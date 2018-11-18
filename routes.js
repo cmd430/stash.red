@@ -121,10 +121,10 @@ module.exports = function (config, multer, app) {
         if (image !== 'undefined') {
           return new Promise((resolve, reject) => {
             let mimetype = image.mimetype
-            let extention = image.originalname.split('.')[1] || 'png'
+            let extention = image.originalname.split('.')[1] || 'unknown'
             let id = crypto.randomBytes(5).toString('hex')
             let path = `${id}.${extention}`
-            if (!mimetype.includes('image')) {
+            if (!mimetype.includes('image') && !mimetype.includes('video') && !mimetype.includes('audio')) {
               return reject({
                 status: 415,
                 message: {
@@ -169,10 +169,10 @@ module.exports = function (config, multer, app) {
     } else {
       let image = req.files[0]
       let mimetype = image.mimetype
-      let extention = image.originalname.split('.')[1] || 'png'
+      let extention = image.originalname.split('.')[1] || 'unknown'
       let id = crypto.randomBytes(5).toString('hex')
       let path = `${id}.${extention}`
-      if (!mimetype.includes('image')) {
+      if (!mimetype.includes('image') && !mimetype.includes('video') && !mimetype.includes('audio')) {
         return res.status(415).json({
           error: 'Unsupported media type'
         })
