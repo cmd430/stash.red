@@ -8,7 +8,7 @@ const config = {
   port: 80,
   rootDir: rootDir,
   uploadDir: uploadDir,
-  useAuth: false,
+  useAuth: true,
   authKeys: require(authKeys)
 }
 

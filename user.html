@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Project Cum Play - User</title>
+    <style>
+      body {
+        margin: 0px;
+        background: rgb(14, 14, 14);
+      }
+      img {
+        max-width: 100%;
+        display: block;
+        margin-left: 50%;
+        margin-bottom: 8px;
+        transform: translateX(-50%);
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        let user = `${location.href}.json`
+        fetch(user)
+        .then(response => {
+          return response.json();
+        })
+        .then(userJSON => {
+          userJSON.forEach(item => {
+            if (item.path.includes('/a/')) {
+              // TODO enable albums viewing
+            } else {
+              var img = document.createElement('img')
+              img.setAttribute('src', `${location.protocol}//${location.host}${item.path}`)
+              document.querySelector('body').appendChild(img);
+            }
+          })
+        })
+        .catch(err => {
+          console.error(err)
+        })
+      })
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

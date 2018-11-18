@@ -83,6 +83,7 @@
               location.href = JSON.parse(request.responseText).path
             }
             request.open(form.method, form.action)
+            request.setRequestHeader('Authorization','test')
             request.send(data)
           })
         })
