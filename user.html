@@ -7,7 +7,7 @@
         margin: 0px;
         background: rgb(14, 14, 14);
       }
-      img {
+      img, video, audio {
         max-width: 100%;
         display: block;
         margin-left: 50%;
@@ -27,9 +27,23 @@
             if (item.path.includes('/a/')) {
               // TODO enable albums viewing
             } else {
-              var img = document.createElement('img')
-              img.setAttribute('src', `${location.protocol}//${location.host}${item.path}`)
-              document.querySelector('body').appendChild(img);
+              if (item.type.includes('image')) {
+                let image = document.createElement('img')
+                image.setAttribute('src', `${location.protocol}//${location.host}${item.path}`)
+                document.querySelector('body').appendChild(image);
+              } else if (item.type.includes('video')) {
+                let video = document.createElement('video')
+                video.setAttribute('src', `${location.protocol}//${location.host}${item.path}`)
+                video.setAttribute('controls', 'true')
+                video.setAttribute('autoplay', 'true')
+                document.querySelector('body').appendChild(video);
+              } else if (item.type.includes('audio')) {
+                let audio = document.createElement('audio')
+                audio.setAttribute('src', `${location.protocol}//${location.host}${item.path}`)
+                audio.setAttribute('controls', 'true')
+                audio.setAttribute('autoplay', 'true')
+                document.querySelector('body').appendChild(audio);
+              }
             }
           })
         })

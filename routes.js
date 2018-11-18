@@ -141,7 +141,10 @@ module.exports = function (config, multer, app) {
                     }
                   })
                 }
-                return resolve({path: `/i/${path}`})
+                return resolve({
+                  path: `/i/${path}`,
+                  type: mimetype.split('/')
+                })
               })
             }
           })
@@ -184,7 +187,8 @@ module.exports = function (config, multer, app) {
             })
           }
           let result = {
-            path: `/i/${path}`
+            path: `/i/${path}`,
+            type: mimetype.split('/')
           }
           addToUser(config, userId, result)
           return res.status(200).json(result)
