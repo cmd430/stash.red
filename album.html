@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Project Cum Play - Album</title>
+    <style>
+      body {
+        margin: 0px;
+        background: rgb(14, 14, 14);
+      }
+      img {
+        max-width: 100%;
+        display: block;
+        margin-left: 50%;
+        margin-bottom: 8px;
+        transform: translateX(-50%);
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        let album = `${location.href}.json`
+        fetch(album)
+        .then(response => {
+          return response.json();
+        })
+        .then(albumJSON => {
+          albumJSON.forEach(image => {
+            var img = document.createElement('img')
+            img.setAttribute('src', `${location.protocol}//${location.host}${image.path}`)
+            document.querySelector('body').appendChild(img);
+          })
+        })
+        .catch(err => {
+          console.error(err)
+        })
+      })
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
