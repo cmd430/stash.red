@@ -33,6 +33,33 @@
           userJSON.forEach(item => {
             if (item.path.includes('/a/')) {
               // TODO enable albums viewing
+              fetch(`${item.path}.json`)
+              .then(response => {
+                return response.json();
+              })
+              .then(ablumJSON => {
+                let ablumbItem = ablumJSON[0]
+                if (ablumbItem.type.includes('image')) {
+                  let image = document.createElement('img')
+                  image.setAttribute('src', `${location.protocol}//${location.host}${ablumbItem.path}`)
+                  document.querySelector('body').appendChild(image);
+                } else if (ablumbItem.type.includes('video')) {
+                  let video = document.createElement('video')
+                  video.setAttribute('src', `${location.protocol}//${location.host}${ablumbItem.path}`)
+                  video.setAttribute('controls', 'true')
+                  video.setAttribute('autoplay', 'true')
+                  document.querySelector('body').appendChild(video);
+                } else if (ablumbItem.type.includes('audio')) {
+                  let audio = document.createElement('audio')
+                  audio.setAttribute('src', `${location.protocol}//${location.host}${ablumbItem.path}`)
+                  audio.setAttribute('controls', 'true')
+                  audio.setAttribute('autoplay', 'true')
+                  document.querySelector('body').appendChild(audio);
+                }
+              })
+              .catch(err => {
+                console.error(err)
+              })
             } else {
               if (item.type.includes('image')) {
                 let image = document.createElement('img')
