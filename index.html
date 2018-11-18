@@ -99,7 +99,9 @@
               let data = new FormData(form)
               let request = new XMLHttpRequest()
               request.onreadystatechange = () => {
-                location.href = JSON.parse(request.responseText).path
+                if (request.readyState === 4 && request.status === 200) {
+                  location.href = JSON.parse(request.responseText).path
+                }
               }
               request.open(form.method, form.action)
               request.setRequestHeader('Authorization', authBox.value)
