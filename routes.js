@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const crypto = require('crypto')
 
 function addToUser (config, userId, item) {
@@ -6,7 +7,11 @@ function addToUser (config, userId, item) {
     if (config.useAuth) {
       let userFile = `${config.uploadDir}/u/${userId}.json`
       new Promise((resolve, reject) => {
-        // Create User if not exist
+        // Create User file if not exist
+        // we dont need to worry about junk
+        // users becasue we can only get to this
+        // function if we passed the auth
+        // test already!
         fs.writeFile(userFile, JSON.stringify([]), {
           flag: 'wx'
         }, err => {
@@ -39,11 +44,6 @@ function addToUser (config, userId, item) {
 }
 
 module.exports = function (config, multer, app) {
-
-  // FavIcon
-  app.get ('/favicon.ico', (req, res) => {
-    res.sendFile(`${config.rootDir}/${req.path}`)
-  })
 
   // Index
   app.get ('/', (req, res) => {
@@ -120,9 +120,9 @@ module.exports = function (config, multer, app) {
         if (image !== 'undefined') {
           return new Promise((resolve, reject) => {
             let mimetype = image.mimetype
-            let extention = image.originalname.split('.')[1] || 'unknown'
+            let extention = path.extname(image.originalname) || 'unknown'
             let id = crypto.randomBytes(5).toString('hex')
-            let path = `${id}.${extention}`
+            let imgpath = `${id}.${extention}`
             if (!mimetype.includes('image') && !mimetype.includes('video') && !mimetype.includes('audio')) {
               return reject({
                 status: 415,
@@ -131,7 +131,7 @@ module.exports = function (config, multer, app) {
                 }
               })
             } else {
-              fs.writeFile(`${config.uploadDir}/i/${path}`, image.buffer, err => {
+              fs.writeFile(`${config.uploadDir}/i/${imgpath}`, image.buffer, err => {
                 if (err) {
                   return reject({
                     status: 500,
@@ -141,7 +141,7 @@ module.exports = function (config, multer, app) {
                   })
                 }
                 return resolve({
-                  path: `/i/${path}`,
+                  path: `/i/${imgpath}`,
                   type: mimetype.split('/')
                 })
               })
@@ -171,22 +171,22 @@ module.exports = function (config, multer, app) {
     } else {
       let image = req.files[0]
       let mimetype = image.mimetype
-      let extention = image.originalname.split('.')[1] || 'unknown'
+      let extention = path.extname(image.originalname) || 'unknown'
       let id = crypto.randomBytes(5).toString('hex')
-      let path = `${id}.${extention}`
+      let imgpath = `${id}.${extention}`
       if (!mimetype.includes('image') && !mimetype.includes('video') && !mimetype.includes('audio')) {
         return res.status(415).json({
           error: 'Unsupported media type'
         })
       } else {
-        fs.writeFile(`${config.uploadDir}/i/${path}`, image.buffer, err => {
+        fs.writeFile(`${config.uploadDir}/i/${imgpath}`, image.buffer, err => {
           if (err) {
             return res.status(500).json({
               error: 'Internal error occurred while writing the image data'
             })
           }
           let result = {
-            path: `/i/${path}`,
+            path: `/i/${imgpath}`,
             type: mimetype.split('/')
           }
           addToUser(config, userId, result)
@@ -194,5 +194,10 @@ module.exports = function (config, multer, app) {
         })
       }
     }
+  })
+
+  // FavIcon
+  app.get ('/favicon.ico', (req, res) => {
+    res.sendFile(`${config.rootDir}/${req.path}`)
   })
 }
