@@ -27,7 +27,6 @@ function addToUser (config, userId, item) {
           if (err) {
             // Hurr Durr swallow the error
           }
-          console.log('Saved User Data')
           return resolve()
         })
       })

@@ -71,6 +71,9 @@
           let fileForm = document.querySelector('form')
           if (fileInput.files.length > 0) {
             fileForm.reset()
+            if (localStorage.authKey) {
+              authBox.value = localStorage.authKey
+            }
           }
           dropContainer.addEventListener('click', e => {
             if (e.target !== authBox) {
@@ -100,6 +103,7 @@
               let request = new XMLHttpRequest()
               request.onreadystatechange = () => {
                 if (request.readyState === 4 && request.status === 200) {
+                  localStorage.authKey = authBox.value
                   location.href = JSON.parse(request.responseText).path
                 }
               }
