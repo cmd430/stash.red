@@ -40,7 +40,19 @@
           color: rgba(255, 255, 255, 0.52);
           cursor: pointer;
         }
-        input[type=submit]:hover {
+        input[type=button] {
+          top: 10px;
+          left: 10px;
+          position: absolute;
+          padding: 8px;
+          border-radius: 5px;
+          border: 0px;
+          background: rgb(26, 26, 26);
+          color: rgba(255, 255, 255, 0.52);
+          cursor: pointer;
+        }
+        input[type=submit]:hover,
+        input[type=button]:hover {
           color: rgb(255, 255, 255);
         }
         input[type=file] {
@@ -68,9 +80,14 @@
           let dropContainer = document.querySelector('div')
           let fileInput = document.querySelector('input[type=file]')
           let fileSubmit = document.querySelector('input[type=submit]')
+          let myUploads = document.querySelector('input[type=button]')
           let fileForm = document.querySelector('form')
           if (fileInput.files.length > 0) {
             fileForm.reset()
+            if (localStorage.authKey) {
+              authBox.value = localStorage.authKey
+            }
+          } else {
             if (localStorage.authKey) {
               authBox.value = localStorage.authKey
             }
@@ -112,16 +129,20 @@
               request.send(data)
             }
           })
+          myUploads.addEventListener('click', e => {
+            location.href = `${location.protocol}//${location.host}/u/${authBox.value}`
+          })
         })
       </script>
   </head>
   <body>
+    <input type="button" value="View my Uploads" />
     <div>
-      <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="text" name="authkey" autocomplete="authkey" placeholder="Enter AuthKey" id="auth">
+      <form action="/upload" method="post" enctype="multipart/form-data" />
+        <input type="text" name="authkey" autocomplete="authkey" placeholder="Enter AuthKey" id="auth" />
         <input type="file" accept="image/*,video/*,audio/*" name="files" multiple />
         <br />
-        <input type="submit" value="Upload Images">
+        <input type="submit" value="Upload Images" />
       </form>
   </body>
 </html>
