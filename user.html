@@ -13,9 +13,25 @@
       body {
         margin: 0px;
         background: rgb(14, 14, 14);
+        color: rgb(230, 230, 230);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+      }
+      span {
+        max-width: 50%;
+        display: block;
+        position: relative;
+        margin-left: 50%;
+        margin-bottom: 8px;
+        transform: translateX(-50%);
+        cursor: pointer;
+        text-align: center;
+      }
+      span:hover > h2,
+      h2:hover {
+        text-decoration: underline
       }
       img, video, audio {
-        max-width: 100%;
+        max-width: 50%;
         display: block;
         margin-left: 50%;
         margin-bottom: 8px;
@@ -32,30 +48,34 @@
         .then(userJSON => {
           userJSON.forEach(item => {
             if (item.path.includes('/a/')) {
-              // TODO enable albums viewing
-              fetch(`${item.path}.json`)
+              fetch(`${location.protocol}//${location.host}${item.path}.json`)
               .then(response => {
                 return response.json();
               })
               .then(ablumJSON => {
                 let ablumbItem = ablumJSON[0]
+                let albumWrapper = document.createElement('span')
+                let albumText = document.createElement('h2')
+                albumText.textContent = "Album"
+                albumWrapper.setAttribute('data-src', `${location.protocol}//${location.host}${item.path}`)
+                albumWrapper.appendChild(albumText)
+                albumWrapper.addEventListener('click', e => {
+                  location.href = albumWrapper.dataset.src
+                })
                 if (ablumbItem.type.includes('image')) {
                   let image = document.createElement('img')
                   image.setAttribute('src', `${location.protocol}//${location.host}${ablumbItem.path}`)
-                  document.querySelector('body').appendChild(image);
+                  albumWrapper.appendChild(image)
                 } else if (ablumbItem.type.includes('video')) {
                   let video = document.createElement('video')
                   video.setAttribute('src', `${location.protocol}//${location.host}${ablumbItem.path}`)
-                  video.setAttribute('controls', 'true')
-                  video.setAttribute('autoplay', 'true')
-                  document.querySelector('body').appendChild(video);
+                  albumWrapper.appendChild(video)
                 } else if (ablumbItem.type.includes('audio')) {
                   let audio = document.createElement('audio')
                   audio.setAttribute('src', `${location.protocol}//${location.host}${ablumbItem.path}`)
-                  audio.setAttribute('controls', 'true')
-                  audio.setAttribute('autoplay', 'true')
-                  document.querySelector('body').appendChild(audio);
+                  albumWrapper.appendChild(audio)
                 }
+                document.querySelector('body').appendChild(albumWrapper)
               })
               .catch(err => {
                 console.error(err)
