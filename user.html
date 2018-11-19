@@ -85,13 +85,11 @@
                 let video = document.createElement('video')
                 video.setAttribute('src', `${location.protocol}//${location.host}${item.path}`)
                 video.setAttribute('controls', 'true')
-                video.setAttribute('autoplay', 'true')
                 document.querySelector('body').appendChild(video);
               } else if (item.type.includes('audio')) {
                 let audio = document.createElement('audio')
                 audio.setAttribute('src', `${location.protocol}//${location.host}${item.path}`)
                 audio.setAttribute('controls', 'true')
-                audio.setAttribute('autoplay', 'true')
                 document.querySelector('body').appendChild(audio);
               }
             }
