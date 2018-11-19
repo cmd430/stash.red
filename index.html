@@ -220,8 +220,12 @@
             authBox.classList.add('hidden')
             myUploads.classList.remove('hidden')
           }
-          if (JSON.parse(localStorage.autoCopy)) {
-            autoCopy.checked = localStorage.autoCopy
+          if (localStorage.autoCopy) {
+            if (JSON.parse(localStorage.autoCopy)) {
+              autoCopy.checked = localStorage.autoCopy
+            }
+          } else {
+            localStorage.autoCopy = false
           }
           autoCopy.addEventListener('change', e => {
             localStorage.autoCopy = autoCopy.checked
