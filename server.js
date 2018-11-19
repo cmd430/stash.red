@@ -11,4 +11,4 @@ app.use(logger('dev')) // 'default', 'short', 'tiny', 'dev'
 
 require('./routes.js')(config, multer, app)
 
-app.listen(config.port, () => console.log('\'Project Cum Play\' online'))
+app.listen(config.port, () => console.log('\'TheShed.red\' online'))
