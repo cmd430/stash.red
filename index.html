@@ -36,6 +36,58 @@
           transform: translate(-50%, -50%);
           cursor: pointer;
         }
+        input[type=checkbox] {
+          height: 0;
+          width: 0;
+          position: absolute;
+          visibility: hidden;
+        }
+        label {
+          cursor: pointer;
+          text-indent: -9999px;
+          width: 50px;
+          height: 30px;
+          background: rgb(128, 128, 128);
+          border-radius: 100px;
+          position: absolute;
+          transform: translateX(-50%);
+          left: 50%;
+          margin-top: 180px;
+        }
+        label::before {
+          content: 'Auto copy to Clipboard';
+          position: absolute;
+          width: 104px;
+          font-size: 10px;
+          margin-top: 35px;
+          margin-left: 50%;
+          color: rgb(255, 255, 255);
+          display: block;
+          z-index: 2;
+          text-indent: 0px;
+          transform: translateX(-50%);
+        }
+        label::after {
+          content: '';
+          position: absolute;
+          top: 5px;
+          left: 5px;
+          width: 20px;
+          height: 20px;
+          background: rgb(34, 34, 34);
+          border-radius: 10px;
+          transition: 0.3s;
+        }
+        input[type=checkbox]:checked + label {
+          background: rgb(255, 255, 255);
+        }
+        input[type=checkbox]:checked + label::after {
+          left: calc(100% - 5px);
+          transform: translateX(-100%);
+        }
+        label:active::after {
+          width: 25px;
+        }
         input[type=submit] {
           margin-top: 220px;
           margin-left: 50%;
@@ -125,6 +177,7 @@
           let fileInput = document.querySelector('input[type=file]')
           let fileSubmit = document.querySelector('input[type=submit]')
           let myUploads = document.querySelector('input[type=button]')
+          let autoCopy = document.querySelector('input[type=checkbox]')
           let fileForm = document.querySelector('form')
           let progressBar = document.querySelector('.progress')
           let progressBarFill = document.querySelector('.progress .fill')
@@ -135,7 +188,14 @@
               request.onreadystatechange = () => {
                 if (request.readyState === 4 && request.status === 200) {
                   localStorage.authKey = authBox.value
-                  location.href = JSON.parse(request.responseText).path
+                  let redirect = JSON.parse(request.responseText).path
+                  if (autoCopy.checked) {
+                    navigator.clipboard.writeText(`${location.protocol}//${location.host}${redirect}`)
+                    .catch(err => {
+                      console.error('Could not copy to clipboard: ', err);
+                    })
+                  }
+                  location.href = redirect
                 }
               }
               request.upload.onprogress = e => {
@@ -160,6 +220,12 @@
             authBox.classList.add('hidden')
             myUploads.classList.remove('hidden')
           }
+          if (JSON.parse(localStorage.autoCopy)) {
+            autoCopy.checked = localStorage.autoCopy
+          }
+          autoCopy.addEventListener('change', e => {
+            localStorage.autoCopy = autoCopy.checked
+          })
           dropContainer.addEventListener('click', e => {
             if (e.target !== authBox) {
               if (fileInput.files.length == 0) {
@@ -238,6 +304,8 @@
   </head>
   <body>
     <input type="button" value="View my Uploads" class="hidden" />
+    <input type="checkbox" id="switch" />
+    <label for="switch"></label>
     <div class="progress hidden" data-label="0%">
         <span class="fill" style="width: 0%"></span>
       </div>
