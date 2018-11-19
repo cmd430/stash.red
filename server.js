@@ -7,7 +7,7 @@ const app = express()
 const config = require('./conf/conf.js')
 
 app.use(responseTime())
-app.use(logger('dev')) // 'default', 'short', 'tiny', 'dev'
+app.use(logger(config.logFormat))
 
 require('./routes.js')(config, multer, app)
 

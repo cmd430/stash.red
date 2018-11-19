@@ -9,7 +9,9 @@ const config = {
   rootDir: rootDir,
   uploadDir: uploadDir,
   useAuth: true,
-  authKeys: require(authKeys)
+  authKeys: require(authKeys),
+  logFormat: '[:date[web]] :method :url :status :response-time ms - :res[content-length] - :remote-addr'
+  // https://www.npmjs.com/package/morgan
 }
 
 module.exports = config
