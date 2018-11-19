@@ -52,7 +52,6 @@ module.exports = function (config, multer, app) {
 
   // View Image
   app.get('/i/*', (req, res) => {
-    console.log(req.path)
     fs.access(`${config.uploadDir}/${req.path}`, fs.constants.R_OK, err => {
       if (err) {
         return res.status(404).json({
