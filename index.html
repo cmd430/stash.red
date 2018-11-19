@@ -23,7 +23,7 @@
           margin-bottom: 8px;
           transform: translateX(-50%);
         }
-        div {
+        .uploadWrapper {
           background-color: rgba(140, 140, 140, 0.1);
           background-image: url('data:image/png;base64,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');
           background-repeat: no-repeat;
@@ -80,24 +80,85 @@
         input[type=text]:hover::placeholder {
           color: rgb(207, 207, 207);
         }
+        .hidden {
+          display: none;
+        }
+        .progress {
+          height: 20px;
+          width: 600px;
+          background-color: rgb(128, 128, 128);
+          position: relative;
+          margin: 50vh 0 0 50vw;
+          transform: translate(-50%, -50%);
+          border-radius: 10px;
+          overflow: hidden;
+        }
+        .progress::before {
+          content: attr(data-label);
+          font-size: 13px;
+          position: absolute;
+          text-align: center;
+          top: 1px;
+          left: 0;
+          right: 0;
+          color: rgb(14, 14, 14);
+          text-shadow: 1px 1px rgb(255, 255, 255);
+        }
+        .progress .fill {
+          background-color: rgb(34, 185, 47);
+          display: inline-block;
+          height: 100%;
+          box-shadow: 0px 0px 5px rgb(0,0,0);
+          border-radius: 10px;
+          transition: width 500ms;
+        }
       </style>
       <script>
+        function isValidURL(str) {
+          let a  = document.createElement('a')
+          a.href = str
+          return (a.host && a.host != location.host)
+        }
         document.addEventListener('DOMContentLoaded', () => {
           let authBox = document.querySelector('#auth')
-          let dropContainer = document.querySelector('div')
+          let dropContainer = document.querySelector('.uploadWrapper')
           let fileInput = document.querySelector('input[type=file]')
           let fileSubmit = document.querySelector('input[type=submit]')
           let myUploads = document.querySelector('input[type=button]')
           let fileForm = document.querySelector('form')
+          let progressBar = document.querySelector('.progress')
+          let progressBarFill = document.querySelector('.progress .fill')
+          let sendFiles = function (fileData) {
+            dropContainer.classList.add('hidden')
+            progressBar.classList.remove('hidden')
+            let request = new XMLHttpRequest()
+              request.onreadystatechange = () => {
+                if (request.readyState === 4 && request.status === 200) {
+                  localStorage.authKey = authBox.value
+                  location.href = JSON.parse(request.responseText).path
+                }
+              }
+              request.upload.onprogress = e => {
+                if (e.lengthComputable) {
+                  let percentage = (e.loaded / e.total) * 100
+                  progressBar.dataset.label = `${Math.round(percentage)}%`
+                  progressBarFill.setAttribute('style', `width: ${percentage}%;`)
+                }
+              }
+              request.onerror = e => {
+                console.error(e)
+              }
+              request.open(fileForm.method, fileForm.action, true)
+              request.setRequestHeader('Authorization', authBox.value)
+              request.send(fileData)
+          }
           if (fileInput.files.length > 0) {
             fileForm.reset()
-            if (localStorage.authKey) {
-              authBox.value = localStorage.authKey
-            }
-          } else {
-            if (localStorage.authKey) {
-              authBox.value = localStorage.authKey
-            }
+          }
+          if (localStorage.authKey) {
+            authBox.value = localStorage.authKey
+            authBox.classList.add('hidden')
+            myUploads.classList.remove('hidden')
           }
           dropContainer.addEventListener('click', e => {
             if (e.target !== authBox) {
@@ -122,30 +183,66 @@
           fileForm.addEventListener('submit', e => {
             e.preventDefault()
             if (fileInput.files.length > 0) {
-              let form = e.target
-              let data = new FormData(form)
-              let request = new XMLHttpRequest()
-              request.onreadystatechange = () => {
-                if (request.readyState === 4 && request.status === 200) {
-                  localStorage.authKey = authBox.value
-                  location.href = JSON.parse(request.responseText).path
-                }
-              }
-              request.open(form.method, form.action)
-              request.setRequestHeader('Authorization', authBox.value)
-              request.send(data)
+              sendFiles(new FormData(e.target))
             }
           })
           myUploads.addEventListener('click', e => {
             location.href = `${location.protocol}//${location.host}/u/${authBox.value}`
           })
+          window.addEventListener('paste', e => {
+            if (progressBar.classList.contains('hidden')) {
+              let clipboardItems = e.clipboardData.items
+              let blobs = []
+              for (clipboardIndex in clipboardItems) {
+                let clipboardItem = clipboardItems[clipboardIndex]
+                if (clipboardItem.kind == 'file') {
+                  if (clipboardItem.type.includes('image') || clipboardItem.type.includes('video') || clipboardItem.type.includes('audio')) {
+                    blobs.push(clipboardItem.getAsFile())
+                  }
+                } else if (clipboardItem.kind == 'string' && clipboardItem.type == 'text/plain') {
+                  clipboardItem.getAsString(text => {
+                    if (isValidURL(text)) {
+                      dropContainer.classList.add('hidden')
+                      progressBar.classList.remove('hidden')
+                      fetch(`https://cors-anywhere.herokuapp.com/${text}`)
+                      .then(response => response.blob())
+                      .then(blob => {
+                        if (blob.type.includes('image') || blob.type.includes('video') || blob.type.includes('audio')) {
+                          blobs.push(blob)
+                        }
+                      })
+                      .then(() => {
+                        let fakeForm = new FormData()
+                        if (blobs.length > 0) {
+                          blobs.forEach(blob => {
+                            fakeForm.append('file', blob, `${blob.name}`)
+                          })
+                          sendFiles(fakeForm)
+                        }
+                      })
+                    }
+                  })
+                }
+              }
+              let fakeForm = new FormData()
+              if (blobs.length > 0) {
+                blobs.forEach(blob => {
+                  fakeForm.append('file', blob, `${blob.name}`)
+                })
+                sendFiles(fakeForm)
+              }
+            }
+          })
         })
       </script>
   </head>
   <body>
-    <input type="button" value="View my Uploads" />
-    <div>
-      <form action="/upload" method="post" enctype="multipart/form-data" />
+    <input type="button" value="View my Uploads" class="hidden" />
+    <div class="progress hidden" data-label="0%">
+        <span class="fill" style="width: 0%"></span>
+      </div>
+    <div class="uploadWrapper">
+      <form action="/upload" method="post" enctype="multipart/form-data">
         <input type="text" name="authkey" autocomplete="authkey" placeholder="Enter AuthKey" id="auth" />
         <input type="file" accept="image/*,video/*,audio/*" name="files" multiple />
         <br />

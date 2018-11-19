@@ -120,7 +120,7 @@ module.exports = function (config, multer, app) {
         if (image !== 'undefined') {
           return new Promise((resolve, reject) => {
             let mimetype = image.mimetype
-            let extention = path.extname(image.originalname) || 'unknown'
+            let extention = path.extname(image.originalname) || `.${mimetype.split('/').pop()}`
             let id = crypto.randomBytes(5).toString('hex')
             let imgpath = `${id}${extention}`
             if (!mimetype.includes('image') && !mimetype.includes('video') && !mimetype.includes('audio')) {
@@ -171,7 +171,7 @@ module.exports = function (config, multer, app) {
     } else {
       let image = req.files[0]
       let mimetype = image.mimetype
-      let extention = path.extname(image.originalname) || 'unknown'
+      let extention = path.extname(image.originalname) || `.${mimetype.split('/').pop()}`
       let id = crypto.randomBytes(5).toString('hex')
       let imgpath = `${id}${extention}`
       if (!mimetype.includes('image') && !mimetype.includes('video') && !mimetype.includes('audio')) {

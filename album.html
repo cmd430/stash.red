@@ -28,25 +28,23 @@
       document.addEventListener('DOMContentLoaded', () => {
         let album = `${location.href}.json`
         fetch(album)
-        .then(response => {
-          return response.json();
-        })
+        .then(response => response.json())
         .then(albumJSON => {
           albumJSON.forEach(item => {
             if (item.type.includes('image')) {
               let image = document.createElement('img')
               image.setAttribute('src', `${location.protocol}//${location.host}${item.path}`)
-              document.querySelector('body').appendChild(image);
+              document.querySelector('body').appendChild(image)
             } else if (item.type.includes('video')) {
               let video = document.createElement('video')
               video.setAttribute('src', `${location.protocol}//${location.host}${item.path}`)
               video.setAttribute('controls', 'true')
-              document.querySelector('body').appendChild(video);
+              document.querySelector('body').appendChild(video)
             } else if (item.type.includes('audio')) {
               let audio = document.createElement('audio')
               audio.setAttribute('src', `${location.protocol}//${location.host}${item.path}`)
               audio.setAttribute('controls', 'true')
-              document.querySelector('body').appendChild(audio);
+              document.querySelector('body').appendChild(audio)
             }
           })
         })

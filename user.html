@@ -42,16 +42,12 @@
       document.addEventListener('DOMContentLoaded', () => {
         let user = `${location.href}.json`
         fetch(user)
-        .then(response => {
-          return response.json();
-        })
+        .then(response => response.json())
         .then(userJSON => {
           userJSON.forEach(item => {
             if (item.path.includes('/a/')) {
               fetch(`${location.protocol}//${location.host}${item.path}.json`)
-              .then(response => {
-                return response.json();
-              })
+              .then(response => response.json())
               .then(ablumJSON => {
                 let ablumbItem = ablumJSON[0]
                 let albumWrapper = document.createElement('span')
