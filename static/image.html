@@ -24,22 +24,8 @@
         transform: translateX(-50%);
       }
     </style>
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        let jsonURL = `${location.protocol}//image.${location.host}${location.pathname.substring(2)}.json`
-        fetch(jsonURL)
-        .then(response => response.json())
-        .then(imageJSON => {
-          let image = document.createElement('img')
-          image.setAttribute('src', `${location.protocol}//image.${location.host}/${imageJSON.direct}`)
-          document.querySelector('body').appendChild(image)
-        })
-        .catch(err => {
-          console.error(err)
-        })
-      })
-    </script>
   </head>
   <body>
+    <h1>IMAGE!</h1>
   </body>
 </html>

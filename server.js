@@ -16,9 +16,9 @@ const app = {
   }
 }
 
-app.domain.use(cors())
 app.domain.use(responseTime())
 app.domain.use(logger(config.logFormat))
+app.domain.use(cors())
 app.domain.use(subdomain('image', app.subdomain.image))
 app.domain.use(subdomain('audio', app.subdomain.audio))
 app.domain.use(subdomain('video', app.subdomain.video))

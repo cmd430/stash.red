@@ -55,22 +55,16 @@ module.exports = function (config, multer) {
         } else if (page.includes('/a/')) {
           return res.sendFile(`${config.storage.static}/album.html`)
         } else if (page.includes('/f/')) {
-          glob.readdir(`${config.storage.files.root.replace(config.webroot, '').split(/[\\\/]/g).join(path.posix.sep)}/**/${page.substring(3)}.*`, (err, files) => {
-            if (err) {
-              return error(res, 404)
-            } else {
-              let mimetype = mime.lookup(`${files.pop()}`) || []
-              if (mimetype.includes('image')) {
-                return res.sendFile(`${config.storage.static}/image.html`)
-              } else if (mimetype.includes('audio')) {
-                return res.sendFile(`${config.storage.static}/audio.html`)
-              } else if (mimetype.includes('video')) {
-                return  res.sendFile(`${config.storage.static}/video.html`)
-              } else {
-                return error(res, 404)
-              }
-            }
-          })
+          let mimetype = mime.lookup(`${page}`) || []
+          if (mimetype.includes('image')) {
+            return res.sendFile(`${config.storage.static}/image.html`)
+          } else if (mimetype.includes('audio')) {
+            return res.sendFile(`${config.storage.static}/audio.html`)
+          } else if (mimetype.includes('video')) {
+            return  res.sendFile(`${config.storage.static}/video.html`)
+          } else {
+            return error(res, 404)
+          }
         }
       }
     },
