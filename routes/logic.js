@@ -17,7 +17,9 @@ module.exports = function (config, multer) {
         // We only want to serve asset files from
         // the 'static' subdomain and the index from
         // the host domain (and the upload files from)
-        // there relevant subdomains
+        // there relevant subdomains so we redirect
+        // any html requests comming from a
+        // subdomain to the homepage...
         return res.redirect(`${req.protocol}://${req.hostname.match(/[^\.]*\.[^.]*$/)[0]}/`)
       }
       if (subdomains.includes('image')) {
@@ -69,6 +71,16 @@ module.exports = function (config, multer) {
 
     // Upload File
     uploadFile: async function (req, res) {
+      //
+      // TODO
+      //  clean this mother fucker up
+      //  change to custom multer storage engine
+      //  so we can use pipe() and create thumbnails
+      //  and maybe in the future add a compression
+      //  option to uploads
+      //
+      //  https://github.com/expressjs/multer/blob/master/StorageEngine.md
+      //
       let userId
       if (config.useAuth) {
         if (!req.headers['authorization'] || !config.authKeys.includes(req.headers['authorization'])) {
@@ -105,7 +117,7 @@ module.exports = function (config, multer) {
                     })
                   }
                   return resolve({
-                    path: `/f/${id}`,
+                    path: `/f/${imgpath}`,
                     direct: `${imgpath}`,
                     type: mimetype.split('/')[0]
                   })
