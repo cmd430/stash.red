@@ -8,6 +8,7 @@
       <meta content="TheShed.red" property="og:description">
       <meta content="https://TheShed.red/" property="og:site_name">
       <meta content='https://TheShed.red/favicon.ico' property='og:image'>
+      <link rel="shortcut icon" type="image/x-icon" href="https://static.theshed.red/img/favicon.ico">
       <title>TheShed.red</title>
     <style>
         body {
@@ -188,8 +189,10 @@
               request.onreadystatechange = () => {
                 if (request.readyState === 4 && request.status === 200) {
                   localStorage.authKey = authBox.value
-                  let redirect = `${location.protocol}//${location.host}${JSON.parse(request.responseText).path}`
-                  //let redirect = `${location.protocol}//${JSON.parse(request.responseText).type}.${location.host}${JSON.parse(request.responseText).direct}`
+                  let responseJSON = JSON.parse(request.responseText)
+                  let redirectSubdomain = responseJSON.type
+                  let redirect = `${location.protocol}//${location.host}${responseJSON.path}`
+                  //let redirect = `${location.protocol}//${responseJSON.type}.${location.host}${responseJSON.direct}` //direct link
                   if (autoCopy.checked) {
                     navigator.clipboard.writeText(redirect)
                     .catch(err => {

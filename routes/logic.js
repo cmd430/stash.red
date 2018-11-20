@@ -25,6 +25,7 @@ module.exports = function (config, multer) {
         // subdomain to the homepage...
         return res.redirect(`${req.protocol}://${req.hostname.match(/[^\.]*\.[^.]*$/)[0]}/`)
       }
+<<<<<<< HEAD
       if (subdomains.includes('image') || subdomains.includes('audio') || subdomains.includes('video')) {
         if (file.includes('.json')) {
           return glob.readdir(`${config.storage.files.root.replace(config.webroot, '').split(/[\\\/]/g).join(path.posix.sep)}/**${file.slice(0, -5)}.*`, (err, files) => {
@@ -55,6 +56,16 @@ module.exports = function (config, multer) {
             file = `${config.storage.static}/${file}`
           }
         }
+=======
+      if (subdomains.includes('image')) {
+        file = `${config.storage.files.image}${file}`
+      } else if (subdomains.includes('audio')) {
+        file = `${config.storage.files.audio}${file}`
+      } else if (subdomains.includes('video')) {
+        file = `${config.storage.files.video}${file}`
+      } else {
+        file = `${config.storage.static}${file}`
+>>>>>>> test-headers-to-transfer-info
       }
       return fileExists(res, file, () => {
         return res.sendFile(`${file}`)
@@ -102,6 +113,7 @@ module.exports = function (config, multer) {
 
     // Upload File
     uploadFile: async function (req, res) {
+<<<<<<< HEAD
         //
         // TODO
         //  clean this mother fucker up
@@ -112,6 +124,18 @@ module.exports = function (config, multer) {
         //
         //  https://github.com/expressjs/multer/blob/master/StorageEngine.md
         //
+=======
+      //
+      // TODO
+      //  clean this mother fucker up
+      //  change to custom multer storage engine
+      //  so we can use pipe() and create thumbnails
+      //  and maybe in the future add a compression
+      //  option to uploads
+      //
+      //  https://github.com/expressjs/multer/blob/master/StorageEngine.md
+      //
+>>>>>>> test-headers-to-transfer-info
       let userId
       if (config.useAuth) {
         if (!req.headers['authorization'] || !config.authKeys.includes(req.headers['authorization'])) {
@@ -138,7 +162,7 @@ module.exports = function (config, multer) {
                   }
                 })
               } else {
-                fs.writeFile(`${config.uploadDir}/f/${imgpath}`, image.buffer, err => {
+                fs.writeFile(`${config.storage.files[mimetype.split('/')[0]]}/${imgpath}`, image.buffer, err => {
                   if (err) {
                     return reject({
                       status: 500,
@@ -148,7 +172,7 @@ module.exports = function (config, multer) {
                     })
                   }
                   return resolve({
-                    path: `/f/${id}`,
+                    path: `/f/${imgpath}`,
                     direct: `${imgpath}`,
                     type: mimetype.split('/')[0]
                   })
@@ -159,7 +183,7 @@ module.exports = function (config, multer) {
         }))
         .then(albumData => {
           if (albumData.length > 0) {
-            fs.writeFile(`${config.uploadDir}/a/${albumId}.json`, JSON.stringify(albumData), err => {
+            fs.writeFile(`${config.storage.albums}/${albumId}.json`, JSON.stringify(albumData), err => {
               if (err) {
                 return res.status(500).json({
                   error: 'Internal error occurred while writing the album data'
@@ -187,14 +211,15 @@ module.exports = function (config, multer) {
             error: 'Unsupported media type'
           })
         } else {
-          fs.writeFile(`${config.uploadDir}/f/${imgpath}`, image.buffer, err => {
+          fs.writeFile(`${config.storage.files[mimetype.split('/')[0]]}/${imgpath}`, image.buffer, err => {
             if (err) {
+              console.log(err)
               return res.status(500).json({
                 error: 'Internal error occurred while writing the image data'
               })
             }
             let result = {
-              path: `/f/${id}`,
+              path: `/f/${imgpath}`,
               direct: `${imgpath}`,
               type: mimetype.split('/')[0]
             }
