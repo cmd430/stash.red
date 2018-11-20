@@ -193,7 +193,7 @@
                   if (autoCopy.checked) {
                     navigator.clipboard.writeText(redirect)
                     .catch(err => {
-                      console.error('Could not copy to clipboard: ', err);
+                      console.error('Could not copy to clipboard: ', err)
                     })
                   }
                   location.href = redirect

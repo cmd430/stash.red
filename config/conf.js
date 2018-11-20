@@ -19,6 +19,7 @@ const config = {
   storage: {
     base: storageBaseDir,
     files: {
+      root: storageFilesDir,
       image: storageImageDir,
       audio: storageAudioDir,
       video: storageVideoDir
