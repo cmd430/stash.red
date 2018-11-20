@@ -95,7 +95,7 @@ module.exports = function (config, multer) {
                   }
                 })
               } else {
-                fs.writeFile(`${config.uploadDir}/f/${imgpath}`, image.buffer, err => {
+                fs.writeFile(`${config.storage.files[mimetype.split('/')[0]]}/${imgpath}`, image.buffer, err => {
                   if (err) {
                     return reject({
                       status: 500,
@@ -116,7 +116,7 @@ module.exports = function (config, multer) {
         }))
         .then(albumData => {
           if (albumData.length > 0) {
-            fs.writeFile(`${config.uploadDir}/a/${albumId}.json`, JSON.stringify(albumData), err => {
+            fs.writeFile(`${config.storage.albums}/${albumId}.json`, JSON.stringify(albumData), err => {
               if (err) {
                 return res.status(500).json({
                   error: 'Internal error occurred while writing the album data'
@@ -144,8 +144,9 @@ module.exports = function (config, multer) {
             error: 'Unsupported media type'
           })
         } else {
-          fs.writeFile(`${config.uploadDir}/f/${imgpath}`, image.buffer, err => {
+          fs.writeFile(`${config.storage.files[mimetype.split('/')[0]]}/${imgpath}`, image.buffer, err => {
             if (err) {
+              console.log(err)
               return res.status(500).json({
                 error: 'Internal error occurred while writing the image data'
               })

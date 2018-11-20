@@ -9,6 +9,7 @@
   "author": "Bradley 'cmd430' Treweek",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.15.5",
     "express-subdomain": "^1.0.5",
     "mime-types": "^2.1.21",
