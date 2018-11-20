@@ -24,8 +24,14 @@
         transform: translateX(-50%);
       }
     </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        let image = document.createElement('img')
+        image.setAttribute('src', `${location.protocol}//image.${location.host}/${location.pathname.substring(3)}`)
+        document.querySelector('body').appendChild(image)
+      })
+    </script>
   </head>
   <body>
-    <h1>IMAGE!</h1>
   </body>
 </html>

@@ -24,8 +24,14 @@
         transform: translateX(-50%);
       }
     </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        let audio = document.createElement('audio')
+        audio.setAttribute('src', `${location.protocol}//audio.${location.host}/${location.pathname.substring(3)}`)
+        document.querySelector('body').appendChild(audio)
+      })
+    </script>
   </head>
   <body>
-    <h1>AUDIO!</h1>
   </body>
 </html>

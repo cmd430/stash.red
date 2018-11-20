@@ -24,8 +24,14 @@
         transform: translateX(-50%);
       }
     </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        let video = document.createElement('video')
+        video.setAttribute('src', `${location.protocol}//video.${location.host}/${location.pathname.substring(3)}`)
+        document.querySelector('body').appendChild(video)
+      })
+    </script>
   </head>
   <body>
-    <h1>VIDEO!</h1>
   </body>
 </html>
