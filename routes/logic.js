@@ -23,13 +23,13 @@ module.exports = function (config, multer) {
         return res.redirect(`${req.protocol}://${req.hostname.match(/[^\.]*\.[^.]*$/)[0]}/`)
       }
       if (subdomains.includes('image')) {
-        file = `${config.storage.files.image}/${file}`
+        file = `${config.storage.files.image}${file}`
       } else if (subdomains.includes('audio')) {
-        file = `${config.storage.files.audio}/${file}`
+        file = `${config.storage.files.audio}${file}`
       } else if (subdomains.includes('video')) {
-        file = `${config.storage.files.video}/${file}`
+        file = `${config.storage.files.video}${file}`
       } else {
-        file = `${config.storage.static}/${file}`
+        file = `${config.storage.static}${file}`
       }
       return fileExists(res, file, () => {
         return res.sendFile(`${file}`)
@@ -164,7 +164,7 @@ module.exports = function (config, multer) {
               })
             }
             let result = {
-              path: `/f/${id}`,
+              path: `/f/${imgpath}`,
               direct: `${imgpath}`,
               type: mimetype.split('/')[0]
             }
