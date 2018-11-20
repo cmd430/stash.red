@@ -2,6 +2,9 @@ const fs = require('fs')
 const path = require('path')
 const crypto = require('crypto')
 const mime = require('mime-types')
+const glob = require('glob-fs')({
+  gitignore: false
+})
 
 /*
   Route Functions
@@ -17,17 +20,41 @@ module.exports = function (config, multer) {
         // We only want to serve asset files from
         // the 'static' subdomain and the index from
         // the host domain (and the upload files from)
-        // there relevant subdomains
+        // there relevant subdomains so we redirect
+        // any html requests comming from a
+        // subdomain to the homepage...
         return res.redirect(`${req.protocol}://${req.hostname.match(/[^\.]*\.[^.]*$/)[0]}/`)
       }
-      if (subdomains.includes('image')) {
-        file = `${config.storage.files.image}/${file}`
-      } else if (subdomains.includes('audio')) {
-        file = `${config.storage.files.audio}/${file}`
-      } else if (subdomains.includes('video')) {
-        file = `${config.storage.files.video}/${file}`
-      } else {
-        file = `${config.storage.static}/${file}`
+      if (subdomains.includes('image') || subdomains.includes('audio') || subdomains.includes('video')) {
+        if (file.includes('.json')) {
+          return glob.readdir(`${config.storage.files.root.replace(config.webroot, '').split(/[\\\/]/g).join(path.posix.sep)}/**${file.slice(0, -5)}.*`, (err, files) => {
+            if (err) {
+              return error(res, 404)
+            } else {
+              let gfile = files.pop()
+              if (typeof gfile === 'undefined') {
+                return error(res, 404)
+              }
+              file = gfile.replace(`${config.storage.files.root.replace(config.webroot, '')}`, '')
+              return fileExists(res, file, () => {
+                return res.json({
+                   direct: path.basename(gfile),
+                   type: mime.lookup(`${file}`).split('/')[0]
+                })
+              })
+            }
+          })
+        } else {
+          if (subdomains.includes('image')) {
+            file = `${config.storage.files.image}/${file}`
+          } else if (subdomains.includes('audio')) {
+            file = `${config.storage.files.audio}/${file}`
+          } else if (subdomains.includes('video')) {
+            file = `${config.storage.files.video}/${file}`
+          } else {
+            file = `${config.storage.static}/${file}`
+          }
+        }
       }
       return fileExists(res, file, () => {
         return res.sendFile(`${file}`)
@@ -53,22 +80,38 @@ module.exports = function (config, multer) {
         } else if (page.includes('/a/')) {
           return res.sendFile(`${config.storage.static}/album.html`)
         } else if (page.includes('/f/')) {
-          let mimetype = mime.lookup(`${page}`) || []
-          if (mimetype.includes('image')) {
-            return res.sendFile(`${config.storage.static}/image.html`)
-          } else if (mimetype.includes('audio')) {
-            return res.sendFile(`${config.storage.static}/audio.html`)
-          } else if (mimetype.includes('video')) {
-            return  res.sendFile(`${config.storage.static}/video.html`)
-          } else {
-            return error(res, 404)
-          }
+          glob.readdir(`${config.storage.files.root.replace(config.webroot, '').split(/[\\\/]/g).join(path.posix.sep)}/**/${page.substring(3)}.*`, (err, files) => {
+            if (err) {
+              return error(res, 404)
+            } else {
+              let mimetype = mime.lookup(`${files.pop()}`) || []
+              if (mimetype.includes('image')) {
+                return res.sendFile(`${config.storage.static}/image.html`)
+              } else if (mimetype.includes('audio')) {
+                return res.sendFile(`${config.storage.static}/audio.html`)
+              } else if (mimetype.includes('video')) {
+                return  res.sendFile(`${config.storage.static}/video.html`)
+              } else {
+                return error(res, 404)
+              }
+            }
+          })
         }
       }
     },
 
     // Upload File
     uploadFile: async function (req, res) {
+        //
+        // TODO
+        //  clean this mother fucker up
+        //  change to custom multer storage engine
+        //  so we can use pipe() and create thumbnails
+        //  and maybe in the future add a compression
+        //  option to uploads
+        //
+        //  https://github.com/expressjs/multer/blob/master/StorageEngine.md
+        //
       let userId
       if (config.useAuth) {
         if (!req.headers['authorization'] || !config.authKeys.includes(req.headers['authorization'])) {

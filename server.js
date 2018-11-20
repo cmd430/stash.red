@@ -3,6 +3,7 @@ const logger = require('morgan')
 const responseTime = require('response-time')
 const multer = require('multer')()
 const subdomain = require('express-subdomain')
+const cors = require('cors')
 
 const config = require('./config/conf.js')
 const app = {
@@ -15,12 +16,13 @@ const app = {
   }
 }
 
+app.domain.use(cors())
+app.domain.use(responseTime())
+app.domain.use(logger(config.logFormat))
 app.domain.use(subdomain('image', app.subdomain.image))
 app.domain.use(subdomain('audio', app.subdomain.audio))
 app.domain.use(subdomain('video', app.subdomain.video))
 app.domain.use(subdomain('static', app.subdomain.static))
-app.domain.use(responseTime())
-app.domain.use(logger(config.logFormat))
 
 require('./routes/routes.js')(config, multer, app)
 
