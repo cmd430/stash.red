@@ -188,9 +188,10 @@
               request.onreadystatechange = () => {
                 if (request.readyState === 4 && request.status === 200) {
                   localStorage.authKey = authBox.value
-                  let redirect = JSON.parse(request.responseText).path
+                  let redirect = `${location.protocol}//${location.host}${JSON.parse(request.responseText).path}`
+                  //let redirect = `${location.protocol}//${JSON.parse(request.responseText).type}.${location.host}${JSON.parse(request.responseText).direct}`
                   if (autoCopy.checked) {
-                    navigator.clipboard.writeText(`${location.protocol}//${location.host}${redirect}`)
+                    navigator.clipboard.writeText(redirect)
                     .catch(err => {
                       console.error('Could not copy to clipboard: ', err);
                     })

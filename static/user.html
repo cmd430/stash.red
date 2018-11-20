@@ -60,15 +60,15 @@
                 })
                 if (ablumbItem.type.includes('image')) {
                   let image = document.createElement('img')
-                  image.setAttribute('src', `${location.protocol}//${location.host}${ablumbItem.path}`)
+                  image.setAttribute('src', `${location.protocol}//${ablumbItem.type}.${location.host}${ablumbItem.direct}`)
                   albumWrapper.appendChild(image)
                 } else if (ablumbItem.type.includes('video')) {
                   let video = document.createElement('video')
-                  video.setAttribute('src', `${location.protocol}//${location.host}${ablumbItem.path}`)
+                  video.setAttribute('src', `${location.protocol}//${ablumbItem.type}.${location.host}${ablumbItem.direct}`)
                   albumWrapper.appendChild(video)
                 } else if (ablumbItem.type.includes('audio')) {
                   let audio = document.createElement('audio')
-                  audio.setAttribute('src', `${location.protocol}//${location.host}${ablumbItem.path}`)
+                  audio.setAttribute('src', `${location.protocol}//${ablumbItem.type}.${location.host}${ablumbItem.direct}`)
                   albumWrapper.appendChild(audio)
                 }
                 document.querySelector('body').appendChild(albumWrapper)
@@ -79,16 +79,16 @@
             } else {
               if (item.type.includes('image')) {
                 let image = document.createElement('img')
-                image.setAttribute('src', `${location.protocol}//${location.host}${item.path}`)
+                image.setAttribute('src', `${location.protocol}//${item.type}.${location.host}${item.direct}`)
                 document.querySelector('body').appendChild(image);
               } else if (item.type.includes('video')) {
                 let video = document.createElement('video')
-                video.setAttribute('src', `${location.protocol}//${location.host}${item.path}`)
+                video.setAttribute('src', `${location.protocol}//${item.type}.${location.host}${item.direct}`)
                 video.setAttribute('controls', 'true')
                 document.querySelector('body').appendChild(video);
               } else if (item.type.includes('audio')) {
                 let audio = document.createElement('audio')
-                audio.setAttribute('src', `${location.protocol}//${location.host}${item.path}`)
+                audio.setAttribute('src', `${location.protocol}//${item.type}.${location.host}${item.direct}`)
                 audio.setAttribute('controls', 'true')
                 document.querySelector('body').appendChild(audio);
               }
