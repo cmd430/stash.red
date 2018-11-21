@@ -1,11 +1,9 @@
 module.exports = (config, multer, app) => {
 
-  const logic = require('./logic.js')(config, multer)
+  const logic = require('./logic.js')(config, app)
 
   // View Album / User / Image (with HTML wrapper)
-  app.domain.get('/f/*', logic.viewPage)
-  app.domain.get('/a/*', logic.viewPage)
-  app.domain.get('/u/*', logic.viewPage)
+  app.domain.get('/:type/:id', logic.viewPage)
 
   // Static Assets
   app.domain.get('/', logic.sendAsset)

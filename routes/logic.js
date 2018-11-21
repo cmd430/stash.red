@@ -1,12 +1,13 @@
 const fs = require('fs')
 const path = require('path')
 const crypto = require('crypto')
-const mime = require('mime-types')
 
 /*
   Route Functions
  =======================*/
-module.exports = function (config, multer) {
+module.exports = function (config, app) {
+
+  const models = require('./models.js')(app)
   return logic = {
 
     // Send Asset Files
@@ -23,11 +24,11 @@ module.exports = function (config, multer) {
         return res.redirect(`${req.protocol}://${req.hostname.match(/[^\.]*\.[^.]*$/)[0]}/`)
       }
       if (subdomains.includes('image')) {
-        file = `${config.storage.files.image}${file}`
+        file = `${config.storage.image}${file}`
       } else if (subdomains.includes('audio')) {
-        file = `${config.storage.files.audio}${file}`
+        file = `${config.storage.audio}${file}`
       } else if (subdomains.includes('video')) {
-        file = `${config.storage.files.video}${file}`
+        file = `${config.storage.video}${file}`
       } else {
         file = `${config.storage.static}${file}`
       }
@@ -36,35 +37,41 @@ module.exports = function (config, multer) {
       })
     },
 
-    // View Album / User Page | View Album / User JSON
+    // View File / View Album / User Page | View File / View Album / User JSON
     viewPage: async function (req, res) {
-      let page = req.path
-      if (page.includes('.json')) {
-        let file = `${page}`
-        if (page.includes('/u/')) {
-          file = `${config.storage.users}${file.substring(2)}`
-        } else if (page.includes('/a/')) {
-          file = `${config.storage.albums}${file.substring(2)}`
-        }
-        return fileExists(res, file, () => {
-          return res.sendFile(`${file}`)
-        })
-      } else {
-        if (page.includes('/u/')) {
-          return res.sendFile(`${config.storage.static}/user.html`)
-        } else if (page.includes('/a/')) {
-          return res.sendFile(`${config.storage.static}/album.html`)
-        } else if (page.includes('/f/')) {
-          let mimetype = mime.lookup(`${page}`) || []
-          if (mimetype.includes('image')) {
-            return res.sendFile(`${config.storage.static}/image.html`)
-          } else if (mimetype.includes('audio')) {
-            return res.sendFile(`${config.storage.static}/audio.html`)
-          } else if (mimetype.includes('video')) {
-            return  res.sendFile(`${config.storage.static}/video.html`)
-          } else {
+      let type = req.params.type
+      let typeLong = (type === 'f' ? 'file' : (type === 'a' ? 'album' : 'user'))
+      if (req.params.id.includes('.json')) {
+        let id = req.params.id.split('.')[0]
+        switch (type) {
+          case 'f': // File
+          case 'a': // Album
+          case 'u': // User
+            return models[typeLong].findOne({
+                id: id
+              })
+            .exec()
+            .then(doc => {
+              if (Array.isArray(docs)) {
+                return res.json(doc[0])
+              } else {
+                return error(res, 404)
+              }
+            })
+            .catch(err => {
+              return error(res, 404)
+            })
+          default: // Error
             return error(res, 404)
-          }
+        }
+      } else {
+        switch (type) {
+          case 'f': // File
+          case 'a': // Album
+          case 'u': // User
+            return res.sendFile(`${config.storage.static}/${typeLong}.html`)
+          default: // Error
+            return error(res, 404)
         }
       }
     },
@@ -74,19 +81,12 @@ module.exports = function (config, multer) {
       //
       // TODO
       //  clean this mother fucker up
-      //  change to custom multer storage engine
-      //  so we can use pipe() and create thumbnails
-      //  and maybe in the future add a compression
-      //  option to uploads
-      //
-      //  https://github.com/expressjs/multer/blob/master/StorageEngine.md
+      //  write data to mongo
       //
       let userId
-      if (config.useAuth) {
-        if (!req.headers['authorization'] || !config.authKeys.includes(req.headers['authorization'])) {
-          return res.status(401).json({
-            error: 'Unauthorized'
-          })
+      if (config.auth.enabled) {
+        if (!req.headers['authorization'] || !await authTest(models, req.headers['authorization'])) {
+          return error(res, 401)
         }
         userId = req.headers['authorization']
       }
@@ -107,7 +107,7 @@ module.exports = function (config, multer) {
                   }
                 })
               } else {
-                fs.writeFile(`${config.storage.files[mimetype.split('/')[0]]}/${imgpath}`, image.buffer, err => {
+                fs.writeFile(`${config.storage[mimetype.split('/')[0]]}/${imgpath}`, image.buffer, err => {
                   if (err) {
                     return reject({
                       status: 500,
@@ -147,6 +147,7 @@ module.exports = function (config, multer) {
         })
       } else {
         let image = req.files[0]
+        console.log(image)
         let mimetype = image.mimetype
         let extention = path.extname(image.originalname) || `.${mimetype.split('/').pop()}`
         let id = crypto.randomBytes(5).toString('hex')
@@ -156,7 +157,7 @@ module.exports = function (config, multer) {
             error: 'Unsupported media type'
           })
         } else {
-          fs.writeFile(`${config.storage.files[mimetype.split('/')[0]]}/${imgpath}`, image.buffer, err => {
+          fs.writeFile(`${config.storage[mimetype.split('/')[0]]}/${imgpath}`, image.buffer, err => {
             if (err) {
               console.log(err)
               return res.status(500).json({
@@ -221,7 +222,24 @@ function fileExists (res, filepath, callback) {
   })
 }
 
-function addToUser (config, userId, item) {
+async function authTest(models, key) {
+  return models.auth.find({
+    id: key
+  })
+  .exec()
+  .then(doc => {
+    if (doc.length > 0) {
+      return true
+    } else {
+      return false
+    }
+  })
+  .catch(err => {
+    return false
+  })
+}
+
+async function addToUser (config, userId, item) {
 
   //
   // TODO
@@ -230,7 +248,7 @@ function addToUser (config, userId, item) {
   //
 
   return new Promise((resolve, reject) => {
-    if (config.useAuth) {
+    if (config.auth.enabled) {
       let userFile = `${config.storage.users}/${userId}.json`
       new Promise((resolve, reject) => {
         // Create User file if not exist

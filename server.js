@@ -1,11 +1,10 @@
 const express = require('express')
 const logger = require('morgan')
 const responseTime = require('response-time')
-const multer = require('multer')()
 const subdomain = require('express-subdomain')
 const cors = require('cors')
-
-const config = require('./config/conf.js')
+const mongoose = require('mongoose')
+const config = require('./config.js')
 const app = {
   domain: express(),
   subdomain: {
@@ -13,11 +12,25 @@ const app = {
     audio: express.Router(),
     video: express.Router(),
     static: express.Router()
-  }
+  },
+  db: mongoose
+}
+const multer = require('multer')()
+
+if (config.mongo.auth.enabled) {
+  app.db.connect(`mongodb://${config.mongo.user}:${config.mongo.pass}@${config.mongo.host}:${config.mongo.port}/${config.mongo.db}`, {
+    useCreateIndex: true,
+    useNewUrlParser: true
+  })
+} else {
+  app.db.connect(`mongodb://${config.mongo.host}:${config.mongo.port}/${config.mongo.db}`, {
+    useCreateIndex: true,
+    useNewUrlParser: true
+  })
 }
 
 app.domain.use(responseTime())
-app.domain.use(logger(config.logFormat))
+app.domain.use(logger(config.log))
 app.domain.use(cors())
 app.domain.use(subdomain('image', app.subdomain.image))
 app.domain.use(subdomain('audio', app.subdomain.audio))
