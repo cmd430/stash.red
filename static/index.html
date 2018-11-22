@@ -184,6 +184,7 @@
           let progressBarFill = document.querySelector('.progress .fill')
           let sendFiles = function (fileData) {
             dropContainer.classList.add('hidden')
+            autoCopy.labels[0].classList.add('hidden')
             progressBar.classList.remove('hidden')
             let request = new XMLHttpRequest()
               request.onreadystatechange = () => {
@@ -277,6 +278,7 @@
                   clipboardItem.getAsString(text => {
                     if (isValidURL(text)) {
                       dropContainer.classList.add('hidden')
+                      autoCopy.labels[0].classList.add('hidden')
                       progressBar.classList.remove('hidden')
                       fetch(`https://cors-anywhere.herokuapp.com/${text}`)
                       .then(response => response.blob())
