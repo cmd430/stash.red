@@ -9,6 +9,9 @@ const storageVideoDir = path.join(storageBaseDir, 'video')
 
 const config = {
   port: 80,
+  identifiers: {
+    length: 5
+  },
   storage: {
     image: storageImageDir,
     audio: storageAudioDir,
@@ -30,7 +33,7 @@ const config = {
     db: 'theshed_red'
   },
   log: '[:date[web]] :method :url :status :response-time ms - :res[content-length]'
-  // https://www.npmjs.com/package/morgan
+  // https://www.npmjs.com/package/morgan#tokens
 }
 
 module.exports = config

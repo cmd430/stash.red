@@ -15,7 +15,9 @@ const app = {
   },
   db: mongoose
 }
-const multer = require('multer')()
+const multer = require('multer')({
+  storage: require('./storage.js')(config, app)
+})
 
 if (config.mongo.auth.enabled) {
   app.db.connect(`mongodb://${config.mongo.user}:${config.mongo.pass}@${config.mongo.host}:${config.mongo.port}/${config.mongo.db}`, {

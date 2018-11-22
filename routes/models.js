@@ -1,4 +1,5 @@
 module.exports = app => {
+  let ObjectId = app.db.Schema.Types.ObjectId
   return {
     auth: app.db.model('auth', new app.db.Schema({
       id: {
@@ -7,23 +8,6 @@ module.exports = app => {
         index: {
           unique: true
         }
-      }
-    }, {
-      versionKey: false
-    })),
-    user: app.db.model('user', new app.db.Schema({
-      id: {
-        type: String,
-        required: true,
-        index: {
-          unique: true
-        }
-      },
-      albums: [],
-      files: {
-        images: [],
-        videos: [],
-        audio: []
       }
     }, {
       versionKey: false
@@ -37,12 +21,22 @@ module.exports = app => {
         }
       },
       meta: {
+        uploaded: {
+          at: {
+            type: Date,
+            default: Date.now
+          },
+          by: {
+            type: String,
+            default: 'Anonymous'
+          }
+        },
         title: String
       },
       files: {
-        images: [],
-        videos: [],
-        audio: []
+        images: Array,
+        videos: Array,
+        audio: Array
       }
     }, {
       versionKey: false
@@ -56,9 +50,21 @@ module.exports = app => {
         }
       },
       meta: {
+        uploaded: {
+          at: {
+            type: Date,
+            default: Date.now
+          },
+          by: {
+            type: String,
+            default: 'Anonymous'
+          }
+        },
+        originalname: String,
         mimetype: String,
-        original_name: String
-      }
+        size: Number,
+      },
+      path: String
     }, {
       versionKey: false
     }))

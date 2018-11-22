@@ -27,8 +27,8 @@
     <script>
       fetch(`${location.host}/${location.pathname}.json`)
       .then(response => response.json())
-      .then(albumJSON => {
-        albumJSON.forEach(item => {
+      .then(fileJSON => {
+        fileJSON.forEach(item => {
           if (item.type.includes('image')) {
             let image = document.createElement('img')
             image.setAttribute('src', `${location.protocol}//${item.type}.${location.host}/${item.direct}`)
