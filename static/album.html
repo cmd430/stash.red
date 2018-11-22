@@ -27,24 +27,23 @@
     </style>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        let album = `${location.href}.json`
-        fetch(album)
+        let album =
+        fetch(`${location.href}.json`)
         .then(response => response.json())
         .then(albumJSON => {
-          albumJSON.forEach(item => {
-            if (item.type.includes('image')) {
+          let albumItems = albumJSON.files.images.concat(albumJSON.files.videos, albumJSON.files.audio)
+          albumItems.forEach(albumItem => {
+            if (albumItem.meta.mimetype.includes('image')) {
               let image = document.createElement('img')
-              image.setAttribute('src', `${location.protocol}//${item.type}.${location.host}/${item.direct}`)
+              image.setAttribute('src', `${albumItem.directpath}`)
               document.querySelector('body').appendChild(image)
-            } else if (item.type.includes('video')) {
+            } else if (albumItem.meta.mimetype.includes('video')) {
               let video = document.createElement('video')
-              video.setAttribute('src', `${location.protocol}//${item.type}.${location.host}/${item.direct}`)
-              video.setAttribute('controls', 'true')
+              video.setAttribute('src', `${albumItem.directpath}`)
               document.querySelector('body').appendChild(video)
-            } else if (item.type.includes('audio')) {
+            } else if (albumItem.meta.mimetype.includes('audio')) {
               let audio = document.createElement('audio')
-              audio.setAttribute('src', `${location.protocol}//${item.type}.${location.host}/${item.direct}`)
-              audio.setAttribute('controls', 'true')
+              audio.setAttribute('src', `${albumItem.directpath}`)
               document.querySelector('body').appendChild(audio)
             }
           })

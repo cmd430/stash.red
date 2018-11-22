@@ -21,6 +21,10 @@ module.exports = app => {
         }
       },
       meta: {
+        type: {
+          type: String,
+          default: 'album'
+        },
         uploaded: {
           at: {
             type: Date,
@@ -50,6 +54,10 @@ module.exports = app => {
         }
       },
       meta: {
+        type: {
+          type: String,
+          default: 'file'
+        },
         uploaded: {
           at: {
             type: Date,

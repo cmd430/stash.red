@@ -25,26 +25,24 @@
       }
     </style>
     <script>
-      fetch(`${location.host}/${location.pathname}.json`)
+      fetch(`${location.href}.json`)
       .then(response => response.json())
       .then(fileJSON => {
-        fileJSON.forEach(item => {
-          if (item.type.includes('image')) {
-            let image = document.createElement('img')
-            image.setAttribute('src', `${location.protocol}//${item.type}.${location.host}/${item.direct}`)
-            document.querySelector('body').appendChild(image)
-          } else if (item.type.includes('video')) {
-            let video = document.createElement('video')
-            video.setAttribute('src', `${location.protocol}//${item.type}.${location.host}/${item.direct}`)
-            video.setAttribute('controls', 'true')
-            document.querySelector('body').appendChild(video)
-          } else if (item.type.includes('audio')) {
-            let audio = document.createElement('audio')
-            audio.setAttribute('src', `${location.protocol}//${item.type}.${location.host}/${item.direct}`)
-            audio.setAttribute('controls', 'true')
-            document.querySelector('body').appendChild(audio)
-          }
-        })
+        if (fileJSON.meta.mimetype.includes('image')) {
+          let image = document.createElement('img')
+          image.setAttribute('src', `${fileJSON.directpath}`)
+          document.querySelector('body').appendChild(image)
+        } else if (fileJSON.meta.mimetype.includes('video')) {
+          let video = document.createElement('video')
+          video.setAttribute('src', `${fileJSON.directpath}`)
+          video.setAttribute('controls', 'true')
+          document.querySelector('body').appendChild(video)
+        } else if (fileJSON.meta.mimetype.includes('audio')) {
+          let audio = document.createElement('audio')
+          audio.setAttribute('src', `${fileJSON.directpath}`)
+          audio.setAttribute('controls', 'true')
+          document.querySelector('body').appendChild(audio)
+        }
       })
       .catch(err => {
         console.error(err)

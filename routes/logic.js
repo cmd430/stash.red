@@ -112,13 +112,27 @@ module.exports = function (config, app, multer) {
         switch (type) {
           case 'f': // File
           case 'a': // Album
-            return models[typeLong].findOne({
+            return models[typeLong].findOne((id.length > 0 ? {
                 id: id
-              })
+              } : {}))
+            .lean()
             .exec()
-            .then(doc => {
-              if (doc) {
-                return res.status(200).json(doc)
+            .then(results => {
+              if (results) {
+                if (results.meta.type === 'file') {
+                  results.directpath = `${req.protocol}://${results.meta.mimetype.split('/')[0]}.${req.hostname}/${results.path}`
+                } else {
+                  results.files.images.forEach(image => {
+                    image.directpath = `${req.protocol}://${image.meta.mimetype.split('/')[0]}.${req.hostname}/${image.path}`
+                  })
+                  results.files.audio.forEach(audio => {
+                    audio.directpath = `${req.protocol}://${audio.meta.mimetype.split('/')[0]}.${req.hostname}/${audio.path}`
+                  })
+                  results.files.videos.forEach(video => {
+                    video.directpath = `${req.protocol}://${video.meta.mimetype.split('/')[0]}.${req.hostname}/${video.path}`
+                  })
+                }
+                return res.status(200).json(results)
               } else {
                 return error(res, 404)
               }
@@ -130,10 +144,38 @@ module.exports = function (config, app, multer) {
             return models.file.find({
               "meta.uploaded.by": id
             })
+            .lean()
             .exec()
-            .then(doc => {
-              if (doc) {
-                return res.status(200).json(doc)
+            .then(files => {
+              if (files) {
+                files.forEach(file => {
+                  if (file.meta.type === 'file') {
+                    file.directpath = `${req.protocol}://${file.meta.mimetype.split('/')[0]}.${req.hostname}/${file.path}`
+                  }
+                })
+                return models.album.find((id.length > 0 ? {
+                  "meta.uploaded.by": id
+                } : {}))
+                .lean()
+                .exec()
+                .then(albums => {
+                  if (albums) {
+                    albums.forEach(album => {
+                      album.files.images.forEach(image => {
+                        image.directpath = `${req.protocol}://${image.meta.mimetype.split('/')[0]}.${req.hostname}/${image.path}`
+                      })
+                      album.files.audio.forEach(audio => {
+                        audio.directpath = `${req.protocol}://${audio.meta.mimetype.split('/')[0]}.${req.hostname}/${audio.path}`
+                      })
+                      album.files.videos.forEach(video => {
+                        video.directpath = `${req.protocol}://${video.meta.mimetype.split('/')[0]}.${req.hostname}/${video.path}`
+                      })
+                    })
+                    return res.status(200).json(files.concat(albums))
+                  } else {
+                    return error(res, 404)
+                  }
+                })
               } else {
                 return error(res, 404)
               }
@@ -186,7 +228,6 @@ module.exports = function (config, app, multer) {
                     by: (typeof userId !== null ? userId : null)
                   }
                 },
-                //path: `${req.protocol}://${shorttype}.${req.hostname}/${filename}`
                 path: filename
               }
               switch (shorttype) {
@@ -206,7 +247,7 @@ module.exports = function (config, app, multer) {
                   if (err) {
                     return error(res, 500)
                   } else {
-                    console.log(file)
+                    file.directpath = `${req.protocol}://${file.meta.mimetype.split('/')[0]}.${req.hostname}/${file.path}`
                     return res.status(200).json(file)
                   }
                 }
@@ -222,15 +263,9 @@ module.exports = function (config, app, multer) {
                   title: null
                 },
                 files: {
-                  images: images.map(image => {
-                    return image.id
-                  }),
-                  audio: audio.map(audio => {
-                    return audio.id
-                  }),
-                  videos: videos.map(video => {
-                    return video.id
-                  })
+                  images: images,
+                  audio: audio,
+                  videos: videos
                 }
               }
               new models.album(albuminfo)
@@ -238,7 +273,11 @@ module.exports = function (config, app, multer) {
                 if (err) {
                   return error(res, 500)
                 } else {
-                  console.log(album)
+                  album.forEach(file => {
+                    if (file.meta.type === 'file') {
+                      file.directpath = `${req.protocol}://${file.meta.mimetype.split('/')[0]}.${req.hostname}/${file.path}`
+                    }
+                  })
                   return res.status(200).json(album)
                 }
               })

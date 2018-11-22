@@ -41,35 +41,34 @@
     </style>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        let user = `${location.href}.json`
-        fetch(user)
+        fetch(`${location.href}.json`)
         .then(response => response.json())
         .then(userJSON => {
           userJSON.forEach(item => {
-            if (item.path.includes('/a/')) {
-              fetch(`${location.protocol}//${location.host}${item.path}.json`)
+            if (item.meta.type === 'album') {
+              fetch(`${location.protocol}//${location.host}/a/${item.id}.json`)
               .then(response => response.json())
-              .then(ablumJSON => {
-                let ablumbItem = ablumJSON[0]
+              .then(albumJSON => {
+                let albumItem = albumJSON.files.images.concat(albumJSON.files.videos, albumJSON.files.audio)[0]
                 let albumWrapper = document.createElement('span')
                 let albumText = document.createElement('h2')
                 albumText.textContent = "Album"
-                albumWrapper.setAttribute('data-src', `${location.protocol}//${location.host}${item.path}`)
+                albumWrapper.setAttribute('data-src', `${location.protocol}//${location.host}/a/${item.id}`)
                 albumWrapper.appendChild(albumText)
                 albumWrapper.addEventListener('click', e => {
                   location.href = albumWrapper.dataset.src
                 })
-                if (ablumbItem.type.includes('image')) {
+                if (albumItem.meta.mimetype.includes('image')) {
                   let image = document.createElement('img')
-                  image.setAttribute('src', `${location.protocol}//${ablumbItem.type}.${location.host}/${ablumbItem.direct}`)
+                  image.setAttribute('src', `${albumItem.directpath}`)
                   albumWrapper.appendChild(image)
-                } else if (ablumbItem.type.includes('video')) {
+                } else if (albumItem.meta.mimetype.includes('video')) {
                   let video = document.createElement('video')
-                  video.setAttribute('src', `${location.protocol}//${ablumbItem.type}.${location.host}/${ablumbItem.direct}`)
+                  video.setAttribute('src', `${albumItem.directpath}`)
                   albumWrapper.appendChild(video)
-                } else if (ablumbItem.type.includes('audio')) {
+                } else if (albumItem.meta.mimetype.includes('audio')) {
                   let audio = document.createElement('audio')
-                  audio.setAttribute('src', `${location.protocol}//${ablumbItem.type}.${location.host}/${ablumbItem.direct}`)
+                  audio.setAttribute('src', `${albumItem.directpath}`)
                   albumWrapper.appendChild(audio)
                 }
                 document.querySelector('body').appendChild(albumWrapper)
@@ -78,18 +77,18 @@
                 console.error(err)
               })
             } else {
-              if (item.type.includes('image')) {
+              if (item.meta.mimetype.includes('image')) {
                 let image = document.createElement('img')
-                image.setAttribute('src', `${location.protocol}//${item.type}.${location.host}/${item.direct}`)
+                image.setAttribute('src', `${item.directpath}`)
                 document.querySelector('body').appendChild(image)
-              } else if (item.type.includes('video')) {
+              } else if (item.meta.mimetype.includes('video')) {
                 let video = document.createElement('video')
-                video.setAttribute('src', `${location.protocol}//${item.type}.${location.host}/${item.direct}`)
+                video.setAttribute('src', `${item.directpath}`)
                 video.setAttribute('controls', 'true')
                 document.querySelector('body').appendChild(video)
-              } else if (item.type.includes('audio')) {
+              } else if (item.meta.mimetype.includes('audio')) {
                 let audio = document.createElement('audio')
-                audio.setAttribute('src', `${location.protocol}//${item.type}.${location.host}/${item.direct}`)
+                audio.setAttribute('src', `${item.directpath}`)
                 audio.setAttribute('controls', 'true')
                 document.querySelector('body').appendChild(audio)
               }

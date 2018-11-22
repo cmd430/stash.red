@@ -191,8 +191,8 @@
                   localStorage.authKey = authBox.value
                   let responseJSON = JSON.parse(request.responseText)
                   let redirectSubdomain = responseJSON.type
-                  let redirect = `${location.protocol}//${location.host}${responseJSON.path}`
-                  //let redirect = `${location.protocol}//${responseJSON.type}.${location.host}${responseJSON.direct}` //direct link
+                  let redirect = `${location.protocol}//${location.host}/${responseJSON.meta.type.charAt(0)}/${responseJSON.id}`
+                  // let redirect = `${responseJSON.directpath}`
                   if (autoCopy.checked) {
                     navigator.clipboard.writeText(redirect)
                     .catch(err => {
