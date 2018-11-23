@@ -21,7 +21,10 @@ const config = {
   auth: {
     enabled: true,
     key: {
-      length: 8
+      length: 8,
+      generation: {
+        enabled: true
+      }
     }
   },
   mongo: {
