@@ -21,7 +21,8 @@ if (config.mongo.auth.enabled) {
 const models = require('./routes/models.js')(app)
 
 new models.auth({
-  id: crypto.randomBytes(10).toString('hex')
+  key: crypto.randomBytes(10).toString('hex'),
+  user: 'user'
 })
 .save((err, product) => {
   if (err) {
@@ -33,8 +34,7 @@ new models.auth({
 
 models.auth.aggregate([{
   $project: {
-    _id: 0,
-    id: 1
+    _id: 0
   }
 }])
 .exec()

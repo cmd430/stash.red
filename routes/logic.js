@@ -12,7 +12,7 @@ module.exports = function (config, app, multer) {
     if (config.auth.enabled) {
       if (!key || await async function () {
         return models.auth.find({
-          id: key
+          key: key
         })
         .exec()
         .then(doc => {
@@ -26,7 +26,7 @@ module.exports = function (config, app, multer) {
           return false
         })
       } === false) {
-        return error(res, 401)
+        return false
       }
       return key
     } else {
@@ -72,6 +72,29 @@ module.exports = function (config, app, multer) {
     return res.status(status).json(message)
   }
 
+  function formatResults (req, results) {
+    // Change paths to suit current host
+    if (results.meta.type === 'file') {
+      results.path = `${req.protocol}://${req.hostname}${results.path}`
+      results.directpath = `${req.protocol}://${results.meta.mimetype.split('/')[0]}.${req.hostname}/${results.file}`
+    } else if (results.meta.type === 'album') {
+      results.path = `${req.protocol}://${req.hostname}${results.path}`
+      results.files.images.forEach(image => {
+        image.path = `${req.protocol}://${req.hostname}${image.path}`
+        image.directpath = `${req.protocol}://${image.meta.mimetype.split('/')[0]}.${req.hostname}/${image.file}`
+      })
+      results.files.audio.forEach(audio => {
+        audio.path = `${req.protocol}://${req.hostname}${audio.path}`
+        audio.directpath = `${req.protocol}://${audio.meta.mimetype.split('/')[0]}.${req.hostname}/${audio.file}`
+      })
+      results.files.videos.forEach(video => {
+        video.path = `${req.protocol}://${req.hostname}${video.path}`
+        video.directpath = `${req.protocol}://${video.meta.mimetype.split('/')[0]}.${req.hostname}/${video.file}`
+      })
+    }
+    return results
+  }
+
 
   // Exposed Route Functions
   return logic = {
@@ -113,26 +136,15 @@ module.exports = function (config, app, multer) {
           case 'f': // File
           case 'a': // Album
             return models[typeLong].findOne((id.length > 0 ? {
-                id: id
-              } : {}))
+              id: id
+            } : {}), {
+              _id: 0
+            })
             .lean()
             .exec()
-            .then(results => {
-              if (results) {
-                if (results.meta.type === 'file') {
-                  results.directpath = `${req.protocol}://${results.meta.mimetype.split('/')[0]}.${req.hostname}/${results.path}`
-                } else {
-                  results.files.images.forEach(image => {
-                    image.directpath = `${req.protocol}://${image.meta.mimetype.split('/')[0]}.${req.hostname}/${image.path}`
-                  })
-                  results.files.audio.forEach(audio => {
-                    audio.directpath = `${req.protocol}://${audio.meta.mimetype.split('/')[0]}.${req.hostname}/${audio.path}`
-                  })
-                  results.files.videos.forEach(video => {
-                    video.directpath = `${req.protocol}://${video.meta.mimetype.split('/')[0]}.${req.hostname}/${video.path}`
-                  })
-                }
-                return res.status(200).json(results)
+            .then(result => {
+              if (result) {
+                return res.status(200).json(formatResults(req, result))
               } else {
                 return error(res, 404)
               }
@@ -141,35 +153,29 @@ module.exports = function (config, app, multer) {
               return error(res, 500)
             })
           case 'u': // User
-            return models.file.find({
+            return models.file.find((id.length > 0 ? {
               "meta.uploaded.by": id
+            } : {}), {
+              _id: 0
             })
             .lean()
             .exec()
             .then(files => {
               if (files) {
-                files.forEach(file => {
-                  if (file.meta.type === 'file') {
-                    file.directpath = `${req.protocol}://${file.meta.mimetype.split('/')[0]}.${req.hostname}/${file.path}`
-                  }
-                })
                 return models.album.find((id.length > 0 ? {
                   "meta.uploaded.by": id
-                } : {}))
+                } : {}), {
+                  _id: 0
+                })
                 .lean()
                 .exec()
                 .then(albums => {
                   if (albums) {
+                    files.forEach(file => {
+                      file = formatResults(req, file)
+                    })
                     albums.forEach(album => {
-                      album.files.images.forEach(image => {
-                        image.directpath = `${req.protocol}://${image.meta.mimetype.split('/')[0]}.${req.hostname}/${image.path}`
-                      })
-                      album.files.audio.forEach(audio => {
-                        audio.directpath = `${req.protocol}://${audio.meta.mimetype.split('/')[0]}.${req.hostname}/${audio.path}`
-                      })
-                      album.files.videos.forEach(video => {
-                        video.directpath = `${req.protocol}://${video.meta.mimetype.split('/')[0]}.${req.hostname}/${video.path}`
-                      })
+                      album = formatResults(req, album)
                     })
                     return res.status(200).json(files.concat(albums))
                   } else {
@@ -200,8 +206,9 @@ module.exports = function (config, app, multer) {
 
     uploadFile: async function (req, res) {
       let userId = await auth(req, res)
-      if (typeof userId !== 'object') {
-        // We are authorized or auth is disabled
+      if (userId !== false) {
+        // We are authorized
+        // or auth is disabled
         multer.any()(req, res, err => {
           if (err) {
             return error(res, err.status || 500, err.message)
@@ -209,9 +216,9 @@ module.exports = function (config, app, multer) {
             let files = req.files
             let isAblum = files.length > 1
             let albumId = crypto.randomBytes(config.identifiers.length).toString('hex')
-            images = []
-            audio = []
-            videos = []
+            let images = []
+            let audio = []
+            let videos = []
             files.forEach(file => {
               let filename = path.basename(file.path)
               let extension = path.extname(filename)
@@ -228,7 +235,8 @@ module.exports = function (config, app, multer) {
                     by: (typeof userId !== null ? userId : null)
                   }
                 },
-                path: filename
+                file: filename,
+                path: `/f/${id}`
               }
               switch (shorttype) {
                 case 'image':
@@ -243,11 +251,12 @@ module.exports = function (config, app, multer) {
               }
               new models.file(fileinfo)
               .save((err, file) => {
-                if (!isAblum) {
-                  if (err) {
-                    return error(res, 500)
-                  } else {
-                    file.directpath = `${req.protocol}://${file.meta.mimetype.split('/')[0]}.${req.hostname}/${file.path}`
+                if (err) {
+                  return error(res, 500)
+                } else {
+                  if (!isAblum) {
+                    file.path = `${req.protocol}://${req.hostname}/${file.path}`
+                    file.directpath = `${req.protocol}://${file.meta.mimetype.split('/')[0]}.${req.hostname}/${file.file}`
                     return res.status(200).json(file)
                   }
                 }
@@ -266,24 +275,23 @@ module.exports = function (config, app, multer) {
                   images: images,
                   audio: audio,
                   videos: videos
-                }
+                },
+                path: `/a/${albumId}`
               }
               new models.album(albuminfo)
               .save((err, album) => {
                 if (err) {
                   return error(res, 500)
                 } else {
-                  album.forEach(file => {
-                    if (file.meta.type === 'file') {
-                      file.directpath = `${req.protocol}://${file.meta.mimetype.split('/')[0]}.${req.hostname}/${file.path}`
-                    }
-                  })
+                  album.path = `${req.protocol}://${req.hostname}/${album.path}`
                   return res.status(200).json(album)
                 }
               })
             }
           }
         })
+      } else {
+        return error(res, 401)
       }
     }
   }
