@@ -21,8 +21,8 @@ if (config.mongo.auth.enabled) {
 const models = require('./routes/models.js')(app)
 
 new models.auth({
-  key: crypto.randomBytes(10).toString('hex'),
-  user: 'user'
+  key: crypto.randomBytes(8).toString('hex'),
+  user: 'test user'
 })
 .save((err, product) => {
   if (err) {

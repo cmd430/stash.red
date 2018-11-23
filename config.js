@@ -19,7 +19,10 @@ const config = {
     static: staticDir
   },
   auth: {
-    enabled: true
+    enabled: true,
+    key: {
+      length: 8
+    }
   },
   mongo: {
     host: 'localhost',

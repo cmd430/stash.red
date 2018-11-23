@@ -15,4 +15,7 @@ module.exports = (config, multer, app) => {
   // Upload File
   app.domain.post('/upload', logic.uploadFile)
 
+  // Add Authkey
+  app.domain.post('/auth', logic.addAuth)
+
 }
