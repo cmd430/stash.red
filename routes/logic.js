@@ -308,23 +308,24 @@ module.exports = function (config, app, multer) {
 
     addAuth: async function (req, res) {
       if (config.auth.enabled && config.auth.generation.enabled) {
-        if (await auth(req, res) !== false) {
-          let authUser = req.headers['user']
-          let authKey = crypto.randomBytes(config.auth.generation.length).toString('hex')
-          new models.auth({
-            key: authKey,
-            user: authUser
-          })
-          .save((err, newAuth) => {
-            if (err) {
-              return error(res, 500)
-            } else {
-              return res.status(200).json({
-                user: newAuth.user,
-                key: newAuth.key
-              })
-            }
-          })
+        let checkAuth = await auth(req, res)
+        if (checkAuth !== false && checkAuth.username === 'admin') {
+            let authUser = req.headers['user']
+            let authKey = crypto.randomBytes(config.auth.generation.length).toString('hex')
+            new models.auth({
+              key: authKey,
+              username: authUser
+            })
+            .save((err, newAuth) => {
+              if (err) {
+                return error(res, 500)
+              } else {
+                return res.status(200).json({
+                  user: newAuth.username,
+                  key: newAuth.key
+                })
+              }
+            })
         } else {
           return error(res, 401)
         }
@@ -334,7 +335,7 @@ module.exports = function (config, app, multer) {
     addAdmin: function () {
       if (config.auth.enabled) {
         return models.auth.findOne({
-          user: 'admin'
+          username: 'admin'
         }, {
           _id: 0
         })
