@@ -323,7 +323,7 @@ module.exports = function (config, app, multer) {
                 return error(res, 500)
               } else {
                 return res.status(200).json({
-                  user: newAuth.username,
+                  username: newAuth.username,
                   key: newAuth.key
                 })
               }
