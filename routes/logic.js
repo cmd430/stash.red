@@ -317,6 +317,8 @@ module.exports = function (config, app, multer) {
               return res.status(200).json(newAuth)
             }
           })
+        } else {
+          return error(res, 401)
         }
       }
     },
