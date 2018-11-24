@@ -41,7 +41,7 @@ const config = {
       enabled: false,
       user: null,
       pass: null
-      //  https://docs.mongodb.com/master/tutorial/enable-authentication/
+      // https://docs.mongodb.com/master/tutorial/enable-authentication/
     },
     options: {
       useCreateIndex: true,
