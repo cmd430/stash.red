@@ -1,0 +1,9 @@
+storage/**
+scripts/**
+docs/*.notes
+
+# VS Code workspace
+# (needs special rule thanks to the
+# '.red', and i don't want to add
+# it to my global .gitignore file)
+  *.red.code-workspace
