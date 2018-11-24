@@ -26,11 +26,9 @@ const config = {
   },
   auth: {
     enabled: true,
-    key: {
-      length: 8,
-      generation: {
-        enabled: true
-      }
+    generation: {
+      enabled: true,
+      length: 8
     }
   },
   mongo: {

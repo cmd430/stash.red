@@ -300,10 +300,10 @@ module.exports = function (config, app, multer) {
     },
 
     addAuth: async function (req, res) {
-      if (config.auth.key.generation.enabled) {
+      if (config.auth.generation.enabled) {
         if (await auth(req, res) !== false) {
           let authUser = req.headers['user']
-          let authKey = crypto.randomBytes(config.auth.key.length).toString('hex')
+          let authKey = crypto.randomBytes(config.auth.generation.length).toString('hex')
           new models.auth({
             key: authKey,
             user: authUser
