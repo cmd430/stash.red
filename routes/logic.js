@@ -102,24 +102,28 @@ module.exports = function (config, app, multer) {
     // Send Asset Files
     sendAsset: async function (req, res) {
       let file = req.path
-      let subdomains = req.subdomains
-      if (subdomains.length > 0 && (file.includes('.html') || file === '/')) {
-        // We only want to serve asset files from
-        // the 'static' subdomain and the index from
-        // the host domain (and the upload files from)
-        // there relevant subdomains so we redirect
-        // any html requests comming from a
-        // subdomain to the homepage...
-        return res.redirect(`${req.protocol}://${req.hostname.match(/[^\.]*\.[^.]*$/)[0]}/`)
-      }
-      if (subdomains.includes('image')) {
-        file = `${config.storage.image}${file}`
-      } else if (subdomains.includes('audio')) {
-        file = `${config.storage.audio}${file}`
-      } else if (subdomains.includes('video')) {
-        file = `${config.storage.video}${file}`
+      if (file.includes('favicon.ico')) {
+        file = `${config.storage.static}/img/${file}`
       } else {
-        file = `${config.storage.static}${file}`
+        let subdomains = req.subdomains
+        if (subdomains.length > 0 && (file.includes('.html') || file === '/')) {
+          // We only want to serve asset files from
+          // the 'static' subdomain and the index from
+          // the host domain (and the upload files from)
+          // there relevant subdomains so we redirect
+          // any html requests comming from a
+          // subdomain to the homepage...
+          return res.redirect(`${req.protocol}://${req.hostname.match(/[^\.]*\.[^.]*$/)[0]}/`)
+        }
+        if (subdomains.includes('image')) {
+          file = `${config.storage.image}${file}`
+        } else if (subdomains.includes('audio')) {
+          file = `${config.storage.audio}${file}`
+        } else if (subdomains.includes('video')) {
+          file = `${config.storage.video}${file}`
+        } else {
+          file = `${config.storage.static}${file}`
+        }
       }
       return fileExists(res, file, () => {
         return res.status(200).sendFile(`${file}`)
