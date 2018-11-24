@@ -38,7 +38,9 @@ Promise.all(Object.keys(config.storage).map(key => {
 .then(() => {
   // Start mongod
   return new Promise((resolve, reject) => {
-    let mongo = spawn('mongod', ['--dbpath', `${config.storage.database}`])
+    let mongo = spawn('mongod', [
+      `--dbpath=${config.storage.database}`
+    ])
     mongo.stdout.on('data', data => {
       return resolve()
     })

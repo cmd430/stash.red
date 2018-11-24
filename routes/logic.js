@@ -20,9 +20,9 @@ module.exports = function (config, app, multer) {
         })
         .lean()
         .exec()
-        .then(result => {
-          if (result) {
-            return authkey
+        .then(auth => {
+          if (auth) {
+            return auth
           } else {
             return false
           }
@@ -182,7 +182,12 @@ module.exports = function (config, app, multer) {
                     albums.forEach(album => {
                       album = formatResults(req, album)
                     })
-                    return res.status(200).json(files.concat(albums))
+                    let results = files.concat(albums)
+                    if (results.length > 0) {
+                      return res.status(200).json(files.concat(albums))
+                    } else {
+                      return error(res, 404)
+                    }
                   } else {
                     return error(res, 404)
                   }
@@ -210,8 +215,9 @@ module.exports = function (config, app, multer) {
     },
 
     uploadFile: async function (req, res) {
-      let userId = await auth(req, res)
-      if (userId !== false) {
+      let user = await auth(req, res)
+
+      if (user !== false) {
         // We are authorized
         // or auth is disabled
         multer.any()(req, res, err => {
@@ -237,7 +243,7 @@ module.exports = function (config, app, multer) {
                   mimetype: mimetype,
                   size: file.size,
                   uploaded: {
-                    by: (typeof userId !== null ? userId : null)
+                    by: (typeof user !== null ? user.username : null)
                   }
                 },
                 file: filename,
@@ -272,7 +278,7 @@ module.exports = function (config, app, multer) {
                 id: albumId,
                 meta: {
                   uploaded: {
-                    by: (typeof userId !== null ? userId : null)
+                    by: (typeof user !== null ? user.username : null)
                   },
                   title: null
                 },
@@ -339,7 +345,7 @@ module.exports = function (config, app, multer) {
             // Create Admin if missing
             return new models.auth({
               key: crypto.randomBytes(config.auth.generation.length * 2).toString('hex'),
-              user: 'admin'
+              username: 'admin'
             })
             .save((err, auth) => {
               if (!err) {

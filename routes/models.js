@@ -8,7 +8,7 @@ module.exports = (app) => {
         unique: true
       }
     },
-    user: {
+    username: {
       type: String,
       default: 'Unknown'
     }
