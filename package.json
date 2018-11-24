@@ -4,7 +4,7 @@
   "description": "A tiny (possibly shitty) image host (it also does video and audio too)",
   "main": "server.js",
   "scripts": {
-    "start": "node server"
+    "server": "node server"
   },
   "author": "Bradley 'cmd430' Treweek",
   "license": "ISC",
