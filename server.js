@@ -20,17 +20,9 @@ const multer = require('multer')({
 })
 
 if (config.mongo.auth.enabled) {
-  app.db.connect(`mongodb://${config.mongo.user}:${config.mongo.pass}@${config.mongo.host}:${config.mongo.port}/${config.mongo.db}`, {
-    useCreateIndex: true,
-    useNewUrlParser: true,
-    useFindAndModify: false
-  })
+  app.db.connect(`mongodb://${config.mongo.user}:${config.mongo.pass}@${config.mongo.host}:${config.mongo.port}/${config.mongo.db}`, config.mongo.options)
 } else {
-  app.db.connect(`mongodb://${config.mongo.host}:${config.mongo.port}/${config.mongo.db}`, {
-    useCreateIndex: true,
-    useNewUrlParser: true,
-    useFindAndModify: false
-  })
+  app.db.connect(`mongodb://${config.mongo.host}:${config.mongo.port}/${config.mongo.db}`, config.mongo.options)
 }
 
 app.domain.use(responseTime())

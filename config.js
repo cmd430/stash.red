@@ -28,6 +28,7 @@ const config = {
     }
   },
   mongo: {
+    db: 'theshed_red',
     host: 'localhost',
     port: 27017,
     auth: {
@@ -36,7 +37,11 @@ const config = {
       pass: null
       //  https://docs.mongodb.com/master/tutorial/enable-authentication/
     },
-    db: 'theshed_red'
+    options: {
+      useCreateIndex: true,
+      useNewUrlParser: true,
+      useFindAndModify: false
+    }
   },
   log: '[:date[web]] :method :url :status :response-time ms - :res[content-length]'
   // https://www.npmjs.com/package/morgan#tokens
