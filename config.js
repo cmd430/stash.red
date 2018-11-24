@@ -1,18 +1,24 @@
 const path = require('path')
 
-const webRoot = path.join(__dirname)
+const webRoot = __dirname
 const staticDir = path.join(webRoot, 'static')
 const storageBaseDir = path.join(webRoot, 'storage')
+const storageDatabaseDir = path.join(storageBaseDir, 'database')
 const storageImageDir = path.join(storageBaseDir, 'image')
 const storageAudioDir = path.join(storageBaseDir, 'audio')
 const storageVideoDir = path.join(storageBaseDir, 'video')
+const serverName = 'TheShed.red'
 
 const config = {
-  port: 80,
+  server: {
+    port: 80,
+    name: serverName
+  },
   identifiers: {
     length: 5
   },
   storage: {
+    database: storageDatabaseDir,
     image: storageImageDir,
     audio: storageAudioDir,
     video: storageVideoDir,
@@ -43,7 +49,7 @@ const config = {
       useFindAndModify: false
     }
   },
-  log: '[:date[web]] :method :url :status :response-time ms - :res[content-length]'
+  log: `[:date[web]][${serverName}] :method :url :status :response-time ms - :res[content-length]`
   // https://www.npmjs.com/package/morgan#tokens
 }
 
