@@ -96,12 +96,7 @@ module.exports = function (config, app, multer) {
         })
       }
     })
-    if (results.length > 1) {
-      return results
-    } else {
-      return results[0]
-    }
-
+    return results
   }
 
   // Exposed Route Functions
@@ -155,9 +150,12 @@ module.exports = function (config, app, multer) {
             .lean()
             .exec()
             .then(result => {
-              console.log(result)
-              if (result) {
-                return res.status(200).json(formatResults(req, result))
+              if (result && result.length > 0) {
+                if (id.length > 0) {
+                  return res.status(200).json(formatResults(req, result)[0])
+                } else {
+                  return res.status(200).json(formatResults(req, result))
+                }
               } else {
                 return error(res, 404)
               }
