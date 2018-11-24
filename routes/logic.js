@@ -313,8 +313,10 @@ module.exports = function (config, app, multer) {
             if (err) {
               return error(res, 500)
             } else {
-              delete newAuth._id
-              return res.status(200).json(newAuth)
+              return res.status(200).json({
+                user: newAuth.user,
+                key: newAuth.key
+              })
             }
           })
         } else {
