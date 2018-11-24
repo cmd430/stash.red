@@ -76,25 +76,32 @@ module.exports = function (config, app, multer) {
 
   function formatResults (req, results) {
     // Change paths to suit current host
-    if (results.meta.type === 'file') {
-      results.path = `${req.protocol}://${req.hostname}${results.path}`
-      results.directpath = `${req.protocol}://${results.meta.mimetype.split('/')[0]}.${req.hostname}/${results.file}`
-    } else if (results.meta.type === 'album') {
-      results.path = `${req.protocol}://${req.hostname}${results.path}`
-      results.files.images.forEach(image => {
-        image.path = `${req.protocol}://${req.hostname}${image.path}`
-        image.directpath = `${req.protocol}://${image.meta.mimetype.split('/')[0]}.${req.hostname}/${image.file}`
-      })
-      results.files.audio.forEach(audio => {
-        audio.path = `${req.protocol}://${req.hostname}${audio.path}`
-        audio.directpath = `${req.protocol}://${audio.meta.mimetype.split('/')[0]}.${req.hostname}/${audio.file}`
-      })
-      results.files.videos.forEach(video => {
-        video.path = `${req.protocol}://${req.hostname}${video.path}`
-        video.directpath = `${req.protocol}://${video.meta.mimetype.split('/')[0]}.${req.hostname}/${video.file}`
-      })
+    results.forEach(result => {
+      if (result.meta.type === 'file') {
+        result.path = `${req.protocol}://${req.hostname}${result.path}`
+        result.directpath = `${req.protocol}://${result.meta.mimetype.split('/')[0]}.${req.hostname}/${result.file}`
+      } else if (result.meta.type === 'album') {
+        result.path = `${req.protocol}://${req.hostname}${result.path}`
+        result.files.images.forEach(image => {
+          image.path = `${req.protocol}://${req.hostname}${image.path}`
+          image.directpath = `${req.protocol}://${image.meta.mimetype.split('/')[0]}.${req.hostname}/${image.file}`
+        })
+        result.files.audio.forEach(audio => {
+          audio.path = `${req.protocol}://${req.hostname}${audio.path}`
+          audio.directpath = `${req.protocol}://${audio.meta.mimetype.split('/')[0]}.${req.hostname}/${audio.file}`
+        })
+        result.files.videos.forEach(video => {
+          video.path = `${req.protocol}://${req.hostname}${video.path}`
+          video.directpath = `${req.protocol}://${video.meta.mimetype.split('/')[0]}.${req.hostname}/${video.file}`
+        })
+      }
+    })
+    if (results.length > 1) {
+      return results
+    } else {
+      return results[0]
     }
-    return results
+
   }
 
   // Exposed Route Functions
@@ -140,7 +147,7 @@ module.exports = function (config, app, multer) {
         switch (type) {
           case 'f': // File
           case 'a': // Album
-            return models[typeLong].findOne((id.length > 0 ? {
+            return models[typeLong].find((id.length > 0 ? {
               id: id
             } : {}), {
               _id: 0
@@ -148,6 +155,7 @@ module.exports = function (config, app, multer) {
             .lean()
             .exec()
             .then(result => {
+              console.log(result)
               if (result) {
                 return res.status(200).json(formatResults(req, result))
               } else {
@@ -176,13 +184,7 @@ module.exports = function (config, app, multer) {
                 .exec()
                 .then(albums => {
                   if (albums) {
-                    files.forEach(file => {
-                      file = formatResults(req, file)
-                    })
-                    albums.forEach(album => {
-                      album = formatResults(req, album)
-                    })
-                    let results = files.concat(albums)
+                    let results = formatResults(req, files).concat(formatResults(req, albums))
                     if (results.length > 0) {
                       return res.status(200).json(files.concat(albums))
                     } else {
