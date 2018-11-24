@@ -1,7 +1,7 @@
 {
   "name": "theshed.red",
   "version": "1.0.0",
-  "description": "A tiny (possibly shitty) image host (it also does video and audio too)",
+  "description": "TheShed.red is a Small footprint File host (Specificly for Image/Video and Audio files)",
   "main": "server.js",
   "scripts": {
     "server": "node server"
