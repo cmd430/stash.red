@@ -1,3 +1,4 @@
+const crypto = require('crypto')
 const spawn = require('child_process').spawn
 const express = require('express')
 const logger = require('morgan')
@@ -15,15 +16,9 @@ const app = {
     video: express.Router(),
     static: express.Router()
   },
-  db: mongoose
-}
-const multer = require('multer')({
-  storage: require('./storage.js')(config, app)
-})
-
-let server = {
-  // Console functions with extra formatting
+  db: mongoose,
   console: {
+    // Console functions with extra formatting
     log: function (message) {
       return console.log(`[${new Date().toUTCString()}][${config.server.name}] ${message}`)
     },
@@ -32,6 +27,9 @@ let server = {
     }
   }
 }
+const multer = require('multer')({
+  storage: require('./storage.js')(config, app)
+})
 
 Promise.all(Object.keys(config.storage).map(key => {
   // Create any missing directories
@@ -81,10 +79,10 @@ Promise.all(Object.keys(config.storage).map(key => {
 })
 .then(() => {
   // Server is now running
-  server.console.log(`Server started`)
+  app.console.log(`Server started`)
 })
 .catch(err => {
   // Something went wrong
-  server.console.error(err)
+  app.console.error(err)
   process.exit(1)
 })

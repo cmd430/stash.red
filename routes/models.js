@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
 
   let authSchema = new app.db.Schema({
     key: {

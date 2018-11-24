@@ -18,4 +18,6 @@ module.exports = (config, multer, app) => {
   // Add Authkey
   app.domain.post('/auth', logic.addAuth)
 
+  // Add Admin auth if Applicable
+  logic.addAdmin()
 }

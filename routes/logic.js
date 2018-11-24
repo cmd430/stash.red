@@ -8,16 +8,21 @@ module.exports = function (config, app, multer) {
 
   // Unexposed Shared Functions
   async function auth(req, res) {
-    let key = req.headers['authorization']
+    let authkey = req.headers['authorization']
     if (config.auth.enabled) {
-      if (!key || await async function () {
-        return models.auth.find({
-          key: key
+      if (!authkey) {
+        return false
+      } else {
+        return models.auth.findOne({
+          key: authkey
+        }, {
+          _id: 0
         })
+        .lean()
         .exec()
-        .then(doc => {
-          if (doc.length > 0) {
-            return true
+        .then(result => {
+          if (result) {
+            return authkey
           } else {
             return false
           }
@@ -25,10 +30,7 @@ module.exports = function (config, app, multer) {
         .catch(err => {
           return false
         })
-      } === false) {
-        return false
       }
-      return key
     } else {
       return null
     }
@@ -94,7 +96,6 @@ module.exports = function (config, app, multer) {
     }
     return results
   }
-
 
   // Exposed Route Functions
   return logic = {
@@ -317,6 +318,32 @@ module.exports = function (config, app, multer) {
             }
           })
         }
+      }
+    },
+
+    addAdmin: function () {
+      if (config.auth.enabled) {
+        return models.auth.findOne({
+          user: 'admin'
+        }, {
+          _id: 0
+        })
+        .lean()
+        .exec()
+        .then(result => {
+          if (!result) {
+            // Create Admin if missing
+            return new models.auth({
+              key: crypto.randomBytes(config.auth.generation.length * 2).toString('hex'),
+              user: 'admin'
+            })
+            .save((err, auth) => {
+              if (!err) {
+                app.console.log(`Admin Auth Key: ${auth.key}`)
+              }
+            })
+          }
+        })
       }
     }
 
