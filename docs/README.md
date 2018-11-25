@@ -7,6 +7,7 @@ TheShed.red is a Small footprint File host (Specificly for Image/Video and Audio
  - Simple Album and Single file support
  - User pages to see files uploaded by specific users
  - Ability to easily find content by User or by Album
+ - Zero loss in quality of uploaded files
 
 Installation
 ============
