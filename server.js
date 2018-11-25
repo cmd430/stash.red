@@ -61,6 +61,7 @@ Promise.all(Object.keys(config.storage).map(key => {
 })
 .then(() => {
   // Start HTTP server
+  app.domain.enable('trust proxy')
   app.domain.use(responseTime())
   app.domain.use(logger(config.log))
   app.domain.use(cors())
