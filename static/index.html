@@ -192,11 +192,12 @@
                     localStorage.authKey = authBox.value
                     localStorage.authUser = responseJSON.meta.uploaded.by
                     let redirect = `${responseJSON.path}`
-                    if (responseJSON.meta.type === 'file' && responseJSON.meta.mimetype.includes('image')) {
-                      redirect = `${responseJSON.directpath}`
-                    }
                     if (autoCopy.checked) {
-                      navigator.clipboard.writeText(`${redirect}`)
+                      let copyText = `${responseJSON.path}`
+                      if (responseJSON.meta.type === 'file' && responseJSON.meta.mimetype.includes('image')) {
+                        copyText = `${responseJSON.directpath}`
+                      }
+                      navigator.clipboard.writeText(`${copyText}`)
                       .catch(err => {
                         console.error('Could not copy to clipboard: ', err)
                       })
