@@ -94,7 +94,7 @@ module.exports = function (config, app, multer) {
 
   function formatResults (req, results) {
     // Change paths to suit current host
-    results.forEach(result => {
+    let format = result => {
       if (result.meta.type === 'file') {
         result.path = `${req.protocol}://${req.hostname}${result.path}`
         result.directpath = `${req.protocol}://${result.meta.mimetype.split('/')[0]}.${req.hostname}/${result.file}`
@@ -113,7 +113,14 @@ module.exports = function (config, app, multer) {
           video.directpath = `${req.protocol}://${video.meta.mimetype.split('/')[0]}.${req.hostname}/${video.file}`
         })
       }
-    })
+    }
+    if (Array.isArray(results)) {
+      results.forEach(result => {
+        format(result)
+      })
+    } else {
+      format(results)
+    }
     return results
   }
 
