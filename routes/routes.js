@@ -5,6 +5,11 @@ module.exports = (config, multer, app) => {
   // View Album / User / Image (with HTML wrapper)
   app.domain.get('/:type/:id', logic.viewPage)
 
+  // Authkeys
+  app.domain.get('/auth', logic.getAuths)
+  app.domain.put('/auth', logic.addAuth)
+  app.domain.delete('/auth', logic.removeAuth)
+
   // Static Assets
   app.domain.get('/*', logic.sendAsset)
   app.subdomain.image.get('/*', logic.sendAsset)
@@ -14,9 +19,6 @@ module.exports = (config, multer, app) => {
 
   // Upload File
   app.domain.post('/upload', logic.uploadFile)
-
-  // Add Authkey
-  app.domain.post('/auth', logic.addAuth)
 
   // Add Admin auth if Applicable
   logic.addAdmin()

@@ -186,20 +186,24 @@
             progressBar.classList.remove('hidden')
             let request = new XMLHttpRequest()
               request.onreadystatechange = () => {
-                if (request.readyState === 4 && request.status === 200) {
-                  let responseJSON = JSON.parse(request.responseText)
-                  localStorage.authKey = authBox.value
-                  localStorage.authUser = responseJSON.meta.uploaded.by
-                  let redirectSubdomain = responseJSON.type
-                  let redirect = `${location.protocol}//${location.host}/${responseJSON.meta.type.charAt(0)}/${responseJSON.id}`
-                  // let redirect = `${responseJSON.directpath}`
-                  if (autoCopy.checked) {
-                    navigator.clipboard.writeText(redirect)
-                    .catch(err => {
-                      console.error('Could not copy to clipboard: ', err)
-                    })
+                if (request.readyState === 4) {
+                  if (request.status === 200) {
+                    let responseJSON = JSON.parse(request.responseText)
+                    localStorage.authKey = authBox.value
+                    localStorage.authUser = responseJSON.meta.uploaded.by
+                    let redirectSubdomain = responseJSON.type
+                    let redirect = `${location.protocol}//${location.host}/${responseJSON.meta.type.charAt(0)}/${responseJSON.id}`
+                    // let redirect = `${responseJSON.directpath}`
+                    if (autoCopy.checked) {
+                      navigator.clipboard.writeText(redirect)
+                      .catch(err => {
+                        console.error('Could not copy to clipboard: ', err)
+                      })
+                    }
+                    location.href = redirect
+                  } else if (request.status !== 200) {
+                    //error
                   }
-                  location.href = redirect
                 }
               }
               request.upload.onprogress = e => {

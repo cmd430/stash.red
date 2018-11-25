@@ -236,7 +236,6 @@ module.exports = function (config, app, multer) {
 
     uploadFile: async function (req, res) {
       let user = await auth(req, res)
-
       if (user !== false) {
         // We are authorized
         // or auth is disabled
@@ -333,7 +332,7 @@ module.exports = function (config, app, multer) {
       if (config.auth.enabled && config.auth.generation.enabled) {
         let checkAuth = await auth(req, res)
         if (checkAuth !== false && checkAuth.username === 'admin') {
-            let authUser = req.headers['user']
+            let authUser = req.headers['add']
             let authKey = generateID()
             new models.auth({
               key: authKey,
@@ -352,6 +351,77 @@ module.exports = function (config, app, multer) {
         } else {
           return error(res, 401)
         }
+      } else {
+        return error(res, 400)
+      }
+    },
+
+    removeAuth: async function(req, res) {
+      if (config.auth.enabled && config.auth.generation.enabled) {
+        let checkAuth = await auth(req, res)
+        if (checkAuth !== false && checkAuth.username === 'admin') {
+          let remove = req.headers['remove']
+          if (remove === checkAuth.key || remove === checkAuth.username) {
+            return error(res, 400)
+          } else {
+            console.log(remove)
+            models.auth.deleteOne({
+              $or: [
+                {
+                  username: remove
+                },
+                {
+                  key: remove
+                }
+              ]
+            })
+            .lean()
+            .exec((err, key) => {
+              console.log(key)
+              if (err || !key ) {
+                return error(res, 500)
+              } else {
+                if (key.ok === 1 && key.n === 1) {
+                  return res.status(200).json({
+                    removed: remove
+                  })
+                } else {
+                  return error(res, 500)
+                }
+              }
+            })
+          }
+        } else {
+          return error(res, 401)
+        }
+      } else {
+        return error(res, 400)
+      }
+    },
+
+    getAuths: async function(req, res) {
+      if (config.auth.enabled && config.auth.generation.enabled) {
+        let checkAuth = await auth(req, res)
+        if (checkAuth !== false && checkAuth.username === 'admin') {
+          models.auth.find({})
+          .where({
+            username: {
+              $ne: 'admin'
+            }
+          })
+          .lean()
+          .exec((err, keys) => {
+            if (err || !keys ) {
+              return error(res, 500)
+            } else {
+              return res.status(200).json(keys)
+            }
+          })
+        } else {
+          return error(res, 401)
+        }
+      } else {
+        return error(res, 400)
       }
     },
 
