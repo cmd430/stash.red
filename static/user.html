@@ -44,14 +44,14 @@
         .then(userJSON => {
           userJSON.forEach(item => {
             if (item.meta.type === 'album') {
-              fetch(`${location.protocol}//${location.host}/a/${item.id}.json`)
+              fetch(`${item.path}.json`)
               .then(response => response.json())
               .then(albumJSON => {
                 let albumItem = albumJSON.files.images.concat(albumJSON.files.videos, albumJSON.files.audio)[0]
                 let albumWrapper = document.createElement('span')
                 let albumText = document.createElement('h2')
                 albumText.textContent = "Album"
-                albumWrapper.setAttribute('data-src', `${location.protocol}//${location.host}/a/${item.id}`)
+                albumWrapper.setAttribute('data-src', `${item.path}`)
                 albumWrapper.appendChild(albumText)
                 albumWrapper.addEventListener('click', e => {
                   location.href = albumWrapper.dataset.src
