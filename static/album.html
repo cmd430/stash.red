@@ -37,10 +37,12 @@
               document.querySelector('body').appendChild(image)
             } else if (albumItem.meta.mimetype.includes('video')) {
               let video = document.createElement('video')
+              video.setAttribute('controls', 'true')
               video.setAttribute('src', `${albumItem.directpath}`)
               document.querySelector('body').appendChild(video)
             } else if (albumItem.meta.mimetype.includes('audio')) {
               let audio = document.createElement('audio')
+              audio.setAttribute('controls', 'true')
               audio.setAttribute('src', `${albumItem.directpath}`)
               document.querySelector('body').appendChild(audio)
             }
