@@ -25,7 +25,6 @@
     </style>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        let album =
         fetch(`${location.href}.json`)
         .then(response => response.json())
         .then(albumJSON => {
