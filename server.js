@@ -1,4 +1,3 @@
-const crypto = require('crypto')
 const spawn = require('child_process').spawn
 const express = require('express')
 const logger = require('morgan')
@@ -28,7 +27,10 @@ const app = {
   }
 }
 const multer = require('multer')({
-  storage: require('./storage.js')(config, app)
+  storage: require('./storage.js')(config, app),
+  limits: {
+    fileSize: config.upload.maxsize
+  }
 })
 
 Promise.all(Object.keys(config.storage).map(key => {

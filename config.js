@@ -17,6 +17,10 @@ const config = {
   identifiers: {
     length: 5
   },
+  upload: {
+    maxsize: 1024 * 1024 * 500
+    // Default 500mb (1024 * 1024 * 500)
+  },
   storage: {
     database: storageDatabaseDir,
     image: storageImageDir,

@@ -15,7 +15,7 @@ function getDestination (req, file, config, callback) {
       return callback(null, `${config.storage[shorttype]}/${filepath}`)
     default:
       return callback({
-        status: 415
+        status: 400
       })
   }
 }
@@ -33,7 +33,15 @@ StreamedStorage.prototype._handleFile = function _handleFile (req, file, callbac
     } else {
       let outStream = fs.createWriteStream(savepath)
       file.stream.pipe(outStream)
-      outStream.on('error', callback)
+      outStream.on('error', err => {
+        let status = 500
+        if (err.errno === 'ENOSPC') {
+          status = 507
+        }
+        callback({
+          status: status
+        })
+      })
       outStream.on('finish', () => {
         callback(null, {
           path: savepath,

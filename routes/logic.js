@@ -36,6 +36,14 @@ module.exports = function (config, app, multer) {
     }
   }
 
+  function generateID (isAdmin = false) {
+    let keyLength = config.identifiers.length
+    if (isAdmin) {
+      keyLength = keyLength * 2
+    }
+    return crypto.randomBytes(keyLength).toString('hex')
+  }
+
   function fileExists (res, filepath, callback) {
     return fs.access(`${filepath}`, fs.constants.R_OK, err => {
       if (err) {
@@ -49,6 +57,11 @@ module.exports = function (config, app, multer) {
   function error (res, status, message) {
     if (typeof message === 'undefined') {
       switch (status) {
+        case 400:
+          message = {
+            error: 'bad request'
+          }
+          break
         case 401:
           message = {
             error: 'unauthorized'
@@ -59,14 +72,19 @@ module.exports = function (config, app, multer) {
             error: 'file not found'
           }
           break
-        case 415:
+        case 413:
           message = {
-            error: 'unsupported media type'
+            error: 'payload too large'
           }
           break
         case 500:
           message = {
             error: 'internal error'
+          }
+          break
+        case 507:
+          message = {
+            error: 'insufficient storage'
           }
           break
       }
@@ -97,6 +115,33 @@ module.exports = function (config, app, multer) {
       }
     })
     return results
+  }
+
+  function queryDB (model, id, callback, searchByUploader = false) {
+    return models[model]
+    .find((searchByUploader ? (id.length > 0 ? {
+      "meta.uploaded.by": id
+    } : {}) : (id.length > 0 ? {
+      id: id
+    } : {})), {
+      _id: 0
+    })
+    .lean()
+    .exec()
+    .then(result => {
+      if (result) {
+          return callback(null, result)
+      } else {
+        return callback({
+          status: 404
+        })
+      }
+    })
+    .catch(err => {
+      return callback({
+        status: 500
+      })
+    })
   }
 
   // Exposed Route Functions
@@ -142,63 +187,38 @@ module.exports = function (config, app, multer) {
         switch (type) {
           case 'f': // File
           case 'a': // Album
-            return models[typeLong].find((id.length > 0 ? {
-              id: id
-            } : {}), {
-              _id: 0
-            })
-            .lean()
-            .exec()
-            .then(result => {
-              if (result && result.length > 0) {
-                if (id.length > 0) {
-                  return res.status(200).json(formatResults(req, result)[0])
-                } else {
-                  return res.status(200).json(formatResults(req, result))
-                }
+            return queryDB(typeLong, id, (err, data) => {
+              if (err) {
+                return error(res, err.status)
               } else {
-                return error(res, 404)
+                if (id.length > 0 && data.length > 0) {
+                  return res.status(200).json(formatResults(req, data)[0])
+                } else if (data.length > 0) {
+                  return res.status(200).json(formatResults(req, data))
+                }
               }
             })
-            .catch(err => {
-              return error(res, 500)
-            })
           case 'u': // User
-            return models.file.find((id.length > 0 ? {
-              "meta.uploaded.by": id
-            } : {}), {
-              _id: 0
-            })
-            .lean()
-            .exec()
-            .then(files => {
-              if (files) {
-                return models.album.find((id.length > 0 ? {
-                  "meta.uploaded.by": id
-                } : {}), {
-                  _id: 0
-                })
-                .lean()
-                .exec()
-                .then(albums => {
-                  if (albums) {
-                    let results = formatResults(req, files).concat(formatResults(req, albums))
-                    if (results.length > 0) {
-                      return res.status(200).json(files.concat(albums))
+            return queryDB('file', id, (err, data) => {
+              if (err) {
+                return error(res, err.status)
+              } else {
+                let files = formatResults(req, data)
+                return queryDB('album', id, (err, data) => {
+                  if (err) {
+                    return error(res, err.status)
+                  } else {
+                    let albums = formatResults(req, data)
+                    let user = files.concat(albums)
+                    if (user.length > 0) {
+                      return res.status(200).json(user)
                     } else {
                       return error(res, 404)
                     }
-                  } else {
-                    return error(res, 404)
                   }
-                })
-              } else {
-                return error(res, 404)
+                }, true)
               }
-            })
-            .catch(err => {
-              return error(res, 500)
-            })
+            }, true)
           default: // Error
             return error(res, 404)
         }
@@ -222,11 +242,16 @@ module.exports = function (config, app, multer) {
         // or auth is disabled
         multer.any()(req, res, err => {
           if (err) {
-            return error(res, err.status || 500, err.message)
+            if (err.code === 'LIMIT_FILE_SIZE') {
+              err.status = 413
+            }
+            if (err.status === 'undefined') {
+              err.status =  500
+            }
+            return error(res, err.status)
           } else {
             let files = req.files
             let isAblum = files.length > 1
-            let albumId = crypto.randomBytes(config.identifiers.length).toString('hex')
             let images = []
             let audio = []
             let videos = []
@@ -266,14 +291,13 @@ module.exports = function (config, app, multer) {
                   return error(res, 500)
                 } else {
                   if (!isAblum) {
-                    file.path = `${req.protocol}://${req.hostname}/${file.path}`
-                    file.directpath = `${req.protocol}://${file.meta.mimetype.split('/')[0]}.${req.hostname}/${file.file}`
-                    return res.status(200).json(file)
+                    return res.status(200).json(formatResults(req, file))
                   }
                 }
               })
             })
             if (isAblum) {
+              let albumId = generateID()
               let albuminfo = {
                 id: albumId,
                 meta: {
@@ -294,8 +318,7 @@ module.exports = function (config, app, multer) {
                 if (err) {
                   return error(res, 500)
                 } else {
-                  album.path = `${req.protocol}://${req.hostname}/${album.path}`
-                  return res.status(200).json(album)
+                  return res.status(200).json(formatResults(req, album))
                 }
               })
             }
@@ -311,7 +334,7 @@ module.exports = function (config, app, multer) {
         let checkAuth = await auth(req, res)
         if (checkAuth !== false && checkAuth.username === 'admin') {
             let authUser = req.headers['user']
-            let authKey = crypto.randomBytes(config.auth.generation.length).toString('hex')
+            let authKey = generateID()
             new models.auth({
               key: authKey,
               username: authUser
@@ -345,7 +368,7 @@ module.exports = function (config, app, multer) {
           if (!result) {
             // Create Admin if missing
             return new models.auth({
-              key: crypto.randomBytes(config.auth.generation.length * 2).toString('hex'),
+              key: generateID(true),
               username: 'admin'
             })
             .save((err, auth) => {
