@@ -6,7 +6,9 @@
     <meta name="theme-color" content="#ff0000" />
     <meta content="TheShed.red | User" property="og:title">
     <meta content="A User hosted on TheShed.red" property="og:description">
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
     <title>TheShed.red | User</title>
     <style>
       body {
@@ -44,36 +46,29 @@
         .then(userJSON => {
           userJSON.forEach(item => {
             if (item.meta.type === 'album') {
-              fetch(`${item.path}.json`)
-              .then(response => response.json())
-              .then(albumJSON => {
-                let albumItem = albumJSON.files.images.concat(albumJSON.files.videos, albumJSON.files.audio)[0]
-                let albumWrapper = document.createElement('span')
-                let albumText = document.createElement('h2')
-                albumText.textContent = "Album"
-                albumWrapper.setAttribute('data-src', `${item.path}`)
-                albumWrapper.appendChild(albumText)
-                albumWrapper.addEventListener('click', e => {
-                  location.href = albumWrapper.dataset.src
-                })
-                if (albumItem.meta.mimetype.includes('image')) {
-                  let image = document.createElement('img')
-                  image.setAttribute('src', `${albumItem.directpath}`)
-                  albumWrapper.appendChild(image)
-                } else if (albumItem.meta.mimetype.includes('video')) {
-                  let video = document.createElement('video')
-                  video.setAttribute('src', `${albumItem.directpath}`)
-                  albumWrapper.appendChild(video)
-                } else if (albumItem.meta.mimetype.includes('audio')) {
-                  let audio = document.createElement('audio')
-                  audio.setAttribute('src', `${albumItem.directpath}`)
-                  albumWrapper.appendChild(audio)
-                }
-                document.querySelector('body').appendChild(albumWrapper)
+              let albumItem = item.files.images.concat(item.files.videos, item.files.audio)[0]
+              let albumWrapper = document.createElement('span')
+              let albumText = document.createElement('h2')
+              albumText.textContent = "Album"
+              albumWrapper.setAttribute('data-src', `${item.path}`)
+              albumWrapper.appendChild(albumText)
+              albumWrapper.addEventListener('click', e => {
+                location.href = albumWrapper.dataset.src
               })
-              .catch(err => {
-                console.error(err)
-              })
+              if (albumItem.meta.mimetype.includes('image')) {
+                let image = document.createElement('img')
+                image.setAttribute('src', `${albumItem.directpath}`)
+                albumWrapper.appendChild(image)
+              } else if (albumItem.meta.mimetype.includes('video')) {
+                let video = document.createElement('video')
+                video.setAttribute('src', `${albumItem.directpath}`)
+                albumWrapper.appendChild(video)
+              } else if (albumItem.meta.mimetype.includes('audio')) {
+                let audio = document.createElement('audio')
+                audio.setAttribute('src', `${albumItem.directpath}`)
+                albumWrapper.appendChild(audio)
+              }
+              document.querySelector('body').appendChild(albumWrapper)
             } else {
               if (item.meta.mimetype.includes('image')) {
                 let image = document.createElement('img')
