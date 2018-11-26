@@ -1,7 +1,7 @@
 const path = require('path')
 
 const webRoot = __dirname
-const staticDir = path.join(webRoot, 'static')
+const assetDir = path.join(webRoot, 'assets')
 const storageBaseDir = path.join(webRoot, 'storage')
 const storageDatabaseDir = path.join(storageBaseDir, 'database')
 const storageImageDir = path.join(storageBaseDir, 'image')
@@ -12,7 +12,12 @@ const serverName = 'TheShed.red'
 const config = {
   server: {
     port: 80,
-    name: serverName
+    name: serverName,
+    subdomains: {
+      image: 'image',
+      audio: 'audio',
+      video: 'video'
+    }
   },
   identifiers: {
     length: 5
@@ -26,7 +31,7 @@ const config = {
     image: storageImageDir,
     audio: storageAudioDir,
     video: storageVideoDir,
-    static: staticDir
+    asset: assetDir
   },
   auth: {
     enabled: true,

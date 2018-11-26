@@ -8,21 +8,32 @@ const mongoose = require('mongoose')
 const mkdir = require('make-dir')
 const config = require('./config.js')
 const app = {
-  domain: express(),
+  domain: {
+    name: config.server.name,
+    router: express()
+  },
   subdomain: {
-    image: express.Router(),
-    audio: express.Router(),
-    video: express.Router(),
-    static: express.Router()
+    image: {
+      name: config.server.subdomains.image,
+      router: express.Router()
+    },
+    audio: {
+      name: config.server.subdomains.audio,
+      router: express.Router()
+    },
+    video: {
+      name: config.server.subdomains.video,
+      router: express.Router()
+    }
   },
   db: mongoose,
   console: {
     // Console functions with extra formatting
     log: function (message) {
-      return console.log(`[${new Date().toUTCString()}][${config.server.name}] ${message}`)
+      return console.log(`[${new Date().toUTCString()}][${app.domain.name}] ${message}`)
     },
     error: function (error) {
-      return console.error(`[${new Date().toUTCString()}][${config.server.name}] ${error.message}`)
+      return console.error(`[${new Date().toUTCString()}][${app.domain.name}] ${error.message}`)
     }
   }
 }
@@ -65,10 +76,9 @@ Promise.all(Object.keys(config.storage).map(key => {
   app.domain.use(responseTime())
   app.domain.use(logger(config.log))
   app.domain.use(cors())
-  app.domain.use(subdomain('image', app.subdomain.image))
-  app.domain.use(subdomain('audio', app.subdomain.audio))
-  app.domain.use(subdomain('video', app.subdomain.video))
-  app.domain.use(subdomain('static', app.subdomain.static))
+  app.domain.use(subdomain(`${app.subdomain.image.name}`, app.subdomain.image.router))
+  app.domain.use(subdomain(`${app.subdomain.audio.name}`, app.subdomain.audio.router))
+  app.domain.use(subdomain(`${app.subdomain.video.name}`, app.subdomain.video.router))
 
   require('./routes/routes.js')(config, multer, app)
 

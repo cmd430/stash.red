@@ -77,9 +77,14 @@ module.exports = function (config, app, multer) {
             error: 'payload too large'
           }
           break
-        case 500:
+          case 500:
           message = {
             error: 'internal error'
+          }
+          break
+        case 501:
+          message = {
+            error: 'not implemented'
           }
           break
         case 507:
@@ -154,30 +159,32 @@ module.exports = function (config, app, multer) {
   // Exposed Route Functions
   return logic = {
 
+    // Not Implemented methods
+    notImplemented: async function (req, res) {
+      return error(res, 501)
+    },
+
     // Send Asset Files
     sendAsset: async function (req, res) {
       let file = req.path
       if (file.includes('favicon.ico') || file.includes('favicon.png')) {
-        file = `${config.storage.static}/img/${file}`
+        file = `${config.storage.asset}/img/${file}`
       } else {
         let subdomains = req.subdomains
         if (subdomains.length > 0 && (file.includes('.html') || file === '/')) {
-          // We only want to serve asset files from
-          // the 'static' subdomain and the index from
-          // the host domain (and the upload files from)
-          // there relevant subdomains so we redirect
-          // any html requests comming from a
-          // subdomain to the homepage...
+          // We only want to serve image/audio/video files
+          // from the subdomains, so we redirect html
+          // requests back to the host domain
           return res.redirect(`${req.protocol}://${req.hostname.match(/[^\.]*\.[^.]*$/)[0]}/`)
         }
-        if (subdomains.includes('image')) {
+        if (subdomains.includes(`${app.subdomain.image.name}`)) {
           file = `${config.storage.image}${file}`
-        } else if (subdomains.includes('audio')) {
+        } else if (subdomains.includes(`${app.subdomain.audio.name}`)) {
           file = `${config.storage.audio}${file}`
-        } else if (subdomains.includes('video')) {
+        } else if (subdomains.includes(`${app.subdomain.video.name}`)) {
           file = `${config.storage.video}${file}`
         } else {
-          file = `${config.storage.static}${file}`
+          file = `${config.storage.asset}${file}`
         }
       }
       return fileExists(res, file, () => {
@@ -234,7 +241,7 @@ module.exports = function (config, app, multer) {
           case 'f': // File
           case 'a': // Album
           case 'u': // User
-            return res.status(200).sendFile(`${config.storage.static}/${typeLong}.html`)
+            return res.status(200).sendFile(`${config.storage.asset}/${typeLong}.html`)
           default: // Error
             return error(res, 404)
         }
