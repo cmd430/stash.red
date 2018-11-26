@@ -94,28 +94,36 @@ module.exports = function (config, app, multer) {
           break
       }
     }
-    return res.status(status).json(message)
+    return res.status(status).json({
+      status: status,
+      error: message.message || message.error
+    })
   }
 
   function formatResults (req, results) {
     // Change paths to suit current host
+    let addPaths = (result, isAlbum = false) => {
+      if (isAlbum) {
+        result.path = `${req.protocol}://${req.hostname}${result.path}`
+      } else {
+        let subdomain = app.subdomain[result.meta.mimetype.split('/')[0]].name
+        result.path = `${req.protocol}://${req.hostname}${result.path}`
+        result.directpath = `${req.protocol}://${subdomain}.${req.hostname}/${result.file}`
+      }
+    }
     let format = result => {
       if (result.meta.type === 'file') {
-        result.path = `${req.protocol}://${req.hostname}${result.path}`
-        result.directpath = `${req.protocol}://${result.meta.mimetype.split('/')[0]}.${req.hostname}/${result.file}`
+        addPaths(result)
       } else if (result.meta.type === 'album') {
-        result.path = `${req.protocol}://${req.hostname}${result.path}`
+        addPaths(result, true)
         result.files.images.forEach(image => {
-          image.path = `${req.protocol}://${req.hostname}${image.path}`
-          image.directpath = `${req.protocol}://${image.meta.mimetype.split('/')[0]}.${req.hostname}/${image.file}`
+          addPaths(image)
         })
         result.files.audio.forEach(audio => {
-          audio.path = `${req.protocol}://${req.hostname}${audio.path}`
-          audio.directpath = `${req.protocol}://${audio.meta.mimetype.split('/')[0]}.${req.hostname}/${audio.file}`
+          addPaths(audio)
         })
         result.files.videos.forEach(video => {
-          video.path = `${req.protocol}://${req.hostname}${video.path}`
-          video.directpath = `${req.protocol}://${video.meta.mimetype.split('/')[0]}.${req.hostname}/${video.file}`
+          addPaths(video)
         })
       }
     }

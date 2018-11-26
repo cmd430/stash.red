@@ -72,25 +72,25 @@ Promise.all(Object.keys(config.storage).map(key => {
 })
 .then(() => {
   // Start HTTP server
-  app.domain.enable('trust proxy')
-  app.domain.use(responseTime())
-  app.domain.use(logger(config.log))
-  app.domain.use(cors())
-  app.domain.use(subdomain(`${app.subdomain.image.name}`, app.subdomain.image.router))
-  app.domain.use(subdomain(`${app.subdomain.audio.name}`, app.subdomain.audio.router))
-  app.domain.use(subdomain(`${app.subdomain.video.name}`, app.subdomain.video.router))
+  app.domain.router.enable('trust proxy')
+  app.domain.router.use(responseTime())
+  app.domain.router.use(logger(config.log))
+  app.domain.router.use(cors())
+  app.domain.router.use(subdomain(`${app.subdomain.image.name}`, app.subdomain.image.router))
+  app.domain.router.use(subdomain(`${app.subdomain.audio.name}`, app.subdomain.audio.router))
+  app.domain.router.use(subdomain(`${app.subdomain.video.name}`, app.subdomain.video.router))
 
   require('./routes/routes.js')(config, multer, app)
 
   return new Promise ((resolve, reject) => {
-    app.domain.listen(config.server.port)
+    app.domain.router.listen(config.server.port)
     .on('listening', () => {
       return resolve()
     })
     .on('error', err => {
       return reject(new Error('Could not start Express'))
     })
- })
+  })
 })
 .then(() => {
   // Server is now running
