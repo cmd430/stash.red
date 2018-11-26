@@ -17,6 +17,11 @@ const config = {
       image: 'image',
       audio: 'audio',
       video: 'video'
+      // can change the subdomain for
+      // the file types here IE. 'image'
+      // could be set to 'i' and the
+      // subdomain would change from
+      // 'image.host.com' to `i.host.com`
     }
   },
   identifiers: {
@@ -25,6 +30,7 @@ const config = {
   upload: {
     maxsize: 1024 * 1024 * 500
     // Default 500mb (1024 * 1024 * 500)
+    // Size is in Bytes
   },
   storage: {
     database: storageDatabaseDir,
