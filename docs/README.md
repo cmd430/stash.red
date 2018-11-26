@@ -1,4 +1,4 @@
-# TheShed.red ![](./img/logo.png)
+# ![TheShed.red](./img/theshed.red_logo.png)
 [![Dependencies Status](https://david-dm.org/cmd430/TheShed.red/status.svg)](https://david-dm.org/cmd430/TheShed.red)
 
 TheShed.red is a Small footprint File host (Specificly for Image/Video and Audio files) It contains:
