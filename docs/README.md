@@ -14,7 +14,7 @@ Installation
 1. Install MongoDB (version `4.0+`)
 2. Install NodeJS (version `10+`)
 3. Clone the repository with: git clone `https://github.com/cmd430/TheShed.red.git`
-4. Install dependencies `npm install`
+4. Install dependencies `npm install --only=prod`
 5. Start the server with `node server` or `npm run server`
 
 ### **Notes** 
