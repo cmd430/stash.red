@@ -201,7 +201,7 @@ module.exports = function (config, app, multer) {
     },
 
     // View File / View Album / User Page | View File / View Album / User JSON
-    viewPage: async function (req, res) {
+    viewPage: async function (req, res, next) {
       let type = req.params.type
       let typeLong = (type === 'f' ? 'file' : (type === 'a' ? 'album' : 'user'))
       if (req.params.id.includes('.json')) {
@@ -251,7 +251,13 @@ module.exports = function (config, app, multer) {
           case 'u': // User
             return res.status(200).sendFile(`${config.storage.asset}/${typeLong}.html`)
           default: // Error
-            return error(res, 404)
+            // We are probably trying to load an asset
+            // so we return next to try the next matching
+            // route that should be the asset route
+            // if the file doesnt match on that route we
+            // will receive the 404
+            return next()
+            // return error(res, 404)
         }
       }
     },
