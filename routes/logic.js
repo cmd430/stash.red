@@ -157,7 +157,7 @@ module.exports = function (config, app, multer) {
     // Send Asset Files
     sendAsset: async function (req, res) {
       let file = req.path
-      if (file.includes('favicon.ico')) {
+      if (file.includes('favicon.ico') || file.includes('favicon.png')) {
         file = `${config.storage.static}/img/${file}`
       } else {
         let subdomains = req.subdomains
