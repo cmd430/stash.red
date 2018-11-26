@@ -1,30 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
     <meta name="theme-color" content="#ff0000" />
-    <meta content="TheShed.red | Album" property="og:title">
-    <meta content="An album hosted on TheShed.red" property="og:description">
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="apple-touch-icon" href="/favicon.png">
+    <meta content="TheShed.red | Album" property="og:title" />
+    <meta content="An album hosted on TheShed.red" property="og:description" />
+    <link rel="icon" type="image/png" href="/img/favicon.png" />
+    <link rel="apple-touch-icon" href="/img/favicon.png" />
+    <link rel="stylesheet" href="/css/user.css" />
     <title>TheShed.red | Album</title>
-    <style>
-      body {
-        margin: 0px;
-        background: rgb(14, 14, 14);
-        color: rgb(230, 230, 230);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
-      }
-      img, video, audio {
-        max-width: 100%;
-        display: block;
-        margin-left: 50%;
-        margin-bottom: 8px;
-        transform: translateX(-50%);
-      }
-    </style>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         fetch(`${location.href}.json`)

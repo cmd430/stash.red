@@ -1,0 +1,26 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: url("/img/noise.png"), url("/img/background.png") top left/cover no-repeat fixed, rgba(0, 0, 0, 0);
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #eeeeee;
+  line-height: 1.7;
+  overflow: overlay;
+  width: 100%;
+}
+
+img,
+video,
+audio {
+  max-width: 100%;
+  display: block;
+  margin-left: 50%;
+  margin-bottom: 8px;
+  transform: translateX(-50%);
+}
+
+/*# sourceMappingURL=index.css.map */
