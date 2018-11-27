@@ -1,27 +1,21 @@
-html,
-body {
+* {
   margin:  0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  background:
-    url('/img/noise.png'),
-    url('/img/background.png') top left / cover no-repeat fixed,
-    rgba(0, 0, 0, 0);
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: rgb(250, 250, 250);
+  font-family: 'Segoe UI', 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: rgb(238, 238, 238);
   line-height: 1.7;
   overflow: overlay;
-  width: 100%;
 }
 
-img,
-video,
-audio {
-  max-width: 100%;
-  display: block;
-  margin-left: 50%;
-  margin-bottom: 8px;
-  transform: translateX(-50%);
+.hidden {
+  display: none;
+}
+
+.invisible {
+  opacity: 0;
 }

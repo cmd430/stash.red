@@ -1,2 +1,171 @@
 @import 'shared';
 
+#content {
+  width: auto;
+  max-width: 750px;
+  min-width: 280px;
+  margin: calc(50vh - 85px) 0 0 50vw;
+  transform: translate(-50%, -50%);
+  #logo {
+    color: rgb(219, 3, 3);
+    font-size: 50px;
+    font-variant: small-caps;
+    text-align: center;
+    user-select: none;
+    cursor: default;
+    span {
+      font-weight: bold;
+      font-size: 45px;
+    }
+  }
+  #dropzone {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    width: auto;
+    max-width: 750px;
+    min-width: 280px;
+    height: 25vh;
+    max-height: 240px;
+    min-height: 100px;
+    background-color: rgb(255, 255, 255);
+    border: 1px dashed rgb(218, 223, 227);
+    text-align: center;
+    cursor: pointer;
+    #dropstate {
+      font-size: 15px;
+      font-weight: 600;
+      &.idle {
+        color: rgb(157, 162, 165);
+      }
+      &.error {
+        color: rgb(234, 56, 56);
+      }
+    }
+    #progress {
+      position: absolute;
+      margin-top: -12px;
+      width: 80%;
+      height: 20px;
+      border: 1px solid rgb(218, 223, 227);
+      transition: opacity 200ms;
+      #fill {
+        display: block;
+        width: 0;
+        height: 100%;
+        background-color: rgb(56, 136, 234);
+        transition: width 200ms;
+      }
+      #text {
+        color: rgb(157, 162, 165);
+        font-weight: 600;
+      }
+    }
+  }
+  #buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0 0 0;
+    .button {
+      font-weight: 600;
+      color: rgb(218, 223, 227);
+      padding: 0 10px;
+      transition: color 200ms;
+      cursor: pointer;
+      &:hover,
+      &.active {
+        color: rgb(36, 41, 46);
+      }
+      &:not(:last-child) {
+        border-right: 1px dotted rgb(218, 223, 227);
+      }
+    }
+  }
+  #settings {
+    padding: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: opacity 200ms;
+    .setting {
+      height: 20px;
+      margin: 6px;
+      span {
+        position: relative;
+        top: -6px;
+        padding: 0 10px 0 0;
+        color: rgb(36, 41, 46);
+        font-weight: 500;
+        cursor: default;
+      }
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+        input {
+          display:none;
+          &:checked {
+            &+ .slider {
+              background-color: rgb(56, 136, 234);
+              &::before {
+                transform: translateX(20px);
+              }
+            }
+          }
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgb(94, 96, 99);
+          transition: 400ms;
+          &::before {
+            position: absolute;
+            content: '';
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: rgb(255, 255, 255);
+            transition: 400ms;
+          }
+        }
+      }
+      input[type=text] {
+        border: 1px solid rgb(94, 96, 99);
+        padding: 2px;
+        position: absolute;
+        width: 220px;
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+#footer {
+  position: absolute;
+  bottom: 15px;
+  height: 24px;
+  width: 100vw;
+  text-align: center;
+  a {
+    > svg {
+      width: 24px;
+      height: 24px;
+      fill: rgb(218, 223, 227);
+      transition: fill 200ms;
+    }
+    &:hover {
+      > svg {
+        fill: rgb(36, 41, 46);
+      }
+    }
+  }
+}

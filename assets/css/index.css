@@ -1,26 +1,186 @@
-html,
-body {
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  background: url("/img/noise.png"), url("/img/background.png") top left/cover no-repeat fixed, rgba(0, 0, 0, 0);
-  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: #fafafa;
+  font-family: "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #eeeeee;
   line-height: 1.7;
   overflow: overlay;
-  width: 100%;
 }
 
-img,
-video,
-audio {
-  max-width: 100%;
+.hidden {
+  display: none;
+}
+
+.invisible {
+  opacity: 0;
+}
+
+#content {
+  width: auto;
+  max-width: 750px;
+  min-width: 280px;
+  margin: calc(50vh - 85px) 0 0 50vw;
+  transform: translate(-50%, -50%);
+}
+#content #logo {
+  color: #db0303;
+  font-size: 50px;
+  font-variant: small-caps;
+  text-align: center;
+  user-select: none;
+  cursor: default;
+}
+#content #logo span {
+  font-weight: bold;
+  font-size: 45px;
+}
+#content #dropzone {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  width: auto;
+  max-width: 750px;
+  min-width: 280px;
+  height: 25vh;
+  max-height: 240px;
+  min-height: 100px;
+  background-color: white;
+  border: 1px dashed #dadfe3;
+  text-align: center;
+  cursor: pointer;
+}
+#content #dropzone #dropstate {
+  font-size: 15px;
+  font-weight: 600;
+}
+#content #dropzone #dropstate.idle {
+  color: #9da2a5;
+}
+#content #dropzone #dropstate.error {
+  color: #ea3838;
+}
+#content #dropzone #progress {
+  position: absolute;
+  margin-top: -12px;
+  width: 80%;
+  height: 20px;
+  border: 1px solid #dadfe3;
+  transition: opacity 200ms;
+}
+#content #dropzone #progress #fill {
   display: block;
-  margin-left: 50%;
-  margin-bottom: 8px;
+  width: 0;
+  height: 100%;
+  background-color: #3888ea;
+  transition: width 200ms;
+}
+#content #dropzone #progress #text {
+  color: #9da2a5;
+  font-weight: 600;
+}
+#content #buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0 0 0;
+}
+#content #buttons .button {
+  font-weight: 600;
+  color: #dadfe3;
+  padding: 0 10px;
+  transition: color 200ms;
+  cursor: pointer;
+}
+#content #buttons .button:hover, #content #buttons .button.active {
+  color: #24292e;
+}
+#content #buttons .button:not(:last-child) {
+  border-right: 1px dotted #dadfe3;
+}
+#content #settings {
+  padding: 10px;
+  position: absolute;
+  left: 50%;
   transform: translateX(-50%);
+  transition: opacity 200ms;
+}
+#content #settings .setting {
+  height: 20px;
+  margin: 6px;
+}
+#content #settings .setting span {
+  position: relative;
+  top: -6px;
+  padding: 0 10px 0 0;
+  color: #24292e;
+  font-weight: 500;
+  cursor: default;
+}
+#content #settings .setting .switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+#content #settings .setting .switch input {
+  display: none;
+}
+#content #settings .setting .switch input:checked + .slider {
+  background-color: #3888ea;
+}
+#content #settings .setting .switch input:checked + .slider::before {
+  transform: translateX(20px);
+}
+#content #settings .setting .switch .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #5e6063;
+  transition: 400ms;
+}
+#content #settings .setting .switch .slider::before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 400ms;
+}
+#content #settings .setting input[type=text] {
+  border: 1px solid #5e6063;
+  padding: 2px;
+  position: absolute;
+  width: 220px;
+  font-size: 16px;
+}
+
+#footer {
+  position: absolute;
+  bottom: 15px;
+  height: 24px;
+  width: 100vw;
+  text-align: center;
+}
+#footer a > svg {
+  width: 24px;
+  height: 24px;
+  fill: #dadfe3;
+  transition: fill 200ms;
+}
+#footer a:hover > svg {
+  fill: #24292e;
 }
 
 /*# sourceMappingURL=index.css.map */

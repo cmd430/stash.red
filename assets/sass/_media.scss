@@ -1,0 +1,9 @@
+img,
+video,
+audio {
+  max-width: 100%;
+  display: block;
+  margin-left: 50%;
+  margin-bottom: 8px;
+  transform: translateX(-50%);
+}
