@@ -11,174 +11,20 @@
     <link rel="stylesheet" href="/css/index.css" />
     <script src="/js/index.js"></script>
     <title>TheShed.red</title>
-    <!--
-      <script>
-        function isValidURL(str) {
-          let a  = document.createElement('a')
-          a.href = str
-          return (a.host && a.host != location.host)
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-          let authBox = document.querySelector('#auth')
-          let dropContainer = document.querySelector('.uploadWrapper')
-          let fileInput = document.querySelector('input[type=file]')
-          let fileSubmit = document.querySelector('input[type=submit]')
-          let myUploads = document.querySelector('input[type=button]')
-          let autoCopy = document.querySelector('input[type=checkbox]')
-          let fileForm = document.querySelector('form')
-          let progressBar = document.querySelector('.progress')
-          let progressBarFill = document.querySelector('.progress .fill')
-          let sendFiles = function (fileData) {
-            dropContainer.classList.add('hidden')
-            autoCopy.labels[0].classList.add('hidden')
-            progressBar.classList.remove('hidden')
-            let request = new XMLHttpRequest()
-              request.onreadystatechange = () => {
-                if (request.readyState === 4) {
-                  if (request.status === 200) {
-                    let responseJSON = JSON.parse(request.responseText)
-                    localStorage.authKey = authBox.value
-                    localStorage.authUser = responseJSON.meta.uploaded.by
-                    let redirect = `${responseJSON.path}`
-                    if (autoCopy.checked) {
-                      let copyText = `${responseJSON.path}`
-                      if (responseJSON.meta.type === 'file' && responseJSON.meta.mimetype.includes('image')) {
-                        copyText = `${responseJSON.directpath}`
-                      }
-                      navigator.clipboard.writeText(`${copyText}`)
-                      .catch(err => {
-                        console.error('Could not copy to clipboard: ', err)
-                      })
-                    }
-                    location.href = redirect
-                  } else if (request.status !== 200) {
-                    //error
-                  }
-                }
-              }
-              request.upload.onprogress = e => {
-                if (e.lengthComputable) {
-                  let percentage = (e.loaded / e.total) * 100
-                  progressBar.dataset.label = `${Math.round(percentage)}%`
-                  progressBarFill.setAttribute('style', `width: ${percentage}%;`)
-                }
-              }
-              request.onerror = e => {
-                console.error(e)
-              }
-              request.open(fileForm.method, fileForm.action, true)
-              request.setRequestHeader('Authorization', authBox.value)
-              request.send(fileData)
-          }
-          if (fileInput.files.length > 0) {
-            fileForm.reset()
-          }
-          if (localStorage.authKey) {
-            authBox.value = localStorage.authKey
-            authBox.classList.add('hidden')
-            myUploads.classList.remove('hidden')
-          }
-          if (localStorage.autoCopy) {
-            if (JSON.parse(localStorage.autoCopy)) {
-              autoCopy.checked = localStorage.autoCopy
-            }
-          } else {
-            localStorage.autoCopy = false
-          }
-          autoCopy.addEventListener('change', e => {
-            localStorage.autoCopy = autoCopy.checked
-          })
-          dropContainer.addEventListener('click', e => {
-            if (e.target !== authBox) {
-              if (fileInput.files.length == 0) {
-                fileInput.click()
-              }
-            }
-          })
-          dropContainer.addEventListener('dragover', e => {
-            e.preventDefault()
-          })
-          dropContainer.addEventListener('dragenter', e => {
-            e.preventDefault()
-          })
-          dropContainer.addEventListener('drop', e => {
-            fileInput.files = e.dataTransfer.files
-            e.preventDefault()
-          })
-          fileInput.addEventListener('change', e => {
-            fileSubmit.click()
-          })
-          fileForm.addEventListener('submit', e => {
-            e.preventDefault()
-            if (fileInput.files.length > 0) {
-              sendFiles(new FormData(e.target))
-            }
-          })
-          myUploads.addEventListener('click', e => {
-            location.href = `${location.protocol}//${location.host}/u/${localStorage.authUser}`
-          })
-          window.addEventListener('paste', e => {
-            if (progressBar.classList.contains('hidden')) {
-              let clipboardItems = e.clipboardData.items
-              let blobs = []
-              for (clipboardIndex in clipboardItems) {
-                let clipboardItem = clipboardItems[clipboardIndex]
-                if (clipboardItem.kind == 'file') {
-                  if (clipboardItem.type.includes('image') || clipboardItem.type.includes('video') || clipboardItem.type.includes('audio')) {
-                    blobs.push(clipboardItem.getAsFile())
-                  }
-                } else if (clipboardItem.kind == 'string' && clipboardItem.type == 'text/plain') {
-                  clipboardItem.getAsString(text => {
-                    if (isValidURL(text)) {
-                      dropContainer.classList.add('hidden')
-                      autoCopy.labels[0].classList.add('hidden')
-                      progressBar.classList.remove('hidden')
-                      fetch(`https://cors-anywhere.herokuapp.com/${text}`)
-                      .then(response => response.blob())
-                      .then(blob => {
-                        if (blob.type.includes('image') || blob.type.includes('video') || blob.type.includes('audio')) {
-                          blobs.push(blob)
-                        }
-                      })
-                      .then(() => {
-                        let fakeForm = new FormData()
-                        if (blobs.length > 0) {
-                          blobs.forEach(blob => {
-                            fakeForm.append('file', blob, `${blob.name}`)
-                          })
-                          sendFiles(fakeForm)
-                        }
-                      })
-                    }
-                  })
-                }
-              }
-              let fakeForm = new FormData()
-              if (blobs.length > 0) {
-                blobs.forEach(blob => {
-                  fakeForm.append('file', blob, `${blob.name}`)
-                })
-                sendFiles(fakeForm)
-              }
-            }
-          })
-        })
-      </script>
-    -->
   </head>
   <body>
     <div id="content">
       <div id="logo">theshed<span>.red</span></div>
       <div id="dropzone">
         <span id="dropstate" class="idle">Click here or Dropfiles</span>
-        <span id="progress" class="hidden invisible" data-progress="0">
+        <span id="progress" class="hidden invisible">
           <span id="fill"></span>
           <span id="text">Uploading: 0%</span>
         </span>
       </div>
       <div id="buttons">
-          <div id="uploadsBtn" class="button hidden">Uploads</div>
-          <div id="settingsBtn" class="button">Settings</div>
+        <div id="uploadsBtn" class="button hidden">Uploads</div>
+        <div id="settingsBtn" class="button">Settings</div>
       </div>
       <div id="settings" class="hidden invisible">
         <div class="setting">
