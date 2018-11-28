@@ -164,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     button__uploads.classList.add('hidden')
     file_dropzonetext.classList.add('hidden')
     progress__text.textContent = statusText
+    progress__fill.setAttribute('style', `width: 0%;`)
     progress__bar.classList.remove('hidden')
     setTimeout(() => {
       progress__bar.classList.remove('invisible')
