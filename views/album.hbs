@@ -15,13 +15,13 @@
   <body>
     <h1 id="album_title">{{album.meta.title}}</h1>
     {{#each album.files.images}}
-    {{> image this}}
+      {{> image this}}
     {{/each}}
     {{#each album.files.videos}}
-    {{> video this}}
+      {{> video this}}
     {{/each}}
     {{#each album.files.audio}}
-    {{> audio this}}
+      {{> audio this}}
     {{/each}}
   </body>
 </html>
