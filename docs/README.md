@@ -1,7 +1,7 @@
-# ![TheShed.red](./img/theshed.red_logo.png)
-[![Dependencies Status](https://david-dm.org/cmd430/TheShed.red/status.svg)](https://david-dm.org/cmd430/TheShed.red)
+# ![](./img/logo.svg)
+[![Dependencies Status](https://david-dm.org/cmd430/stash.red/status.svg)](https://david-dm.org/cmd430/stash.red)
 
-TheShed.red is a Small footprint File host (Specificly for Image/Video and Audio files) It contains:
+stash.red is a Small footprint File host (Specificly for Image/Video and Audio files) It contains:
  - Simple Authentication using Auth key
  - Disable Authentication to allow anonymous uploads
  - Simple Album and Single file support
@@ -13,7 +13,7 @@ Installation
 ============
 1. Install MongoDB (version `4.0+`)
 2. Install NodeJS (version `10+`)
-3. Clone the repository with: git clone `https://github.com/cmd430/TheShed.red.git`
+3. Clone the repository with: git clone `https://github.com/cmd430/stash.red.git`
 4. Install dependencies `npm install --only=prod`
 5. Start the server with `node server` or `npm run server`
 
