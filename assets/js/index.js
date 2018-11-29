@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let file_dropzonetext = document.querySelector('#dropstate')
 
   let button__uploads = document.querySelector('#uploadsBtn')
+  let button__uploads__anchor = button__uploads.querySelector('a')
   let button__settings = document.querySelector('#settingsBtn')
   let panel__settings = document.querySelector('#settings')
 
@@ -41,15 +42,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function __button__uploads () {
     let username = localStorage.getItem('Username') || ''
-    let button__uploads_action = () => {
-      location.href = `${location.protocol}//${location.host}/u/${username}`
-    }
     if (username !== '') {
       button__uploads.classList.remove('hidden')
-      button__uploads.addEventListener('click', button__uploads_action)
+      button__uploads__anchor.setAttribute('href', `${location.protocol}//${location.host}/u/${username}`)
     } else {
       button__uploads.classList.add('hidden')
-      button__uploads.removeEventListener('click', button__uploads_action)
+      button__uploads__anchor.removeAttribute('href')
     }
   }
   __button__uploads()

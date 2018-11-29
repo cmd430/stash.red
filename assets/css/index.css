@@ -95,17 +95,18 @@ body {
   justify-content: center;
   margin: 10px 0 0 0;
 }
-#content #buttons .button {
+#content #buttons .button, #content #buttons .button a {
   font-weight: 600;
   color: #dadfe3;
   padding: 0 10px;
   transition: color 200ms;
+  text-decoration: none;
   cursor: pointer;
 }
-#content #buttons .button:hover, #content #buttons .button.active {
+#content #buttons .button:hover, #content #buttons .button.active, #content #buttons .button a:hover, #content #buttons .button a.active {
   color: #24292e;
 }
-#content #buttons .button:not(:last-child) {
+#content #buttons .button:not(:last-child), #content #buttons .button a:not(:last-child) {
   border-right: 1px dotted #dadfe3;
 }
 #content #settings {

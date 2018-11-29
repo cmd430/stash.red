@@ -81,17 +81,20 @@ body {
     justify-content: center;
     margin: 10px 0 0 0;
     .button {
-      font-weight: 600;
-      color: rgb(218, 223, 227);
-      padding: 0 10px;
-      transition: color 200ms;
-      cursor: pointer;
-      &:hover,
-      &.active {
-        color: rgb(36, 41, 46);
-      }
-      &:not(:last-child) {
-        border-right: 1px dotted rgb(218, 223, 227);
+      &, a {
+        font-weight: 600;
+        color: rgb(218, 223, 227);
+        padding: 0 10px;
+        transition: color 200ms;
+        text-decoration: none;
+        cursor: pointer;
+        &:hover,
+        &.active {
+          color: rgb(36, 41, 46);
+        }
+        &:not(:last-child) {
+          border-right: 1px dotted rgb(218, 223, 227);
+        }
       }
     }
   }
