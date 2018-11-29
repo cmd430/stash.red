@@ -5,10 +5,7 @@
 }
 
 body {
-  background-color: #fafafa;
   font-family: "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #eeeeee;
-  line-height: 1.7;
   overflow: overlay;
 }
 
@@ -18,6 +15,11 @@ body {
 
 .invisible {
   opacity: 0;
+}
+
+body {
+  background-color: #fafafa;
+  line-height: 1.7;
 }
 
 #content {
@@ -59,12 +61,7 @@ body {
 #content #dropzone #dropstate {
   font-size: 15px;
   font-weight: 600;
-}
-#content #dropzone #dropstate.idle {
   color: #9da2a5;
-}
-#content #dropzone #dropstate.error {
-  color: #ea3838;
 }
 #content #dropzone #progress {
   position: absolute;
@@ -74,16 +71,23 @@ body {
   border: 1px solid #dadfe3;
   transition: opacity 200ms;
 }
+#content #dropzone #progress.warn #fill {
+  background-color: #eaea38;
+}
+#content #dropzone #progress.error #fill {
+  background-color: #ea3838;
+}
 #content #dropzone #progress #fill {
   display: block;
   width: 0;
   height: 100%;
   background-color: #3888ea;
-  transition: width 200ms;
+  transition: width 200ms, background-color 200ms;
 }
 #content #dropzone #progress #text {
   color: #9da2a5;
   font-weight: 600;
+  text-transform: capitalize;
 }
 #content #buttons {
   display: flex;
@@ -182,5 +186,3 @@ body {
 #footer a:hover > svg {
   fill: #24292e;
 }
-
-/*# sourceMappingURL=index.css.map */

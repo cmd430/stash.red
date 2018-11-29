@@ -1,5 +1,10 @@
 @import 'shared';
 
+body {
+  background-color: rgb(250, 250, 250);
+  line-height: 1.7;
+}
+
 #content {
   width: auto;
   max-width: 750px;
@@ -37,12 +42,7 @@
     #dropstate {
       font-size: 15px;
       font-weight: 600;
-      &.idle {
-        color: rgb(157, 162, 165);
-      }
-      &.error {
-        color: rgb(234, 56, 56);
-      }
+      color: rgb(157, 162, 165);
     }
     #progress {
       position: absolute;
@@ -51,16 +51,27 @@
       height: 20px;
       border: 1px solid rgb(218, 223, 227);
       transition: opacity 200ms;
+      &.warn {
+        #fill {
+          background-color: rgb(234, 234, 56);
+        }
+      }
+      &.error {
+        #fill {
+          background-color: rgb(234, 56, 56);
+        }
+      }
       #fill {
         display: block;
         width: 0;
         height: 100%;
         background-color: rgb(56, 136, 234);
-        transition: width 200ms;
+        transition: width 200ms, background-color 200ms;
       }
       #text {
         color: rgb(157, 162, 165);
         font-weight: 600;
+        text-transform: capitalize;
       }
     }
   }

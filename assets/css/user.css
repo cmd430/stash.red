@@ -5,10 +5,7 @@
 }
 
 body {
-  background-color: #fafafa;
   font-family: "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #eeeeee;
-  line-height: 1.7;
   overflow: overlay;
 }
 
@@ -29,5 +26,3 @@ audio {
   margin-bottom: 8px;
   transform: translateX(-50%);
 }
-
-/*# sourceMappingURL=user.css.map */

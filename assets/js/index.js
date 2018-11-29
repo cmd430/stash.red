@@ -39,16 +39,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
-  let = userUploads = () => {
+  function __button__uploads () {
     let username = localStorage.getItem('Username') || ''
+    let button__uploads_action = () => {
+      location.href = `${location.protocol}//${location.host}/u/${username}`
+    }
     if (username !== '') {
       button__uploads.classList.remove('hidden')
-      button__uploads.addEventListener('click', e => {
-        location.href = `${location.protocol}//${location.host}/u/${username}`
-      })
+      button__uploads.addEventListener('click', button__uploads_action)
+    } else {
+      button__uploads.classList.add('hidden')
+      button__uploads.removeEventListener('click', button__uploads_action)
     }
   }
-  userUploads()
+  __button__uploads()
 
   setting__copylink.checked = JSON.parse(localStorage.getItem('AutoCopyLink')) || false
   setting__directlink.checked = JSON.parse(localStorage.getItem('CopyDirectLink')) || false
@@ -62,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   })
   setting__authkey.addEventListener('change', e => {
     localStorage.setItem('Username', '')
-    userUploads()
+    __button__uploads()
     localStorage.setItem('AuthorizationKey', setting__authkey.value)
   })
 
@@ -94,69 +98,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
-  window.addEventListener('paste', e => {
+  window.addEventListener('paste', async e => {
     if (progress__bar.classList.contains('hidden')) {
       let clipboardItems = e.clipboardData.items
-      let blobs = []
       for (clipboardIndex in clipboardItems) {
         let clipboardItem = clipboardItems[clipboardIndex]
         if (clipboardItem.kind == 'file') {
           if (clipboardItem.type.includes('image') || clipboardItem.type.includes('video') || clipboardItem.type.includes('audio')) {
-            blobs.push(clipboardItem.getAsFile())
+            uploadFiles(clipboardItem.getAsFile())
           }
         } else if (clipboardItem.kind == 'string' && clipboardItem.type == 'text/plain') {
           clipboardItem.getAsString(text => {
-            if (isValidURL(text)) {
-              preProgress('Fetching: 0%')
-              let request = new XMLHttpRequest()
-              request.onreadystatechange = () => {
-                if (request.readyState === 4 && request.status === 200) {
-                  let blob = new Blob([request.response], {
-                    type: request.getResponseHeader('Content-Type')
-                  })
-                  console.log(blob)
-                  if (blob.type.includes('image') || blob.type.includes('video') || blob.type.includes('audio')) {
-                    blobs.push(blob)
-                    fakeForm(blobs)
-                  }
-                }
-              }
-              request.onprogress = e => {
-                if (e.lengthComputable) {
-                  let percentage = (e.loaded / e.total) * 100
-                  progress__text.textContent = `Fetching: ${Math.round(percentage)}%`
-                  progress__fill.setAttribute('style', `width: ${percentage}%;`)
-                } else {
-                  // Can't compute size :/
-                  preProgress('Fetching...')
-                }
-              }
-              request.onerror = e => {
-                // Mostly Ignore error (for now)
-                console.error(e)
-              }
-              request.open('GET', `https://cors-anywhere.herokuapp.com/${text}`, true)
-              request.responseType = 'blob';
-              request.send()
-            }
+            downloadFiles(text)
           })
         }
       }
-      fakeForm(blobs)
     }
   })
 
-  let fakeForm = (blobs) => {
-    let fakeForm = new FormData()
-    if (blobs.length > 0) {
-      blobs.forEach(blob => {
-        fakeForm.append('file', blob, `${blob.name}`)
-      })
-      uploadFiles(fakeForm)
+  function error (error = {}) {
+    let message = 'Unknown Error'
+    if (error.error) {
+      message = `${error.status}: ${error.error}`
+    } else if (error.message) {
+      message = error.message
     }
+    progress__text.textContent = message
+    progress__fill.setAttribute('style', 'width: 100%;')
+    progress__bar.classList.add('error')
   }
 
-  let preProgress = (statusText) => {
+  function warn (warn) {
+    let message = 'Unknown Warning'
+    if (warn) {
+      message = warn
+    }
+    progress__text.textContent = message
+    progress__fill.setAttribute('style', 'width: 100%;')
+    progress__bar.classList.add('warn')
+  }
+
+  function prepare (statusText) {
     if (button__settings.classList.contains('active')) {
       button__settings.click()
     }
@@ -164,64 +146,138 @@ document.addEventListener('DOMContentLoaded', () => {
     button__uploads.classList.add('hidden')
     file_dropzonetext.classList.add('hidden')
     progress__text.textContent = statusText
-    progress__fill.setAttribute('style', `width: 0%;`)
+    progress__fill.removeAttribute('style')
     progress__bar.classList.remove('hidden')
     setTimeout(() => {
       progress__bar.classList.remove('invisible')
     }, 0)
   }
 
-  let uploadFiles = formData => {
-    preProgress('Uploading: 0%')
-    if (button__settings.classList.contains('active')) {
-      button__settings.click()
+  function downloadFiles (url) {
+    if (isValidURL(url)) {
+      prepare('Fetching: 0%')
+      download(url)
+      .then(data => {
+        uploadFiles(data)
+      })
+      .catch(err => {
+        error(err)
+      })
     }
-    button__settings.classList.add('hidden')
-    button__uploads.classList.add('hidden')
-    file_dropzonetext.classList.add('hidden')
-    progress__bar.classList.remove('hidden')
-    setTimeout(() => {
-      progress__bar.classList.remove('invisible')
-    }, 0)
-    let request = new XMLHttpRequest()
-    request.onreadystatechange = () => {
-      if (request.readyState === 4 && request.status === 200) {
-        let responseJSON = JSON.parse(request.responseText)
-        localStorage.setItem('Username', responseJSON.meta.uploaded.by)
-        let redirect = copyText = `${responseJSON.path}`
-        if (setting__copylink.checked) {
-          if (responseJSON.meta.type === 'file' && responseJSON.meta.mimetype.includes('image')) {
-            copyText = `${responseJSON.directpath}`
-          }
-          try {
-            navigator.clipboard.writeText(`${copyText}`)
-            .catch(err => {
-              // Mostly Ignore error (for now)
-              console.error('Could not copy to clipboard')
+  }
+
+  function uploadFiles (data) {
+    let formData = new FormData()
+    if (data[Symbol.toStringTag] === 'FileList') {
+      let fileCount = data.length
+      for (var x = 0; x < fileCount; x++) {
+        formData.append('files[]', data[x])
+      }
+      data = formData
+    } else if (data[Symbol.toStringTag] === 'Blob' || data[Symbol.toStringTag] === 'File') {
+      let filename = data.name || `unknown.${data.type.split('/').pop()}`
+      formData.append('files[]', data, filename)
+      data = formData
+    }
+    prepare('Uploading: 0%')
+    upload(data)
+    .then(response => {
+      localStorage.setItem('Username', response.meta.uploaded.by)
+      let redirect = copyText = `${response.path}`
+      if (setting__copylink.checked) {
+        if (response.meta.type === 'file' && response.meta.mimetype.includes('image')) {
+          copyText = `${response.directpath}`
+        }
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(`${copyText}`)
+          .catch(err => {
+            // Couldn't copy to clipboard
+            // Maybe we lost focus?
+            console.error(err)
+          })
+        }
+      }
+      location.href = redirect
+    })
+    .catch(err => {
+      error(err)
+    })
+  }
+
+  async function download(url) {
+    return new Promise((resolve, reject) => {
+      let request = new XMLHttpRequest()
+      request.onreadystatechange = () => {
+        if (request.readyState === 4) {
+          if (request.status === 200) {
+            let blob = new Blob([request.response], {
+              type: request.getResponseHeader('Content-Type')
             })
-          } catch (err) {
-            // Mostly Ignore error (for now)
-            console.error('Could not copy to clipboard')
+            if (blob.type.includes('image') || blob.type.includes('video') || blob.type.includes('audio')) {
+              return resolve(blob)
+            } else {
+              return reject({
+                message: 'invalid filetype'
+              })
+            }
+          } else {
+            return reject({
+              message: 'invalid url'
+            })
           }
         }
-        location.href = redirect
       }
-    }
-    request.upload.onprogress = e => {
-      if (e.lengthComputable) {
-        let percentage = (e.loaded / e.total) * 100
-        progress__text.textContent = `Uploading: ${Math.round(percentage)}%`
-        progress__fill.setAttribute('style', `width: ${percentage}%;`)
+      request.onprogress = e => {
+        if (e.lengthComputable) {
+          let percentage = (e.loaded / e.total) * 100
+          progress__text.textContent = `Fetching: ${Math.round(percentage)}%`
+          progress__fill.setAttribute('style', `width: ${percentage}%;`)
+        } else {
+          warn('Fetching: Progress Unavailable')
+        }
       }
-    }
-    request.onerror = e => {
-      // Mostly Ignore error (for now)
-      console.error(e)
-    }
-    request.open('POST', '/upload', true)
-    request.setRequestHeader('Authorization', localStorage.getItem('AuthorizationKey'))
-    request.send(formData)
+      request.onerror = err => {
+        return reject(err)
+      }
+      request.open('GET', `https://gobetween.oklabs.org/pipe/${url}`, true)
+      request.responseType = 'blob'
+      // CORS Proxys
+      //  https://gobetween.oklabs.org/pipe/
+      //  https://cors-anywhere.herokuapp.com/
+      request.send()
+    })
   }
+
+  async function upload(formData) {
+    return new Promise((resolve, reject) => {
+      let request = new XMLHttpRequest()
+      request.onreadystatechange = () => {
+        if (request.readyState === 4) {
+          if (request.status === 200) {
+            return resolve(JSON.parse(request.responseText))
+          } else {
+            return reject(JSON.parse(request.responseText))
+          }
+        }
+      }
+      request.upload.onprogress = e => {
+        if (e.lengthComputable) {
+          let percentage = (e.loaded / e.total) * 100
+          progress__text.textContent = `Uploading: ${Math.round(percentage)}%`
+          progress__fill.setAttribute('style', `width: ${percentage}%;`)
+        } else {
+          warn('Uploading: Progress Unavailable')
+        }
+      }
+      request.upload.onerror = err => {
+        return reject(err)
+      }
+      request.open('POST', '/upload', true)
+      request.setRequestHeader('Authorization', localStorage.getItem('AuthorizationKey'))
+      request.send(formData)
+    })
+  }
+
 })
 
 function isValidURL(str) {
