@@ -1,4 +1,4 @@
-# ![](./img/logo.svg)
+# <svg version="1.1" width="700" height="120"><text style="font-family: 'Segoe UI', 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;font-variant: small-caps;" font-size="130" x="0" y="100" fill="red">stash<tspan font-weight="bold" font-size="110">.red</tspan></text></svg>
 [![Dependencies Status](https://david-dm.org/cmd430/stash.red/status.svg)](https://david-dm.org/cmd430/stash.red)
 
 stash.red is a Small footprint File host (Specificly for Image/Video and Audio files) It contains:
