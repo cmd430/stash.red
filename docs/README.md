@@ -10,6 +10,9 @@ stash.red is a Small footprint File host (Specificly for Image/Video and Audio f
  - Ability to easily find content by User or by Album
  - Zero loss in quality of uploaded files
 
+###### ![](./img/screenshot_index.png) Screenshot of Home/Upload page
+
+
 Installation
 ============
 1. Install MongoDB (version `4.0+`)
