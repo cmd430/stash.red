@@ -4,6 +4,7 @@ const logger = require('morgan')
 const responseTime = require('response-time')
 const subdomain = require('express-subdomain')
 const cors = require('cors')
+const hbs = require('hbs')
 const mongoose = require('mongoose')
 const mkdir = require('make-dir')
 const config = require('./config.js')
@@ -72,7 +73,36 @@ Promise.all(Object.keys(config.storage).map(key => {
 })
 .then(() => {
   // Start HTTP server
+  hbs.registerHelper('json', data => {
+    return JSON.stringify(data)
+  })
+  hbs.registerHelper('typeof', file => {
+    let type = file.meta.mimetype.split('/')[0]
+    return `${type.charAt(0).toUpperCase()}${type.slice(1)}`
+  })
+  hbs.registerHelper('is', (left_value, right_value, options) => {
+    if (arguments.length < 3) {
+      throw new Error('Handlebars \'is\' helper needs 2 parameters')
+    }
+    if (right_value === 'album' || right_value === 'file') {
+      if (left_value.meta.type === right_value) {
+        return options.fn(left_value)
+      } else {
+          return options.inverse(this)
+      }
+    } else {
+      if (left_value.meta.mimetype.includes(right_value)) {
+          return options.fn(left_value)
+      } else {
+          return options.inverse(this)
+      }
+    }
+  })
+  hbs.registerPartials(`${config.handelbars.partials}`)
+
   app.domain.router.enable('trust proxy')
+  app.domain.router.set('view engine', 'hbs')
+  app.domain.router.set('views', `${config.handelbars.views}`)
   app.domain.router.use(responseTime())
   app.domain.router.use(logger(config.log))
   app.domain.router.use(cors())

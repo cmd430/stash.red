@@ -26,3 +26,14 @@ audio {
   margin-bottom: 8px;
   transform: translateX(-50%);
 }
+
+.album_title, .album_title a {
+  cursor: pointer;
+  text-align: center;
+  color: black;
+  text-decoration: none;
+}
+
+.album_title:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
+    <meta name="theme-color" content="{{server.opengraph.theme}}" />
+    <meta content="{{server.name.fullname}} | {{file.id}}" property="og:title" />
+    <meta content="{{typeof file}} hosted on {{server.name.fullname}}" property="og:description" />
+    <link rel="icon" type="image/png" href="/img/favicon.png" />
+    <link rel="apple-touch-icon" href="/img/favicon.png" />
+    <link rel="stylesheet" href="/css/file.css" />
+    <script src="/js/file.js"></script>
+    <title>{{server.name.fullname}} | {{file.id}}</title>
+  </head>
+  <body>
+    {{#is file 'image'}}
+    {{> image this}}
+    {{/is}}
+    {{#is file 'video'}}
+    {{> video this}}
+    {{/is}}
+    {{#is file 'audio'}}
+    {{> audio this}}
+    {{/is}}
+  </body>
+</html>

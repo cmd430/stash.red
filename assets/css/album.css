@@ -26,3 +26,7 @@ audio {
   margin-bottom: 8px;
   transform: translateX(-50%);
 }
+
+#album_title {
+  text-align: center;
+}

@@ -2,12 +2,14 @@ const path = require('path')
 
 const webRoot = __dirname
 const assetDir = path.join(webRoot, 'assets')
+const viewsDir = path.join(webRoot, 'views')
+const partialsDir = path.join(viewsDir, 'partials')
 const storageBaseDir = path.join(webRoot, 'storage')
 const storageDatabaseDir = path.join(storageBaseDir, 'database')
 const storageImageDir = path.join(storageBaseDir, 'image')
 const storageAudioDir = path.join(storageBaseDir, 'audio')
 const storageVideoDir = path.join(storageBaseDir, 'video')
-const serverName = 'TheShed.red'
+const serverName = 'stash.red'
 
 const config = {
   server: {
@@ -24,6 +26,24 @@ const config = {
       // 'image.host.com' to `i.host.com`
     }
   },
+  handelbars: {
+    views: viewsDir,
+    partials: partialsDir
+  },
+  render: {
+    // Variables we pass the HTML pages
+    // This is used to set meta info
+    // on each page thanks to handelbars
+    name: {
+      fullname: `${serverName}`,
+      fragment_one: `${serverName.split('.')[0]}`,
+      fragment_two: `${serverName.split('.')[1]}`
+    },
+    opengraph: {
+      theme: '#db0303'
+    },
+    github: 'cmd430/stash.red'
+  },
   identifiers: {
     length: 5
   },
@@ -37,7 +57,7 @@ const config = {
     image: storageImageDir,
     audio: storageAudioDir,
     video: storageVideoDir,
-    asset: assetDir
+    asset: assetDir,
   },
   auth: {
     enabled: true,

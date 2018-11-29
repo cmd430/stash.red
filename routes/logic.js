@@ -116,6 +116,9 @@ module.exports = function (config, app, multer) {
         addPaths(result)
       } else if (result.meta.type === 'album') {
         addPaths(result, true)
+        if (result.meta.title === null) {
+          result.meta.title = 'Album'
+        }
         result.files.images.forEach(image => {
           addPaths(image)
         })
@@ -179,7 +182,7 @@ module.exports = function (config, app, multer) {
         file = `${config.storage.asset}/img/${file}`
       } else {
         let subdomains = req.subdomains
-        if (subdomains.length > 0 && (file.includes('.html') || file === '/')) {
+        if (file.includes('.html') || file === '/') {
           // We only want to serve image/audio/video files
           // from the subdomains, so we redirect html
           // requests back to the host domain
@@ -203,9 +206,19 @@ module.exports = function (config, app, multer) {
     // View File / View Album / User Page | View File / View Album / User JSON
     viewPage: async function (req, res, next) {
       let type = req.params.type
-      let typeLong = (type === 'f' ? 'file' : (type === 'a' ? 'album' : 'user'))
-      if (req.params.id.includes('.json')) {
-        let id = req.params.id.split('.')[0]
+      if (type === undefined) {
+        // Serve our Homepage
+        res.render('index.hbs', {
+          server: config.render
+        })
+      } else {
+        let typeLong = (type === 'f' ? 'file' : (type === 'a' ? 'album' : 'user'))
+        let id = req.params.id
+        let rawJSON = false
+        if (req.params.id.includes('.json')) {
+          id = id.split('.')[0]
+          rawJSON = true
+        }
         switch (type) {
           case 'f': // File
           case 'a': // Album
@@ -213,10 +226,14 @@ module.exports = function (config, app, multer) {
               if (err) {
                 return error(res, err.status)
               } else {
-                if (id.length > 0 && data.length > 0) {
-                  return res.status(200).json(formatResults(req, data)[0])
-                } else if (data.length > 0) {
-                  return res.status(200).json(formatResults(req, data))
+                let dynamic = {
+                  server: config.render
+                }
+                dynamic[typeLong] = formatResults(req, data)[0]
+                if (!rawJSON) {
+                  return res.status(200).render(`${typeLong}.hbs`, dynamic)
+                } else {
+                  return res.status(200).json(dynamic[typeLong])
                 }
               }
             })
@@ -231,9 +248,31 @@ module.exports = function (config, app, multer) {
                     return error(res, err.status)
                   } else {
                     let albums = formatResults(req, data)
-                    let user = files.concat(albums)
-                    if (user.length > 0) {
-                      return res.status(200).json(user)
+                    let __ids = []
+                    albums.forEach(album => {
+                      album.files.images.concat(album.files.audio, album.files.videos).forEach(file => {
+                        __ids.push(file.id)
+                        album.firstItem = file
+                      })
+                    })
+                    files = files.filter(file  => {
+                      return !__ids.includes(file.id)
+                    })
+                    let user = {}
+                    let total = files.concat(albums)
+                    user.username = total[0].meta.uploaded.by
+                    user.albums = albums
+                    user.files = files
+                    if (total.length > 0) {
+                      if (!rawJSON) {
+                        let dynamic = {
+                          server: `${config.render}`,
+                        }
+                        dynamic[typeLong] = user
+                        return res.status(200).render(`${typeLong}.hbs`, dynamic)
+                      } else {
+                        return res.status(200).json(user)
+                      }
                     } else {
                       return error(res, 404)
                     }
@@ -242,22 +281,16 @@ module.exports = function (config, app, multer) {
               }
             }, true)
           default: // Error
-            return error(res, 404)
-        }
-      } else {
-        switch (type) {
-          case 'f': // File
-          case 'a': // Album
-          case 'u': // User
-            return res.status(200).sendFile(`${config.storage.asset}/${typeLong}.html`)
-          default: // Error
-            // We are probably trying to load an asset
-            // so we return next to try the next matching
-            // route that should be the asset route
-            // if the file doesnt match on that route we
-            // will receive the 404
-            return next()
-            // return error(res, 404)
+            if (!rawJSON) {
+              // We are probably trying to load an asset
+              // so we return next to try the next matching
+              // route that should be the asset route
+              // if the file doesnt match on that route we
+              // will receive the 404
+              return next()
+            } else {
+              return error(res, 404)
+            }
         }
       }
     },

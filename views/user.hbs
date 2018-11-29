@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
+    <meta name="theme-color" content="{{server.opengraph.theme}}" />
+    <meta content="{{server.name.fullname}} | {{user.username}}" property="og:title" />
+    <meta content="{{user.username}} on {{server.name.fullname}}" property="og:description" />
+    <link rel="icon" type="image/png" href="/img/favicon.png" />
+    <link rel="apple-touch-icon" href="/img/favicon.png" />
+    <link rel="stylesheet" href="/css/user.css" />
+    <script src="/js/user.js"></script>
+    <title>{{server.name.fullname}} | {{user.username}}</title>
+  </head>
+  <body>
+    {{#each user.files}}
+    {{#is this 'file'}}
+    {{#is this 'image'}}
+    {{> image this}}
+    {{/is}}
+    {{#is this 'video'}}
+    {{> video this}}
+    {{/is}}
+    {{#is this 'audio'}}
+    {{> audio this}}
+    {{/is}}
+    {{/is}}
+    {{/each}}
+    {{#each user.albums}}
+    {{#is this 'album'}}
+    <h1 class="album_title">
+      <a href="{{this.path}}">{{this.meta.title}}</a>
+    </h1>
+    {{#is this.firstItem 'image'}}
+    {{> image this}}
+    {{/is}}
+    {{#is this.firstItem 'video'}}
+    {{> video this}}
+    {{/is}}
+    {{#is this.firstItem 'audio'}}
+    {{> audio this}}
+    {{/is}}
+    {{/is}}
+    {{/each}}
+  </body>
+</html>

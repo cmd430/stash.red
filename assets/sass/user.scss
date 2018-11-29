@@ -1,2 +1,15 @@
 @import 'shared';
 @import 'media';
+
+.album_title {
+  &, a {
+    cursor: pointer;
+    text-align: center;
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+  }
+}
+
+.album_title:hover {
+  text-decoration: underline;
+}

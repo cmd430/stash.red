@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
+    <meta name="theme-color" content="{{server.opengraph.theme}}" />
+    <meta content="{{server.name.fullname}} | {{album.meta.title}}" property="og:title" />
+    <meta content="Album hosted on {{server.name.fullname}}" property="og:description" />
+    <link rel="icon" type="image/png" href="/img/favicon.png" />
+    <link rel="apple-touch-icon" href="/img/favicon.png" />
+    <link rel="stylesheet" href="/css/album.css" />
+    <script src="/js/album.js"></script>
+    <title>{{server.name.fullname}} | {{album.meta.title}}</title>
+  </head>
+  <body>
+    <h1 id="album_title">{{album.meta.title}}</h1>
+    {{#each album.files.images}}
+    {{> image this}}
+    {{/each}}
+    {{#each album.files.videos}}
+    {{> video this}}
+    {{/each}}
+    {{#each album.files.audio}}
+    {{> audio this}}
+    {{/each}}
+  </body>
+</html>

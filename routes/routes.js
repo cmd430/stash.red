@@ -2,6 +2,14 @@ module.exports = (config, multer, app) => {
 
   const logic = require('./logic.js')(config, app, multer)
 
+  // View Index
+  app.domain.router.route('/')
+    .get(logic.viewPage)
+    .put(logic.notImplemented)
+    .post(logic.notImplemented)
+    .patch(logic.notImplemented)
+    .delete(logic.notImplemented)
+
   // View Album/User/Image/Audio/Video (with HTML wrapper)
   app.domain.router.route('/:type/:id')
   .get(logic.viewPage)
