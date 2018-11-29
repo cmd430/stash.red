@@ -425,7 +425,6 @@ module.exports = function (config, app, multer) {
           if (remove === checkAuth.key || remove === checkAuth.username) {
             return error(res, 400)
           } else {
-            console.log(remove)
             models.auth.deleteOne({
               $or: [
                 {
@@ -438,7 +437,6 @@ module.exports = function (config, app, multer) {
             })
             .lean()
             .exec((err, key) => {
-              console.log(key)
               if (err || !key ) {
                 return error(res, 500)
               } else {
