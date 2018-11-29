@@ -4,7 +4,7 @@
   "description": "TheShed.red is a Small footprint File host (Specificly for Image/Video and Audio files)",
   "main": "server.js",
   "scripts": {
-    "sass": "sass --watch assets/sass/:assets/css/",
+    "sass": "sass --no-source-map --watch assets/sass/:assets/css/",
     "server": "node server"
   },
   "author": "Bradley 'cmd430' Treweek",
