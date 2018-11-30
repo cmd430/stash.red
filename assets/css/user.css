@@ -107,6 +107,7 @@ audio {
   text-decoration: none;
 }
 .album a > img {
+  max-width: 100%;
   filter: grayscale(1);
   transition: filter 200ms;
 }
