@@ -2,22 +2,35 @@
 @import 'media';
 
 .album {
+  position: relative;
   margin: 10px auto;
-  span {
+  .title {
     display: block;
     font-size: 25px;
     font-weight: 600;
     padding: 0 0 5px 0;
+  }
+  .icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    background: url('/img/album.png') right top 38px / 40px no-repeat
   }
   &, a {
     color: rgb(119, 119, 119);
     text-align: center;
     text-decoration: none;
   }
+  a > img {
+    filter: grayscale(1);
+    transition: filter 200ms;
+  }
   &:hover {
-    &, a {
-      text-decoration: underline;
-      text-decoration-color: rgb(219, 3, 3);
+    a > img {
+      filter: grayscale(0);
     }
   }
 }

@@ -10,6 +10,14 @@ body {
   overflow: overlay;
 }
 
+.hidden {
+  display: none;
+}
+
+.invisible {
+  opacity: 0;
+}
+
 #logo {
   text-align: center;
 }
@@ -46,14 +54,6 @@ header h1 {
   line-height: 85px;
   font-variant: small-caps;
   height: 85px;
-}
-
-.hidden {
-  display: none;
-}
-
-.invisible {
-  opacity: 0;
 }
 
 #content {

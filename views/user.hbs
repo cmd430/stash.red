@@ -18,6 +18,11 @@
       <h1>{{user.username}}</h1>
     </header>
     <div id="container">
+      {{#each user.albums}}
+        {{#is this 'album'}}
+          {{> album this}}
+        {{/is}}
+      {{/each}}
       {{#each user.files}}
         {{#is this 'file'}}
           {{#is this 'image'}}
@@ -29,11 +34,6 @@
           {{#is this 'audio'}}
             {{> audio this}}
           {{/is}}
-        {{/is}}
-        {{/each}}
-        {{#each user.albums}}
-          {{#is this 'album'}}
-            {{> album this}}
         {{/is}}
       {{/each}}
     </div>
