@@ -13,15 +13,20 @@
     <title>{{server.name.fullname}} | {{album.meta.title}}</title>
   </head>
   <body>
-    <h1 id="album_title">{{album.meta.title}}</h1>
-    {{#each album.files.images}}
-      {{> image this}}
-    {{/each}}
-    {{#each album.files.videos}}
-      {{> video this}}
-    {{/each}}
-    {{#each album.files.audio}}
-      {{> audio this}}
-    {{/each}}
+    <header>
+      {{> logo server}}
+      <h1>{{album.meta.title}}</h1>
+    </header>
+    <div id="container">
+      {{#each album.files.images}}
+        {{> image this}}
+      {{/each}}
+      {{#each album.files.videos}}
+        {{> video this}}
+      {{/each}}
+      {{#each album.files.audio}}
+        {{> audio this}}
+      {{/each}}
+    </div>
   </body>
 </html>

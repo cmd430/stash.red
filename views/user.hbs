@@ -13,34 +13,29 @@
     <title>{{server.name.fullname}} | {{user.username}}</title>
   </head>
   <body>
-    {{#each user.files}}
-      {{#is this 'file'}}
-        {{#is this 'image'}}
-          {{> image this}}
+    <header>
+      {{> logo server}}
+      <h1>{{user.username}}</h1>
+    </header>
+    <div id="container">
+      {{#each user.files}}
+        {{#is this 'file'}}
+          {{#is this 'image'}}
+            {{> image this}}
+          {{/is}}
+          {{#is this 'video'}}
+            {{> video this}}
+          {{/is}}
+          {{#is this 'audio'}}
+            {{> audio this}}
+          {{/is}}
         {{/is}}
-        {{#is this 'video'}}
-          {{> video this}}
+        {{/each}}
+        {{#each user.albums}}
+          {{#is this 'album'}}
+            {{> album this}}
         {{/is}}
-        {{#is this 'audio'}}
-          {{> audio this}}
-        {{/is}}
-      {{/is}}
       {{/each}}
-      {{#each user.albums}}
-        {{#is this 'album'}}
-        <h1 class="album_title">
-          <a href="{{this.path}}">{{this.meta.title}}</a>
-        </h1>
-        {{#is this.firstItem 'image'}}
-          {{> image this}}
-        {{/is}}
-        {{#is this.firstItem 'video'}}
-          {{> video this}}
-        {{/is}}
-        {{#is this.firstItem 'audio'}}
-          {{> audio this}}
-        {{/is}}
-      {{/is}}
-    {{/each}}
+    </div>
   </body>
 </html>

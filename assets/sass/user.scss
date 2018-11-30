@@ -1,15 +1,23 @@
 @import 'shared';
 @import 'media';
 
-.album_title {
+.album {
+  margin: 10px auto;
+  span {
+    display: block;
+    font-size: 25px;
+    font-weight: 600;
+    padding: 0 0 5px 0;
+  }
   &, a {
-    cursor: pointer;
+    color: rgb(119, 119, 119);
     text-align: center;
-    color: rgb(0, 0, 0);
     text-decoration: none;
   }
-}
-
-.album_title:hover {
-  text-decoration: underline;
+  &:hover {
+    &, a {
+      text-decoration: underline;
+      text-decoration-color: rgb(219, 3, 3);
+    }
+  }
 }

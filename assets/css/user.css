@@ -5,8 +5,46 @@
 }
 
 body {
+  background-color: #fafafa;
   font-family: "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   overflow: overlay;
+}
+
+#logo {
+  text-align: center;
+}
+#logo a {
+  color: #db0303;
+  font-size: 40px;
+  font-variant: small-caps;
+  text-decoration: none;
+  line-height: 75px;
+  justify-self: start;
+  user-select: none;
+  cursor: default;
+}
+#logo a span {
+  font-weight: bold;
+}
+
+header {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+header #logo {
+  text-align: left;
+}
+header #logo a {
+  cursor: pointer;
+}
+header h1 {
+  color: #777777;
+  justify-self: end;
+  font-weight: 400;
+  line-height: 85px;
+  font-variant: small-caps;
 }
 
 .hidden {
@@ -17,7 +55,23 @@ body {
   opacity: 0;
 }
 
-img,
+#container {
+  display: grid;
+  background: white;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 15px;
+}
+#container .image {
+  margin: 10px auto;
+}
+#container .image img {
+  background: linear-gradient(45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 0/20px 20px, linear-gradient(-45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 10px/20px 20px, linear-gradient(45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) 10px -10px/20px 20px, linear-gradient(-45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) -10px 0px/20px 20px;
+  max-width: 100%;
+  max-height: 750px;
+  margin: 0 auto;
+}
+
 video,
 audio {
   max-width: 100%;
@@ -27,13 +81,21 @@ audio {
   transform: translateX(-50%);
 }
 
-.album_title, .album_title a {
-  cursor: pointer;
+.album {
+  margin: 10px auto;
+}
+.album span {
+  display: block;
+  font-size: 25px;
+  font-weight: 600;
+  padding: 0 0 5px 0;
+}
+.album, .album a {
+  color: #777777;
   text-align: center;
-  color: black;
   text-decoration: none;
 }
-
-.album_title:hover {
+.album:hover, .album:hover a {
   text-decoration: underline;
+  text-decoration-color: #db0303;
 }

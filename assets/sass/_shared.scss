@@ -5,8 +5,45 @@
 }
 
 body {
+  background-color: rgb(250, 250, 250);
   font-family: 'Segoe UI', 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   overflow: overlay;
+}
+
+#logo {
+  text-align: center;
+  a {
+    color: rgb(219, 3, 3);
+    font-size: 40px;
+    font-variant: small-caps;
+    text-decoration: none;
+    line-height: 75px;
+    justify-self: start;
+    user-select: none;
+    cursor: default;
+    span {
+      font-weight: bold;
+    }
+  }
+}
+header {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  max-width: 960px;
+  margin: 0 auto;
+  #logo {
+    text-align: left;
+    a {
+      cursor: pointer;
+    }
+  }
+  h1 {
+    color: rgb(119, 119, 119);
+    justify-self: end;
+    font-weight: 400;
+    line-height: 85px;
+    font-variant: small-caps;
+  }
 }
 
 .hidden {

@@ -1,28 +1,11 @@
 @import 'shared';
 
-body {
-  background-color: rgb(250, 250, 250);
-  line-height: 1.7;
-}
-
 #content {
   width: auto;
   max-width: 750px;
   min-width: 280px;
   margin: calc(50vh - 85px) 0 0 50vw;
   transform: translate(-50%, -50%);
-  #logo {
-    color: rgb(219, 3, 3);
-    font-size: 50px;
-    font-variant: small-caps;
-    text-align: center;
-    user-select: none;
-    cursor: default;
-    span {
-      font-weight: bold;
-      font-size: 45px;
-    }
-  }
   #dropzone {
     position: relative;
     display: flex;
@@ -81,19 +64,19 @@ body {
     justify-content: center;
     margin: 10px 0 0 0;
     .button {
+      padding: 0 10px;
+      cursor: pointer;
       &, a {
         font-weight: 600;
-        color: rgb(218, 223, 227);
-        padding: 0 10px;
+        color: rgb(198, 203, 207);
         transition: color 200ms;
         text-decoration: none;
-        cursor: pointer;
         &:hover,
         &.active {
           color: rgb(36, 41, 46);
         }
         &:not(:last-child) {
-          border-right: 1px dotted rgb(218, 223, 227);
+          border-right: 1px dotted rgb(198, 203, 207);
         }
       }
     }

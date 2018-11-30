@@ -36,8 +36,8 @@ const config = {
     // on each page thanks to handelbars
     name: {
       fullname: `${serverName}`,
-      fragment_one: `${serverName.split('.')[0]}`,
-      fragment_two: `${serverName.split('.')[1]}`
+      fragment_one: `${serverName.split('.')[0].toUpperCase()}`,
+      fragment_two: `${serverName.split('.')[1].toLowerCase()}`
     },
     opengraph: {
       theme: '#db0303'

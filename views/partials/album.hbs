@@ -1,0 +1,14 @@
+<div class="album">
+  <a href="{{this.path}}">
+    <span>{{this.meta.title}}</span>
+    {{#is this.firstItem 'image'}}
+      <img src="{{this.directpath}}" />
+    {{/is}}
+    {{#is this.firstItem 'video'}}
+      <img src="/img/audio_video_placeholder.png" />
+    {{/is}}
+    {{#is this.firstItem 'audio'}}
+      <img src="/img/audio_video_placeholder.png" />
+    {{/is}}
+  </a>
+</div>

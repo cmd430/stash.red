@@ -13,14 +13,19 @@
     <title>{{server.name.fullname}} | {{file.id}}</title>
   </head>
   <body>
-    {{#is file 'image'}}
-      {{> image this}}
-    {{/is}}
-    {{#is file 'video'}}
-      {{> video this}}
-    {{/is}}
-    {{#is file 'audio'}}
-      {{> audio this}}
-    {{/is}}
+    <header>
+      {{> logo server}}
+    </header>
+    <div id="container">
+      {{#is file 'image'}}
+        {{> image this}}
+      {{/is}}
+      {{#is file 'video'}}
+        {{> video this}}
+      {{/is}}
+      {{#is file 'audio'}}
+        {{> audio this}}
+      {{/is}}
+    </div>
   </body>
 </html>
