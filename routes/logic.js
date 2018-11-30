@@ -140,6 +140,18 @@ module.exports = function (config, app, multer) {
     return results
   }
 
+  function sortByDate(array, assending = true) {
+    return array.sort(function(a, b) {
+      a = new Date(a.meta.uploaded.at)
+      b = new Date(b.meta.uploaded.at)
+      if (assending) {
+        return a > b ? -1 : a < b ? 1 : 0
+      } else {
+        return a>b ? 1 : a<b ? -1 : 0
+      }
+    })
+  }
+
   function queryDB (model, id, callback, searchByUploader = false) {
     return models[model]
     .find((searchByUploader ? (id.length > 0 ? {
@@ -242,17 +254,19 @@ module.exports = function (config, app, multer) {
               if (err) {
                 return error(res, err.status)
               } else {
-                let files = formatResults(req, data)
+                let files = sortByDate(formatResults(req, data))
                 return queryDB('album', id, (err, data) => {
                   if (err) {
                     return error(res, err.status)
                   } else {
-                    let albums = formatResults(req, data)
+                    let albums = sortByDate(formatResults(req, data))
                     let __ids = []
                     albums.forEach(album => {
                       album.files.images.concat(album.files.audio, album.files.videos).forEach(file => {
                         __ids.push(file.id)
-                        album.firstItem = file
+                        if (!album.firstItem) {
+                          album.firstItem = file
+                        }
                       })
                     })
                     files = files.filter(file  => {
@@ -266,7 +280,7 @@ module.exports = function (config, app, multer) {
                     if (total.length > 0) {
                       if (!rawJSON) {
                         let dynamic = {
-                          server: `${config.render}`,
+                          server: config.render
                         }
                         dynamic[typeLong] = user
                         return res.status(200).render(`${typeLong}.hbs`, dynamic)
