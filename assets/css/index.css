@@ -187,7 +187,7 @@ header h1 {
   background-color: white;
   transition: 400ms;
 }
-#content #settings .setting input[type=text] {
+#content #settings .setting input[type=password] {
   border: 1px solid #5e6063;
   padding: 2px;
   position: absolute;
