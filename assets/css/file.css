@@ -1,3 +1,4 @@
+@charset "UTF-8";
 * {
   margin: 0;
   padding: 0;
@@ -56,6 +57,314 @@ header h1 {
   height: 85px;
 }
 
+/*
+Usually, `apache` already has necessary settings, but `nginx` and other
+webservers should be tuned. Here is list of mime types for our file extensions:
+
+- `application/vnd.ms-fontobject` - eot
+- `application/x-font-woff` - woff
+- `application/x-font-ttf` - ttf
+- `image/svg+xml` - svg
+
+*/
+@font-face {
+  font-family: "icons";
+  src: url("/font/icons.eot?48031863");
+  src: url("/font/icons.eot?48031863#iefix") format("embedded-opentype"), url("/font/icons.woff2?48031863") format("woff2"), url("/font/icons.woff?48031863") format("woff"), url("/font/icons.ttf?48031863") format("truetype"), url("/font/icons.svg?48031863#icons") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+[class^=icon-]::before, [class*=" icon-"]::before {
+  font-family: "icons";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: 0.2em;
+  text-align: center;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1em;
+  font-size: 120%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-th-outline::before {
+  content: "";
+}
+
+/* '' */
+.icon-th::before {
+  content: "";
+}
+
+/* '' */
+.icon-th-large-outline::before {
+  content: "";
+}
+
+/* '' */
+.icon-th-large::before {
+  content: "";
+}
+
+/* '' */
+.icon-th-list::before {
+  content: "";
+}
+
+/* '' */
+.icon-th-list-outline::before {
+  content: "";
+}
+
+/* '' */
+.icon-download-outline::before {
+  content: "";
+}
+
+/* '' */
+.icon-download::before {
+  content: "";
+}
+
+/* '' */
+.icon-home::before {
+  content: "";
+}
+
+/* '' */
+.icon-home-outline::before {
+  content: "";
+}
+
+/* '' */
+.icon-warning::before {
+  content: "";
+}
+
+/* '' */
+.icon-warning-empty::before {
+  content: "";
+}
+
+/* '' */
+.icon-ok::before {
+  content: "";
+}
+
+/* '' */
+.icon-ok-outline::before {
+  content: "";
+}
+
+/* '' */
+.icon-calendar-outlilne::before {
+  content: "";
+}
+
+/* '' */
+.icon-calendar::before {
+  content: "";
+}
+
+/* '' */
+.icon-videocam::before {
+  content: "";
+}
+
+/* '' */
+.icon-videocam-outline::before {
+  content: "";
+}
+
+/* '' */
+.icon-music::before {
+  content: "";
+}
+
+/* '' */
+.icon-cog::before {
+  content: "";
+}
+
+/* '' */
+.icon-cog-outline::before {
+  content: "";
+}
+
+/* '' */
+.icon-wrench-outline::before {
+  content: "";
+}
+
+/* '' */
+.icon-wrench::before {
+  content: "";
+}
+
+/* '' */
+.icon-info-outline::before {
+  content: "";
+}
+
+/* '' */
+.icon-info::before {
+  content: "";
+}
+
+/* '' */
+.icon-chart-pie-outline::before {
+  content: "";
+}
+
+/* '' */
+.icon-chart-pie::before {
+  content: "";
+}
+
+/* '' */
+.icon-video::before {
+  content: "";
+}
+
+/* '' */
+.icon-picture::before {
+  content: "";
+}
+
+/* '' */
+.icon-trash-empty::before {
+  content: "";
+}
+
+/* '' */
+.icon-ok-1::before {
+  content: "";
+}
+
+/* '' */
+.icon-cancel::before {
+  content: "";
+}
+
+/* '' */
+.icon-plus::before {
+  content: "";
+}
+
+/* '' */
+.icon-upload::before {
+  content: "";
+}
+
+/* '' */
+.icon-pencil::before {
+  content: "";
+}
+
+/* '' */
+.icon-cw::before {
+  content: "";
+}
+
+/* '' */
+.icon-pause::before {
+  content: "";
+}
+
+/* '' */
+.icon-stop::before {
+  content: "";
+}
+
+/* '' */
+.icon-play::before {
+  content: "";
+}
+
+/* '' */
+.icon-volume-off::before {
+  content: "";
+}
+
+/* '' */
+.icon-volume-down::before {
+  content: "";
+}
+
+/* '' */
+.icon-volume-up::before {
+  content: "";
+}
+
+/* '' */
+.icon-chart-bar::before {
+  content: "";
+}
+
+/* '' */
+.icon-link::before {
+  content: "";
+}
+
+/* '' */
+.icon-resize-full::before {
+  content: "";
+}
+
+/* '' */
+.icon-down-dir::before {
+  content: "";
+}
+
+/* '' */
+.icon-up-dir::before {
+  content: "";
+}
+
+/* '' */
+.icon-resize-small::before {
+  content: "";
+}
+
+/* '' */
+.icon-link-ext::before {
+  content: "";
+}
+
+/* '' */
+.icon-info-1::before {
+  content: "";
+}
+
+/* '' */
+.icon-circle-notch::before {
+  content: "";
+}
+
+/* '' */
+.icon-sliders::before {
+  content: "";
+}
+
+/* '' */
+.icon-trash::before {
+  content: "";
+}
+
+/* '' */
+audio {
+  max-width: 100%;
+  display: block;
+  margin-left: 50%;
+  margin-bottom: 8px;
+  transform: translateX(-50%);
+}
+
 #container {
   display: grid;
   background: white;
@@ -69,15 +378,90 @@ header h1 {
 #container .image img {
   background: linear-gradient(45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 0/20px 20px, linear-gradient(-45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 10px/20px 20px, linear-gradient(45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) 10px -10px/20px 20px, linear-gradient(-45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) -10px 0px/20px 20px;
   max-width: 100%;
-  max-height: 750px;
+  max-height: 550px;
+  /* was 750px */
   margin: 0 auto;
 }
-
-video,
-audio {
-  max-width: 100%;
-  display: block;
-  margin-left: 50%;
-  margin-bottom: 8px;
+#container .video__player {
+  position: relative;
+  margin: 10px auto;
+}
+#container .video__player video {
+  position: relative;
+  left: 50%;
   transform: translateX(-50%);
+  width: 100%;
+  max-height: 550px;
+  background: black;
+}
+#container .video__player .video__controls {
+  position: relative;
+  margin: -4px 0 0 0;
+  height: 30px;
+  width: 100%;
+  padding: 0 5px;
+  background: #fafafa;
+  color: #24292e;
+  font-size: 18px;
+  user-select: none;
+}
+#container .video__player .video__controls .video__playback .playback__progress {
+  width: 360px;
+}
+#container .video__player .video__controls .video__volume .volume__control {
+  width: 80px;
+}
+#container .video__player .video__controls span {
+  display: inline-block;
+  height: 30px;
+  line-height: 1.5;
+}
+#container .video__player .video__controls span.playback__time, #container .video__player .video__controls span.playback__length {
+  cursor: default;
+}
+#container .video__player .video__controls button {
+  display: inline-block;
+  height: 30px;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+#container .video__player .video__controls button i {
+  color: #24292e;
+}
+#container .video__player .video__controls a {
+  font-size: 13px;
+  color: #24292e;
+}
+#container .video__player .video__controls input[type=range] {
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: #24292e;
+  position: relative;
+  display: inline-block;
+  top: -3px;
+  height: 4px;
+  margin: 0;
+  border: none;
+  border-radius: 14px;
+  outline: none;
+  cursor: pointer;
+}
+#container .video__player .video__controls input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #24292e;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+#container .video__player .video__controls input[type=range]::-webkit-slider-thumb:hover,
+#container .video__player .video__controls input[type=range]::-webkit-slider-thumb:focus,
+#container .video__player .video__controls input[type=range]::-webkit-slider-thumb:active,
+#container .video__player .video__controls input[type=range]:hover::-webkit-slider-thumb,
+#container .video__player .video__controls input[type=range]:focus::-webkit-slider-thumb,
+#container .video__player .video__controls input[type=range]:active::-webkit-slider-thumb {
+  opacity: 1;
 }
