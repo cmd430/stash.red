@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   fixImageRotation()
   initialiseVideoPlayers()
+  initialiseAudioPlayers()
 } , false)
 
 function fixImageRotation() {
@@ -22,7 +23,6 @@ function fixImageRotation() {
   })
 }
 
-let videoPlayers = []
 function initialiseVideoPlayers () {
   document.querySelectorAll('.video__player').forEach(player => {
     let video = player.querySelector('video')
@@ -156,7 +156,19 @@ function initialiseVideoPlayers () {
 
     // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events
     // https://developer.mozilla.org/en-US/docs/Web/Apps/Fundamentals/Audio_and_video_delivery/Video_player_styling_basics
+  })
+}
 
-    videoPlayers.push(video)
+function initialiseAudioPlayers () {
+  document.querySelectorAll('.audio__player').forEach(player => {
+    let audio = player.querySelector('audio')
+    jsmediatags.read(audio.getAttribute('src'), {
+      onSuccess: function(tag) {
+        console.log(tag)
+      },
+      onError: function(error) {
+        console.log(':(', error.type, error.info)
+      }
+    })
   })
 }
