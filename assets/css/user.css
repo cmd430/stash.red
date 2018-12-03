@@ -41,6 +41,7 @@ header {
   grid-template-columns: 50% 50%;
   max-width: 960px;
   margin: 0 auto;
+  padding: 0 8px;
 }
 header #logo {
   text-align: left;
@@ -391,7 +392,8 @@ audio {
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-height: 550px;
+  max-height: calc(100vh - 165px);
+  /* max-height: 750px; */
   background: black;
 }
 #container .video__player .video__controls {
@@ -403,10 +405,8 @@ audio {
   background: #fafafa;
   color: #24292e;
   font-size: 18px;
+  text-align: center;
   user-select: none;
-}
-#container .video__player .video__controls .video__playback .playback__progress {
-  width: 360px;
 }
 #container .video__player .video__controls .video__volume .volume__control {
   width: 80px;
@@ -414,7 +414,12 @@ audio {
 #container .video__player .video__controls span {
   display: inline-block;
   height: 30px;
-  line-height: 1.5;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 2.5;
+}
+#container .video__player .video__controls span.playback__clock {
+  margin: 0 3px 0 0;
 }
 #container .video__player .video__controls span.playback__time, #container .video__player .video__controls span.playback__length {
   cursor: default;
@@ -426,6 +431,9 @@ audio {
   border: none;
   outline: none;
   cursor: pointer;
+}
+#container .video__player .video__controls button.control__fullscreen {
+  padding: 0 0 0 3px;
 }
 #container .video__player .video__controls button i {
   color: #24292e;

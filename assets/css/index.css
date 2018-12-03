@@ -40,6 +40,7 @@ header {
   grid-template-columns: 50% 50%;
   max-width: 960px;
   margin: 0 auto;
+  padding: 0 8px;
 }
 header #logo {
   text-align: left;
