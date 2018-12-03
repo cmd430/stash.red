@@ -59,12 +59,15 @@ audio {
         font-size: 12px;
         font-weight: 700;
         line-height: 2.5;
-        &.playback__clock {
-          margin: 0 3px 0 0;
-        }
-        &.playback__time,
-        &.playback__length {
-          cursor: default;
+        &.video__playback {
+          text-align: left !important;
+          > .playback__clock {
+            margin: 0 3px 0 0;
+            > .playback__time,
+            > .playback__length {
+              cursor: default;
+            }
+          }
         }
       }
       button {

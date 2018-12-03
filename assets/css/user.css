@@ -418,10 +418,14 @@ audio {
   font-weight: 700;
   line-height: 2.5;
 }
-#container .video__player .video__controls span.playback__clock {
+#container .video__player .video__controls span.video__playback {
+  text-align: left !important;
+}
+#container .video__player .video__controls span.video__playback > .playback__clock {
   margin: 0 3px 0 0;
 }
-#container .video__player .video__controls span.playback__time, #container .video__player .video__controls span.playback__length {
+#container .video__player .video__controls span.video__playback > .playback__clock > .playback__time,
+#container .video__player .video__controls span.video__playback > .playback__clock > .playback__length {
   cursor: default;
 }
 #container .video__player .video__controls button {

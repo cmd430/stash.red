@@ -37,23 +37,24 @@ function initialiseVideoPlayers () {
     let control__fullscreen = controls.querySelector('.control__fullscreen')
     let control__breakout = controls.querySelector('.control__breakout')
 
-    let video__playback = controls.querySelector('.video__playback')
-    let video__volume = controls.querySelector('.video__volume')
-
     volume__control.setAttribute('style', 'background-image: linear-gradient(to right, rgb(56, 136, 234) 0%, rgb(56, 136, 234) 100%, rgb(0,0,0) 100%, rgb(0,0,0) 100%)')
     playback__progress.setAttribute('style', 'background-image: linear-gradient(to right, rgb(56, 136, 234) 0%, rgb(56, 136, 234) 0%, rgb(0,0,0) 0%, rgb(0,0,0) 100%)')
     video.__mute = false
 
     // Make controls fit player
-    let playback__progress__width = (video__playback.clientWidth - playback__progress.clientWidth) + 3
-    createCSSSelector('.playback__progress', `width: calc(100% - ${playback__progress__width}px) !important;`)
-    createCSSSelector('.video__playback', 'width: calc(100% - 184px) !important;')
-
-    // View on seperate page
-    if (location.href.includes('/f/')) {
-      control__breakout.setAttribute('style', 'display: none;')
-      createCSSSelector('.video__playback', 'width: calc(100% - 160px) !important;')
-    }
+    video.addEventListener('loadedmetadata', e => {
+      createCSSSelector('.playback__progress', `width: calc(100% - 80px); transform: translateX(-50%); left: calc(50% - ${playback__clock.clientWidth - 18}px);`)
+      createCSSSelector('.video__playback', 'width: calc(100% - 184px);')
+      //fix short videos
+      if (video.duration < 599) {
+        createCSSSelector('.playback__progress', `width: calc(100% - 80px); transform: translateX(-50%); left: calc(50% - ${playback__clock.clientWidth - 26}px);`)
+      }
+      // View on seperate page
+      if (location.href.includes('/f/')) {
+        control__breakout.setAttribute('style', 'display: none;')
+        createCSSSelector('.video__playback', 'width: calc(100% - 160px);')
+      }
+    })
 
     // Fullscreen
     control__fullscreen.addEventListener('click', e => {
