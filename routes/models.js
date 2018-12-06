@@ -38,11 +38,20 @@ module.exports = (app) => {
           default: 'Anonymous'
         }
       },
+      song: {
+        title: String,
+        album: String,
+        artist: String
+      },
+      thumbnail: {
+        type: String,
+        default: null
+      },
+      filename: String,
       originalname: String,
       mimetype: String,
       size: Number,
     },
-    file: String,
     path: String,
     directpath: String
   }, {
@@ -71,6 +80,10 @@ module.exports = (app) => {
       type: {
         type: String,
         default: 'album'
+      },
+      thumbnail: {
+        type: String,
+        default: null
       }
     },
     files: {

@@ -1,27 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-  fixImageRotation()
   initialiseVideoPlayers()
   initialiseAudioPlayers()
 } , false)
 
-function fixImageRotation() {
-  // fix image rotation from mobile
-  // photos using EXIF data
-  document.querySelectorAll('.image img').forEach(img => {
-    img.addEventListener('load', e => {
-      EXIF.getData(img, function() {
-        let orientation = EXIF.getTag(this, "Orientation")
-        if(orientation === 6) {
-          img.setAttribute('style', 'transform: rotate(90deg)')
-        } else if(orientation === 3) {
-          img.setAttribute('style', 'transform: rotate(180deg)')
-        } else if(orientation === 8) {
-          img.setAttribute('style', 'transform: rotate(270deg)')
-        }
-      })
-    })
-  })
-}
 
 function initialiseVideoPlayers () {
   document.querySelectorAll('.video__player').forEach(player => {
@@ -162,13 +143,6 @@ function initialiseVideoPlayers () {
 function initialiseAudioPlayers () {
   document.querySelectorAll('.audio__player').forEach(player => {
     let audio = player.querySelector('audio')
-    jsmediatags.read(audio.getAttribute('src'), {
-      onSuccess: function(tag) {
-        console.log(tag)
-      },
-      onError: function(error) {
-        console.log(':(', error.type, error.info)
-      }
-    })
+
   })
 }

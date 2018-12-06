@@ -13,12 +13,16 @@
     "cors": "^2.8.5",
     "express": "^4.15.5",
     "express-subdomain": "^1.0.5",
+    "ffmpeg-static": "^2.4.0",
     "hbs": "^4.0.1",
+    "jsmediatags": "^3.8.1",
     "make-dir": "^1.3.0",
     "mongoose": "^5.3.13",
     "morgan": "^1.9.1",
     "multer": "^1.3.0",
-    "response-time": "^2.3.2"
+    "response-time": "^2.3.2",
+    "sharp": "^0.21.0",
+    "simple-thumbnail": "git://github.com/cmd430/simple-thumbnail.git"
   },
   "devDependencies": {
     "sass": "^1.15.1"

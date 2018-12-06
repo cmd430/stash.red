@@ -1,6 +1,10 @@
 const fs = require('fs')
 const path = require('path')
 const crypto = require('crypto')
+const ffmpeg = require('ffmpeg-static')
+const simpleThumbnail = require('simple-thumbnail')
+const jsmediatags = require('jsmediatags')
+const sharp = require('sharp')
 
 module.exports = function (config, app, multer) {
 
@@ -42,6 +46,75 @@ module.exports = function (config, app, multer) {
       keyLength = keyLength * 2
     }
     return crypto.randomBytes(keyLength).toString('hex')
+  }
+
+  async function asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array)
+    }
+  }
+
+  async function generateThumbnail (file, type) {
+    return new Promise((resolve, reject) => {
+      switch (type) {
+        case 'image':
+          return resolve(sharp(file).rotate().toBuffer())
+        case 'video':
+          return simpleThumbnail(file, true, '100%', { // `true` make us get a raw stream
+            seek: '00:00:03.00',
+            path: ffmpeg.path
+          })
+          .then(stream => {
+            return stream.on('data', data => {
+              return resolve(data)
+            })
+          })
+        case 'audio':
+          return new jsmediatags.Reader(file)
+          .setTagsToRead([
+            'picture'
+          ])
+          .read({
+            onSuccess: data => {
+              return resolve(Buffer.from(data.tags.picture.data))
+            },
+            onError: err => {
+              return reject(err)
+            }
+          })
+      }
+    })
+    .then(buffer => {
+      return sharp(buffer)
+      .resize(250)
+      .png()
+      .toBuffer()
+    })
+    .then(thumbnail => {
+      return `data:image/png;base64,${thumbnail.toString('base64')}`
+    })
+    .catch(err => {
+      return null
+    })
+  }
+
+  async function getAudioMeta (file) {
+    return new Promise((resolve, reject) => {
+      return new jsmediatags.Reader(file)
+      .setTagsToRead([
+        'title',
+        'album',
+        'artist'
+      ])
+      .read({
+        onSuccess: meta => {
+          return resolve(meta.tags)
+        },
+        onError: err => {
+          return reject(null)
+        }
+      })
+    })
   }
 
   function fileExists (res, filepath, callback) {
@@ -108,7 +181,7 @@ module.exports = function (config, app, multer) {
       } else {
         let subdomain = app.subdomain[result.meta.mimetype.split('/')[0]].name
         result.path = `${req.protocol}://${req.hostname}${result.path}`
-        result.directpath = `${req.protocol}://${subdomain}.${req.hostname}/${result.file}`
+        result.directpath = `${req.protocol}://${subdomain}.${req.hostname}/${result.meta.filename}`
       }
     }
     let format = result => {
@@ -314,7 +387,7 @@ module.exports = function (config, app, multer) {
       if (user !== false) {
         // We are authorized
         // or auth is disabled
-        multer.any()(req, res, err => {
+        return multer.any()(req, res, async err => {
           if (err) {
             if (err.code === 'LIMIT_FILE_SIZE') {
               err.status = 413
@@ -329,15 +402,18 @@ module.exports = function (config, app, multer) {
             let images = []
             let audio = []
             let videos = []
-            files.forEach(file => {
+            await asyncForEach(files, async file => {
               let filename = path.basename(file.path)
               let extension = path.extname(filename)
               let id = path.basename(filename, extension)
               let mimetype = file.mimetype
               let shorttype = mimetype.split('/')[0]
+              let thumbnail = await generateThumbnail(file.path, shorttype)
               let fileinfo = {
                 id: id,
                 meta: {
+                  thumbnail: thumbnail,
+                  filename: filename,
                   originalname: file.originalname,
                   mimetype: mimetype,
                   size: file.size,
@@ -345,7 +421,6 @@ module.exports = function (config, app, multer) {
                     by: (typeof user !== null ? user.username : null)
                   }
                 },
-                file: filename,
                 path: `/f/${id}`
               }
               switch (shorttype) {
@@ -353,10 +428,16 @@ module.exports = function (config, app, multer) {
                   images.push(fileinfo)
                   break
                 case 'audio':
-                audio.push(fileinfo)
+                  let audioMeta = await getAudioMeta(file.path)
+                  fileinfo.meta.song = {
+                    title: audioMeta.title || 'Unknown',
+                    album: audioMeta.album || 'Unknown',
+                    artist: audioMeta.artist || 'Unknown'
+                  }
+                  audio.push(fileinfo)
                   break
                 case 'video':
-                videos.push(fileinfo)
+                  videos.push(fileinfo)
                   break
               }
               new models.file(fileinfo)
@@ -378,7 +459,8 @@ module.exports = function (config, app, multer) {
                   uploaded: {
                     by: (typeof user !== null ? user.username : null)
                   },
-                  title: null
+                  title: null,
+                  thumbnail: null
                 },
                 files: {
                   images: images,
