@@ -179,28 +179,22 @@ module.exports = function (config, app, multer) {
       if (isAlbum) {
         result.path = `${req.protocol}://${req.hostname}${result.path}`
       } else {
-        let subdomain = app.subdomain[result.meta.mimetype.split('/')[0]].name
+        let subdomain = app.subdomain[result.meta.type].name
         result.path = `${req.protocol}://${req.hostname}${result.path}`
         result.directpath = `${req.protocol}://${subdomain}.${req.hostname}/${result.meta.filename}`
       }
     }
     let format = result => {
-      if (result.meta.type === 'file') {
-        addPaths(result)
-      } else if (result.meta.type === 'album') {
+      if (result.meta.type === 'album') {
         addPaths(result, true)
         if (result.meta.title === null) {
           result.meta.title = 'Album'
         }
-        result.files.images.forEach(image => {
-          addPaths(image)
+        result.files.forEach(file => {
+          addPaths(file)
         })
-        result.files.audio.forEach(audio => {
-          addPaths(audio)
-        })
-        result.files.videos.forEach(video => {
-          addPaths(video)
-        })
+      } else {
+        addPaths(result)
       }
     }
     if (Array.isArray(results)) {
@@ -335,11 +329,8 @@ module.exports = function (config, app, multer) {
                     let albums = sortByDate(formatResults(req, data))
                     let __ids = []
                     albums.forEach(album => {
-                      album.files.images.concat(album.files.audio, album.files.videos).forEach(file => {
+                      album.files.forEach(file => {
                         __ids.push(file.id)
-                        if (!album.firstItem) {
-                          album.firstItem = file
-                        }
                       })
                     })
                     files = files.filter(file  => {
@@ -399,9 +390,7 @@ module.exports = function (config, app, multer) {
           } else {
             let files = req.files
             let isAblum = files.length > 1
-            let images = []
-            let audio = []
-            let videos = []
+            let filesinfo = []
             await asyncForEach(files, async file => {
               let filename = path.basename(file.path)
               let extension = path.extname(filename)
@@ -418,15 +407,13 @@ module.exports = function (config, app, multer) {
                   mimetype: mimetype,
                   size: file.size,
                   uploaded: {
-                    by: (typeof user !== null ? user.username : null)
-                  }
+                    by: (typeof user !== null ? user.username : undefined)
+                  },
+                  type: shorttype
                 },
                 path: `/f/${id}`
               }
               switch (shorttype) {
-                case 'image':
-                  images.push(fileinfo)
-                  break
                 case 'audio':
                   let audioMeta = await getAudioMeta(file.path)
                   fileinfo.meta.song = {
@@ -434,10 +421,9 @@ module.exports = function (config, app, multer) {
                     album: audioMeta.album || 'Unknown',
                     artist: audioMeta.artist || 'Unknown'
                   }
-                  audio.push(fileinfo)
-                  break
+                case 'image':
                 case 'video':
-                  videos.push(fileinfo)
+                  filesinfo.push(fileinfo)
                   break
               }
               new models.file(fileinfo)
@@ -460,13 +446,9 @@ module.exports = function (config, app, multer) {
                     by: (typeof user !== null ? user.username : null)
                   },
                   title: null,
-                  thumbnail: null
+                  thumbnail: filesinfo[0].meta.thumbnail
                 },
-                files: {
-                  images: images,
-                  audio: audio,
-                  videos: videos
-                },
+                files: filesinfo,
                 path: `/a/${albumId}`
               }
               new models.album(albuminfo)

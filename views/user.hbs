@@ -25,16 +25,14 @@
         {{/is}}
       {{/each}}
       {{#each user.files}}
-        {{#is this 'file'}}
-          {{#is this 'image'}}
-            {{> image this}}
-          {{/is}}
-          {{#is this 'video'}}
-            {{> video this}}
-          {{/is}}
-          {{#is this 'audio'}}
-            {{> audio this}}
-          {{/is}}
+        {{#is this 'image'}}
+          {{> image this}}
+        {{/is}}
+        {{#is this 'video'}}
+          {{> video this}}
+        {{/is}}
+        {{#is this 'audio'}}
+          {{> audio this}}
         {{/is}}
       {{/each}}
     </div>

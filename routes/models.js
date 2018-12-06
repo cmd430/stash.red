@@ -36,6 +36,10 @@ module.exports = (app) => {
         by: {
           type: String,
           default: 'Anonymous'
+        },
+        until: {
+          type: String,
+          default: 'infinity'
         }
       },
       song: {
@@ -75,6 +79,10 @@ module.exports = (app) => {
         by: {
           type: String,
           default: 'Anonymous'
+        },
+        until: {
+          type: String,
+          default: 'infinity'
         }
       },
       type: {
@@ -86,11 +94,7 @@ module.exports = (app) => {
         default: null
       }
     },
-    files: {
-      images: Array,
-      audio: Array,
-      videos: Array
-    },
+    files: Array,
     path: String
   }, {
     versionKey: false
