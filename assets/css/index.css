@@ -94,6 +94,9 @@ header h1 {
   border: 1px solid #dadfe3;
   transition: opacity 200ms;
 }
+#content #dropzone #progress.proc #fill {
+  background-color: #88ea38;
+}
 #content #dropzone #progress.warn #fill {
   background-color: #eaea38;
 }

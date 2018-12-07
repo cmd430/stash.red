@@ -123,6 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     progress__text.textContent = message
     progress__fill.setAttribute('style', 'width: 100%;')
+    progress__bar.classList.remove('proc')
+    progress__bar.classList.remove('warn')
     progress__bar.classList.add('error')
   }
 
@@ -133,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     progress__text.textContent = message
     progress__fill.setAttribute('style', 'width: 100%;')
+    progress__bar.classList.remove('proc')
     progress__bar.classList.add('warn')
   }
 
@@ -263,6 +266,10 @@ document.addEventListener('DOMContentLoaded', () => {
           let percentage = (e.loaded / e.total) * 100
           progress__text.textContent = `Uploading: ${Math.round(percentage)}%`
           progress__fill.setAttribute('style', `width: ${percentage}%;`)
+          if (percentage === 100) {
+            progress__text.textContent = `Processing`
+            progress__bar.classList.add('proc')
+          }
         } else {
           warn('Uploading: Progress Unavailable')
         }
