@@ -28,6 +28,10 @@ module.exports = (app) => {
         type: String,
         default: 'file'
       },
+      public: {
+        type: Boolean,
+        default: true
+      },
       uploaded: {
         at: {
           type: Date,
@@ -71,6 +75,14 @@ module.exports = (app) => {
     },
     meta: {
       title: String,
+      type: {
+        type: String,
+        default: 'album'
+      },
+      public: {
+        type: Boolean,
+        default: true
+      },
       uploaded: {
         at: {
           type: Date,
@@ -84,10 +96,6 @@ module.exports = (app) => {
           type: String,
           default: 'infinity'
         }
-      },
-      type: {
-        type: String,
-        default: 'album'
       },
       thumbnail: {
         type: String,
