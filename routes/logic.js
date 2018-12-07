@@ -65,8 +65,11 @@ module.exports = function (config, app, multer) {
             path: ffmpeg.path
           })
           .then(stream => {
-            return stream.on('data', data => {
+            stream.on('data', data => {
               return resolve(data)
+            })
+            stream.on('error', err => {
+              return reject(data)
             })
           })
         case 'audio':
@@ -76,7 +79,13 @@ module.exports = function (config, app, multer) {
           ])
           .read({
             onSuccess: data => {
-              return resolve(Buffer.from(data.tags.picture.data))
+              let picture = data.tags.picture
+              if (picture === undefined){
+                return reject({
+                  message: 'no picute data'
+                })
+              }
+              return resolve(Buffer.from(picture.data))
             },
             onError: err => {
               return reject(err)
@@ -86,7 +95,7 @@ module.exports = function (config, app, multer) {
     })
     .then(buffer => {
       return sharp(buffer)
-      .resize(250)
+      .resize((typeof config.thumbnail.height === String ? `${config.thumbnail.width}` : `${config.thumbnail.width}x${config.thumbnail.height}`))
       .png()
       .toBuffer()
     })

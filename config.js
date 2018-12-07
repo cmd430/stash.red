@@ -48,9 +48,15 @@ const config = {
     length: 5
   },
   upload: {
-    maxsize: 1024 * 1024 * 500
+    maxsize: 1024 * 1024 * 500,
     // Default 500mb (1024 * 1024 * 500)
     // Size is in Bytes
+    thumbnail: {
+      // Size in pixels
+      // can be Width + Height or Width + Auto
+      width: 200,
+      height: 'auto'
+    }
   },
   storage: {
     database: storageDatabaseDir,
