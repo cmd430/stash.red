@@ -57,6 +57,7 @@ audio {
       font-size: 18px;
       line-height: 2.8;
       user-select: none;
+      transition: margin 300ms;
       .playback__bar {
         position: absolute;
         left: 0;

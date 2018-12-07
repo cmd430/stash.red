@@ -418,6 +418,7 @@ audio {
   font-size: 18px;
   line-height: 2.8;
   user-select: none;
+  transition: margin 300ms;
 }
 #container .video__player .video__controls .playback__bar {
   position: absolute;

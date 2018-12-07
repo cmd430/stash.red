@@ -21,12 +21,15 @@ function initialiseVideoPlayers () {
 
     video.__mute = false
 
-    // View on seperate page
+    // View on seperate page (hide if viewing the file page)
     if (location.href.includes('/f/')) {
       control__breakout.setAttribute('style', 'display: none;')
     }
 
     // Fullscreen
+    if (!window.thread) {
+      window.thread = null
+    }
     control__fullscreen.addEventListener('click', e => {
       if (document.webkitFullscreenElement) {
         document.webkitExitFullscreen()
@@ -37,13 +40,30 @@ function initialiseVideoPlayers () {
     let control__fullscreen__icon = control__fullscreen.querySelector('i')
     document.addEventListener('webkitfullscreenchange', () => {
       if (document.webkitFullscreenElement) {
+        if (!location.href.includes('/f/')) {
+          control__breakout.setAttribute('style', 'display: none;')
+        }
         control__fullscreen__icon.classList.remove('icon-resize-full')
         control__fullscreen__icon.classList.add('icon-resize-small')
         control__fullscreen.setAttribute('title', 'Exit Fullscreen')
       } else {
+        if (!location.href.includes('/f/')) {
+          control__breakout.removeAttribute('style')
+        }
         control__fullscreen__icon.classList.remove('icon-resize-small')
         control__fullscreen__icon.classList.add('icon-resize-full')
         control__fullscreen.setAttribute('title', 'Fullscreen')
+        clearTimeout(thread)
+        controls.removeAttribute('style')
+      }
+    })
+    document.addEventListener('mousemove', () => {
+      if (document.webkitFullscreenElement) {
+        controls.removeAttribute('style')
+          clearTimeout(thread)
+          window.thread = setTimeout(() => {
+            controls.setAttribute('style', 'margin: 0 0 -42px 0;')
+          }, 1500)
       }
     })
 
@@ -133,7 +153,7 @@ function initialiseVideoPlayers () {
     })
 
     // Seek
-    let seek = e => {
+    function seek (e) {
       let multiplier = (e.offsetX / playback__bar.clientWidth)
       playback__progress.setAttribute('style', `width: ${multiplier * 100}%;`)
       video.currentTime = video.duration * multiplier
