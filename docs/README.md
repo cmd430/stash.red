@@ -1,6 +1,9 @@
 # ![](./img/logo.png)
-[![Dependencies Status](https://david-dm.org/cmd430/stash.red/status.svg)](https://david-dm.org/cmd430/stash.red)
-[![Dependencies Status](https://david-dm.org/cmd430/stash.red/dev-status.svg)](https://david-dm.org/cmd430/stash.red?type=dev)
+
+![Dependencies Status](https://img.shields.io/david/cmd430/stash.red.svg)
+![Dev Dependencies Status](https://img.shields.io/david/dev/cmd430/stash.red.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/cmd430/stash.red.svg)
+![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.png?v=103)
 
 stash.red is a Small footprint File host (Specificly for Image/Video and Audio files) It contains:
  - Simple Authentication using Auth key

@@ -8,7 +8,7 @@
     "server": "node server"
   },
   "author": "Bradley 'cmd430' Treweek",
-  "license": "ISC",
+  "license": "GPL",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.15.5",

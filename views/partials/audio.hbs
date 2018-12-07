@@ -4,9 +4,6 @@
   </audio>
   <img class="audio__artwork" src="{{this.meta.thumbnail}}" onerror="this.src='/img/generic_audio.png'" />
   <div class="audio__controls">
-    <a class="control__breakout" title="View on seperate page" href="{{this.path}}">
-      <i class="icon-link-ext"></i>
-    </a>
     <span class="audio__playback">
       <span class="playback__bar">
         <span class="playback__buffer"></span>
@@ -29,6 +26,11 @@
       <span class="title">Title: {{this.meta.song.title}}</span>
       <span class="album">Album: {{this.meta.song.album}}</span>
       <span class="artist">Artist: {{this.meta.song.artist}}</span>
+    </span>
+    <span class="playback__extra">
+      <a class="control__breakout" title="View on seperate page" href="{{this.path}}">
+        <i class="icon-link-ext"></i>
+      </a>
     </span>
   </div>
 </div>
