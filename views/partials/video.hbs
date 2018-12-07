@@ -1,5 +1,7 @@
 <div class="video__player">
-  <video src="{{this.directpath}}"></video>
+  <video>
+    <source src="{{this.directpath}}" type="{{this.meta.mimetype}}" />
+  </video>
   <div class="video__controls">
     <button class="control__playPause paused" title="Play">
       <i class="icon-play"></i>

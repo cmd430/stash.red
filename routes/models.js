@@ -24,10 +24,7 @@ module.exports = (app) => {
       }
     },
     meta: {
-      type: {
-        type: String,
-        default: 'file'
-      },
+      type: String,
       public: {
         type: Boolean,
         default: true
