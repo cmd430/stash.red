@@ -207,18 +207,6 @@ module.exports = function (config, app, multer) {
     return results
   }
 
-  function sortByDate(array, assending = true) {
-    return array.sort(function(a, b) {
-      a = new Date(a.meta.uploaded.at)
-      b = new Date(b.meta.uploaded.at)
-      if (assending) {
-        return a > b ? -1 : a < b ? 1 : 0
-      } else {
-        return a>b ? 1 : a<b ? -1 : 0
-      }
-    })
-  }
-
   function queryDB (model, id, callback, searchByUploader = false) {
     return models[model]
     .find((searchByUploader ? (id.length > 0 ? {
