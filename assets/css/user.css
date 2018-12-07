@@ -19,6 +19,10 @@ body {
   opacity: 0;
 }
 
+.no_transition {
+  transition: none !important;
+}
+
 #logo {
   text-align: center;
 }
@@ -387,48 +391,88 @@ audio {
   position: relative;
   margin: 10px auto;
 }
+#container .video__player:-webkit-full-screen video {
+  max-height: 100vh;
+}
+#container .video__player:-webkit-full-screen .video__controls {
+  position: absolute;
+  bottom: 0;
+}
 #container .video__player video {
   position: relative;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-height: calc(100vh - 165px);
+  max-height: calc(100vh - 180px);
   /* max-height: 750px; */
   background: black;
 }
 #container .video__player .video__controls {
   position: relative;
   margin: -4px 0 0 0;
-  height: 30px;
+  height: 42px;
   width: 100%;
   padding: 0 5px;
-  background: #fafafa;
+  background: #f0f0f0;
   color: #24292e;
   font-size: 18px;
-  text-align: center;
+  line-height: 2.8;
   user-select: none;
 }
-#container .video__player .video__controls .video__volume .volume__control {
-  width: 80px;
+#container .video__player .video__controls .playback__bar {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  margin: 0 6px;
+  width: calc(100% - 12px);
+  height: 6px;
+  background-color: #24292e;
+  overflow: hidden;
 }
-#container .video__player .video__controls span {
+#container .video__player .video__controls .playback__bar .playback__buffer {
+  width: 0%;
+  background-color: #4c5053;
+}
+#container .video__player .video__controls .playback__bar .playback__progress {
+  width: 0%;
+  background-color: #3888ea;
+}
+#container .video__player .video__controls .playback__bar .playback__buffer,
+#container .video__player .video__controls .playback__bar .playback__progress {
+  position: absolute;
   display: inline-block;
+  left: 0;
+  height: 100%;
+  transition: linear width 250ms;
+}
+#container .video__player .video__controls .playback__clock {
   height: 30px;
-  font-size: 12px;
-  font-weight: 700;
   line-height: 2.5;
 }
-#container .video__player .video__controls span.video__playback {
-  text-align: left !important;
-}
-#container .video__player .video__controls span.video__playback > .playback__clock {
+#container .video__player .video__controls .playback__clock .playback__time,
+#container .video__player .video__controls .playback__clock .playback__length {
   margin: 0 3px 0 0;
-}
-#container .video__player .video__controls span.video__playback > .playback__clock > .playback__time,
-#container .video__player .video__controls span.video__playback > .playback__clock > .playback__length {
+  font-size: 12px;
+  font-weight: 700;
   cursor: default;
 }
-#container .video__player .video__controls button {
+#container .video__player .video__controls .playback__volume .volume__control {
+  width: 80px;
+}
+#container .video__player .video__controls .playback__extra {
+  position: absolute;
+  top: 12px;
+  right: 4px;
+  height: 30px;
+  line-height: 1;
+}
+#container .video__player .video__controls .playback__extra .control__breakout {
+  font-size: 13px;
+  color: #24292e;
+}
+#container .video__player .video__controls .playback__playPause,
+#container .video__player .video__controls .playback__volume > .volume__muteUnmute,
+#container .video__player .video__controls .playback__extra > .control__fullscreen {
   display: inline-block;
   height: 30px;
   background: none;
@@ -436,17 +480,12 @@ audio {
   outline: none;
   cursor: pointer;
 }
-#container .video__player .video__controls button.control__fullscreen {
-  padding: 0 0 0 3px;
-}
-#container .video__player .video__controls button i {
+#container .video__player .video__controls .playback__playPause i,
+#container .video__player .video__controls .playback__volume > .volume__muteUnmute i,
+#container .video__player .video__controls .playback__extra > .control__fullscreen i {
   color: #24292e;
 }
-#container .video__player .video__controls a {
-  font-size: 13px;
-  color: #24292e;
-}
-#container .video__player .video__controls input[type=range] {
+#container .video__player .video__controls .playback__volume .volume__control {
   -webkit-appearance: none;
   -webkit-tap-highlight-color: #24292e;
   position: relative;
@@ -455,11 +494,12 @@ audio {
   height: 4px;
   margin: 0;
   border: none;
-  border-radius: 14px;
+  border-radius: 2px;
+  background-image: linear-gradient(to right, #3888ea 0%, #3888ea 100%, black 100%, black 100%);
   outline: none;
   cursor: pointer;
 }
-#container .video__player .video__controls input[type=range]::-webkit-slider-thumb {
+#container .video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 12px;
   height: 12px;
@@ -469,12 +509,7 @@ audio {
   opacity: 0;
   transition: opacity 200ms;
 }
-#container .video__player .video__controls input[type=range]::-webkit-slider-thumb:hover,
-#container .video__player .video__controls input[type=range]::-webkit-slider-thumb:focus,
-#container .video__player .video__controls input[type=range]::-webkit-slider-thumb:active,
-#container .video__player .video__controls input[type=range]:hover::-webkit-slider-thumb,
-#container .video__player .video__controls input[type=range]:focus::-webkit-slider-thumb,
-#container .video__player .video__controls input[type=range]:active::-webkit-slider-thumb {
+#container .video__player .video__controls .playback__volume .volume__control, #container .video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb:hover, #container .video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb:focus, #container .video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb:active, #container .video__player .video__controls .playback__volume .volume__control:hover::-webkit-slider-thumb, #container .video__player .video__controls .playback__volume .volume__control:focus::-webkit-slider-thumb, #container .video__player .video__controls .playback__volume .volume__control:active::-webkit-slider-thumb {
   opacity: 1;
 }
 
