@@ -60,7 +60,7 @@ module.exports = function (config, app, multer) {
         case 'image':
           return resolve(sharp(file).rotate().toBuffer())
         case 'video':
-          return simpleThumbnail(file, true, '100%', { // `true` make us get a raw stream
+          return simpleThumbnail(file, null, '100%', {
             seek: '00:00:03.00',
             path: ffmpeg.path
           })
@@ -222,11 +222,14 @@ module.exports = function (config, app, multer) {
   function queryDB (model, id, callback, searchByUploader = false) {
     return models[model]
     .find((searchByUploader ? (id.length > 0 ? {
-      "meta.uploaded.by": id
+      'meta.uploaded.by': id
     } : {}) : (id.length > 0 ? {
       id: id
     } : {})), {
       _id: 0
+    })
+    .sort({
+      'meta.uploaded.at': 'descending'
     })
     .lean()
     .exec()
@@ -321,12 +324,12 @@ module.exports = function (config, app, multer) {
               if (err) {
                 return error(res, err.status)
               } else {
-                let files = sortByDate(formatResults(req, data))
+                let files = formatResults(req, data)
                 return queryDB('album', id, (err, data) => {
                   if (err) {
                     return error(res, err.status)
                   } else {
-                    let albums = sortByDate(formatResults(req, data))
+                    let albums = formatResults(req, data)
                     let __ids = []
                     albums.forEach(album => {
                       album.files.forEach(file => {

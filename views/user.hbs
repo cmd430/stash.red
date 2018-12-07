@@ -21,19 +21,11 @@
     <div id="container">
       {{#each user.albums}}
         {{#is this 'album'}}
-          {{> album this}}
+          {{> preview_album this}}
         {{/is}}
       {{/each}}
       {{#each user.files}}
-        {{#is this 'image'}}
-          {{> image this}}
-        {{/is}}
-        {{#is this 'video'}}
-          {{> video this}}
-        {{/is}}
-        {{#is this 'audio'}}
-          {{> audio this}}
-        {{/is}}
+        {{> preview_file this}}
       {{/each}}
     </div>
   </body>

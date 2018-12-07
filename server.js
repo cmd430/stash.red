@@ -81,6 +81,7 @@ Promise.all(Object.keys(config.storage).map(key => {
     return `${type.charAt(0).toUpperCase()}${type.slice(1)}`
   })
   hbs.registerHelper('is', (left_value, right_value, options) => {
+    console.log(left_value)
     if (left_value.meta.type === right_value) {
         return options.fn(left_value)
     } else {

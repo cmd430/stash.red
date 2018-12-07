@@ -35,3 +35,15 @@
     }
   }
 }
+
+.file {
+  position: relative;
+  margin: 10px auto;
+  &, a {
+    text-align: center;
+    text-decoration: none;
+  }
+  a > img {
+    max-width: 100%;
+  }
+}
