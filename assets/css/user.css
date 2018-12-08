@@ -693,11 +693,20 @@ audio {
   display: inline-block;
 }
 
-.preview {
-  position: relative;
-  margin: 10px auto;
+#container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-evenly;
 }
-.preview .icon {
+#container .preview {
+  position: relative;
+  margin: 10px;
+  overflow: hidden;
+  height: 200px;
+  width: 200px;
+}
+#container .preview .icon {
   position: absolute;
   top: 0;
   left: 0;
@@ -709,21 +718,23 @@ audio {
   background-position: right top;
   background-repeat: no-repeat;
 }
-.preview .icon.image {
+#container .preview .icon.image {
   background-image: url("/img/image.png");
 }
-.preview .icon.audio {
+#container .preview .icon.audio {
   background-image: url("/img/audio.png");
 }
-.preview .icon.video {
+#container .preview .icon.video {
   background-image: url("/img/video.png");
 }
-.preview .icon.album {
+#container .preview .icon.album {
   background-image: url("/img/album.png");
 }
-.preview, .preview a {
-  text-align: center;
-}
-.preview a > img {
+#container .preview a > img {
   max-width: 100%;
+}
+#container .spacer {
+  width: 200px;
+  height: 0;
+  margin: 0 10px;
 }
