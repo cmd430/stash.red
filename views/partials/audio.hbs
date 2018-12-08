@@ -2,35 +2,36 @@
   <audio>
     <source src="{{this.directpath}}" type="{{this.meta.mimetype}}" />
   </audio>
-  <img class="audio__artwork" src="{{this.meta.thumbnail}}" onerror="this.src='/img/generic_audio.png'" />
-  <div class="audio__controls">
-    <span class="audio__playback">
-      <span class="playback__bar">
-        <span class="playback__buffer"></span>
-        <span class="playback__progress"></span>
-      </span>
-      <span class="playback__clock">
-        <span class="playback__time">0:00</span> / <span class="playback__length">0:00</span>
-      </span>
-    </span>
-    <span class="audio__volume">
-      <button class="volume__muteUnmute unmuted" title="Mute">
-        <i class="icon-volume-up"></i>
-      </button>
-      <input class="volume__control" type="range" min="0" max="1" step="0.01" value="1" />
-    </span>
-    <button class="control__playPause paused" title="Play">
-      <i class="icon-play"></i>
-    </button>
-    <span class="audio__info">
-      <span class="title">Title: {{this.meta.song.title}}</span>
-      <span class="album">Album: {{this.meta.song.album}}</span>
-      <span class="artist">Artist: {{this.meta.song.artist}}</span>
-    </span>
-    <span class="playback__extra">
-      <a class="control__breakout" title="View on seperate page" href="{{this.path}}">
-        <i class="icon-link-ext"></i>
-      </a>
-    </span>
-  </div>
+  <ul>
+    <li class="audio__artwork">
+      <img src="{{this.meta.thumbnail}}" onerror="this.src='/img/generic_audio.png'" />
+    </li>
+    <li class="audio__info">
+      <div class="audio__controls">
+        <span class="playback__bar">
+          <span class="playback__buffer"></span>
+          <span class="playback__progress"></span>
+        </span>
+        <span class="playback__clock">
+          <span class="playback__time">0:00</span> / <span class="playback__length">0:00</span>
+        </span>
+        <button class="playback__playPause paused" title="Play">
+          <i class="icon-play"></i>
+        </button>
+        <span class="playback__volume">
+          <button class="volume__muteUnmute unmuted" title="Mute">
+            <i class="icon-volume-up"></i>
+          </button>
+          <input class="volume__control" type="range" min="0" max="1" step="0.01" value="1" />
+        </span>
+        <span class="playback__extra">
+          <a class="control__breakout" title="View on seperate page" href="{{this.path}}">
+            <i class="icon-link-ext"></i>
+          </a>
+        </span>
+      </div>
+      <h1 class="title">{{this.meta.song.title}}</h1>
+      <h2 class="artist">{{this.meta.song.artist}}</h2>
+    </li>
+  </ul>
 </div>
