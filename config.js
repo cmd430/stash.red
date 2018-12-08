@@ -54,7 +54,7 @@ const config = {
     thumbnail: {
       // Size in pixels
       // can be Width + Height or Width + Auto
-      width: 200,
+      width: 250,
       height: 'auto'
     }
   },
