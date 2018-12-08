@@ -10,10 +10,12 @@ audio {
 
 #container {
   display: grid;
-  background: rgb(255, 255, 255);
-  max-width: 960px;
   margin: 0 auto;
   padding: 15px;
+  max-width: 960px;
+  min-height: calc(100vh - 85px);
+  background: rgb(232, 235, 237);
+  border: 1px solid rgb(226, 230, 233);
   .image {
     margin: 10px auto;
     img {
@@ -29,7 +31,10 @@ audio {
   .video__player {
     position: relative;
     margin: 10px auto;
+    border: 1px solid rgb(218, 223, 227);
+    box-sizing: content-box;
     &:-webkit-full-screen { //:fullscreen
+      border: none;
       video {
         max-height: 100vh;
       }
@@ -50,10 +55,10 @@ audio {
     .video__controls {
       position: relative;
       margin: -4px 0 0 0;
-      height: 35px;
+      height: 41px;
       width: 100%;
       padding: 0 5px;
-      background: rgb(240, 240, 240);
+      background-color: rgb(255, 255, 255);
       color: rgb(36, 41, 46);
       font-size: 18px;
       user-select: none;
@@ -77,7 +82,7 @@ audio {
             position: absolute;
             display: block;
             left: calc(100% - 7px);
-            top: -4px;
+            top: -5px;
             width: 15px;
             height: 15px;
             background: rgb(36, 41, 46);
@@ -102,7 +107,7 @@ audio {
       }
       .playback__clock {
         height: 30px;
-        line-height: 2.2;
+        line-height: 2.5;
         .playback__time,
         .playback__length {
           margin: 0 3px 0 0;
@@ -115,7 +120,7 @@ audio {
         position: absolute;
         right: 4px;
         height: 30px;
-        line-height: 2.2;
+        line-height: 2.5;
         .control__breakout {
           font-size: 13px;
           color: rgb(36, 41, 46);
@@ -173,8 +178,11 @@ audio {
   }
   .audio__player {
     width: 250px;
+    height: 338px;
     margin: 0 auto;
-    background-color: rgb(240, 240, 240);
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(218, 223, 227);
+    box-sizing: content-box;
     user-select: none;
     .audio__info {
       position: relative;
@@ -221,7 +229,7 @@ audio {
               position: absolute;
               display: block;
               left: calc(100% - 7px);
-              top: -4px;
+              top: -5px;
               width: 15px;
               height: 15px;
               background: rgb(36, 41, 46);
@@ -259,7 +267,7 @@ audio {
         }
         .playback__volume {
           position: relative;
-          left: 45px;
+          left: 42px;
           .volume__control {
             -webkit-appearance: none;
             -webkit-tap-highlight-color: rgb(36, 41, 46);

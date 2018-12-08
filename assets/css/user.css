@@ -62,20 +62,10 @@ header h1 {
   height: 85px;
 }
 
-/*
-Usually, `apache` already has necessary settings, but `nginx` and other
-webservers should be tuned. Here is list of mime types for our file extensions:
-
-- `application/vnd.ms-fontobject` - eot
-- `application/x-font-woff` - woff
-- `application/x-font-ttf` - ttf
-- `image/svg+xml` - svg
-
-*/
 @font-face {
   font-family: "icons";
-  src: url("/font/icons.eot?48031863");
-  src: url("/font/icons.eot?48031863#iefix") format("embedded-opentype"), url("/font/icons.woff2?48031863") format("woff2"), url("/font/icons.woff?48031863") format("woff"), url("/font/icons.ttf?48031863") format("truetype"), url("/font/icons.svg?48031863#icons") format("svg");
+  src: url("../font/icons.eot?71483038");
+  src: url("../font/icons.eot?71483038#iefix") format("embedded-opentype"), url("../font/icons.woff2?71483038") format("woff2"), url("../font/icons.woff?71483038") format("woff"), url("../font/icons.ttf?71483038") format("truetype"), url("../font/icons.svg?71483038#icons") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -92,146 +82,17 @@ webservers should be tuned. Here is list of mime types for our file extensions:
   font-variant: normal;
   text-transform: none;
   line-height: 1em;
+  margin-left: 0.2em;
   font-size: 120%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-th-outline::before {
-  content: "";
-}
-
-/* '' */
-.icon-th::before {
-  content: "";
-}
-
-/* '' */
-.icon-th-large-outline::before {
-  content: "";
-}
-
-/* '' */
-.icon-th-large::before {
-  content: "";
-}
-
-/* '' */
-.icon-th-list::before {
-  content: "";
-}
-
-/* '' */
-.icon-th-list-outline::before {
-  content: "";
-}
-
-/* '' */
-.icon-download-outline::before {
-  content: "";
-}
-
-/* '' */
-.icon-download::before {
-  content: "";
-}
-
-/* '' */
-.icon-home::before {
-  content: "";
-}
-
-/* '' */
-.icon-home-outline::before {
-  content: "";
-}
-
-/* '' */
-.icon-warning::before {
-  content: "";
-}
-
-/* '' */
-.icon-warning-empty::before {
-  content: "";
-}
-
-/* '' */
-.icon-ok::before {
-  content: "";
-}
-
-/* '' */
-.icon-ok-outline::before {
-  content: "";
-}
-
-/* '' */
-.icon-calendar-outlilne::before {
-  content: "";
-}
-
-/* '' */
-.icon-calendar::before {
-  content: "";
-}
-
-/* '' */
-.icon-videocam::before {
-  content: "";
-}
-
-/* '' */
-.icon-videocam-outline::before {
-  content: "";
-}
-
-/* '' */
 .icon-music::before {
   content: "";
 }
 
 /* '' */
-.icon-cog::before {
-  content: "";
-}
-
-/* '' */
-.icon-cog-outline::before {
-  content: "";
-}
-
-/* '' */
-.icon-wrench-outline::before {
-  content: "";
-}
-
-/* '' */
-.icon-wrench::before {
-  content: "";
-}
-
-/* '' */
-.icon-info-outline::before {
-  content: "";
-}
-
-/* '' */
-.icon-info::before {
-  content: "";
-}
-
-/* '' */
-.icon-chart-pie-outline::before {
-  content: "";
-}
-
-/* '' */
-.icon-chart-pie::before {
-  content: "";
-}
-
-/* '' */
 .icon-video::before {
   content: "";
 }
@@ -247,7 +108,7 @@ webservers should be tuned. Here is list of mime types for our file extensions:
 }
 
 /* '' */
-.icon-ok-1::before {
+.icon-ok::before {
   content: "";
 }
 
@@ -307,11 +168,6 @@ webservers should be tuned. Here is list of mime types for our file extensions:
 }
 
 /* '' */
-.icon-chart-bar::before {
-  content: "";
-}
-
-/* '' */
 .icon-link::before {
   content: "";
 }
@@ -322,16 +178,6 @@ webservers should be tuned. Here is list of mime types for our file extensions:
 }
 
 /* '' */
-.icon-down-dir::before {
-  content: "";
-}
-
-/* '' */
-.icon-up-dir::before {
-  content: "";
-}
-
-/* '' */
 .icon-resize-small::before {
   content: "";
 }
@@ -342,21 +188,11 @@ webservers should be tuned. Here is list of mime types for our file extensions:
 }
 
 /* '' */
-.icon-info-1::before {
+.icon-info::before {
   content: "";
 }
 
 /* '' */
-.icon-circle-notch::before {
-  content: "";
-}
-
-/* '' */
-.icon-sliders::before {
-  content: "";
-}
-
-/* '' */
 .icon-trash::before {
   content: "";
 }
@@ -372,10 +208,12 @@ audio {
 
 #container {
   display: grid;
-  background: white;
-  max-width: 960px;
   margin: 0 auto;
   padding: 15px;
+  max-width: 960px;
+  min-height: calc(100vh - 85px);
+  background: #e8ebed;
+  border: 1px solid #e2e6e9;
 }
 #container .image {
   margin: 10px auto;
@@ -390,6 +228,11 @@ audio {
 #container .video__player {
   position: relative;
   margin: 10px auto;
+  border: 1px solid #dadfe3;
+  box-sizing: content-box;
+}
+#container .video__player:-webkit-full-screen {
+  border: none;
 }
 #container .video__player:-webkit-full-screen video {
   max-height: 100vh;
@@ -411,10 +254,10 @@ audio {
 #container .video__player .video__controls {
   position: relative;
   margin: -4px 0 0 0;
-  height: 35px;
+  height: 41px;
   width: 100%;
   padding: 0 5px;
-  background: #f0f0f0;
+  background-color: white;
   color: #24292e;
   font-size: 18px;
   user-select: none;
@@ -441,7 +284,7 @@ audio {
   position: absolute;
   display: block;
   left: calc(100% - 7px);
-  top: -4px;
+  top: -5px;
   width: 15px;
   height: 15px;
   background: #24292e;
@@ -462,7 +305,7 @@ audio {
 }
 #container .video__player .video__controls .playback__clock {
   height: 30px;
-  line-height: 2.2;
+  line-height: 2.5;
 }
 #container .video__player .video__controls .playback__clock .playback__time,
 #container .video__player .video__controls .playback__clock .playback__length {
@@ -475,7 +318,7 @@ audio {
   position: absolute;
   right: 4px;
   height: 30px;
-  line-height: 2.2;
+  line-height: 2.5;
 }
 #container .video__player .video__controls .playback__extra .control__breakout {
   font-size: 13px;
@@ -525,8 +368,11 @@ audio {
 }
 #container .audio__player {
   width: 250px;
+  height: 338px;
   margin: 0 auto;
-  background-color: #f0f0f0;
+  background-color: white;
+  border: 1px solid #dadfe3;
+  box-sizing: content-box;
   user-select: none;
 }
 #container .audio__player .audio__info {
@@ -576,7 +422,7 @@ audio {
   position: absolute;
   display: block;
   left: calc(100% - 7px);
-  top: -4px;
+  top: -5px;
   width: 15px;
   height: 15px;
   background: #24292e;
@@ -610,7 +456,7 @@ audio {
 }
 #container .audio__player .audio__info .audio__controls .playback__volume {
   position: relative;
-  left: 45px;
+  left: 42px;
 }
 #container .audio__player .audio__info .audio__controls .playback__volume .volume__control {
   -webkit-appearance: none;
@@ -698,6 +544,7 @@ audio {
   flex-wrap: wrap;
   flex-direction: row;
   justify-content: space-evenly;
+  align-content: baseline;
 }
 #container .preview {
   position: relative;
