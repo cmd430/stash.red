@@ -149,6 +149,7 @@ header h1 {
   transition: opacity 200ms;
 }
 #content #settings .setting {
+  width: 221px;
   height: 20px;
   margin: 6px;
 }
