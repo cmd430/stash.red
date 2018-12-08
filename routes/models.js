@@ -24,7 +24,9 @@ module.exports = (app) => {
       }
     },
     meta: {
-      type: String,
+      type: {
+        type: String
+      },
       public: {
         type: Boolean,
         default: true
