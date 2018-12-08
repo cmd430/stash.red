@@ -155,13 +155,17 @@ function initialiseVideoPlayers () {
     // Seek
     function seek (e) {
       let multiplier = (e.offsetX / playback__bar.clientWidth)
-      playback__progress.setAttribute('style', `width: ${multiplier * 100}%;`)
-      video.currentTime = video.duration * multiplier
+      if ((video.duration * multiplier) >= 0 && (video.duration * multiplier) <= video.duration) {
+        playback__progress.setAttribute('style', `width: ${multiplier * 100}%;`)
+        video.currentTime = video.duration * multiplier
+      }
     }
     playback__bar.addEventListener('mousedown', e => {
-      seek(e)
-      this.addEventListener('mousemove', seek)
-      playback__progress.classList.add('no_transition')
+      if (e.button === 0) {
+        seek(e)
+        this.addEventListener('mousemove', seek)
+        playback__progress.classList.add('no_transition')
+      }
     })
     document.addEventListener('mouseup', e => {
       this.removeEventListener('mousemove', seek)
@@ -235,7 +239,8 @@ function initialiseAudioPlayers () {
       playback__playPause__icon.classList.remove('icon-play')
       playback__playPause__icon.classList.add('icon-cw')
     })
-    audio.addEventListener('click', e => {
+    let audioart = player.querySelector('.audio__artwork')
+    audioart.addEventListener('click', e => {
       playback__playPause.click();
     })
 
@@ -298,13 +303,17 @@ function initialiseAudioPlayers () {
     // Seek
     function seek (e) {
       let multiplier = (e.offsetX / playback__bar.clientWidth)
-      playback__progress.setAttribute('style', `width: ${multiplier * 100}%;`)
-      audio.currentTime = audio.duration * multiplier
+      if ((audio.duration * multiplier) >= 0 && (audio.duration * multiplier) <= audio.duration) {
+        playback__progress.setAttribute('style', `width: ${multiplier * 100}%;`)
+        audio.currentTime = audio.duration * multiplier
+      }
     }
     playback__bar.addEventListener('mousedown', e => {
-      seek(e)
-      this.addEventListener('mousemove', seek)
-      playback__progress.classList.add('no_transition')
+      if (e.button === 0) {
+        seek(e)
+        this.addEventListener('mousemove', seek)
+        playback__progress.classList.add('no_transition')
+      }
     })
     document.addEventListener('mouseup', e => {
       this.removeEventListener('mousemove', seek)
