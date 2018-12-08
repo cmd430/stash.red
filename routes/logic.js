@@ -95,7 +95,10 @@ module.exports = function (config, app, multer) {
     })
     .then(buffer => {
       return sharp(buffer)
-      .resize((typeof config.thumbnail.height === String ? `${config.thumbnail.width}` : `${config.thumbnail.width}x${config.thumbnail.height}`))
+      .resize({
+        width: config.upload.thumbnail.width,
+        height: config.upload.thumbnail.height
+      })
       .png()
       .toBuffer()
     })
@@ -103,6 +106,7 @@ module.exports = function (config, app, multer) {
       return `data:image/png;base64,${thumbnail.toString('base64')}`
     })
     .catch(err => {
+      console.log(err)
       return null
     })
   }

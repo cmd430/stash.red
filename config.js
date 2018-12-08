@@ -53,9 +53,10 @@ const config = {
     // Size is in Bytes
     thumbnail: {
       // Size in pixels
-      // can be Width + Height or Width + Auto
+      // can use null for width OR height
+      // to maintain aspect ratio of image
       width: 250,
-      height: 'auto'
+      height: null
     }
   },
   storage: {
