@@ -555,6 +555,7 @@ audio {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  border: 1px solid #dadfe3;
 }
 #container .preview .icon {
   position: absolute;
