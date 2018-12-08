@@ -705,6 +705,9 @@ audio {
   overflow: hidden;
   height: 200px;
   width: 200px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 #container .preview .icon {
   position: absolute;
@@ -729,9 +732,6 @@ audio {
 }
 #container .preview .icon.album {
   background-image: url("/img/album.png");
-}
-#container .preview a > img {
-  max-width: 100%;
 }
 #container .spacer {
   width: 200px;
