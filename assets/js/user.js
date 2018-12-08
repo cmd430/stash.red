@@ -6,4 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
     spacer.classList.add('spacer')
     document.querySelector('#container').appendChild(spacer)
   }
+  document.querySelectorAll('.preview').forEach(preview => {
+    // any missing thumbnails will be
+    // changed to the generic icon
+    if (preview.getAttribute('style') === 'background-image: url(\'\')') {
+      preview.setAttribute('style', `background-image: url('${preview.dataset.fallback}')`)
+    }
+  })
 })
