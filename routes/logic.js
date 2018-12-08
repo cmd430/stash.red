@@ -240,8 +240,14 @@ module.exports = function (config, app, multer) {
       }
     })
     .catch(err => {
+      if (err.message === 'Cannot read property \'meta\' of undefined') {
+        // if a user hasnot uploaded anything this error will be thrown
+        return callback({
+          status: 404,
+        })
+      }
       return callback({
-        status: 500
+        status: 500,
       })
     })
   }
@@ -305,14 +311,18 @@ module.exports = function (config, app, multer) {
               if (err) {
                 return error(res, err.status)
               } else {
-                let dynamic = {
-                  server: config.render
-                }
-                dynamic[typeLong] = formatResults(req, data)[0]
-                if (!rawJSON) {
-                  return res.status(200).render(`${typeLong}.hbs`, dynamic)
+                if (data.length > 0) {
+                  let dynamic = {
+                    server: config.render
+                  }
+                  dynamic[typeLong] = formatResults(req, data)[0]
+                  if (!rawJSON) {
+                    return res.status(200).render(`${typeLong}.hbs`, dynamic)
+                  } else {
+                    return res.status(200).json(dynamic[typeLong])
+                  }
                 } else {
-                  return res.status(200).json(dynamic[typeLong])
+                  return error(res, 404)
                 }
               }
             })
