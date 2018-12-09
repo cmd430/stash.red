@@ -111,7 +111,7 @@ Promise.all(Object.keys(config.storage).map(key => {
       return resolve()
     })
     .on('error', err => {
-      return reject(new Error('Could not start Express'))
+      return reject(new Error(`Could not start Express: ${err.message}`))
     })
   })
 })
