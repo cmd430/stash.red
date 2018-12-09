@@ -198,14 +198,6 @@ header h1 {
 }
 
 /* '' */
-audio {
-  max-width: 100%;
-  display: block;
-  margin-left: 50%;
-  margin-bottom: 8px;
-  transform: translateX(-50%);
-}
-
 #container {
   display: grid;
   margin: 0 auto;
@@ -370,7 +362,7 @@ audio {
 #container .audio__player {
   width: 250px;
   height: 338px;
-  margin: 0 auto;
+  margin: 10px auto;
   background-color: white;
   border: 1px solid #dadfe3;
   box-sizing: content-box;
