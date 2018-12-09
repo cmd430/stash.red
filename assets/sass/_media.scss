@@ -115,13 +115,22 @@
         height: 30px;
         line-height: 2.5;
         .control__breakout {
+          display: inline-block;
+          height: 30px;
           font-size: 13px;
           color: rgb(36, 41, 46);
+          text-decoration: none;
+        }
+        .control__breakout,
+        .control__download {
+          position: relative;
+          top: 1px;
         }
       }
       .playback__playPause,
       .playback__volume > .volume__muteUnmute,
-      .playback__extra > .control__fullscreen {
+      .playback__extra > .control__fullscreen,
+      .playback__extra > .control__download {
         display: inline-block;
         height: 30px;
         background: none;
@@ -171,7 +180,7 @@
   }
   .audio__player {
     width: 250px;
-    height: 338px;
+    height: 337px;
     margin: 10px auto;
     background-color: rgb(255, 255, 255);
     border: 1px solid rgb(218, 223, 227);
@@ -183,18 +192,16 @@
       padding: 12px 6px 6px;
       width: 100%;
       .title {
-        font-size: 17px;
         font-weight: 600;
-        color: rgb(36, 41, 46);
       }
       .artist {
-        font-size: 17px;
         font-weight: 300;
-        color: rgb(36, 41, 46);
       }
       .artist,
       .title {
-        width: calc(100% - 20px);
+        width: calc(100% - 45px);
+        font-size: 17px;
+        color: rgb(36, 41, 46);
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -297,13 +304,14 @@
         }
         .playback__extra {
           position: absolute;
-          bottom: 2px;
+          bottom: 3px;
           right: 3px;
           height: 20px;
           line-height: 1;
           .control__breakout {
             font-size: 13px;
             color: rgb(36, 41, 46);
+            text-decoration: none;
           }
         }
         .playback__playPause {
@@ -319,9 +327,12 @@
         }
         .playback__playPause,
         .playback__volume > .volume__muteUnmute,
-        .playback__extra > .control__fullscreen {
+        .playback__extra > .control__fullscreen,
+        .playback__extra > .control__download {
           display: inline-block;
-          height: 30px;
+          &:not(.control__download) {
+            height: 30px;
+          }
           background: none;
           border: none;
           outline: none;

@@ -28,6 +28,9 @@
           <a class="control__breakout" title="View on seperate page" href="{{this.path}}">
             <i class="icon-link-ext"></i>
           </a>
+          <button class="control__download" title="Download this File" onclick="window.download('{{this.directpath}}', '{{this.meta.filename}}', '{{this.meta.mimetype}}')">
+            <i class="icon-download"></i>
+          </button>
         </span>
       </div>
       <h1 class="title">{{this.meta.song.title}}</h1>

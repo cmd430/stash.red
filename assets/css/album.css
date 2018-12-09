@@ -64,8 +64,8 @@ header h1 {
 
 @font-face {
   font-family: "icons";
-  src: url("../font/icons.eot?71483038");
-  src: url("../font/icons.eot?71483038#iefix") format("embedded-opentype"), url("../font/icons.woff2?71483038") format("woff2"), url("../font/icons.woff?71483038") format("woff"), url("../font/icons.ttf?71483038") format("truetype"), url("../font/icons.svg?71483038#icons") format("svg");
+  src: url("../font/icons.eot?29898629");
+  src: url("../font/icons.eot?29898629#iefix") format("embedded-opentype"), url("../font/icons.woff2?29898629") format("woff2"), url("../font/icons.woff?29898629") format("woff"), url("../font/icons.ttf?29898629") format("truetype"), url("../font/icons.svg?29898629#icons") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -73,7 +73,6 @@ header h1 {
   font-family: "icons";
   font-style: normal;
   font-weight: normal;
-  speak: none;
   display: inline-block;
   text-decoration: inherit;
   width: 1em;
@@ -88,116 +87,106 @@ header h1 {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-music::before {
+.icon-download:before {
+  content: "";
+}
+
+.icon-eye-off:before {
+  content: "";
+}
+
+.icon-eye:before {
+  content: "";
+}
+
+.icon-music:before {
   content: "";
 }
 
-/* '' */
-.icon-video::before {
+.icon-video:before {
   content: "";
 }
 
-/* '' */
-.icon-picture::before {
+.icon-picture:before {
   content: "";
 }
 
-/* '' */
-.icon-trash-empty::before {
+.icon-trash-empty:before {
   content: "";
 }
 
-/* '' */
-.icon-ok::before {
+.icon-ok:before {
   content: "";
 }
 
-/* '' */
-.icon-cancel::before {
+.icon-cancel:before {
   content: "";
 }
 
-/* '' */
-.icon-plus::before {
+.icon-plus:before {
   content: "";
 }
 
-/* '' */
-.icon-upload::before {
+.icon-upload:before {
   content: "";
 }
 
-/* '' */
-.icon-pencil::before {
+.icon-pencil:before {
   content: "";
 }
 
-/* '' */
-.icon-cw::before {
+.icon-cw:before {
   content: "";
 }
 
-/* '' */
-.icon-pause::before {
+.icon-pause:before {
   content: "";
 }
 
-/* '' */
-.icon-stop::before {
+.icon-stop:before {
   content: "";
 }
 
-/* '' */
-.icon-play::before {
+.icon-play:before {
   content: "";
 }
 
-/* '' */
-.icon-volume-off::before {
+.icon-volume-off:before {
   content: "";
 }
 
-/* '' */
-.icon-volume-down::before {
+.icon-volume-down:before {
   content: "";
 }
 
-/* '' */
-.icon-volume-up::before {
+.icon-volume-up:before {
   content: "";
 }
 
-/* '' */
-.icon-link::before {
+.icon-link:before {
   content: "";
 }
 
-/* '' */
-.icon-resize-full::before {
+.icon-resize-full:before {
   content: "";
 }
 
-/* '' */
-.icon-resize-small::before {
+.icon-resize-small:before {
   content: "";
 }
 
-/* '' */
-.icon-link-ext::before {
+.icon-link-ext:before {
   content: "";
 }
 
-/* '' */
-.icon-info::before {
+.icon-info:before {
   content: "";
 }
 
-/* '' */
-.icon-trash::before {
+.icon-trash:before {
   content: "";
 }
 
-/* '' */
 #container {
   display: grid;
   margin: 0 auto;
@@ -314,12 +303,21 @@ header h1 {
   line-height: 2.5;
 }
 #container .video__player .video__controls .playback__extra .control__breakout {
+  display: inline-block;
+  height: 30px;
   font-size: 13px;
   color: #24292e;
+  text-decoration: none;
+}
+#container .video__player .video__controls .playback__extra .control__breakout,
+#container .video__player .video__controls .playback__extra .control__download {
+  position: relative;
+  top: 1px;
 }
 #container .video__player .video__controls .playback__playPause,
 #container .video__player .video__controls .playback__volume > .volume__muteUnmute,
-#container .video__player .video__controls .playback__extra > .control__fullscreen {
+#container .video__player .video__controls .playback__extra > .control__fullscreen,
+#container .video__player .video__controls .playback__extra > .control__download {
   display: inline-block;
   height: 30px;
   background: none;
@@ -329,7 +327,8 @@ header h1 {
 }
 #container .video__player .video__controls .playback__playPause i,
 #container .video__player .video__controls .playback__volume > .volume__muteUnmute i,
-#container .video__player .video__controls .playback__extra > .control__fullscreen i {
+#container .video__player .video__controls .playback__extra > .control__fullscreen i,
+#container .video__player .video__controls .playback__extra > .control__download i {
   color: #24292e;
 }
 #container .video__player .video__controls .playback__volume .volume__control {
@@ -361,7 +360,7 @@ header h1 {
 }
 #container .audio__player {
   width: 250px;
-  height: 338px;
+  height: 337px;
   margin: 10px auto;
   background-color: white;
   border: 1px solid #dadfe3;
@@ -375,18 +374,16 @@ header h1 {
   width: 100%;
 }
 #container .audio__player .audio__info .title {
-  font-size: 17px;
   font-weight: 600;
-  color: #24292e;
 }
 #container .audio__player .audio__info .artist {
-  font-size: 17px;
   font-weight: 300;
-  color: #24292e;
 }
 #container .audio__player .audio__info .artist,
 #container .audio__player .audio__info .title {
-  width: calc(100% - 20px);
+  width: calc(100% - 45px);
+  font-size: 17px;
+  color: #24292e;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -480,7 +477,7 @@ header h1 {
 }
 #container .audio__player .audio__info .audio__controls .playback__extra {
   position: absolute;
-  bottom: 2px;
+  bottom: 3px;
   right: 3px;
   height: 20px;
   line-height: 1;
@@ -488,6 +485,7 @@ header h1 {
 #container .audio__player .audio__info .audio__controls .playback__extra .control__breakout {
   font-size: 13px;
   color: #24292e;
+  text-decoration: none;
 }
 #container .audio__player .audio__info .audio__controls .playback__playPause {
   position: absolute;
@@ -502,17 +500,24 @@ header h1 {
 }
 #container .audio__player .audio__info .audio__controls .playback__playPause,
 #container .audio__player .audio__info .audio__controls .playback__volume > .volume__muteUnmute,
-#container .audio__player .audio__info .audio__controls .playback__extra > .control__fullscreen {
+#container .audio__player .audio__info .audio__controls .playback__extra > .control__fullscreen,
+#container .audio__player .audio__info .audio__controls .playback__extra > .control__download {
   display: inline-block;
-  height: 30px;
   background: none;
   border: none;
   outline: none;
   cursor: pointer;
 }
+#container .audio__player .audio__info .audio__controls .playback__playPause:not(.control__download),
+#container .audio__player .audio__info .audio__controls .playback__volume > .volume__muteUnmute:not(.control__download),
+#container .audio__player .audio__info .audio__controls .playback__extra > .control__fullscreen:not(.control__download),
+#container .audio__player .audio__info .audio__controls .playback__extra > .control__download:not(.control__download) {
+  height: 30px;
+}
 #container .audio__player .audio__info .audio__controls .playback__playPause i,
 #container .audio__player .audio__info .audio__controls .playback__volume > .volume__muteUnmute i,
-#container .audio__player .audio__info .audio__controls .playback__extra > .control__fullscreen i {
+#container .audio__player .audio__info .audio__controls .playback__extra > .control__fullscreen i,
+#container .audio__player .audio__info .audio__controls .playback__extra > .control__download i {
   color: #24292e;
 }
 #container .audio__player .audio__artwork {

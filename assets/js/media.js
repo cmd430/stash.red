@@ -211,7 +211,7 @@ function initialiseAudioPlayers () {
     // View on seperate page (hide if viewing the file page)
     if (location.href.includes('/f/')) {
       control__breakout.setAttribute('style', 'display: none;')
-      createCSSSelector('.title, .artist', 'width: 100% !important;')
+      createCSSSelector('.title, .artist', 'width: calc(100% - 20px) !important;')
     }
 
     // Play | Pasue | Replay
