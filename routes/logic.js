@@ -106,7 +106,6 @@ module.exports = function (config, app, multer) {
       return `data:image/png;base64,${thumbnail.toString('base64')}`
     })
     .catch(err => {
-      console.log(err)
       return null
     })
   }
