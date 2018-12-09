@@ -48,9 +48,16 @@ const config = {
     length: 5
   },
   upload: {
-    maxsize: 1024 * 1024 * 500
+    maxsize: 1024 * 1024 * 500,
     // Default 500mb (1024 * 1024 * 500)
     // Size is in Bytes
+    thumbnail: {
+      // Size in pixels
+      // can use null for width OR height
+      // to maintain aspect ratio of image
+      width: 250,
+      height: null
+    }
   },
   storage: {
     database: storageDatabaseDir,

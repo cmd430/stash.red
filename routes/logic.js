@@ -1,6 +1,10 @@
 const fs = require('fs')
 const path = require('path')
 const crypto = require('crypto')
+const ffmpeg = require('ffmpeg-static')
+const simpleThumbnail = require('simple-thumbnail')
+const jsmediatags = require('jsmediatags')
+const sharp = require('sharp')
 
 module.exports = function (config, app, multer) {
 
@@ -42,6 +46,88 @@ module.exports = function (config, app, multer) {
       keyLength = keyLength * 2
     }
     return crypto.randomBytes(keyLength).toString('hex')
+  }
+
+  async function asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array)
+    }
+  }
+
+  async function generateThumbnail (file, type) {
+    return new Promise((resolve, reject) => {
+      switch (type) {
+        case 'image':
+          return resolve(sharp(file).rotate().toBuffer())
+        case 'video':
+          return simpleThumbnail(file, null, '100%', {
+            seek: '00:00:03.00',
+            path: ffmpeg.path
+          })
+          .then(stream => {
+            stream.on('data', data => {
+              return resolve(data)
+            })
+            stream.on('error', err => {
+              return reject(data)
+            })
+          })
+        case 'audio':
+          return new jsmediatags.Reader(file)
+          .setTagsToRead([
+            'picture'
+          ])
+          .read({
+            onSuccess: data => {
+              let picture = data.tags.picture
+              if (picture === undefined){
+                return reject({
+                  message: 'no picute data'
+                })
+              }
+              return resolve(Buffer.from(picture.data))
+            },
+            onError: err => {
+              return reject(err)
+            }
+          })
+      }
+    })
+    .then(buffer => {
+      return sharp(buffer)
+      .resize({
+        width: config.upload.thumbnail.width,
+        height: config.upload.thumbnail.height
+      })
+      .png()
+      .toBuffer()
+    })
+    .then(thumbnail => {
+      return `data:image/png;base64,${thumbnail.toString('base64')}`
+    })
+    .catch(err => {
+      console.log(err)
+      return null
+    })
+  }
+
+  async function getAudioMeta (file) {
+    return new Promise((resolve, reject) => {
+      return new jsmediatags.Reader(file)
+      .setTagsToRead([
+        'title',
+        'album',
+        'artist'
+      ])
+      .read({
+        onSuccess: meta => {
+          return resolve(meta.tags)
+        },
+        onError: err => {
+          return reject(null)
+        }
+      })
+    })
   }
 
   function fileExists (res, filepath, callback) {
@@ -106,28 +192,22 @@ module.exports = function (config, app, multer) {
       if (isAlbum) {
         result.path = `${req.protocol}://${req.hostname}${result.path}`
       } else {
-        let subdomain = app.subdomain[result.meta.mimetype.split('/')[0]].name
+        let subdomain = app.subdomain[result.meta.type].name
         result.path = `${req.protocol}://${req.hostname}${result.path}`
-        result.directpath = `${req.protocol}://${subdomain}.${req.hostname}/${result.file}`
+        result.directpath = `${req.protocol}://${subdomain}.${req.hostname}/${result.meta.filename}`
       }
     }
     let format = result => {
-      if (result.meta.type === 'file') {
-        addPaths(result)
-      } else if (result.meta.type === 'album') {
+      if (result.meta.type === 'album') {
         addPaths(result, true)
         if (result.meta.title === null) {
           result.meta.title = 'Album'
         }
-        result.files.images.forEach(image => {
-          addPaths(image)
+        result.files.forEach(file => {
+          addPaths(file)
         })
-        result.files.audio.forEach(audio => {
-          addPaths(audio)
-        })
-        result.files.videos.forEach(video => {
-          addPaths(video)
-        })
+      } else {
+        addPaths(result)
       }
     }
     if (Array.isArray(results)) {
@@ -140,26 +220,17 @@ module.exports = function (config, app, multer) {
     return results
   }
 
-  function sortByDate(array, assending = true) {
-    return array.sort(function(a, b) {
-      a = new Date(a.meta.uploaded.at)
-      b = new Date(b.meta.uploaded.at)
-      if (assending) {
-        return a > b ? -1 : a < b ? 1 : 0
-      } else {
-        return a>b ? 1 : a<b ? -1 : 0
-      }
-    })
-  }
-
   function queryDB (model, id, callback, searchByUploader = false) {
     return models[model]
     .find((searchByUploader ? (id.length > 0 ? {
-      "meta.uploaded.by": id
+      'meta.uploaded.by': id
     } : {}) : (id.length > 0 ? {
       id: id
     } : {})), {
       _id: 0
+    })
+    .sort({
+      'meta.uploaded.at': 'descending'
     })
     .lean()
     .exec()
@@ -173,8 +244,14 @@ module.exports = function (config, app, multer) {
       }
     })
     .catch(err => {
+      if (err.message === 'Cannot read property \'meta\' of undefined') {
+        // if a user hasnot uploaded anything this error will be thrown
+        return callback({
+          status: 404,
+        })
+      }
       return callback({
-        status: 500
+        status: 500,
       })
     })
   }
@@ -238,14 +315,18 @@ module.exports = function (config, app, multer) {
               if (err) {
                 return error(res, err.status)
               } else {
-                let dynamic = {
-                  server: config.render
-                }
-                dynamic[typeLong] = formatResults(req, data)[0]
-                if (!rawJSON) {
-                  return res.status(200).render(`${typeLong}.hbs`, dynamic)
+                if (data.length > 0) {
+                  let dynamic = {
+                    server: config.render
+                  }
+                  dynamic[typeLong] = formatResults(req, data)[0]
+                  if (!rawJSON) {
+                    return res.status(200).render(`${typeLong}.hbs`, dynamic)
+                  } else {
+                    return res.status(200).json(dynamic[typeLong])
+                  }
                 } else {
-                  return res.status(200).json(dynamic[typeLong])
+                  return error(res, 404)
                 }
               }
             })
@@ -254,19 +335,16 @@ module.exports = function (config, app, multer) {
               if (err) {
                 return error(res, err.status)
               } else {
-                let files = sortByDate(formatResults(req, data))
+                let files = formatResults(req, data)
                 return queryDB('album', id, (err, data) => {
                   if (err) {
                     return error(res, err.status)
                   } else {
-                    let albums = sortByDate(formatResults(req, data))
+                    let albums = formatResults(req, data)
                     let __ids = []
                     albums.forEach(album => {
-                      album.files.images.concat(album.files.audio, album.files.videos).forEach(file => {
+                      album.files.forEach(file => {
                         __ids.push(file.id)
-                        if (!album.firstItem) {
-                          album.firstItem = file
-                        }
                       })
                     })
                     files = files.filter(file  => {
@@ -314,7 +392,7 @@ module.exports = function (config, app, multer) {
       if (user !== false) {
         // We are authorized
         // or auth is disabled
-        multer.any()(req, res, err => {
+        return multer.any()(req, res, async err => {
           if (err) {
             if (err.code === 'LIMIT_FILE_SIZE') {
               err.status = 413
@@ -326,37 +404,40 @@ module.exports = function (config, app, multer) {
           } else {
             let files = req.files
             let isAblum = files.length > 1
-            let images = []
-            let audio = []
-            let videos = []
-            files.forEach(file => {
+            let filesinfo = []
+            await asyncForEach(files, async file => {
               let filename = path.basename(file.path)
               let extension = path.extname(filename)
               let id = path.basename(filename, extension)
               let mimetype = file.mimetype
               let shorttype = mimetype.split('/')[0]
+              let thumbnail = await generateThumbnail(file.path, shorttype)
               let fileinfo = {
                 id: id,
                 meta: {
+                  thumbnail: thumbnail,
+                  filename: filename,
                   originalname: file.originalname,
                   mimetype: mimetype,
                   size: file.size,
                   uploaded: {
-                    by: (typeof user !== null ? user.username : null)
-                  }
+                    by: (typeof user !== null ? user.username : undefined)
+                  },
+                  type: shorttype
                 },
-                file: filename,
                 path: `/f/${id}`
               }
               switch (shorttype) {
-                case 'image':
-                  images.push(fileinfo)
-                  break
                 case 'audio':
-                audio.push(fileinfo)
-                  break
+                  let audioMeta = await getAudioMeta(file.path)
+                  fileinfo.meta.song = {
+                    title: audioMeta.title || 'Unknown',
+                    album: audioMeta.album || 'Unknown',
+                    artist: audioMeta.artist || 'Unknown'
+                  }
+                case 'image':
                 case 'video':
-                videos.push(fileinfo)
+                  filesinfo.push(fileinfo)
                   break
               }
               new models.file(fileinfo)
@@ -378,13 +459,10 @@ module.exports = function (config, app, multer) {
                   uploaded: {
                     by: (typeof user !== null ? user.username : null)
                   },
-                  title: null
+                  title: null,
+                  thumbnail: filesinfo[0].meta.thumbnail
                 },
-                files: {
-                  images: images,
-                  audio: audio,
-                  videos: videos
-                },
+                files: filesinfo,
                 path: `/a/${albumId}`
               }
               new models.album(albuminfo)

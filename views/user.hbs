@@ -9,10 +9,9 @@
     <link rel="icon" type="image/png" href="/img/favicon.png" />
     <link rel="apple-touch-icon" href="/img/favicon.png" />
     <link rel="stylesheet" href="/css/user.css" />
-    <script src="/js/exif.js"></script>
-    <script src="/js/id3.js"></script>
     <script src="/js/common.js"></script>
     <script src="/js/media.js"></script>
+    <script src="/js/user.js"></script>
     <title>{{server.name.fullname}} | {{user.username}}</title>
   </head>
   <body>
@@ -22,22 +21,10 @@
     </header>
     <div id="container">
       {{#each user.albums}}
-        {{#is this 'album'}}
-          {{> album this}}
-        {{/is}}
+        {{> preview this}}
       {{/each}}
       {{#each user.files}}
-        {{#is this 'file'}}
-          {{#is this 'image'}}
-            {{> image this}}
-          {{/is}}
-          {{#is this 'video'}}
-            {{> video this}}
-          {{/is}}
-          {{#is this 'audio'}}
-            {{> audio this}}
-          {{/is}}
-        {{/is}}
+        {{> preview this}}
       {{/each}}
     </div>
   </body>

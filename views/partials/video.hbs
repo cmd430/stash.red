@@ -1,26 +1,31 @@
 <div class="video__player">
-  <video src="{{this.directpath}}"></video>
+  <video>
+    <source src="{{this.directpath}}" type="{{this.meta.mimetype}}" />
+  </video>
   <div class="video__controls">
-    <button class="control__playPause paused" title="Play">
+    <button class="playback__playPause paused" title="Play">
       <i class="icon-play"></i>
     </button>
-    <span class="video__playback">
-      <span class="playback__clock">
-        <span class="playback__time">0:00</span> / <span class="playback__length">0:00</span>
-      </span>
-      <input class="playback__progress" type="range" min="0" max="100" step="0.001" value="0" />
+    <span class="playback__clock">
+      <span class="playback__time">0:00</span> / <span class="playback__length">0:00</span>
     </span>
-    <span class="video__volume">
+    <span class="playback__bar">
+      <span class="playback__buffer"></span>
+      <span class="playback__progress"></span>
+    </span>
+    <span class="playback__volume">
       <button class="volume__muteUnmute unmuted" title="Mute">
         <i class="icon-volume-up"></i>
       </button>
       <input class="volume__control" type="range" min="0" max="1" step="0.01" value="1" />
     </span>
-    <button class="control__fullscreen" title="Fullscreen">
-      <i class="icon-resize-full"></i>
-    </button>
-    <a class="control__breakout" title="View on seperate page" href="{{this.path}}">
-      <i class="icon-link-ext"></i>
-    </a>
+    <span class="playback__extra">
+      <button class="control__fullscreen" title="Fullscreen">
+        <i class="icon-resize-full"></i>
+      </button>
+      <a class="control__breakout" title="View on seperate page" href="{{this.path}}">
+        <i class="icon-link-ext"></i>
+      </a>
+    </span>
   </div>
 </div>

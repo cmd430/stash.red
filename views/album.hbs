@@ -9,8 +9,6 @@
     <link rel="icon" type="image/png" href="/img/favicon.png" />
     <link rel="apple-touch-icon" href="/img/favicon.png" />
     <link rel="stylesheet" href="/css/album.css" />
-    <script src="/js/exif.js"></script>
-    <script src="/js/id3.js"></script>
     <script src="/js/common.js"></script>
     <script src="/js/media.js"></script>
     <title>{{server.name.fullname}} | {{album.meta.title}}</title>
@@ -21,14 +19,16 @@
       <h1>{{album.meta.title}}</h1>
     </header>
     <div id="container">
-      {{#each album.files.images}}
-        {{> image this}}
-      {{/each}}
-      {{#each album.files.videos}}
-        {{> video this}}
-      {{/each}}
-      {{#each album.files.audio}}
-        {{> audio this}}
+      {{#each album.files}}
+        {{#is this 'image'}}
+          {{> image this}}
+        {{/is}}
+        {{#is this 'video'}}
+          {{> video this}}
+        {{/is}}
+        {{#is this 'audio'}}
+          {{> audio this}}
+        {{/is}}
       {{/each}}
     </div>
   </body>

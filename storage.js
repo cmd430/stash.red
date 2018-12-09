@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const crypto = require('crypto')
+const sharp = require('sharp')
 
 function getDestination (req, file, config, callback) {
   let mimetype = file.mimetype
@@ -27,12 +28,20 @@ function StreamedStorage (config, app) {
 }
 
 StreamedStorage.prototype._handleFile = function _handleFile (req, file, callback) {
+  let __success = false
   this.getDestination(req, file, this.config, (err, savepath) => {
     if (err) {
       return callback(err)
     } else {
       let outStream = fs.createWriteStream(savepath)
-      file.stream.pipe(outStream)
+      if (file.mimetype.split('/')[0] === 'image') {
+        let fixRoation = sharp().rotate()
+        file.stream
+        .pipe(fixRoation)
+        .pipe(outStream)
+      } else {
+        file.stream.pipe(outStream)
+      }
       outStream.on('error', err => {
         let status = 500
         if (err.errno === 'ENOSPC') {
@@ -43,16 +52,19 @@ StreamedStorage.prototype._handleFile = function _handleFile (req, file, callbac
         })
       })
       outStream.on('finish', () => {
+        __success = true
         callback(null, {
           path: savepath,
           size: outStream.bytesWritten
         })
       })
       req.on('close', () => {
-        outStream.close()
-        this._removeFile(req, {
-          path: savepath
-        }, callback)
+        if (!__success) {
+          outStream.close()
+          this._removeFile(req, {
+            path: savepath
+          }, callback)
+        }
       })
     }
   })

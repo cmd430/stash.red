@@ -18,6 +18,10 @@ body {
   opacity: 0;
 }
 
+.no_transition {
+  transition: none !important;
+}
+
 #logo {
   text-align: center;
   a {

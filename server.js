@@ -77,25 +77,14 @@ Promise.all(Object.keys(config.storage).map(key => {
     return JSON.stringify(data)
   })
   hbs.registerHelper('typeof', file => {
-    let type = file.meta.mimetype.split('/')[0]
+    let type = file.meta.type
     return `${type.charAt(0).toUpperCase()}${type.slice(1)}`
   })
   hbs.registerHelper('is', (left_value, right_value, options) => {
-    if (arguments.length < 3) {
-      throw new Error('Handlebars \'is\' helper needs 2 parameters')
-    }
-    if (right_value === 'album' || right_value === 'file') {
-      if (left_value.meta.type === right_value) {
+    if (left_value.meta.type === right_value) {
         return options.fn(left_value)
-      } else {
-          return options.inverse(this)
-      }
     } else {
-      if (left_value.meta.mimetype.includes(right_value)) {
-          return options.fn(left_value)
-      } else {
-          return options.inverse(this)
-      }
+        return options.inverse(this)
     }
   })
   hbs.registerPartials(`${config.handelbars.partials}`)
