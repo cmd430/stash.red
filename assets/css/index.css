@@ -7,7 +7,7 @@
 body {
   background-color: #fafafa;
   font-family: "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  overflow: overlay;
+  overflow: hidden overlay;
 }
 
 .hidden {
