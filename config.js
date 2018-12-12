@@ -52,6 +52,8 @@ const config = {
     // Default 500mb (1024 * 1024 * 500)
     // Size is in Bytes
     thumbnail: {
+      // if diabled shows generic filetype placeholder
+      enabled: true,
       // Size in pixels
       // can use null for width OR height
       // to maintain aspect ratio of image

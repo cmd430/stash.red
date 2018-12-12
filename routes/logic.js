@@ -410,7 +410,10 @@ module.exports = function (config, app, multer) {
               let id = path.basename(filename, extension)
               let mimetype = file.mimetype
               let shorttype = mimetype.split('/')[0]
-              let thumbnail = await generateThumbnail(file.path, shorttype)
+              let thumbnail = null
+              if (config.upload.thumbnail.enabled) {
+                thumbnail = await generateThumbnail(file.path, shorttype)
+              }
               let fileinfo = {
                 id: id,
                 meta: {
