@@ -59,7 +59,7 @@ module.exports = function (config, app, multer) {
     return new Promise((resolve, reject) => {
       switch (type) {
         case 'image':
-          return resolve(sharp(file).rotate().toBuffer())
+          return resolve(sharp(file).toBuffer())
         case 'video':
           return simpleThumbnail(file, null, '100%', {
             seek: '00:00:03.00',
