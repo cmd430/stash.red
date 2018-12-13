@@ -63,7 +63,10 @@ const config = {
       // can use null for width OR height
       // to maintain aspect ratio of image
       width: 250,
-      height: null,
+      height: 250,
+      fit: 'cover',
+      position: 'entropy',
+      // http://sharp.pixelplumbing.com/en/stable/api-resize/#parameters
       concurrency: 1
       // Number of threads for thumbnail generation
       // 0 = Default (4)

@@ -98,7 +98,9 @@ module.exports = function (config, app, multer) {
       return sharp(buffer)
       .resize({
         width: config.upload.thumbnail.width,
-        height: config.upload.thumbnail.height
+        height: config.upload.thumbnail.height,
+        fit: config.upload.thumbnail.fit,
+        position: config.upload.thumbnail.position
       })
       .png()
       .toBuffer()
