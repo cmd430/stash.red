@@ -32,7 +32,6 @@ body {
     line-height: 75px;
     justify-self: start;
     user-select: none;
-    cursor: default;
     span {
       font-weight: bold;
     }
@@ -46,9 +45,6 @@ header {
   padding: 0 8px;
   #logo {
     text-align: left;
-    a {
-      cursor: pointer;
-    }
   }
   h1 {
     color: rgb(119, 119, 119);
