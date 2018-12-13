@@ -33,8 +33,11 @@ const app = {
     log: function (message) {
       return console.log(`[${new Date().toUTCString()}][${app.domain.name}] ${message}`)
     },
+    debug: function (message) {
+      return console.log('\x1b[1m\x1b[33m%s\x1b[0m', `[${new Date().toUTCString()}][${app.domain.name}] ${message}`)
+    },
     error: function (error) {
-      return console.error(`[${new Date().toUTCString()}][${app.domain.name}] ${error.message}`)
+      return console.log(`[${new Date().toUTCString()}][${app.domain.name}] ${errr.message}`)
     }
   }
 }

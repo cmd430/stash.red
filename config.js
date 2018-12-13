@@ -24,7 +24,8 @@ const config = {
       // could be set to 'i' and the
       // subdomain would change from
       // 'image.host.com' to `i.host.com`
-    }
+    },
+    debug: false
   },
   handelbars: {
     views: viewsDir,
