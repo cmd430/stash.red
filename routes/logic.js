@@ -55,6 +55,7 @@ module.exports = function (config, app, multer) {
   }
 
   async function generateThumbnail (file, type) {
+    sharp.concurrency(config.upload.thumbnail.concurrency)
     return new Promise((resolve, reject) => {
       switch (type) {
         case 'image':

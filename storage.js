@@ -35,9 +35,9 @@ StreamedStorage.prototype._handleFile = function _handleFile (req, file, callbac
     } else {
       let outStream = fs.createWriteStream(savepath)
       if (file.mimetype.split('/')[0] === 'image') {
-        let fixRoation = sharp().rotate()
+        sharp.concurrency(this.config.upload.concurrency)
         file.stream
-        .pipe(fixRoation)
+        .pipe(sharp().rotate())
         .pipe(outStream)
       } else {
         file.stream.pipe(outStream)
