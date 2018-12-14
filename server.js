@@ -78,6 +78,7 @@ Promise.all(Object.keys(config.storage).map(key => {
 }))
 .then(() => {
   // Start mongod
+  app.console.debug('Starting mongod')
   return new Promise((resolve, reject) => {
     let mongo = spawn('mongod', [
       `--dbpath=${config.storage.database}`
@@ -91,14 +92,17 @@ Promise.all(Object.keys(config.storage).map(key => {
   })
 })
 .then(() => {
+  app.console.debug('Started mongod')
   // Connect to mongo
   let mongoConnection = `${config.mongo.host}:${config.mongo.port}`
   if (config.mongo.auth.enabled) {
     mongoConnection = `${config.mongo.user}:${config.mongo.pass}@${config.mongo.host}:${config.mongo.port}`
   }
+  app.console.debug('Connecting to mongodb')
   return app.db.connect(`mongodb://${mongoConnection}/${config.mongo.db}`, config.mongo.options)
 })
 .then(() => {
+  app.console.debug('Connected to mongodb')
   // Start HTTP server
   hbs.registerHelper('json', data => {
     return JSON.stringify(data)
@@ -132,6 +136,7 @@ Promise.all(Object.keys(config.storage).map(key => {
 
   require('./routes/routes.js')(config, multer, app)
 
+  app.console.debug('Starting Express')
   return new Promise ((resolve, reject) => {
     app.domain.router.listen(config.server.port)
     .on('listening', () => {

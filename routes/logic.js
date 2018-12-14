@@ -55,6 +55,7 @@ module.exports = function (config, app, multer) {
   }
 
   async function generateThumbnail (file, type) {
+    app.console.debug(`Generating thumbnail for file: ${path.basename(file)}`)
     sharp.concurrency(config.upload.thumbnail.concurrency)
     return new Promise((resolve, reject) => {
       switch (type) {
@@ -95,6 +96,7 @@ module.exports = function (config, app, multer) {
       }
     })
     .then(buffer => {
+      app.console.debug(`Scaling thumbnail for file: ${path.basename(file)}`)
       return sharp(buffer)
       .resize({
         width: config.upload.thumbnail.width,
@@ -106,14 +108,17 @@ module.exports = function (config, app, multer) {
       .toBuffer()
     })
     .then(thumbnail => {
+      app.console.debug(`Generated thumbnail for file: ${path.basename(file)}`)
       return `data:image/png;base64,${thumbnail.toString('base64')}`
     })
     .catch(err => {
+      app.console.debug(`Unable to generate thumbnail for file: ${path.basename(file)}`)
       return null
     })
   }
 
   async function getAudioMeta (file) {
+    app.console.debug(`Processing audio meta for file: ${path.basename(file)}`)
     return new Promise((resolve, reject) => {
       return new jsmediatags.Reader(file)
       .setTagsToRead([
@@ -123,9 +128,11 @@ module.exports = function (config, app, multer) {
       ])
       .read({
         onSuccess: meta => {
+          app.console.debug(`Processed audio meta for file: ${path.basename(file)}`)
           return resolve(meta.tags)
         },
         onError: err => {
+          app.console.debug(`Unable to process audio meta for file: ${path.basename(file)}`)
           return reject(null)
         }
       })
@@ -445,11 +452,14 @@ module.exports = function (config, app, multer) {
                   filesinfo.push(fileinfo)
                   break
               }
+              app.console.debug(`Adding database entry for file: ${filename}`)
               new models.file(fileinfo)
               .save((err, file) => {
                 if (err) {
+                  app.console.debug(`Unable to add database entry for file: ${filename}`)
                   return error(res, 500)
                 } else {
+                  app.console.debug(`Added database entry for file: ${filename}`)
                   if (!isAblum) {
                     return res.status(200).json(formatResults(req, file))
                   }
@@ -470,11 +480,14 @@ module.exports = function (config, app, multer) {
                 files: filesinfo,
                 path: `/a/${albumId}`
               }
+              app.console.debug(`Adding database entry for album: ${albumId}`)
               new models.album(albuminfo)
               .save((err, album) => {
                 if (err) {
+                  app.console.debug(`Unable to add database entry for album: ${albumId}`)
                   return error(res, 500)
                 } else {
+                  app.console.debug(`Added database entry for album: ${albumId}`)
                   return res.status(200).json(formatResults(req, album))
                 }
               })
