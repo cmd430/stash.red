@@ -156,7 +156,7 @@ Promise.all(Object.keys(config.storage).map(key => {
   let diff = process.hrtime(startTime)
   let milliseconds = (diff[0] * 1e9 + diff[1]) / 1000000
   let seconds = ((milliseconds % 60000) / 1000).toFixed(1)
-  app.console.log(`Server started in ${(seconds >= 1 ? `${seconds}s` : `${milliseconds}ms`)}`, 'green')
+  app.console.log(`Server started in ${(seconds >= 1 ? `${seconds}s` : `${milliseconds.toFixed(1)}ms`)}`, 'green')
 })
 .catch(err => {
   // Something went wrong
