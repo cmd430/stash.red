@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('Username', response.meta.uploaded.by)
       let redirect = copyText = `${response.path}`
       if (setting__copylink.checked) {
-        if (response.meta.type === 'file' && response.meta.mimetype.includes('image')) {
+        if (response.meta.type === 'image') {
           copyText = `${response.directpath}`
         }
         if (navigator.clipboard) {
