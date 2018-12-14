@@ -2,6 +2,7 @@ const spawn = require('child_process').spawn
 const express = require('express')
 const logger = require('morgan')
 const responseTime = require('response-time')
+const chalk = require('chalk')
 const subdomain = require('express-subdomain')
 const cors = require('cors')
 const hbs = require('hbs')
@@ -30,14 +31,19 @@ const app = {
   db: mongoose,
   console: {
     // Console functions with extra formatting
-    log: function (message) {
-      return console.log(`[${new Date().toUTCString()}][${app.domain.name}] ${message}`)
+    log: function (message, color = 'cyan') {
+      return console.log( `[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
     },
     debug: function (message) {
-      return console.log('\x1b[1m\x1b[33m%s\x1b[0m', `[${new Date().toUTCString()}][${app.domain.name}] ${message}`)
+      if (config.server.debug) {
+        return console.debug(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.magenta(message)}`)
+      }
     },
-    error: function (error) {
-      return console.log(`[${new Date().toUTCString()}][${app.domain.name}] ${errr.message}`)
+    warn: function (warn, stack = false) {
+      return console.error(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.yellow((stack ? warn.stack : warn.message))}`)
+    },
+    error: function (error, stack = false) {
+      return console.error(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.red((stack ? error.stack : error.message))}`)
     }
   }
 }
@@ -47,13 +53,36 @@ const multer = require('multer')({
     fileSize: config.upload.maxsize
   }
 })
-
+chalk.enabled = config.server.colors
+process.on('warning', warning => {
+  if (config.server.debug) {
+    // Only show warnings when debuging
+    app.console.warn(warning)
+  }
+})
+// Catch any unhandled errors
+// and add timestamp to output
+// before killing application
+process.on('uncaughtException', error => {
+  app.console.error(error, true)
+  process.exit(1)
+})
+process.on('unhandledRejection', error => {
+  app.console.error(error, true)
+  process.exit(1)
+})
+// Only logs if Debug is infact enabled
+app.console.debug('Debug enabled')
+app.console.log(`Server starting`, 'cyan')
+const startTime = process.hrtime()
+// Main Startup chain
 Promise.all(Object.keys(config.storage).map(key => {
   // Create any missing directories
   return mkdir(config.storage[key])
 }))
 .then(() => {
   // Start mongod
+  app.console.debug('Starting mongod')
   return new Promise((resolve, reject) => {
     let mongo = spawn('mongod', [
       `--dbpath=${config.storage.database}`
@@ -62,19 +91,22 @@ Promise.all(Object.keys(config.storage).map(key => {
       return resolve()
     })
     mongo.on('error', err => {
-      return reject(new Error('Could not start MongoDB'))
+      return reject(new Error(`Could not start MongoDB: ${err.message}`))
     })
   })
 })
 .then(() => {
+  app.console.debug('Started mongod')
   // Connect to mongo
   let mongoConnection = `${config.mongo.host}:${config.mongo.port}`
   if (config.mongo.auth.enabled) {
     mongoConnection = `${config.mongo.user}:${config.mongo.pass}@${config.mongo.host}:${config.mongo.port}`
   }
+  app.console.debug('Connecting to mongodb')
   return app.db.connect(`mongodb://${mongoConnection}/${config.mongo.db}`, config.mongo.options)
 })
 .then(() => {
+  app.console.debug('Connected to mongodb')
   // Start HTTP server
   hbs.registerHelper('json', data => {
     return JSON.stringify(data)
@@ -108,6 +140,7 @@ Promise.all(Object.keys(config.storage).map(key => {
 
   require('./routes/routes.js')(config, multer, app)
 
+  app.console.debug('Starting Express')
   return new Promise ((resolve, reject) => {
     app.domain.router.listen(config.server.port)
     .on('listening', () => {
@@ -120,7 +153,10 @@ Promise.all(Object.keys(config.storage).map(key => {
 })
 .then(() => {
   // Server is now running
-  app.console.log(`Server started`)
+  let diff = process.hrtime(startTime)
+  let milliseconds = (diff[0] * 1e9 + diff[1]) / 1000000
+  let seconds = ((milliseconds % 60000) / 1000).toFixed(1)
+  app.console.log(`Server started in ${(seconds >= 1 ? `${seconds}s` : `${milliseconds}ms`)}`, 'green')
 })
 .catch(err => {
   // Something went wrong
