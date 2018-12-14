@@ -71,7 +71,10 @@ process.on('unhandledRejection', error => {
   app.console.error(error, true)
   process.exit(1)
 })
+// Only logs if Debug is infact enabled
+app.console.debug('Debug enabled')
 
+// Main Startup chain
 Promise.all(Object.keys(config.storage).map(key => {
   // Create any missing directories
   return mkdir(config.storage[key])
