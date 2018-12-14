@@ -74,6 +74,7 @@ process.on('unhandledRejection', error => {
 // Only logs if Debug is infact enabled
 app.console.debug('Debug enabled')
 app.console.log(`Server starting`, 'cyan')
+const startTime = process.hrtime()
 // Main Startup chain
 Promise.all(Object.keys(config.storage).map(key => {
   // Create any missing directories
@@ -152,7 +153,10 @@ Promise.all(Object.keys(config.storage).map(key => {
 })
 .then(() => {
   // Server is now running
-  app.console.log(`Server started`, 'green')
+  let diff = process.hrtime(startTime)
+  let milliseconds = (diff[0] * 1e9 + diff[1]) / 1000000
+  let seconds = ((milliseconds % 60000) / 1000).toFixed(1)
+  app.console.log(`Server started in ${(seconds >= 1 ? `${seconds}s` : `${milliseconds}ms`)}`, 'green')
 })
 .catch(err => {
   // Something went wrong
