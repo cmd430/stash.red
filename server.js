@@ -73,7 +73,7 @@ process.on('unhandledRejection', error => {
 })
 // Only logs if Debug is infact enabled
 app.console.debug('Debug enabled')
-
+app.console.log(`Server starting`, 'cyan')
 // Main Startup chain
 Promise.all(Object.keys(config.storage).map(key => {
   // Create any missing directories
