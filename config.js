@@ -1,4 +1,5 @@
 const path = require('path')
+const chalk = require('chalk')
 
 const webRoot = __dirname
 const assetDir = path.join(webRoot, 'assets')
@@ -9,7 +10,22 @@ const storageDatabaseDir = path.join(storageBaseDir, 'database')
 const storageImageDir = path.join(storageBaseDir, 'image')
 const storageAudioDir = path.join(storageBaseDir, 'audio')
 const storageVideoDir = path.join(storageBaseDir, 'video')
+
 const serverName = 'stash.red'
+const logFormat = (tokens, req, res) => {
+  // https://www.npmjs.com/package/morgan#tokens
+  let date = tokens['date'](req, res, 'web')
+  let method = tokens['method'](req, res)
+  let url = tokens['url'](req, res)
+  let status = tokens['status'](req, res)
+  let responseTime = tokens['response-time'](req, res)
+  let contentLength = tokens['res'](req, res, 'content-length')
+
+  status = chalk.keyword(status >= 500 ? 'red' : status >= 400 ? 'yellow' : status >= 300 ? 'cyan' : 'green')(status)
+  contentLength = contentLength ? `- ${contentLength}` : ''
+
+  return `[${date}][${serverName}] ${method} ${status} ${url} ${responseTime} ms ${contentLength}`
+}
 
 const config = {
   server: {
@@ -25,7 +41,8 @@ const config = {
       // subdomain would change from
       // 'image.host.com' to `i.host.com`
     },
-    debug: false
+    debug: false,
+    colors: true
   },
   handelbars: {
     views: viewsDir,
@@ -103,8 +120,8 @@ const config = {
       useFindAndModify: false
     }
   },
-  log: `[:date[web]][${serverName}] :method :url :status :response-time ms - :res[content-length]`
-  // https://www.npmjs.com/package/morgan#tokens
+  log: logFormat
 }
 
 module.exports = config
+chalk.enabled = config.server.colors

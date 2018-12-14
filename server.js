@@ -2,6 +2,7 @@ const spawn = require('child_process').spawn
 const express = require('express')
 const logger = require('morgan')
 const responseTime = require('response-time')
+const chalk = require('chalk')
 const subdomain = require('express-subdomain')
 const cors = require('cors')
 const hbs = require('hbs')
@@ -30,14 +31,19 @@ const app = {
   db: mongoose,
   console: {
     // Console functions with extra formatting
-    log: function (message) {
-      return console.log(`[${new Date().toUTCString()}][${app.domain.name}] ${message}`)
+    log: function (message, color = 'cyan') {
+      return console.log( `[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
     },
     debug: function (message) {
-      return console.log('\x1b[1m\x1b[33m%s\x1b[0m', `[${new Date().toUTCString()}][${app.domain.name}] ${message}`)
+      if (config.server.debug) {
+        return console.debug(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.magenta(message)}`)
+      }
     },
-    error: function (error) {
-      return console.log(`[${new Date().toUTCString()}][${app.domain.name}] ${errr.message}`)
+    warn: function (warn, stack = false) {
+      return console.error(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.yellow((stack ? warn.stack : warn.message))}`)
+    },
+    error: function (error, stack = false) {
+      return console.error(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.red((stack ? error.stack : error.message))}`)
     }
   }
 }
@@ -46,6 +52,24 @@ const multer = require('multer')({
   limits: {
     fileSize: config.upload.maxsize
   }
+})
+chalk.enabled = config.server.colors
+process.on('warning', warning => {
+  if (config.server.debug) {
+    // Only show warnings when debuging
+    app.console.warn(warning)
+  }
+})
+// Catch any unhandled errors
+// and add timestamp to output
+// before killing application
+process.on('uncaughtException', error => {
+  app.console.error(error, true)
+  process.exit(1)
+})
+process.on('unhandledRejection', error => {
+  app.console.error(error, true)
+  process.exit(1)
 })
 
 Promise.all(Object.keys(config.storage).map(key => {
@@ -62,7 +86,7 @@ Promise.all(Object.keys(config.storage).map(key => {
       return resolve()
     })
     mongo.on('error', err => {
-      return reject(new Error('Could not start MongoDB'))
+      return reject(new Error(`Could not start MongoDB: ${err.message}`))
     })
   })
 })
@@ -120,7 +144,7 @@ Promise.all(Object.keys(config.storage).map(key => {
 })
 .then(() => {
   // Server is now running
-  app.console.log(`Server started`)
+  app.console.log(`Server started`, 'green')
 })
 .catch(err => {
   // Something went wrong
