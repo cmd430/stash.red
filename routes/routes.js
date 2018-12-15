@@ -16,7 +16,7 @@ module.exports = (config, multer, app) => {
   .put(logic.notImplemented)
   .post(logic.notImplemented)
   .patch(logic.notImplemented)
-  .delete(logic.notImplemented)
+  .delete(logic.removeFile)
 
   // Upload File(s)
   app.domain.router.route('/upload')
@@ -59,6 +59,14 @@ module.exports = (config, multer, app) => {
 
   app.subdomain.video.router.route('/*')
   .get(logic.sendAsset)
+  .put(logic.notImplemented)
+  .post(logic.notImplemented)
+  .patch(logic.notImplemented)
+  .delete(logic.notImplemented)
+
+  // Downloads
+  app.subdomain.download.router.route('/:type/:file')
+  .get(logic.downloadFile)
   .put(logic.notImplemented)
   .post(logic.notImplemented)
   .patch(logic.notImplemented)

@@ -299,17 +299,15 @@ header h1 {
   height: 30px;
   line-height: 2.5;
 }
-#container .video__player .video__controls .playback__extra .control__breakout {
+#container .video__player .video__controls .playback__extra .control__breakout,
+#container .video__player .video__controls .playback__extra .control__download {
+  position: relative;
   display: inline-block;
+  top: 1px;
   height: 30px;
   font-size: 13px;
   color: #24292e;
   text-decoration: none;
-}
-#container .video__player .video__controls .playback__extra .control__breakout,
-#container .video__player .video__controls .playback__extra .control__download {
-  position: relative;
-  top: 1px;
 }
 #container .video__player .video__controls .playback__playPause,
 #container .video__player .video__controls .playback__volume > .volume__muteUnmute,
@@ -500,16 +498,11 @@ header h1 {
 #container .audio__player .audio__info .audio__controls .playback__extra > .control__fullscreen,
 #container .audio__player .audio__info .audio__controls .playback__extra > .control__download {
   display: inline-block;
+  height: 30px;
   background: none;
   border: none;
   outline: none;
   cursor: pointer;
-}
-#container .audio__player .audio__info .audio__controls .playback__playPause:not(.control__download),
-#container .audio__player .audio__info .audio__controls .playback__volume > .volume__muteUnmute:not(.control__download),
-#container .audio__player .audio__info .audio__controls .playback__extra > .control__fullscreen:not(.control__download),
-#container .audio__player .audio__info .audio__controls .playback__extra > .control__download:not(.control__download) {
-  height: 30px;
 }
 #container .audio__player .audio__info .audio__controls .playback__playPause i,
 #container .audio__player .audio__info .audio__controls .playback__volume > .volume__muteUnmute i,

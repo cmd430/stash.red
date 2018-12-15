@@ -34,7 +34,8 @@ const config = {
     subdomains: {
       image: 'image',
       audio: 'audio',
-      video: 'video'
+      video: 'video',
+      download: 'download'
       // can change the subdomain for
       // the file types here IE. 'image'
       // could be set to 'i' and the

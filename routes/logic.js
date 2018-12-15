@@ -197,23 +197,33 @@ module.exports = function (config, app, multer) {
 
   function formatResults (req, results) {
     // Change paths to suit current host
-    let addPaths = (result, isAlbum = false) => {
-      if (isAlbum) {
+    let addPaths = (result, isFile = true) => {
+      if (!isFile) {
         result.path = `${req.protocol}://${req.hostname}${result.path}`
       } else {
-        let subdomain = app.subdomain[result.meta.type].name
+        let type = result.meta.type
+        let subdomain = app.subdomain[type].name
         result.path = `${req.protocol}://${req.hostname}${result.path}`
         result.directpath = `${req.protocol}://${subdomain}.${req.hostname}/${result.meta.filename}`
+        result.downloadpath = `${req.protocol}://${app.subdomain.download.name}.${req.hostname}/${type}/${result.meta.filename}`
       }
     }
     let format = result => {
       if (result.meta.type === 'album') {
-        addPaths(result, true)
+        addPaths(result, false)
         if (result.meta.title === null) {
           result.meta.title = 'Album'
         }
         result.files.forEach(file => {
           addPaths(file)
+        })
+      } else if (result.meta.type === 'user') {
+        addPaths(result, false)
+        result.files.forEach(file => {
+          addPaths(file)
+        })
+        result.albums.forEach(album => {
+          format(album)
         })
       } else {
         addPaths(result)
@@ -229,15 +239,81 @@ module.exports = function (config, app, multer) {
     return results
   }
 
-  function queryDB (model, id, callback, searchByUploader = false) {
-    return models[model]
-    .find((searchByUploader ? (id.length > 0 ? {
-      'meta.uploaded.by': id
-    } : {}) : (id.length > 0 ? {
+  async function getDBFiles (id, callback, searchByUploader = false, filesInAlbum = false) {
+    return queryDB('file', id, callback, searchByUploader, filesInAlbum)
+  }
+
+  async function getDBAlbum (id, callback, searchByUploader = false) {
+    return queryDB('album', id, async (err, result) => {
+      if (err) {
+        return callback(err)
+      }
+      await asyncForEach(result, async album => {
+        await getDBFiles(album.id, async (err, f_result) => {
+          if (err) {
+            return callback(err)
+          }
+          album.files = f_result
+          album.meta.thumbnail = album.files[0].meta.thumbnail
+        }, false, true)
+      })
+
+      return callback(null, result)
+    }, searchByUploader)
+  }
+
+  async function getDBUser (id, callback) {
+    let albums = await getDBAlbum(id, async (err, a_data) => {
+      if (err) {
+        return callback(err)
+      }
+      return a_data
+    }, true)
+    let files = await getDBFiles(id, async (err, f_data) => {
+      if (err) {
+        return callback(err)
+      }
+      return f_data
+    }, true, false)
+    let user = [{
+      meta: {
+        username: id,
+        type: 'user'
+      },
+      albums: albums,
+      files: files,
+      path: `/u/${id}`
+    }]
+    if (albums.concat(files).length === 0) {
+      return callback(null, [])
+    }
+    return callback(null, user)
+  }
+
+  async function queryDB (model, id, callback, searchByUploader = false, filesInAlbum = false) {
+    var dbModel = models[model].find({
       id: id
-    } : {})), {
+    }, {
       _id: 0
     })
+    if (searchByUploader) {
+      var dbModel = models[model].find({
+        'meta.uploaded.by': id,
+        'meta.album': {
+          $exists : false
+        }
+      }, {
+        _id: 0
+      })
+    }
+    if (filesInAlbum) {
+      var dbModel = models[model].find({
+        'meta.album': id
+      }, {
+        _id: 0
+      })
+    }
+    return dbModel
     .sort({
       'meta.uploaded.at': 'descending'
     })
@@ -245,7 +321,7 @@ module.exports = function (config, app, multer) {
     .exec()
     .then(result => {
       if (result) {
-          return callback(null, result)
+        return callback(null, result)
       } else {
         return callback({
           status: 404
@@ -306,7 +382,7 @@ module.exports = function (config, app, multer) {
       let type = req.params.type
       if (type === undefined) {
         // Serve our Homepage
-        res.render('index.hbs', {
+        return res.render('index.hbs', {
           server: config.render
         })
       } else {
@@ -319,68 +395,11 @@ module.exports = function (config, app, multer) {
         }
         switch (type) {
           case 'f': // File
+            return getDBFiles(id, render)
           case 'a': // Album
-            return queryDB(typeLong, id, (err, data) => {
-              if (err) {
-                return error(res, err.status)
-              } else {
-                if (data.length > 0) {
-                  let dynamic = {
-                    server: config.render
-                  }
-                  dynamic[typeLong] = formatResults(req, data)[0]
-                  if (!rawJSON) {
-                    return res.status(200).render(`${typeLong}.hbs`, dynamic)
-                  } else {
-                    return res.status(200).json(dynamic[typeLong])
-                  }
-                } else {
-                  return error(res, 404)
-                }
-              }
-            })
+            return getDBAlbum(id, render)
           case 'u': // User
-            return queryDB('file', id, (err, data) => {
-              if (err) {
-                return error(res, err.status)
-              } else {
-                let files = formatResults(req, data)
-                return queryDB('album', id, (err, data) => {
-                  if (err) {
-                    return error(res, err.status)
-                  } else {
-                    let albums = formatResults(req, data)
-                    let __ids = []
-                    albums.forEach(album => {
-                      album.files.forEach(file => {
-                        __ids.push(file.id)
-                      })
-                    })
-                    files = files.filter(file  => {
-                      return !__ids.includes(file.id)
-                    })
-                    let user = {}
-                    let total = files.concat(albums)
-                    user.username = total[0].meta.uploaded.by
-                    user.albums = albums
-                    user.files = files
-                    if (total.length > 0) {
-                      if (!rawJSON) {
-                        let dynamic = {
-                          server: config.render
-                        }
-                        dynamic[typeLong] = user
-                        return res.status(200).render(`${typeLong}.hbs`, dynamic)
-                      } else {
-                        return res.status(200).json(user)
-                      }
-                    } else {
-                      return error(res, 404)
-                    }
-                  }
-                }, true)
-              }
-            }, true)
+            return getDBUser(id, render)
           default: // Error
             if (!rawJSON) {
               // We are probably trying to load an asset
@@ -392,6 +411,26 @@ module.exports = function (config, app, multer) {
             } else {
               return error(res, 404)
             }
+        }
+        // Do the render from results
+        function render (err, data) {
+          if (err) {
+            return error(res, err.status)
+          } else {
+            if (data.length > 0) {
+              let dynamic = {
+                server: config.render
+              }
+              dynamic[typeLong] = formatResults(req, data)[0]
+              if (!rawJSON) {
+                return res.status(200).render(`${typeLong}.hbs`, dynamic)
+              } else {
+                return res.status(200).json(dynamic[typeLong])
+              }
+            } else {
+              return error(res, 404)
+            }
+          }
         }
       }
     },
@@ -412,7 +451,10 @@ module.exports = function (config, app, multer) {
             return error(res, err.status)
           } else {
             let files = req.files
-            let isAblum = files.length > 1
+            let albumId = null
+            if (files.length > 1) {
+              albumId = generateID()
+            }
             let filesinfo = []
             await asyncForEach(files, async file => {
               let filename = path.basename(file.path)
@@ -449,6 +491,9 @@ module.exports = function (config, app, multer) {
                   }
                 case 'image':
                 case 'video':
+                  if (albumId) {
+                    fileinfo.meta.album = albumId
+                  }
                   filesinfo.push(fileinfo)
                   break
               }
@@ -460,24 +505,21 @@ module.exports = function (config, app, multer) {
                   return error(res, 500)
                 } else {
                   app.console.debug(`Added database entry for file: ${filename}`)
-                  if (!isAblum) {
+                  if (!albumId) {
                     return res.status(200).json(formatResults(req, file))
                   }
                 }
               })
             })
-            if (isAblum) {
-              let albumId = generateID()
+            if (albumId) {
               let albuminfo = {
                 id: albumId,
                 meta: {
                   uploaded: {
                     by: (typeof user !== null ? user.username : null)
                   },
-                  title: null,
-                  thumbnail: filesinfo[0].meta.thumbnail
+                  title: null
                 },
-                files: filesinfo,
                 path: `/a/${albumId}`
               }
               app.console.debug(`Adding database entry for album: ${albumId}`)
@@ -488,6 +530,7 @@ module.exports = function (config, app, multer) {
                   return error(res, 500)
                 } else {
                   app.console.debug(`Added database entry for album: ${albumId}`)
+                  album.files = filesinfo
                   return res.status(200).json(formatResults(req, album))
                 }
               })
@@ -496,6 +539,49 @@ module.exports = function (config, app, multer) {
         })
       } else {
         return error(res, 401)
+      }
+    },
+
+    removeFile: async function (req, res) {
+      let user = await auth(req, res)
+      if (user !== false) {
+        let fileID = req.params.id
+        return queryDB('file', fileID, (err, data) => {
+          if (err) {
+            return error(res, err.status)
+          }
+          data = data[0]
+          if (data.meta.uploaded.by !== user.username) {
+            return error(res, 401)
+          }
+          fs.unlink(path.join(config.storage[data.meta.type], data.meta.filename), err => {
+            if (err) {
+              return error(res, 500)
+            }
+            models.file.findOneAndRemove({
+              id: fileID
+            }, err => {
+              if (err) {
+                return error(res, 500)
+              }
+              return res.sendStatus(200)
+            })
+          })
+        })
+      } else {
+        return error(res, 401)
+      }
+    },
+
+    downloadFile: async function (req, res) {
+      let type = req.params.type
+      if (type === 'image' || type === 'audio' || type ==='video') {
+        let file = path.join(config.storage[type], req.params.file)
+        return fileExists(res, file, () => {
+          return res.download(`${file}`)
+        })
+      } else {
+        return logic.sendAsset(req, res)
       }
     },
 
@@ -612,7 +698,7 @@ module.exports = function (config, app, multer) {
             })
             .save((err, auth) => {
               if (!err) {
-                app.console.log(`Admin Auth Key: ${auth.key}`)
+                app.console.log(`Admin Auth Key: ${auth.key}`, 'cyan')
               }
             })
           }

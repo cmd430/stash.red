@@ -116,17 +116,15 @@
         right: 4px;
         height: 30px;
         line-height: 2.5;
-        .control__breakout {
+        .control__breakout,
+        .control__download {
+          position: relative;
           display: inline-block;
+          top: 1px;
           height: 30px;
           font-size: 13px;
           color: rgb(36, 41, 46);
           text-decoration: none;
-        }
-        .control__breakout,
-        .control__download {
-          position: relative;
-          top: 1px;
         }
       }
       .playback__playPause,
@@ -332,9 +330,7 @@
         .playback__extra > .control__fullscreen,
         .playback__extra > .control__download {
           display: inline-block;
-          &:not(.control__download) {
-            height: 30px;
-          }
+          height: 30px;
           background: none;
           border: none;
           outline: none;
