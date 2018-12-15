@@ -1,0 +1,13 @@
+@import 'shared';
+@import 'media';
+
+#container {
+  display: grid;
+  grid-auto-rows: minmax(min-content, max-content);
+  margin: 0 auto;
+  padding: 15px;
+  max-width: 960px;
+  min-height: calc(100vh - 85px);
+  background: rgb(232, 235, 237);
+  border: 1px solid rgb(226, 230, 233);
+}

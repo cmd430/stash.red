@@ -40,7 +40,7 @@ body {
 
 header {
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 220px auto;
   max-width: 960px;
   margin: 0 auto;
   padding: 0 8px;
@@ -49,12 +49,16 @@ header #logo {
   text-align: left;
 }
 header h1 {
+  height: 85px;
+  max-width: 100%;
   color: #777777;
-  justify-self: end;
   font-weight: 400;
   line-height: 85px;
+  justify-self: end;
   font-variant: small-caps;
-  height: 85px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #content {
