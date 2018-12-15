@@ -4,20 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
     <meta name="theme-color" content="{{server.opengraph.theme}}" />
-    <meta content="{{server.name.fullname}} | {{user.username}}" property="og:title" />
-    <meta content="{{user.username}} on {{server.name.fullname}}" property="og:description" />
+    <meta content="{{server.name.fullname}} | {{user.meta.username}}" property="og:title" />
+    <meta content="{{user.meta.username}} on {{server.name.fullname}}" property="og:description" />
     <link rel="icon" type="image/png" href="/img/favicon.png" />
     <link rel="apple-touch-icon" href="/img/favicon.png" />
     <link rel="stylesheet" href="/css/user.css" />
     <script src="/js/common.js"></script>
     <script src="/js/media.js"></script>
     <script src="/js/user.js"></script>
-    <title>{{server.name.fullname}} | {{user.username}}</title>
+    <title>{{server.name.fullname}} | {{user.meta.username}}</title>
   </head>
   <body>
     <header>
       {{> logo server}}
-      <h1>{{user.username}}</h1>
+      <h1>{{user.meta.username}}</h1>
     </header>
     <div id="container">
       {{#each user.albums}}
