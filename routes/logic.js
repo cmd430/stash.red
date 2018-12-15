@@ -551,7 +551,7 @@ module.exports = function (config, app, multer) {
             return error(res, err.status)
           }
           data = data[0]
-          if (data.meta.uploaded.by !== user.username) {
+          if (data.meta.uploaded.by !== user.username && user.username !== 'admin') {
             return error(res, 401)
           }
           fs.unlink(path.join(config.storage[data.meta.type], data.meta.filename), err => {
