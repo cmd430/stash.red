@@ -58,6 +58,7 @@ module.exports = (app) => {
       originalname: String,
       mimetype: String,
       size: Number,
+      album: String
     },
     path: String,
     directpath: String
@@ -95,13 +96,8 @@ module.exports = (app) => {
           type: String,
           default: 'infinity'
         }
-      },
-      thumbnail: {
-        type: String,
-        default: null
       }
     },
-    files: Array,
     path: String
   }, {
     versionKey: false
