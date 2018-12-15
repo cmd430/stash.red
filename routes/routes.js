@@ -64,6 +64,14 @@ module.exports = (config, multer, app) => {
   .patch(logic.notImplemented)
   .delete(logic.notImplemented)
 
+  // Downloads
+  app.subdomain.download.router.route('/:type/:file')
+  .get(logic.downloadFile)
+  .put(logic.notImplemented)
+  .post(logic.notImplemented)
+  .patch(logic.notImplemented)
+  .delete(logic.notImplemented)
+
   // Add Admin auth if Applicable
   logic.addAdmin()
 }

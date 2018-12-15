@@ -201,9 +201,11 @@ module.exports = function (config, app, multer) {
       if (!isFile) {
         result.path = `${req.protocol}://${req.hostname}${result.path}`
       } else {
-        let subdomain = app.subdomain[result.meta.type].name
+        let type = result.meta.type
+        let subdomain = app.subdomain[type].name
         result.path = `${req.protocol}://${req.hostname}${result.path}`
         result.directpath = `${req.protocol}://${subdomain}.${req.hostname}/${result.meta.filename}`
+        result.downloadpath = `${req.protocol}://${app.subdomain.download.name}.${req.hostname}/${type}/${result.meta.filename}`
       }
     }
     let format = result => {
@@ -380,7 +382,7 @@ module.exports = function (config, app, multer) {
       let type = req.params.type
       if (type === undefined) {
         // Serve our Homepage
-        res.render('index.hbs', {
+        return res.render('index.hbs', {
           server: config.render
         })
       } else {
@@ -568,6 +570,18 @@ module.exports = function (config, app, multer) {
         })
       } else {
         return error(res, 401)
+      }
+    },
+
+    downloadFile: async function (req, res) {
+      let type = req.params.type
+      if (type === 'image' || type === 'audio' || type ==='video') {
+        let file = path.join(config.storage[type], req.params.file)
+        return fileExists(res, file, () => {
+          return res.download(`${file}`)
+        })
+      } else {
+        return logic.sendAsset(req, res)
       }
     },
 

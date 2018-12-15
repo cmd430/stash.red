@@ -26,6 +26,10 @@ const app = {
     video: {
       name: config.server.subdomains.video,
       router: express.Router()
+    },
+    download: {
+      name: config.server.subdomains.download,
+      router: express.Router()
     }
   },
   db: mongoose,
@@ -137,6 +141,7 @@ Promise.all(Object.keys(config.storage).map(key => {
   app.domain.router.use(subdomain(`${app.subdomain.image.name}`, app.subdomain.image.router))
   app.domain.router.use(subdomain(`${app.subdomain.audio.name}`, app.subdomain.audio.router))
   app.domain.router.use(subdomain(`${app.subdomain.video.name}`, app.subdomain.video.router))
+  app.domain.router.use(subdomain(`${app.subdomain.download.name}`, app.subdomain.download.router))
 
   require('./routes/routes.js')(config, multer, app)
 
