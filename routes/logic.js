@@ -631,6 +631,51 @@ module.exports = function (config, app, multer) {
       }
     },
 
+    updateItem: async function (req, res) {
+      let itemType = req.params.type
+      if (itemType === 'f') {
+        return logic.updateFile(req, res)
+      } else if (itemType === 'a') {
+        return logic.updateAlbum(req, res)
+      } else if (itemType === 'u') {
+        return logic.notImplemented
+      } else {
+        return error(res, 404)
+      }
+    },
+
+    updateFile: async function (req, res) {
+      return logic.notImplemented
+    },
+
+    updateAlbum: async function (req, res) {
+      let user = await auth(req, res)
+      if (user !== false) {
+        let albumID = req.params.id
+        return queryDB('album', albumID, async (err, data) => {
+          if (err) {
+            return error(res, err.status)
+          }
+          data = data[0]
+          if (data.meta.uploaded.by !== user.username && user.username !== 'admin') {
+            return error(res, 401)
+          }
+          models.album.findOneAndUpdate({
+            id: albumID
+          }, {
+            'meta.title': req.headers['title'] || null
+          }, (err, result) => {
+            if (err) {
+              return error(res, 500)
+            }
+            return res.sendStatus(200)
+          })
+        })
+      } else {
+        return error(res, 401)
+      }
+    },
+
     downloadFile: async function (req, res) {
       let type = req.params.type
       if (type === 'image' || type === 'audio' || type ==='video') {

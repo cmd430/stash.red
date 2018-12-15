@@ -15,7 +15,7 @@ module.exports = (config, multer, app) => {
   .get(logic.viewPage)
   .put(logic.notImplemented)
   .post(logic.notImplemented)
-  .patch(logic.notImplemented)
+  .patch(logic.updateItem)
   .delete(logic.removeItem)
 
   // Upload File(s)
