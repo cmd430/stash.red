@@ -499,6 +499,37 @@ module.exports = function (config, app, multer) {
       }
     },
 
+    removeFile: async function (req, res) {
+      let user = await auth(req, res)
+      if (user !== false) {
+        let fileID = req.params.id
+        return queryDB('file', fileID, (err, data) => {
+          if (err) {
+            return error(res, err.status)
+          }
+          data = data[0]
+          if (data.meta.uploaded.by !== user.username) {
+            return error(res, 401)
+          }
+          fs.unlink(path.join(config.storage[data.meta.type], data.meta.filename), err => {
+            if (err) {
+              return error(res, 500)
+            }
+            models.file.findOneAndRemove({
+              id: fileID
+            }, err => {
+              if (err) {
+                return error(res, 500)
+              }
+              return res.sendStatus(200)
+            })
+          })
+        })
+      } else {
+        return error(res, 401)
+      }
+    },
+
     addAuth: async function (req, res) {
       if (config.auth.enabled && config.auth.generation.enabled) {
         let checkAuth = await auth(req, res)
@@ -612,7 +643,7 @@ module.exports = function (config, app, multer) {
             })
             .save((err, auth) => {
               if (!err) {
-                app.console.log(`Admin Auth Key: ${auth.key}`)
+                app.console.log(`Admin Auth Key: ${auth.key}`, 'cyan')
               }
             })
           }

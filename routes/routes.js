@@ -16,7 +16,7 @@ module.exports = (config, multer, app) => {
   .put(logic.notImplemented)
   .post(logic.notImplemented)
   .patch(logic.notImplemented)
-  .delete(logic.notImplemented)
+  .delete(logic.removeFile)
 
   // Upload File(s)
   app.domain.router.route('/upload')
