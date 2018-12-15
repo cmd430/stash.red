@@ -41,7 +41,7 @@ body {
 
 header {
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 220px auto;
   max-width: 960px;
   margin: 0 auto;
   padding: 0 8px;
@@ -50,12 +50,16 @@ header #logo {
   text-align: left;
 }
 header h1 {
+  height: 85px;
+  max-width: 100%;
   color: #777777;
-  justify-self: end;
   font-weight: 400;
   line-height: 85px;
+  justify-self: end;
   font-variant: small-caps;
-  height: 85px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @font-face {
@@ -183,20 +187,10 @@ header h1 {
   content: "";
 }
 
-#container {
-  display: grid;
-  grid-auto-rows: minmax(min-content, max-content);
-  margin: 0 auto;
-  padding: 15px;
-  max-width: 960px;
-  min-height: calc(100vh - 85px);
-  background: #e8ebed;
-  border: 1px solid #e2e6e9;
-}
-#container .image {
+.image {
   margin: 10px auto;
 }
-#container .image img {
+.image img {
   margin: 0 auto;
   max-width: 100%;
   max-height: 550px;
@@ -204,23 +198,24 @@ header h1 {
   background: linear-gradient(45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 0/20px 20px, linear-gradient(-45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 10px/20px 20px, linear-gradient(45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) 10px -10px/20px 20px, linear-gradient(-45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) -10px 0px/20px 20px, white;
   border: 1px solid #dadfe3;
 }
-#container .video__player {
+
+.video__player {
   position: relative;
   margin: 10px auto;
   border: 1px solid #dadfe3;
   box-sizing: content-box;
 }
-#container .video__player:-webkit-full-screen {
+.video__player:-webkit-full-screen {
   border: none;
 }
-#container .video__player:-webkit-full-screen video {
+.video__player:-webkit-full-screen video {
   max-height: 100vh;
 }
-#container .video__player:-webkit-full-screen .video__controls {
+.video__player:-webkit-full-screen .video__controls {
   position: absolute;
   bottom: 0;
 }
-#container .video__player video {
+.video__player video {
   position: relative;
   left: 50%;
   transform: translateX(-50%);
@@ -230,7 +225,7 @@ header h1 {
   background: black;
   cursor: pointer;
 }
-#container .video__player .video__controls {
+.video__player .video__controls {
   position: relative;
   margin: -4px 0 0 0;
   height: 41px;
@@ -242,7 +237,7 @@ header h1 {
   user-select: none;
   transition: margin 300ms;
 }
-#container .video__player .video__controls .playback__bar {
+.video__player .video__controls .playback__bar {
   position: absolute;
   left: 0;
   width: 100%;
@@ -250,15 +245,15 @@ header h1 {
   background-color: #24292e;
   cursor: pointer;
 }
-#container .video__player .video__controls .playback__bar .playback__buffer {
+.video__player .video__controls .playback__bar .playback__buffer {
   width: 0%;
   background-color: #4c5053;
 }
-#container .video__player .video__controls .playback__bar .playback__progress {
+.video__player .video__controls .playback__bar .playback__progress {
   width: 0%;
   background-color: #3888ea;
 }
-#container .video__player .video__controls .playback__bar .playback__progress::after {
+.video__player .video__controls .playback__bar .playback__progress::after {
   content: "";
   position: absolute;
   display: block;
@@ -271,36 +266,36 @@ header h1 {
   opacity: 0;
   transition: opacity 200ms, linear left 250ms;
 }
-#container .video__player .video__controls .playback__bar:hover .playback__progress::after {
+.video__player .video__controls .playback__bar:hover .playback__progress::after {
   opacity: 1;
 }
-#container .video__player .video__controls .playback__bar .playback__buffer,
-#container .video__player .video__controls .playback__bar .playback__progress {
+.video__player .video__controls .playback__bar .playback__buffer,
+.video__player .video__controls .playback__bar .playback__progress {
   position: absolute;
   display: inline-block;
   left: 0;
   height: 100%;
   transition: linear width 250ms;
 }
-#container .video__player .video__controls .playback__clock {
+.video__player .video__controls .playback__clock {
   height: 30px;
   line-height: 2.5;
 }
-#container .video__player .video__controls .playback__clock .playback__time,
-#container .video__player .video__controls .playback__clock .playback__length {
+.video__player .video__controls .playback__clock .playback__time,
+.video__player .video__controls .playback__clock .playback__length {
   margin: 0 3px 0 0;
   font-size: 12px;
   font-weight: 700;
   cursor: default;
 }
-#container .video__player .video__controls .playback__extra {
+.video__player .video__controls .playback__extra {
   position: absolute;
   right: 4px;
   height: 30px;
   line-height: 2.5;
 }
-#container .video__player .video__controls .playback__extra .control__breakout,
-#container .video__player .video__controls .playback__extra .control__download {
+.video__player .video__controls .playback__extra .control__breakout,
+.video__player .video__controls .playback__extra .control__download {
   position: relative;
   display: inline-block;
   top: 1px;
@@ -309,10 +304,10 @@ header h1 {
   color: #24292e;
   text-decoration: none;
 }
-#container .video__player .video__controls .playback__playPause,
-#container .video__player .video__controls .playback__volume > .volume__muteUnmute,
-#container .video__player .video__controls .playback__extra > .control__fullscreen,
-#container .video__player .video__controls .playback__extra > .control__download {
+.video__player .video__controls .playback__playPause,
+.video__player .video__controls .playback__volume > .volume__muteUnmute,
+.video__player .video__controls .playback__extra > .control__fullscreen,
+.video__player .video__controls .playback__extra > .control__download {
   display: inline-block;
   height: 30px;
   background: none;
@@ -320,13 +315,13 @@ header h1 {
   outline: none;
   cursor: pointer;
 }
-#container .video__player .video__controls .playback__playPause i,
-#container .video__player .video__controls .playback__volume > .volume__muteUnmute i,
-#container .video__player .video__controls .playback__extra > .control__fullscreen i,
-#container .video__player .video__controls .playback__extra > .control__download i {
+.video__player .video__controls .playback__playPause i,
+.video__player .video__controls .playback__volume > .volume__muteUnmute i,
+.video__player .video__controls .playback__extra > .control__fullscreen i,
+.video__player .video__controls .playback__extra > .control__download i {
   color: #24292e;
 }
-#container .video__player .video__controls .playback__volume .volume__control {
+.video__player .video__controls .playback__volume .volume__control {
   -webkit-appearance: none;
   -webkit-tap-highlight-color: #24292e;
   position: relative;
@@ -340,7 +335,7 @@ header h1 {
   outline: none;
   cursor: pointer;
 }
-#container .video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb {
+.video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 12px;
   height: 12px;
@@ -350,10 +345,11 @@ header h1 {
   opacity: 0;
   transition: opacity 200ms;
 }
-#container .video__player .video__controls .playback__volume .volume__control, #container .video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb:hover, #container .video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb:focus, #container .video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb:active, #container .video__player .video__controls .playback__volume .volume__control:hover::-webkit-slider-thumb, #container .video__player .video__controls .playback__volume .volume__control:focus::-webkit-slider-thumb, #container .video__player .video__controls .playback__volume .volume__control:active::-webkit-slider-thumb {
+.video__player .video__controls .playback__volume .volume__control, .video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb:hover, .video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb:focus, .video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb:active, .video__player .video__controls .playback__volume .volume__control:hover::-webkit-slider-thumb, .video__player .video__controls .playback__volume .volume__control:focus::-webkit-slider-thumb, .video__player .video__controls .playback__volume .volume__control:active::-webkit-slider-thumb {
   opacity: 1;
 }
-#container .audio__player {
+
+.audio__player {
   width: 250px;
   height: 337px;
   margin: 10px auto;
@@ -362,20 +358,20 @@ header h1 {
   box-sizing: content-box;
   user-select: none;
 }
-#container .audio__player .audio__info {
+.audio__player .audio__info {
   position: relative;
   margin-top: -7px;
   padding: 12px 6px 6px;
   width: 100%;
 }
-#container .audio__player .audio__info .title {
+.audio__player .audio__info .title {
   font-weight: 600;
 }
-#container .audio__player .audio__info .artist {
+.audio__player .audio__info .artist {
   font-weight: 300;
 }
-#container .audio__player .audio__info .artist,
-#container .audio__player .audio__info .title {
+.audio__player .audio__info .artist,
+.audio__player .audio__info .title {
   width: calc(100% - 45px);
   font-size: 17px;
   color: #24292e;
@@ -384,7 +380,7 @@ header h1 {
   overflow: hidden;
   cursor: default;
 }
-#container .audio__player .audio__info .audio__controls .playback__bar {
+.audio__player .audio__info .audio__controls .playback__bar {
   position: absolute;
   left: 0;
   top: 3px;
@@ -394,15 +390,15 @@ header h1 {
   background-color: #24292e;
   cursor: pointer;
 }
-#container .audio__player .audio__info .audio__controls .playback__bar .playback__buffer {
+.audio__player .audio__info .audio__controls .playback__bar .playback__buffer {
   width: 0%;
   background-color: #4c5053;
 }
-#container .audio__player .audio__info .audio__controls .playback__bar .playback__progress {
+.audio__player .audio__info .audio__controls .playback__bar .playback__progress {
   width: 0%;
   background-color: #3888ea;
 }
-#container .audio__player .audio__info .audio__controls .playback__bar .playback__progress::after {
+.audio__player .audio__info .audio__controls .playback__bar .playback__progress::after {
   content: "";
   position: absolute;
   display: block;
@@ -415,35 +411,35 @@ header h1 {
   opacity: 0;
   transition: opacity 200ms, linear left 250ms;
 }
-#container .audio__player .audio__info .audio__controls .playback__bar:hover .playback__progress::after {
+.audio__player .audio__info .audio__controls .playback__bar:hover .playback__progress::after {
   opacity: 1;
 }
-#container .audio__player .audio__info .audio__controls .playback__bar .playback__buffer,
-#container .audio__player .audio__info .audio__controls .playback__bar .playback__progress {
+.audio__player .audio__info .audio__controls .playback__bar .playback__buffer,
+.audio__player .audio__info .audio__controls .playback__bar .playback__progress {
   position: absolute;
   display: inline-block;
   left: 0;
   height: 100%;
   transition: linear width 250ms;
 }
-#container .audio__player .audio__info .audio__controls .playback__clock {
+.audio__player .audio__info .audio__controls .playback__clock {
   display: inline-block;
   width: 105px;
   height: 30px;
   color: #24292e;
 }
-#container .audio__player .audio__info .audio__controls .playback__clock .playback__time,
-#container .audio__player .audio__info .audio__controls .playback__clock .playback__length {
+.audio__player .audio__info .audio__controls .playback__clock .playback__time,
+.audio__player .audio__info .audio__controls .playback__clock .playback__length {
   margin: 0 3px 0 0;
   font-size: 12px;
   font-weight: 700;
   cursor: default;
 }
-#container .audio__player .audio__info .audio__controls .playback__volume {
+.audio__player .audio__info .audio__controls .playback__volume {
   position: relative;
   left: 42px;
 }
-#container .audio__player .audio__info .audio__controls .playback__volume .volume__control {
+.audio__player .audio__info .audio__controls .playback__volume .volume__control {
   -webkit-appearance: none;
   -webkit-tap-highlight-color: #24292e;
   position: relative;
@@ -457,7 +453,7 @@ header h1 {
   outline: none;
   cursor: pointer;
 }
-#container .audio__player .audio__info .audio__controls .playback__volume .volume__control::-webkit-slider-thumb {
+.audio__player .audio__info .audio__controls .playback__volume .volume__control::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 12px;
   height: 12px;
@@ -467,36 +463,36 @@ header h1 {
   opacity: 0;
   transition: opacity 200ms;
 }
-#container .audio__player .audio__info .audio__controls .playback__volume .volume__control, #container .audio__player .audio__info .audio__controls .playback__volume .volume__control::-webkit-slider-thumb:hover, #container .audio__player .audio__info .audio__controls .playback__volume .volume__control::-webkit-slider-thumb:focus, #container .audio__player .audio__info .audio__controls .playback__volume .volume__control::-webkit-slider-thumb:active, #container .audio__player .audio__info .audio__controls .playback__volume .volume__control:hover::-webkit-slider-thumb, #container .audio__player .audio__info .audio__controls .playback__volume .volume__control:focus::-webkit-slider-thumb, #container .audio__player .audio__info .audio__controls .playback__volume .volume__control:active::-webkit-slider-thumb {
+.audio__player .audio__info .audio__controls .playback__volume .volume__control, .audio__player .audio__info .audio__controls .playback__volume .volume__control::-webkit-slider-thumb:hover, .audio__player .audio__info .audio__controls .playback__volume .volume__control::-webkit-slider-thumb:focus, .audio__player .audio__info .audio__controls .playback__volume .volume__control::-webkit-slider-thumb:active, .audio__player .audio__info .audio__controls .playback__volume .volume__control:hover::-webkit-slider-thumb, .audio__player .audio__info .audio__controls .playback__volume .volume__control:focus::-webkit-slider-thumb, .audio__player .audio__info .audio__controls .playback__volume .volume__control:active::-webkit-slider-thumb {
   opacity: 1;
 }
-#container .audio__player .audio__info .audio__controls .playback__extra {
+.audio__player .audio__info .audio__controls .playback__extra {
   position: absolute;
   bottom: 3px;
   right: 3px;
   height: 20px;
   line-height: 1;
 }
-#container .audio__player .audio__info .audio__controls .playback__extra .control__breakout {
+.audio__player .audio__info .audio__controls .playback__extra .control__breakout {
   font-size: 13px;
   color: #24292e;
   text-decoration: none;
 }
-#container .audio__player .audio__info .audio__controls .playback__playPause {
+.audio__player .audio__info .audio__controls .playback__playPause {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
 }
-#container .audio__player .audio__info .audio__controls .playback__playPause i {
+.audio__player .audio__info .audio__controls .playback__playPause i {
   font-size: 20px;
 }
-#container .audio__player .audio__info .audio__controls .playback__playPause i::before {
+.audio__player .audio__info .audio__controls .playback__playPause i::before {
   margin-right: 0;
 }
-#container .audio__player .audio__info .audio__controls .playback__playPause,
-#container .audio__player .audio__info .audio__controls .playback__volume > .volume__muteUnmute,
-#container .audio__player .audio__info .audio__controls .playback__extra > .control__fullscreen,
-#container .audio__player .audio__info .audio__controls .playback__extra > .control__download {
+.audio__player .audio__info .audio__controls .playback__playPause,
+.audio__player .audio__info .audio__controls .playback__volume > .volume__muteUnmute,
+.audio__player .audio__info .audio__controls .playback__extra > .control__fullscreen,
+.audio__player .audio__info .audio__controls .playback__extra > .control__download {
   display: inline-block;
   height: 30px;
   background: none;
@@ -504,25 +500,36 @@ header h1 {
   outline: none;
   cursor: pointer;
 }
-#container .audio__player .audio__info .audio__controls .playback__playPause i,
-#container .audio__player .audio__info .audio__controls .playback__volume > .volume__muteUnmute i,
-#container .audio__player .audio__info .audio__controls .playback__extra > .control__fullscreen i,
-#container .audio__player .audio__info .audio__controls .playback__extra > .control__download i {
+.audio__player .audio__info .audio__controls .playback__playPause i,
+.audio__player .audio__info .audio__controls .playback__volume > .volume__muteUnmute i,
+.audio__player .audio__info .audio__controls .playback__extra > .control__fullscreen i,
+.audio__player .audio__info .audio__controls .playback__extra > .control__download i {
   color: #24292e;
 }
-#container .audio__player .audio__artwork {
+.audio__player .audio__artwork {
   position: relative;
   cursor: pointer;
 }
-#container .audio__player .audio__artwork, #container .audio__player .audio__artwork img {
+.audio__player .audio__artwork, .audio__player .audio__artwork img {
   width: 250px;
 }
-#container .audio__player .audio__artwork img {
+.audio__player .audio__artwork img {
   padding: 6px 6px 0;
 }
-#container .audio__player ul {
+.audio__player ul {
   list-style: none;
 }
-#container .audio__player ul li {
+.audio__player ul li {
   display: inline-block;
+}
+
+#container {
+  display: grid;
+  grid-auto-rows: minmax(min-content, max-content);
+  margin: 0 auto;
+  padding: 15px;
+  max-width: 960px;
+  min-height: calc(100vh - 85px);
+  background: #e8ebed;
+  border: 1px solid #e2e6e9;
 }
