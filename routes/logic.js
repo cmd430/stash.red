@@ -119,6 +119,9 @@ module.exports = function (config, app, multer) {
     .catch(err => {
       app.console.debug(`Unable to generate thumbnail for file: ${path.basename(file)}`)
       app.console.debug(err.stack)
+      // TEMP
+      return arguments[2].json([err])
+      // END TEMP
       return null
     })
   }
@@ -470,7 +473,7 @@ module.exports = function (config, app, multer) {
               let shorttype = mimetype.split('/')[0]
               let thumbnail = null
               if (config.upload.thumbnail.enabled) {
-                thumbnail = await generateThumbnail(file.path, shorttype)
+                thumbnail = await generateThumbnail(file.path, shorttype, res) // TEMP added res
               }
               let fileinfo = {
                 id: id,
