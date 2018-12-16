@@ -42,7 +42,7 @@ const config = {
       // subdomain would change from
       // 'image.host.com' to `i.host.com`
     },
-    debug: true,
+    debug: false,
     colors: true
   },
   handelbars: {
