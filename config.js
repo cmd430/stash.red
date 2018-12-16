@@ -24,7 +24,7 @@ const logFormat = (tokens, req, res) => {
   status = chalk.keyword(status >= 500 ? 'red' : status >= 400 ? 'yellow' : status >= 300 ? 'cyan' : 'green')(status)
   contentLength = contentLength ? `- ${contentLength}` : ''
 
-  return `[${date}][${serverName}] ${method} ${status} ${url} ${responseTime} ms ${contentLength}`
+  return `[${date}][${serverName}] ${status} ${method} ${url} ${responseTime} ms ${contentLength}`
 }
 
 const config = {
