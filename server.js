@@ -10,6 +10,13 @@ const hbs = require('hbs')
 const mongoose = require('mongoose')
 const mkdir = require('make-dir')
 const config = require('./config.js')
+
+// Allow override config opts from args
+const args = process.argv.splice(process.execArgv.length + 2)
+if (args.includes('--debug')) {
+  config.server.debug = true
+}
+
 const app = {
   domain: {
     name: config.server.name,
