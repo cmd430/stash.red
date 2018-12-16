@@ -1,6 +1,6 @@
-module.exports = (config, multer, app) => {
+module.exports = (config, app) => {
 
-  const logic = require('./logic.js')(config, app, multer)
+  const logic = require('./logic.js')(config, app)
 
   // View Index
   app.domain.router.route('/')

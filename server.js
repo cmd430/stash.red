@@ -5,6 +5,7 @@ const responseTime = require('response-time')
 const chalk = require('chalk')
 const subdomain = require('express-subdomain')
 const cors = require('cors')
+const busboy = require('connect-busboy')
 const hbs = require('hbs')
 const mongoose = require('mongoose')
 const mkdir = require('make-dir')
@@ -51,12 +52,6 @@ const app = {
     }
   }
 }
-const multer = require('multer')({
-  storage: require('./storage.js')(config, app),
-  limits: {
-    fileSize: config.upload.maxsize
-  }
-})
 chalk.enabled = config.server.colors
 process.on('warning', warning => {
   if (config.server.debug) {
@@ -138,12 +133,18 @@ Promise.all(Object.keys(config.storage).map(key => {
       'Content-Length'
     ]
   }))
+  app.domain.router.use(busboy({
+    highWaterMark: config.upload.buffer,
+    limits: {
+      fileSize: config.upload.maxsize
+    }
+  }))
   app.domain.router.use(subdomain(`${app.subdomain.image.name}`, app.subdomain.image.router))
   app.domain.router.use(subdomain(`${app.subdomain.audio.name}`, app.subdomain.audio.router))
   app.domain.router.use(subdomain(`${app.subdomain.video.name}`, app.subdomain.video.router))
   app.domain.router.use(subdomain(`${app.subdomain.download.name}`, app.subdomain.download.router))
 
-  require('./routes/routes.js')(config, multer, app)
+  require('./routes/routes.js')(config, app)
 
   app.console.debug('Starting Express')
   return new Promise ((resolve, reject) => {
