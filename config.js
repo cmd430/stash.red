@@ -17,14 +17,14 @@ const logFormat = (tokens, req, res) => {
   let date = tokens['date'](req, res, 'web')
   let method = tokens['method'](req, res)
   let url = tokens['url'](req, res)
-  let status = tokens['status'](req, res)
-  let responseTime = tokens['response-time'](req, res)
+  let status = tokens['status'](req, res) || 499
+  let responseTime = tokens['response-time'](req, res) || 0
   let contentLength = tokens['res'](req, res, 'content-length')
 
   status = chalk.keyword(status >= 500 ? 'red' : status >= 400 ? 'yellow' : status >= 300 ? 'cyan' : 'green')(status)
   contentLength = contentLength ? `- ${contentLength}` : ''
 
-  return `[${date}][${serverName}] ${method} ${status} ${url} ${responseTime} ms ${contentLength}`
+  return `[${date}][${serverName}] ${status} ${method} ${url} ${responseTime} ms ${contentLength}`
 }
 
 const config = {
@@ -70,10 +70,6 @@ const config = {
     maxsize: 1024 * 1024 * 500,
     // Default 500mb (1024 * 1024 * 500)
     // Size is in Bytes
-    concurrency: 0,
-    // Number of threads for auto roatation
-    // 0 = Default (4)
-    // http://sharp.pixelplumbing.com/en/stable/api-utility/#concurrency
     thumbnail: {
       // if diabled shows generic filetype placeholder
       enabled: true,
@@ -83,12 +79,8 @@ const config = {
       width: 250,
       height: 250,
       fit: 'cover',
-      position: 'entropy',
+      position: 'entropy'
       // http://sharp.pixelplumbing.com/en/stable/api-resize/#parameters
-      concurrency: 1
-      // Number of threads for thumbnail generation
-      // 0 = Default (4)
-      // http://sharp.pixelplumbing.com/en/stable/api-utility/#concurrency
     }
   },
   storage: {

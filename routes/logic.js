@@ -56,7 +56,6 @@ module.exports = function (config, app, multer) {
 
   async function generateThumbnail (file, type) {
     app.console.debug(`Generating thumbnail for file: ${path.basename(file)}`)
-    sharp.concurrency(config.upload.thumbnail.concurrency)
     return new Promise((resolve, reject) => {
       switch (type) {
         case 'image':
@@ -77,7 +76,7 @@ module.exports = function (config, app, multer) {
               return resolve(Buffer.concat(buffer))
             })
             stream.on('error', err => {
-              return reject(data)
+              return reject(err)
             })
           })
         case 'audio':
@@ -119,6 +118,10 @@ module.exports = function (config, app, multer) {
     })
     .catch(err => {
       app.console.debug(`Unable to generate thumbnail for file: ${path.basename(file)}`)
+      app.console.debug(err.stack)
+      // TEMP
+      return arguments[2].json([err])
+      // END TEMP
       return null
     })
   }
@@ -470,7 +473,7 @@ module.exports = function (config, app, multer) {
               let shorttype = mimetype.split('/')[0]
               let thumbnail = null
               if (config.upload.thumbnail.enabled) {
-                thumbnail = await generateThumbnail(file.path, shorttype)
+                thumbnail = await generateThumbnail(file.path, shorttype, res) // TEMP added res
               }
               let fileinfo = {
                 id: id,
