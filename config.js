@@ -17,8 +17,8 @@ const logFormat = (tokens, req, res) => {
   let date = tokens['date'](req, res, 'web')
   let method = tokens['method'](req, res)
   let url = tokens['url'](req, res)
-  let status = tokens['status'](req, res)
-  let responseTime = tokens['response-time'](req, res)
+  let status = tokens['status'](req, res) || 499
+  let responseTime = tokens['response-time'](req, res) || 0
   let contentLength = tokens['res'](req, res, 'content-length')
 
   status = chalk.keyword(status >= 500 ? 'red' : status >= 400 ? 'yellow' : status >= 300 ? 'cyan' : 'green')(status)
