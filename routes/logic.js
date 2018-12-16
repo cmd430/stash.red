@@ -542,6 +542,19 @@ module.exports = function (config, app, multer) {
       }
     },
 
+    removeItem: async function (req, res) {
+      let itemType = req.params.type
+      if (itemType === 'f') {
+        return logic.removeFile(req, res)
+      } else if (itemType === 'a') {
+        return logic.removeAlbum(req, res)
+      } else if (itemType === 'u') {
+        return error(res, 401)
+      } else {
+        return error(res, 404)
+      }
+    },
+
     removeFile: async function (req, res) {
       let user = await auth(req, res)
       if (user !== false) {
@@ -551,7 +564,7 @@ module.exports = function (config, app, multer) {
             return error(res, err.status)
           }
           data = data[0]
-          if (data.meta.uploaded.by !== user.username) {
+          if (data.meta.uploaded.by !== user.username && user.username !== 'admin') {
             return error(res, 401)
           }
           fs.unlink(path.join(config.storage[data.meta.type], data.meta.filename), err => {
@@ -566,6 +579,96 @@ module.exports = function (config, app, multer) {
               }
               return res.sendStatus(200)
             })
+          })
+        })
+      } else {
+        return error(res, 401)
+      }
+    },
+
+    removeAlbum: async function (req, res) {
+      let user = await auth(req, res)
+      if (user !== false) {
+        let albumID = req.params.id
+        return queryDB('album', albumID, async (err, data) => {
+          if (err) {
+            return error(res, err.status)
+          }
+          data = data[0]
+          if (data.meta.uploaded.by !== user.username && user.username !== 'admin') {
+            return error(res, 401)
+          }
+          await queryDB('file', albumID, async (err, data) => {
+            if (err) {
+              return error(res, err.status)
+            }
+            await asyncForEach(data, async file => {
+              fs.unlink(path.join(config.storage[file.meta.type], file.meta.filename), err => {
+                if (err) {
+                  return error(res, 500)
+                }
+                return models.file.findOneAndRemove({
+                  id: file.id
+                }, err => {
+                  if (err) {
+                    return error(res, 500)
+                  }
+                })
+              })
+            })
+          }, false, true)
+          models.album.findOneAndRemove({
+            id: albumID
+          }, err => {
+            if (err) {
+              return error(res, 500)
+            }
+            return res.sendStatus(200)
+          })
+        })
+      } else {
+        return error(res, 401)
+      }
+    },
+
+    updateItem: async function (req, res) {
+      let itemType = req.params.type
+      if (itemType === 'f') {
+        return logic.updateFile(req, res)
+      } else if (itemType === 'a') {
+        return logic.updateAlbum(req, res)
+      } else if (itemType === 'u') {
+        return logic.notImplemented
+      } else {
+        return error(res, 404)
+      }
+    },
+
+    updateFile: async function (req, res) {
+      return logic.notImplemented
+    },
+
+    updateAlbum: async function (req, res) {
+      let user = await auth(req, res)
+      if (user !== false) {
+        let albumID = req.params.id
+        return queryDB('album', albumID, async (err, data) => {
+          if (err) {
+            return error(res, err.status)
+          }
+          data = data[0]
+          if (data.meta.uploaded.by !== user.username && user.username !== 'admin') {
+            return error(res, 401)
+          }
+          models.album.findOneAndUpdate({
+            id: albumID
+          }, {
+            'meta.title': req.headers['title'] || null
+          }, (err, result) => {
+            if (err) {
+              return error(res, 500)
+            }
+            return res.sendStatus(200)
           })
         })
       } else {
