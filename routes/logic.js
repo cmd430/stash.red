@@ -60,15 +60,21 @@ module.exports = function (config, app, multer) {
     return new Promise((resolve, reject) => {
       switch (type) {
         case 'image':
-          return resolve(sharp(file).toBuffer())
         case 'video':
-          return simpleThumbnail(file, null, '100%', {
-            seek: '00:00:03.00',
+          let options = {
             path: ffmpeg.path
-          })
+          }
+          if (type === 'video') {
+            options.seek = '00:00:03.00'
+          }
+          return simpleThumbnail(file, null, '100%', options)
           .then(stream => {
+            let buffer = []
             stream.on('data', data => {
-              return resolve(data)
+              buffer.push(data)
+            })
+            stream.on('close', () => {
+              return resolve(Buffer.concat(buffer))
             })
             stream.on('error', err => {
               return reject(data)
