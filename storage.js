@@ -35,7 +35,6 @@ StreamedStorage.prototype._handleFile = function _handleFile (req, file, callbac
     } else {
       let outStream = fs.createWriteStream(savepath)
       if (file.mimetype.split('/')[0] === 'image') {
-        sharp.concurrency(this.config.upload.concurrency)
         file.stream
         .pipe(sharp().rotate())
         .pipe(outStream)
@@ -47,12 +46,14 @@ StreamedStorage.prototype._handleFile = function _handleFile (req, file, callbac
         if (err.errno === 'ENOSPC') {
           status = 507
         }
+        outStream.close()
         callback({
           status: status
         })
       })
       outStream.on('finish', () => {
         __success = true
+        outStream.close()
         callback(null, {
           path: savepath,
           size: outStream.bytesWritten

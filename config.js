@@ -70,10 +70,6 @@ const config = {
     maxsize: 1024 * 1024 * 500,
     // Default 500mb (1024 * 1024 * 500)
     // Size is in Bytes
-    concurrency: 0,
-    // Number of threads for auto roatation
-    // 0 = Default (4)
-    // http://sharp.pixelplumbing.com/en/stable/api-utility/#concurrency
     thumbnail: {
       // if diabled shows generic filetype placeholder
       enabled: true,
@@ -83,12 +79,8 @@ const config = {
       width: 250,
       height: 250,
       fit: 'cover',
-      position: 'entropy',
+      position: 'entropy'
       // http://sharp.pixelplumbing.com/en/stable/api-resize/#parameters
-      concurrency: 1
-      // Number of threads for thumbnail generation
-      // 0 = Default (4)
-      // http://sharp.pixelplumbing.com/en/stable/api-utility/#concurrency
     }
   },
   storage: {
