@@ -5,10 +5,18 @@ const responseTime = require('response-time')
 const chalk = require('chalk')
 const subdomain = require('express-subdomain')
 const cors = require('cors')
+const busboy = require('connect-busboy')
 const hbs = require('hbs')
 const mongoose = require('mongoose')
 const mkdir = require('make-dir')
 const config = require('./config.js')
+
+// Allow override config opts from args
+const args = process.argv.splice(process.execArgv.length + 2)
+if (args.includes('--debug')) {
+  config.server.debug = true
+}
+
 const app = {
   domain: {
     name: config.server.name,
@@ -51,12 +59,6 @@ const app = {
     }
   }
 }
-const multer = require('multer')({
-  storage: require('./storage.js')(config, app),
-  limits: {
-    fileSize: config.upload.maxsize
-  }
-})
 chalk.enabled = config.server.colors
 process.on('warning', warning => {
   if (config.server.debug) {
@@ -72,7 +74,13 @@ process.on('uncaughtException', error => {
   process.exit(1)
 })
 process.on('unhandledRejection', error => {
-  app.console.error(error, true)
+  if (error instanceof Error) {
+    app.console.error(error, true)
+  } else {
+    app.console.error({
+      message: error
+    })
+  }
   process.exit(1)
 })
 // Only logs if Debug is infact enabled
@@ -138,12 +146,19 @@ Promise.all(Object.keys(config.storage).map(key => {
       'Content-Length'
     ]
   }))
+  app.domain.router.use(busboy({
+    highWaterMark: config.upload.buffer,
+    limits: {
+      fileSize: config.upload.maxsize
+    }
+  }))
   app.domain.router.use(subdomain(`${app.subdomain.image.name}`, app.subdomain.image.router))
   app.domain.router.use(subdomain(`${app.subdomain.audio.name}`, app.subdomain.audio.router))
   app.domain.router.use(subdomain(`${app.subdomain.video.name}`, app.subdomain.video.router))
   app.domain.router.use(subdomain(`${app.subdomain.download.name}`, app.subdomain.download.router))
 
-  require('./routes/routes.js')(config, multer, app)
+  require('./models/models.js')(app)
+  require('./routes.js')(config, app)
 
   app.console.debug('Starting Express')
   return new Promise ((resolve, reject) => {

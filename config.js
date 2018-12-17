@@ -67,6 +67,9 @@ const config = {
     length: 5
   },
   upload: {
+    buffer: 1024 * 1024 * 2,
+    // Default 2mb (1024 * 1024 * 2)
+    // Size is in Bytes
     maxsize: 1024 * 1024 * 500,
     // Default 500mb (1024 * 1024 * 500)
     // Size is in Bytes
