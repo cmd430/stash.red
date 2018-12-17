@@ -151,7 +151,8 @@ Promise.all(Object.keys(config.storage).map(key => {
   app.domain.router.use(subdomain(`${app.subdomain.video.name}`, app.subdomain.video.router))
   app.domain.router.use(subdomain(`${app.subdomain.download.name}`, app.subdomain.download.router))
 
-  require('./routes/routes.js')(config, app)
+  require('./models/models.js')(app)
+  require('./routes.js')(config, app)
 
   app.console.debug('Starting Express')
   return new Promise ((resolve, reject) => {
