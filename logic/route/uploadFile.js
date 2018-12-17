@@ -42,6 +42,7 @@ module.exports = (config, app, common, route) => {
         let shorttype = mimetype.split('/')[0]
         let extention = path.extname(fileinfo.originalname) || `.${mimetype.split('/').pop()}`
         let id = common.generateID()
+        app.console.debug(`ID Generated for '${filename}' => '${id}'`)
         let filepath = `${id}${extention}`
         let destination = null
         switch (shorttype) {
@@ -100,6 +101,7 @@ module.exports = (config, app, common, route) => {
           let albumId = null
           if (files.length > 1) {
             albumId = common.generateID()
+            app.console.debug(`Generated album ID '${albumId}'`)
           }
           let filesinfo = []
           await common.asyncForEach(files, async file => {
@@ -143,14 +145,14 @@ module.exports = (config, app, common, route) => {
                 filesinfo.push(fileinfo)
                 break
             }
-            app.console.debug(`Adding database entry for file: ${filename}`)
+            app.console.debug(`Adding database entry for file '${filename}'`)
             new app.db.models.file(fileinfo)
             .save((err, file) => {
               if (err) {
-                app.console.debug(`Unable to add database entry for file: ${filename}`)
+                app.console.debug(`Unable to add database entry for file '${filename}'`)
                 return common.error(res, 500)
               } else {
-                app.console.debug(`Added database entry for file: ${filename}`)
+                app.console.debug(`Added database entry for file '${filename}'`)
                 if (!albumId) {
                   return res.status(200).json(common.formatResults(req, file))
                 }
@@ -168,14 +170,14 @@ module.exports = (config, app, common, route) => {
               },
               path: `/a/${albumId}`
             }
-            app.console.debug(`Adding database entry for album: ${albumId}`)
+            app.console.debug(`Adding database entry for album '${albumId}'`)
             new app.db.models.album(albuminfo)
             .save((err, album) => {
               if (err) {
-                app.console.debug(`Unable to add database entry for album: ${albumId}`)
+                app.console.debug(`Unable to add database entry for album '${albumId}'`)
                 return common.error(res, 500)
               } else {
-                app.console.debug(`Added database entry for album: ${albumId}`)
+                app.console.debug(`Added database entry for album '${albumId}'`)
                 album.files = filesinfo
                 return res.status(200).json(common.formatResults(req, album))
               }
