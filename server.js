@@ -74,7 +74,13 @@ process.on('uncaughtException', error => {
   process.exit(1)
 })
 process.on('unhandledRejection', error => {
-  app.console.error(error, true)
+  if (error instanceof Error) {
+    app.console.error(error, true)
+  } else {
+    app.console.error({
+      message: error
+    })
+  }
   process.exit(1)
 })
 // Only logs if Debug is infact enabled

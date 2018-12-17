@@ -14,14 +14,24 @@ module.exports = (config, app, common) => {
       ])
       .read({
         onSuccess: meta => {
-          app.console.debug(`Processed audio meta for file: ${path.basename(file)}`)
           return resolve(meta.tags)
         },
         onError: err => {
-          app.console.debug(`Unable to process audio meta for file: ${path.basename(file)}`)
           return reject(null)
         }
       })
+    })
+    .then(tags => {
+      app.console.debug(`Processed audio meta for file: ${path.basename(file)}`)
+      return tags
+    })
+    .catch(err => {
+      app.console.debug(`Unable to process audio meta for file: ${path.basename(file)}`)
+      return {
+        title: null,
+        album: null,
+        artist: null
+      }
     })
   }
 
