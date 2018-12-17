@@ -1,3 +1,5 @@
+const path = require('path')
+
 module.exports = (config, app, common) => {
 
   return function formatResults (req, results) {
@@ -8,6 +10,15 @@ module.exports = (config, app, common) => {
       } else {
         let type = result.meta.type
         let subdomain = app.subdomain[type].name
+        if (type === 'audio') {
+          // Hopfully this will stop any songs
+          // titled 'Unknown' from incorrectly
+          // using filename
+          if (result.meta.song.title === 'Unknown' && result.meta.song.artist === 'Unknown') {
+            // Use filename for audio missing title
+            result.meta.song.title = path.parse(result.meta.originalname).name
+          }
+        }
         result.path = `${req.protocol}://${req.hostname}${result.path}`
         result.directpath = `${req.protocol}://${subdomain}.${req.hostname}/${result.meta.filename}`
         result.downloadpath = `${req.protocol}://${app.subdomain.download.name}.${req.hostname}/${type}/${result.meta.filename}`
