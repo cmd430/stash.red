@@ -14,7 +14,10 @@ module.exports = (config, app, common, route) => {
         if (!result) {
           // Create Admin if missing
           return new app.db.models.auth({
-            key: common.generateID(true),
+            key: common.generateID({
+              isAuth: true,
+              isAdmin: true
+            }),
             username: 'admin'
           })
           .save((err, auth) => {
