@@ -10,11 +10,10 @@ module.exports = (config, app, common, route) => {
             isAuth: true,
             isAdmin: false
           })
-          new app.db.models.auth({
+          app.db.models.auth.create({
             key: authKey,
             username: authUser
-          })
-          .save((err, newAuth) => {
+          }, (err, newAuth) => {
             if (err) {
               return common.error(res, 500)
             } else {
