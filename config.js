@@ -101,7 +101,7 @@ const config = {
     }
   },
   mongo: {
-    db: 'theshed_red',
+    db: 'stash',
     host: 'localhost',
     port: 27017,
     auth: {
