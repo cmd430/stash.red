@@ -110,14 +110,10 @@ module.exports = (config, app, common, route) => {
             let fileID = path.basename(filename, extension)
             let mimetype = file.mimetype
             let shorttype = mimetype.split('/')[0]
-            let thumbnail = null
-            if (config.upload.thumbnail.enabled) {
-              thumbnail = await common.generateThumbnail(file.path, shorttype)
-            }
             let fileinfo = {
               id: fileID,
               meta: {
-                thumbnail: thumbnail,
+                thumbnail: (config.upload.thumbnail.enabled ? await common.generateThumbnail(file.path, shorttype) : null),
                 filename: filename,
                 originalname: file.originalname,
                 mimetype: mimetype,
@@ -146,8 +142,7 @@ module.exports = (config, app, common, route) => {
                 break
             }
             app.console.debug(`Adding database entry for file '${filename}'`)
-            new app.db.models.file(fileinfo)
-            .save((err, file) => {
+            app.db.models.file.create(fileinfo, (err, file) => {
               if (err) {
                 app.console.debug(`Unable to add database entry for file '${filename}'`)
                 return common.error(res, 500)
@@ -171,8 +166,7 @@ module.exports = (config, app, common, route) => {
               path: `/a/${albumId}`
             }
             app.console.debug(`Adding database entry for album '${albumId}'`)
-            new app.db.models.album(albuminfo)
-            .save((err, album) => {
+            app.db.models.album.create(albuminfo, (err, album) => {
               if (err) {
                 app.console.debug(`Unable to add database entry for album '${albumId}'`)
                 return common.error(res, 500)
