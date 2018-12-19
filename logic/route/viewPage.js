@@ -6,7 +6,9 @@ module.exports = (config, app, common, route) => {
     let dynamic = {
       server: config.render
     }
-    dynamic['server']['opengraph']['icon'] = `${req.protocol}://${req.hostname}${config.render.opengraph.icon}`
+    if (!dynamic['server']['opengraph']['icon'].includes(`${req.protocol}://${req.hostname}`)) {
+      dynamic['server']['opengraph']['icon'] =`${req.protocol}://${req.hostname}${config.render.opengraph.icon}`
+    }
     dynamic['server']['opengraph']['url'] = `${req.protocol}://${req.hostname}${req.url}`
     if (type === undefined) {
       // Serve our Homepage
