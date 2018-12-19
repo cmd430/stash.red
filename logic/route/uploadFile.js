@@ -17,13 +17,18 @@ module.exports = (config, app, common, route) => {
       let finished = false
       req.on('close', () => {
         if (!finished) {
+          app.console.debug(`Upload aborted removing files`)
           if (partial.path) {
             partial.stream.close()
-            fs.unlink(partial.path, () => {})
+            app.console.debug(`Removing partial file '${path.basename(partial.path)}'`)
+            fs.unlink(partial.path, () => {
+              app.console.debug(`Removed partial file '${path.basename(partial.path)}'`)
+            })
           }
           files.forEach(file => {
+            app.console.debug(`Removing file '${path.basename(partial.path)}'`)
             fs.unlink(file.path, () => {
-              // Remove DB entries (if any)
+              app.console.debug(`Removed file '${path.basename(partial.path)}'`)
             })
           })
         }
@@ -56,9 +61,15 @@ module.exports = (config, app, common, route) => {
           return file.resume()
         }
         let fstream = fs.createWriteStream(destination)
+        fstream.on('error', () => {
+          errored = true
+          fs.unlink(destination, () => {
+            file.resume()
+          })
+        })
         let size = meter()
         if (shorttype === 'image') {
-          file.pipe(size).pipe(sharp().rotate()).pipe(fstream)
+          file.pipe(size).pipe(sharp().rotate().pipe(fstream))
         } else {
           file.pipe(size).pipe(fstream)
         }
@@ -70,12 +81,6 @@ module.exports = (config, app, common, route) => {
         })
         file.on('limit', () => {
           aborted = true
-          fs.unlink(destination, () => {
-            file.resume()
-          })
-        })
-        fstream.on('error', () => {
-          errored = true
           fs.unlink(destination, () => {
             file.resume()
           })
