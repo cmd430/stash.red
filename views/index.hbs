@@ -4,8 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
     <meta name="theme-color" content="{{server.opengraph.theme}}" />
-    <meta content="{{server.name.fullname}}" property="og:title" />
-    <meta content="{{server.name.fullname}}" property="og:description" />
+    <meta property="og:site_name" content="{{server.name.fullname}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{server.opengraph.url}}" />
+    <meta property="og:title" content="{{server.name.fullname}}" />
+    <meta property="og:image" content="{{server.opengraph.icon}}" />
+    <meta property="og:description" content="An Image/Audio and Video Host" />
     <link rel="icon" type="image/png" href="/img/favicon.png" />
     <link rel="apple-touch-icon" href="/img/favicon.png" />
     <link rel="stylesheet" href="/css/index.css" />

@@ -59,6 +59,7 @@ const config = {
       fragment_two: `${serverName.split('.')[1].toLowerCase()}`
     },
     opengraph: {
+      icon: '/img/favicon.png',
       theme: '#db0303'
     },
     github: 'cmd430/stash.red'
@@ -101,7 +102,7 @@ const config = {
     }
   },
   mongo: {
-    db: 'theshed_red',
+    db: 'stash',
     host: 'localhost',
     port: 27017,
     auth: {

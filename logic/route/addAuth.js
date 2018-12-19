@@ -6,12 +6,14 @@ module.exports = (config, app, common, route) => {
       let checkAuth = await common.auth(req, res)
       if (checkAuth !== false && checkAuth.username === 'admin') {
           let authUser = req.headers['add']
-          let authKey = common.generateID()
-          new app.db.models.auth({
+          let authKey = common.generateID({
+            isAuth: true,
+            isAdmin: false
+          })
+          app.db.models.auth.create({
             key: authKey,
             username: authUser
-          })
-          .save((err, newAuth) => {
+          }, (err, newAuth) => {
             if (err) {
               return common.error(res, 500)
             } else {

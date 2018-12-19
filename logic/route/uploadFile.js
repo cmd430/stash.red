@@ -17,13 +17,18 @@ module.exports = (config, app, common, route) => {
       let finished = false
       req.on('close', () => {
         if (!finished) {
+          app.console.debug(`Upload aborted removing files`)
           if (partial.path) {
             partial.stream.close()
-            fs.unlink(partial.path, () => {})
+            app.console.debug(`Removing partial file '${path.basename(partial.path)}'`)
+            fs.unlink(partial.path, () => {
+              app.console.debug(`Removed partial file '${path.basename(partial.path)}'`)
+            })
           }
           files.forEach(file => {
+            app.console.debug(`Removing file '${path.basename(partial.path)}'`)
             fs.unlink(file.path, () => {
-              // Remove DB entries (if any)
+              app.console.debug(`Removed file '${path.basename(partial.path)}'`)
             })
           })
         }
@@ -52,13 +57,19 @@ module.exports = (config, app, common, route) => {
             destination = `${config.storage[shorttype]}/${filepath}`
         }
         if (destination === null) {
-          app.console.debug(`Upload of '${filename}' aborted invaild filetype`)
+          app.console.debug(`Upload of '${filename}' aborted invaild filetype`, 'red')
           return file.resume()
         }
         let fstream = fs.createWriteStream(destination)
+        fstream.on('error', () => {
+          errored = true
+          fs.unlink(destination, () => {
+            file.resume()
+          })
+        })
         let size = meter()
         if (shorttype === 'image') {
-          file.pipe(size).pipe(sharp().rotate()).pipe(fstream)
+          file.pipe(size).pipe(sharp().rotate().pipe(fstream))
         } else {
           file.pipe(size).pipe(fstream)
         }
@@ -74,17 +85,11 @@ module.exports = (config, app, common, route) => {
             file.resume()
           })
         })
-        fstream.on('error', () => {
-          errored = true
-          fs.unlink(destination, () => {
-            file.resume()
-          })
-        })
         file.on('end', async () => {
           if (aborted) {
-            app.console.debug(`Upload of '${filename}' aborted size limit reached`)
+            app.console.debug(`Upload of '${filename}' aborted size limit reached`, 'red')
           } else if (errored) {
-            app.console.debug(`Upload of '${filename}' aborted due to error`)
+            app.console.debug(`Upload of '${filename}' aborted due to error`, 'red')
           } else {
             app.console.debug(`Upload of '${filename}' finished`)
             fileinfo.path = destination
@@ -110,14 +115,10 @@ module.exports = (config, app, common, route) => {
             let fileID = path.basename(filename, extension)
             let mimetype = file.mimetype
             let shorttype = mimetype.split('/')[0]
-            let thumbnail = null
-            if (config.upload.thumbnail.enabled) {
-              thumbnail = await common.generateThumbnail(file.path, shorttype)
-            }
             let fileinfo = {
               id: fileID,
               meta: {
-                thumbnail: thumbnail,
+                thumbnail: (config.upload.thumbnail.enabled ? await common.generateThumbnail(file.path, shorttype) : null),
                 filename: filename,
                 originalname: file.originalname,
                 mimetype: mimetype,
@@ -146,10 +147,9 @@ module.exports = (config, app, common, route) => {
                 break
             }
             app.console.debug(`Adding database entry for file '${filename}'`)
-            new app.db.models.file(fileinfo)
-            .save((err, file) => {
+            app.db.models.file.create(fileinfo, (err, file) => {
               if (err) {
-                app.console.debug(`Unable to add database entry for file '${filename}'`)
+                app.console.debug(`Unable to add database entry for file '${filename}'`, 'red')
                 return common.error(res, 500)
               } else {
                 app.console.debug(`Added database entry for file '${filename}'`)
@@ -171,10 +171,9 @@ module.exports = (config, app, common, route) => {
               path: `/a/${albumId}`
             }
             app.console.debug(`Adding database entry for album '${albumId}'`)
-            new app.db.models.album(albuminfo)
-            .save((err, album) => {
+            app.db.models.album.create(albuminfo, (err, album) => {
               if (err) {
-                app.console.debug(`Unable to add database entry for album '${albumId}'`)
+                app.console.debug(`Unable to add database entry for album '${albumId}'`, 'red')
                 return common.error(res, 500)
               } else {
                 app.console.debug(`Added database entry for album '${albumId}'`)

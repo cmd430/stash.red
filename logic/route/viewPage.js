@@ -3,11 +3,16 @@ module.exports = (config, app, common, route) => {
   // View File / View Album / User Page | View File / View Album / User JSON
   return async function viewPage (req, res, next) {
     let type = req.params.type
+    let dynamic = {
+      server: config.render
+    }
+    if (!dynamic['server']['opengraph']['icon'].includes(`${req.protocol}://${req.hostname}`)) {
+      dynamic['server']['opengraph']['icon'] =`${req.protocol}://${req.hostname}${config.render.opengraph.icon}`
+    }
+    dynamic['server']['opengraph']['url'] = `${req.protocol}://${req.hostname}${req.url}`
     if (type === undefined) {
       // Serve our Homepage
-      return res.render('index.hbs', {
-        server: config.render
-      })
+      return res.render('index.hbs', dynamic)
     } else {
       let typeLong = (type === 'f' ? 'file' : (type === 'a' ? 'album' : 'user'))
       let id = req.params.id
@@ -41,9 +46,6 @@ module.exports = (config, app, common, route) => {
           return common.error(res, err.status)
         } else {
           if (data.length > 0) {
-            let dynamic = {
-              server: config.render
-            }
             dynamic[typeLong] = common.formatResults(req, data)[0]
             if (!rawJSON) {
               return res.status(200).render(`${typeLong}.hbs`, dynamic)

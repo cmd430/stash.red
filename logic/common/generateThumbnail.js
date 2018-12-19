@@ -24,7 +24,7 @@ module.exports = (config, app, common) => {
             stream.on('data', data => {
               buffer.push(data)
             })
-            stream.on('close', () => {
+            stream.on('end', () => {
               return resolve(Buffer.concat(buffer))
             })
             stream.on('error', err => {
@@ -69,7 +69,8 @@ module.exports = (config, app, common) => {
       return `data:image/png;base64,${thumbnail.toString('base64')}`
     })
     .catch(err => {
-      app.console.debug(`Unable to generate thumbnail for file: ${path.basename(file)}`)
+      app.console.debug(`Unable to generate thumbnail for file: ${path.basename(file)}`, 'red')
+      app.console.debug(err, 'red')
       return null
     })
   }
