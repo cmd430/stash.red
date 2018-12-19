@@ -11,21 +11,19 @@
       <meta name="medium" content="image" />
       <meta property="og:image" content="{{this.directpath}}" />
       <meta property="og:image:type" content="{{this.meta.mimetype}}" />
-      <meta property="og:description" content="An Image hosted on {{server.name.fullname}}" />
     {{/is}}
     {{#is file 'audio'}}
       <meta name="medium" content="audio" />
       <meta property="og:audio" content="{{this.directpath}}" />
       <meta property="og:audio:type" content="{{this.meta.mimetype}}" />
-      <meta property="og:description" content="Audio hosted on {{server.name.fullname}}" />
     {{/is}}
     {{#is file 'video'}}
       <meta name="medium" content="video" />
       <meta property="og:video" content="{{this.directpath}}" />
       <meta property="og:video:type" content="{{this.meta.mimetype}}" />
-      <meta property="og:description" content="A Video hosted on {{server.name.fullname}}" />
     {{/is}}
     <meta property="og:title" content="{{file.id}}" />
+    <meta property="og:description" content="{{typeof file}} hosted on {{server.name.fullname}}" />
     <link rel="icon" type="image/png" href="/img/favicon.png" />
     <link rel="apple-touch-icon" href="/img/favicon.png" />
     <link rel="stylesheet" href="/css/common.css" />

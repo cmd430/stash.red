@@ -8,7 +8,7 @@ module.exports = (config, app, common, route) => {
     let subdomains = req.subdomains
     if (file.includes('favicon.ico')) {
       file = `${config.storage.asset}/img/${file}`
-    } else if (file.includes('.html') || file === '/') {
+    } else if (file.includes('.html') || file === '/' || file === '//') {
       // We only want to serve image/audio/video files
       // from the subdomains, so we redirect html
       // requests back to the host domain
