@@ -69,7 +69,7 @@ module.exports = (config, app, common) => {
       return `data:image/png;base64,${thumbnail.toString('base64')}`
     })
     .catch(err => {
-      app.console.debug(`Unable to generate thumbnail for file: ${path.basename(file)}`)
+      app.console.debug(`Unable to generate thumbnail for file: ${path.basename(file)}`, 'red')
       return null
     })
   }

@@ -46,9 +46,9 @@ const app = {
     log: function (message, color = 'cyan') {
       return console.log( `[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
     },
-    debug: function (message) {
+    debug: function (message, color = 'deeppink') {
       if (config.server.debug) {
-        return console.debug(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.magenta(message)}`)
+        return console.debug(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
       }
     },
     warn: function (warn, stack = false) {
@@ -83,9 +83,8 @@ process.on('unhandledRejection', error => {
   }
   process.exit(1)
 })
-// Only logs if Debug is infact enabled
-app.console.debug('Debug enabled')
 app.console.log(`Server starting`, 'cyan')
+app.console.debug('Debug enabled') // Only logs if Debug is infact enabled
 const startTime = process.hrtime()
 // Main Startup chain
 Promise.all(Object.keys(config.storage).map(key => {
@@ -147,7 +146,6 @@ Promise.all(Object.keys(config.storage).map(key => {
     ]
   }))
   app.domain.router.use(busboy({
-    immediate: true,
     highWaterMark: config.upload.buffer,
     limits: {
       fileSize: config.upload.maxsize

@@ -11,6 +11,7 @@ module.exports = (config, app, common, route) => {
     if (user !== false) {
       // We are authorized
       // or auth is disabled
+      req.pipe(req.busboy)
       let files = []
       let partial = {}
       let finished = false
@@ -51,7 +52,7 @@ module.exports = (config, app, common, route) => {
             destination = `${config.storage[shorttype]}/${filepath}`
         }
         if (destination === null) {
-          app.console.debug(`Upload of '${filename}' aborted invaild filetype`)
+          app.console.debug(`Upload of '${filename}' aborted invaild filetype`, 'red')
           return file.resume()
         }
         let fstream = fs.createWriteStream(destination)
@@ -81,9 +82,9 @@ module.exports = (config, app, common, route) => {
         })
         file.on('end', async () => {
           if (aborted) {
-            app.console.debug(`Upload of '${filename}' aborted size limit reached`)
+            app.console.debug(`Upload of '${filename}' aborted size limit reached`, 'red')
           } else if (errored) {
-            app.console.debug(`Upload of '${filename}' aborted due to error`)
+            app.console.debug(`Upload of '${filename}' aborted due to error`, 'red')
           } else {
             app.console.debug(`Upload of '${filename}' finished`)
             fileinfo.path = destination
@@ -143,7 +144,7 @@ module.exports = (config, app, common, route) => {
             app.console.debug(`Adding database entry for file '${filename}'`)
             app.db.models.file.create(fileinfo, (err, file) => {
               if (err) {
-                app.console.debug(`Unable to add database entry for file '${filename}'`)
+                app.console.debug(`Unable to add database entry for file '${filename}'`, 'red')
                 return common.error(res, 500)
               } else {
                 app.console.debug(`Added database entry for file '${filename}'`)
@@ -167,7 +168,7 @@ module.exports = (config, app, common, route) => {
             app.console.debug(`Adding database entry for album '${albumId}'`)
             app.db.models.album.create(albuminfo, (err, album) => {
               if (err) {
-                app.console.debug(`Unable to add database entry for album '${albumId}'`)
+                app.console.debug(`Unable to add database entry for album '${albumId}'`, 'red')
                 return common.error(res, 500)
               } else {
                 app.console.debug(`Added database entry for album '${albumId}'`)
