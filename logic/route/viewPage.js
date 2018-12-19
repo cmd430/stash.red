@@ -44,6 +44,8 @@ module.exports = (config, app, common, route) => {
             let dynamic = {
               server: config.render
             }
+            dynamic.server.opengraph.icon = `${req.protocol}://${req.hostname}${dynamic.server.opengraph.icon}`
+            dynamic.server.opengraph.url = `${req.protocol}://${req.hostname}${req.originalUrl}`
             dynamic[typeLong] = common.formatResults(req, data)[0]
             if (!rawJSON) {
               return res.status(200).render(`${typeLong}.hbs`, dynamic)

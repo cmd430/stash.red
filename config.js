@@ -59,6 +59,7 @@ const config = {
       fragment_two: `${serverName.split('.')[1].toLowerCase()}`
     },
     opengraph: {
+      icon: '/img/favicon.png',
       theme: '#db0303'
     },
     github: 'cmd430/stash.red'

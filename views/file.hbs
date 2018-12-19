@@ -4,8 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
     <meta name="theme-color" content="{{server.opengraph.theme}}" />
-    <meta content="{{server.name.fullname}} | {{file.id}}" property="og:title" />
-    <meta content="{{typeof file}} hosted on {{server.name.fullname}}" property="og:description" />
+    <meta property="og:site_name" content="{{server.name.fullname}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{server.opengraph.url}}" />
+    {{#is file 'image'}}
+      <meta name="medium" content="image" />
+      <meta property="og:image" content="{{this.directpath}}" />
+      <meta property="og:image:type" content="{{this.meta.mimetype}}" />
+      <meta property="og:description" content="An Image hosted on {{server.name.fullname}}" />
+    {{/is}}
+    {{#is file 'audio'}}
+      <meta name="medium" content="audio" />
+      <meta property="og:audio" content="{{this.directpath}}" />
+      <meta property="og:audio:type" content="{{this.meta.mimetype}}" />
+      <meta property="og:description" content="Audio hosted on {{server.name.fullname}}" />
+    {{/is}}
+    {{#is file 'video'}}
+      <meta name="medium" content="video" />
+      <meta property="og:video" content="{{this.directpath}}" />
+      <meta property="og:video:type" content="{{this.meta.mimetype}}" />
+      <meta property="og:description" content="A Video hosted on {{server.name.fullname}}" />
+    {{/is}}
+    <meta property="og:title" content="{{file.id}}" />
     <link rel="icon" type="image/png" href="/img/favicon.png" />
     <link rel="apple-touch-icon" href="/img/favicon.png" />
     <link rel="stylesheet" href="/css/common.css" />
