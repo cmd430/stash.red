@@ -147,6 +147,7 @@ Promise.all(Object.keys(config.storage).map(key => {
     ]
   }))
   app.domain.router.use(busboy({
+    immediate: true,
     highWaterMark: config.upload.buffer,
     limits: {
       fileSize: config.upload.maxsize

@@ -11,7 +11,6 @@ module.exports = (config, app, common, route) => {
     if (user !== false) {
       // We are authorized
       // or auth is disabled
-      req.pipe(req.busboy)
       let files = []
       let partial = {}
       let finished = false
