@@ -10,10 +10,14 @@
   </head>
   <body>
     {{#is embed 'video'}}
-      <video src="{{this.directpath}}" controls></video>
+      <video controls>
+        <source src="{{this.directpath}}" />
+      </video>
     {{/is}}
     {{#is embed 'audio'}}
-      <audio src="{{this.directpath}}" controls></audio>
+      <audio controls>
+        <source src="{{this.directpath}}" />
+      </audio>
     {{/is}}
   </body>
 </html>
