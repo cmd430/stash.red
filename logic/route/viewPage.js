@@ -20,12 +20,6 @@ module.exports = (config, app, common, route) => {
       if (req.params.id.includes('.json')) {
         id = id.split('.')[0]
         rawJSON = true
-      } else if (req.params.id.includes('.rss')) {
-        id = id.split('.')[0]
-        rawJSON = true
-      } else if (req.params.id.includes('.atom')) {
-        id = id.split('.')[0]
-        rawJSON = true
       }
       switch (type) {
         case 'e':
