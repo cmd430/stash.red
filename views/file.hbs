@@ -4,26 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
     <meta name="theme-color" content="{{server.opengraph.theme}}" />
+    <meta property="og:title" content="{{file.id}}" />
     <meta property="og:site_name" content="{{server.name.fullname}}" />
-    <meta property="og:type" content="website" />
     <meta property="og:url" content="{{server.opengraph.url}}" />
     {{#is file 'image'}}
-      <meta name="medium" content="image" />
+      <meta property="twitter:card" content="summary_large_image" />
       <meta property="og:image" content="{{this.directpath}}" />
-      <meta property="og:image:type" content="{{this.meta.mimetype}}" />
     {{/is}}
     {{#is file 'audio'}}
-      <meta name="medium" content="audio" />
-      <meta property="og:audio" content="{{this.directpath}}" />
-      <meta property="og:audio:type" content="{{this.meta.mimetype}}" />
+      <meta property="twitter:player" content="{{this.embedpath}}" />
+      <meta property="twitter:player:width" content="1920" />
+      <meta property="twitter:player:height" content="1080" />
+      <meta property="twitter:image" content="https://stash.blue/img/generic_audio.png" />
     {{/is}}
     {{#is file 'video'}}
-      <meta name="medium" content="video" />
-      <meta property="og:video" content="{{this.directpath}}" />
-      <meta property="og:video:type" content="{{this.meta.mimetype}}" />
+      <meta property="twitter:card" content="player" />
+      <meta property="twitter:player" content="{{this.embedpath}}" />
+      <meta property="twitter:player:width" content="1920" />
+      <meta property="twitter:player:height" content="1080" />
     {{/is}}
-    <meta property="og:title" content="{{file.id}}" />
-    <meta property="og:description" content="{{typeof file}} hosted on {{server.name.fullname}}" />
     <link rel="icon" type="image/png" href="/img/favicon.png" />
     <link rel="apple-touch-icon" href="/img/favicon.png" />
     <link rel="stylesheet" href="/css/common.css" />

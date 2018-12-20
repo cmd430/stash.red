@@ -22,6 +22,9 @@ module.exports = (config, app, common) => {
         result.path = `${req.protocol}://${req.hostname}${result.path}`
         result.directpath = `${req.protocol}://${subdomain}.${req.hostname}/${result.meta.filename}`
         result.downloadpath = `${req.protocol}://${app.subdomain.download.name}.${req.hostname}/${type}/${result.meta.filename}`
+        if (type === 'audio' || type === 'video') {
+          result.embedpath = `${req.protocol}://${req.hostname}${result.path.replace('/f/', '/e/')}`
+        }
       }
     }
     let format = result => {
