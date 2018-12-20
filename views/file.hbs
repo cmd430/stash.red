@@ -12,6 +12,7 @@
       <meta property="og:image" content="{{this.directpath}}" />
     {{/is}}
     {{#is file 'audio'}}
+      <meta property="twitter:card" content="player" />
       <meta property="twitter:player" content="{{this.embedpath}}" />
       <meta property="twitter:player:width" content="1920" />
       <meta property="twitter:player:height" content="1080" />
@@ -19,7 +20,7 @@
     {{/is}}
     {{#is file 'video'}}
       <meta property="twitter:card" content="player" />
-      <meta property="twitter:player" content="{{this.embedpath}}" />
+      <meta property="twitter:player" content="{{this.directpath}}" />
       <meta property="twitter:player:width" content="1920" />
       <meta property="twitter:player:height" content="1080" />
     {{/is}}
