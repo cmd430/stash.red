@@ -14,7 +14,7 @@ module.exports = (config, app, common, route) => {
       // Serve our Homepage
       return res.render('index.hbs', dynamic)
     } else {
-      let typeLong = (type === 'f' ? 'file' : (type === 'a' ? 'album' : (type === 'u' ? 'user' : 'embeded')))
+      let typeLong = (type === 'f' ? 'file' : (type === 'a' ? 'album' : (type === 'u' ? 'user' : 'embed')))
       let id = req.params.id
       let rawJSON = false
       if (req.params.id.includes('.json')) {
