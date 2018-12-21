@@ -3,7 +3,10 @@ const express = require('express')
 const logger = require('morgan')
 const responseTime = require('response-time')
 const chalk = require('chalk')
+const bodyParser = require('body-parser')
 const subdomain = require('express-subdomain')
+const session = require('express-session')
+const mongoStore = require('connect-mongo')(session)
 const cors = require('cors')
 const busboy = require('connect-busboy')
 const hbs = require('hbs')
@@ -138,6 +141,22 @@ Promise.all(Object.keys(config.storage).map(key => {
   app.domain.router.enable('trust proxy')
   app.domain.router.set('view engine', 'hbs')
   app.domain.router.set('views', `${config.handelbars.views}`)
+  app.domain.router.use(session({
+    secret: 'work hard',
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+      secure: 'auto',
+      maxAge: 2592000000 // 30 days from now
+    },
+    store: new mongoStore({
+      mongooseConnection: app.db.connection
+    })
+  }))
+  app.domain.router.use(bodyParser.json())
+  app.domain.router.use(bodyParser.urlencoded({
+    extended: false
+  }))
   app.domain.router.use(responseTime())
   app.domain.router.use(logger(config.log))
   app.domain.router.use(cors({
@@ -156,8 +175,13 @@ Promise.all(Object.keys(config.storage).map(key => {
   app.domain.router.use(subdomain(`${app.subdomain.video.name}`, app.subdomain.video.router))
   app.domain.router.use(subdomain(`${app.subdomain.download.name}`, app.subdomain.download.router))
 
-  require('./models/models.js')(app)
+  require('./models/models.js')(config, app)
   require('./routes.js')(config, app)
+
+  app.domain.router.use(function (err, req, res, next) {
+    // Global Error Handler WIP
+    res.status(err.status || 500).send(err.message)
+  })
 
   app.console.debug('Starting Express')
   return new Promise ((resolve, reject) => {

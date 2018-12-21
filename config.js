@@ -55,8 +55,8 @@ const config = {
     // on each page thanks to handelbars
     name: {
       fullname: `${serverName}`,
-      fragment_one: `${serverName.split('.')[0].toUpperCase()}`,
-      fragment_two: `${serverName.split('.')[1].toLowerCase()}`
+      fragmentOne: `${serverName.split('.')[0].toUpperCase()}`,
+      fragmentTwo: `${serverName.split('.')[1].toLowerCase()}`
     },
     opengraph: {
       icon: '/img/favicon.png',
@@ -95,11 +95,13 @@ const config = {
     asset: assetDir,
   },
   auth: {
-    enabled: true,
-    generation: {
-      enabled: true,
-      length: 8
-    }
+    // if you dont want to allow
+    // new accounts set this to false
+    allowSignup: true,
+    // salt for password hashing as String
+    // or number of rounds as Number
+    // Default: 10
+    saltOrRounds: 10
   },
   mongo: {
     db: 'stash',

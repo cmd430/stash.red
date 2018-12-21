@@ -1,13 +1,23 @@
 module.exports = (config, app, common) => {
 
-  return async function queryDB (model, id, callback, searchByUploader = false, filesInAlbum = false) {
-    var dbModel = app.db.models[model].find({
+  return async function queryDB (model, id, options, callback) {
+    if (options instanceof Function) {
+      callback = options
+      options = {}
+    }
+    options = {
+      searchByUploader: options.searchByUploader || false,
+      filesInAlbum: options.filesInAlbum || false,
+      showPrivate: options.showPrivate || false
+    }
+
+    let dbModel = app.db.models[model].find({
       id: id
     }, {
       _id: 0
     })
-    if (searchByUploader) {
-      var dbModel = app.db.models[model].find({
+    if (options.searchByUploader) {
+      dbModel = app.db.models[model].find({
         'meta.uploaded.by': id,
         'meta.album': {
           $exists : false
@@ -16,8 +26,8 @@ module.exports = (config, app, common) => {
         _id: 0
       })
     }
-    if (filesInAlbum) {
-      var dbModel = app.db.models[model].find({
+    if (options.filesInAlbum) {
+      dbModel = app.db.models[model].find({
         'meta.album': id
       }, {
         _id: 0

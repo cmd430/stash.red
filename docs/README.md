@@ -4,8 +4,8 @@
 ![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.png?v=103)
 
 stash.red is a Small footprint File host (Specificly for Image/Video and Audio files) It contains:
- - Simple Authentication using Auth key
- - Disable Authentication to allow anonymous uploads
+ - Account creation with hased passwords
+ - Private uploads (hidden unless you have the link)
  - Simple Album and Single file support
  - User pages to see files uploaded by specific users
  - Ability to easily find content by User or by Album

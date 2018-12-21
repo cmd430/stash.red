@@ -7,11 +7,10 @@ const signature = require('buffer-signature')
 module.exports = (config, app, common, route) => {
 
   // Handle file uploads
-  return async function uploadFile (req, res) {
-    let user = await common.auth(req, res)
-    if (user !== false) {
+  return async function uploadFile (req, res, next) {
+    let user = await common.isAuthenticated(req)
+    if (user) {
       // We are authorized
-      // or auth is disabled
       req.pipe(req.busboy)
       let files = []
       let partial = {}
@@ -217,15 +216,10 @@ module.exports = (config, app, common, route) => {
             })
           }
         } else {
-          let error = errors[0]
           if (errors.length > 1) {
-            error = {
-              file: 'multiple',
-              status: 422,
-              message: 'unprocessable entity'
-            }
+            return common.error(res, 422)
           }
-          return res.status(error.status).json(error)
+          return res.status(errors[0].status).json(errors[0])
         }
       })
     } else {

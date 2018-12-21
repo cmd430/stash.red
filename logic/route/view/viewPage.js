@@ -4,13 +4,19 @@ module.exports = (config, app, common, route) => {
   return async function viewPage (req, res, next) {
     let type = req.params.type
     let dynamic = {
-      server: config.render
+      server: config.render,
+      signedin: await common.isAuthenticated(req)
     }
     if (!dynamic['server']['opengraph']['icon'].includes(`${req.protocol}://${req.hostname}`)) {
       dynamic['server']['opengraph']['icon'] =`${req.protocol}://${req.hostname}${config.render.opengraph.icon}`
     }
     dynamic['server']['opengraph']['url'] = `${req.protocol}://${req.hostname}${req.url}`
     if (type === undefined) {
+      if (req.url === '/login') {
+        return res.render('login.hbs', dynamic)
+      } else if (req.url === '/signup') {
+        return res.render('signup.hbs', dynamic)
+      }
       // Serve our Homepage
       return res.render('index.hbs', dynamic)
     } else {

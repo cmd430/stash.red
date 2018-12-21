@@ -10,13 +10,27 @@ module.exports = (config, app) => {
   .patch(route.notImplemented)
   .delete(route.notImplemented)
 
-  // View Album/User/Image/Audio/Video (with HTML wrapper)
-  app.domain.router.route('/:type/:id')
+  // Login / Sign Up / Logout / Profile
+  app.domain.router.route('/login')
   .get(route.viewPage)
   .put(route.notImplemented)
+  .post(route.login)
+  .patch(route.notImplemented)
+  .delete(route.notImplemented)
+
+  app.domain.router.route('/signup')
+  .get(route.viewPage)
+  .put(route.notImplemented)
+  .post(route.signup)
+  .patch(route.notImplemented)
+  .delete(route.notImplemented)
+
+  app.domain.router.route('/logout')
+  .get(route.logout)
+  .put(route.notImplemented)
   .post(route.notImplemented)
-  .patch(route.updateItem)
-  .delete(route.removeItem)
+  .patch(route.notImplemented)
+  .delete(route.notImplemented)
 
   // Upload File(s)
   app.domain.router.route('/upload')
@@ -26,17 +40,25 @@ module.exports = (config, app) => {
   .patch(route.notImplemented)
   .delete(route.notImplemented)
 
-  // Authkeys
-  app.domain.router.route('/auth')
-  .get(route.getAuths)
-  .put(route.addAuth)
+  // View Album/User/Image/Audio/Video (with HTML wrapper)
+  app.domain.router.route('/:type/:id')
+  .get(route.viewPage)
+  .put(route.notImplemented)
   .post(route.notImplemented)
-  .patch(route.notImplemented)
-  .delete(route.removeAuth)
+  .patch(route.updateItem)
+  .delete(route.removeItem)
 
   // Static Assets
   app.domain.router.route('/*')
   .get(route.sendAsset)
+  .put(route.notImplemented)
+  .post(route.notImplemented)
+  .patch(route.notImplemented)
+  .delete(route.notImplemented)
+
+  // Downloads
+  app.subdomain.download.router.route('/:type/:file')
+  .get(route.downloadFile)
   .put(route.notImplemented)
   .post(route.notImplemented)
   .patch(route.notImplemented)
@@ -64,14 +86,4 @@ module.exports = (config, app) => {
   .patch(route.notImplemented)
   .delete(route.notImplemented)
 
-  // Downloads
-  app.subdomain.download.router.route('/:type/:file')
-  .get(route.downloadFile)
-  .put(route.notImplemented)
-  .post(route.notImplemented)
-  .patch(route.notImplemented)
-  .delete(route.notImplemented)
-
-  // Add Admin auth if Applicable
-  route.addAdmin()
 }

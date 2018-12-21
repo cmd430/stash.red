@@ -1,18 +1,26 @@
 module.exports = (config, app, common) => {
 
-  return async function getDBUser (id, callback) {
-    let albums = await common.getDBAlbum(id, async (err, a_data) => {
+  return async function getDBUser (id, options, callback) {
+    if (options instanceof Function) {
+      callback = options
+      options = {}
+    }
+    options = {
+      showPrivate: options.showPrivate || false,
+      searchByUploader: true
+    }
+    let albums = await common.getDBAlbum(id, options, async (err, a_data) => {
       if (err) {
         return callback(err)
       }
       return a_data
-    }, true)
-    let files = await common.getDBFile(id, async (err, f_data) => {
+    })
+    let files = await common.getDBFile(id, options, async (err, f_data) => {
       if (err) {
         return callback(err)
       }
       return f_data
-    }, true, false)
+    })
     let user = [{
       meta: {
         username: id,

@@ -1,4 +1,4 @@
-module.exports = (app) => {
+module.exports = (config, app) => {
 
   let albumSchema = new app.db.Schema({
     id: {

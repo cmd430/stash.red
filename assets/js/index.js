@@ -4,14 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let file__dropzone = document.querySelector('#dropzone')
   let file_dropzonetext = document.querySelector('#dropstate')
 
-  let button__uploads = document.querySelector('#uploadsBtn')
-  let button__uploads__anchor = button__uploads.querySelector('a')
   let button__settings = document.querySelector('#settingsBtn')
   let panel__settings = document.querySelector('#settings')
 
   let setting__copylink = document.querySelector('#cltcb')
   let setting__directlink = document.querySelector('#dlfi')
-  let setting__authkey = document.querySelector('#ak')
 
   let progress__bar = document.querySelector('#progress')
   let progress__fill = progress__bar.querySelector('#fill')
@@ -23,49 +20,33 @@ document.addEventListener('DOMContentLoaded', () => {
     file__picker.value = ''
   }
 
-  button__settings.addEventListener('click', e => {
-    if (button__settings.classList.contains('active')) {
-      button__settings.classList.remove('active')
-      panel__settings.classList.add('invisible')
-      setTimeout(() => {
-        panel__settings.classList.add('hidden')
-      }, 200)
-    } else {
-      button__settings.classList.add('active')
-      panel__settings.classList.remove('hidden')
-      setTimeout(() => {
-        // Hack to make shit work
-        panel__settings.classList.remove('invisible')
-      }, 0)
-    }
-  })
-
-  function __button__uploads () {
-    let username = localStorage.getItem('Username') || ''
-    if (username !== '') {
-      button__uploads.classList.remove('hidden')
-      button__uploads__anchor.setAttribute('href', `${location.protocol}//${location.host}/u/${username}`)
-    } else {
-      button__uploads.classList.add('hidden')
-      button__uploads__anchor.removeAttribute('href')
-    }
+  if (button__settings) {
+    button__settings.addEventListener('click', e => {
+      if (button__settings.classList.contains('active')) {
+        button__settings.classList.remove('active')
+        panel__settings.classList.add('invisible')
+        setTimeout(() => {
+          panel__settings.classList.add('hidden')
+        }, 200)
+      } else {
+        button__settings.classList.add('active')
+        panel__settings.classList.remove('hidden')
+        setTimeout(() => {
+          // Hack to make shit work
+          panel__settings.classList.remove('invisible')
+        }, 0)
+      }
+    })
   }
-  __button__uploads()
 
   setting__copylink.checked = JSON.parse(localStorage.getItem('AutoCopyLink')) || false
   setting__directlink.checked = JSON.parse(localStorage.getItem('CopyDirectLink')) || false
-  setting__authkey.value = localStorage.getItem('AuthorizationKey') || ''
 
   setting__copylink.addEventListener('change', e => {
     localStorage.setItem('AutoCopyLink', setting__copylink.checked)
   })
   setting__directlink.addEventListener('change', e => {
     localStorage.setItem('CopyDirectLink', setting__directlink.checked)
-  })
-  setting__authkey.addEventListener('change', e => {
-    localStorage.setItem('Username', '')
-    __button__uploads()
-    localStorage.setItem('AuthorizationKey', setting__authkey.value)
   })
 
   file__dropzone.addEventListener('click', e => {

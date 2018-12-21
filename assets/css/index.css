@@ -197,13 +197,6 @@ header h1 {
   background-color: white;
   transition: 400ms;
 }
-#content #settings .setting input[type=password] {
-  border: 1px solid #5e6063;
-  padding: 2px;
-  position: absolute;
-  width: 220px;
-  font-size: 16px;
-}
 
 #footer {
   position: absolute;
