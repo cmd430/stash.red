@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const sharp = require('sharp')
 const meter = require('stream-meter')
+const signature = require('buffer-signature')
 
 module.exports = (config, app, common, route) => {
 
@@ -36,6 +37,7 @@ module.exports = (config, app, common, route) => {
       req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
         let aborted = false
         let errored = false
+        let invailid = false
         partial = {}
         let fileinfo = {
           fieldname: fieldname,
@@ -68,11 +70,21 @@ module.exports = (config, app, common, route) => {
           })
         })
         let size = meter()
+        let pipeline = file.pipe(signature.identifyStream(info => {
+          let mime = info.mimeType
+          if (!mime.includes('image') && !mime.includes('audio') && !mime.includes('video')) {
+            invailid = mime
+            fs.unlink(destination, () => {
+              file.resume()
+            })
+          }
+        })).pipe(size)
         if (shorttype === 'image') {
-          file.pipe(size).pipe(sharp().rotate().pipe(fstream))
+          pipeline.pipe(sharp().rotate().pipe(fstream))
         } else {
-          file.pipe(size).pipe(fstream)
+          pipeline.pipe(fstream)
         }
+        size.resume()
         file.on('data', () => {
           partial = {
             stream: fstream,
@@ -86,7 +98,9 @@ module.exports = (config, app, common, route) => {
           })
         })
         file.on('end', async () => {
-          if (aborted) {
+          if (invailid) {
+            app.console.debug(`Upload of '${filename}' rejected file magic is invaild ('${invailid}')`, 'red')
+          } else if (aborted) {
             app.console.debug(`Upload of '${filename}' aborted size limit reached`, 'red')
           } else if (errored) {
             app.console.debug(`Upload of '${filename}' aborted due to error`, 'red')
