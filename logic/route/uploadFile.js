@@ -84,7 +84,6 @@ module.exports = (config, app, common, route) => {
         } else {
           pipeline.pipe(fstream)
         }
-        size.resume()
         file.on('data', () => {
           partial = {
             stream: fstream,
