@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const sharp = require('sharp')
 const meter = require('stream-meter')
+const signature = require('buffer-signature')
 
 module.exports = (config, app, common, route) => {
 
@@ -15,6 +16,7 @@ module.exports = (config, app, common, route) => {
       let files = []
       let partial = {}
       let finished = false
+      let errors = []
       req.on('close', () => {
         if (!finished) {
           app.console.debug(`Upload aborted removing files`)
@@ -36,6 +38,7 @@ module.exports = (config, app, common, route) => {
       req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
         let aborted = false
         let errored = false
+        let invailid = false
         partial = {}
         let fileinfo = {
           fieldname: fieldname,
@@ -58,6 +61,11 @@ module.exports = (config, app, common, route) => {
         }
         if (destination === null) {
           app.console.debug(`Upload of '${filename}' aborted invaild filetype`, 'red')
+          errors.push({
+            file: filename,
+            status: 415,
+            message: 'invaild filetype'
+          })
           return file.resume()
         }
         let fstream = fs.createWriteStream(destination)
@@ -68,10 +76,19 @@ module.exports = (config, app, common, route) => {
           })
         })
         let size = meter()
+        let pipeline = file.pipe(signature.identifyStream(info => {
+          let mime = info.mimeType
+          if (!mime.includes('image') && !mime.includes('audio') && !mime.includes('video')) {
+            invailid = mime
+            fs.unlink(destination, () => {
+              file.resume()
+            })
+          }
+        })).pipe(size)
         if (shorttype === 'image') {
-          file.pipe(size).pipe(sharp().rotate().pipe(fstream))
+          pipeline.pipe(sharp().rotate().pipe(fstream))
         } else {
-          file.pipe(size).pipe(fstream)
+          pipeline.pipe(fstream)
         }
         file.on('data', () => {
           partial = {
@@ -86,10 +103,27 @@ module.exports = (config, app, common, route) => {
           })
         })
         file.on('end', async () => {
-          if (aborted) {
+          if (invailid) {
+            app.console.debug(`Upload of '${filename}' rejected file magic is invaild ('${invailid}')`, 'red')
+            errors.push({
+              file: filename,
+              status: 415,
+              message: 'invaild filetype'
+            })
+          } else if (aborted) {
             app.console.debug(`Upload of '${filename}' aborted size limit reached`, 'red')
+            errors.push({
+              file: filename,
+              status: 413,
+              message: 'file too large'
+            })
           } else if (errored) {
-            app.console.debug(`Upload of '${filename}' aborted due to error`, 'red')
+            app.console.debug(`Upload of '${filename}' aborted due to write error`, 'red')
+            errors.push({
+              file: filename,
+              status: 500,
+              message: 'error writing file'
+            })
           } else {
             app.console.debug(`Upload of '${filename}' finished`)
             fileinfo.path = destination
@@ -183,7 +217,15 @@ module.exports = (config, app, common, route) => {
             })
           }
         } else {
-          return common.error(res, 500)
+          let error = errors[0]
+          if (errors.length > 1) {
+            error = {
+              file: 'multiple',
+              status: 422,
+              message: 'unprocessable entity'
+            }
+          }
+          return res.status(error.status).json(error)
         }
       })
     } else {
