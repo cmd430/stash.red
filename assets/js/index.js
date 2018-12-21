@@ -120,6 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
       message = `${error.status}: ${error.error}`
     } else if (error.message) {
       message = error.message
+      if (error.status) {
+        message = `${error.status}: ${message}`
+      }
     }
     progress__text.textContent = message
     progress__fill.setAttribute('style', 'width: 100%;')
@@ -136,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     progress__text.textContent = message
     progress__fill.setAttribute('style', 'width: 100%;')
     progress__bar.classList.remove('proc')
+    progress__bar.classList.remove('error')
     progress__bar.classList.add('warn')
   }
 
