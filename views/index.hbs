@@ -29,18 +29,18 @@
       <div id="buttons">
         {{#if signedin}}
           <div id="uploadsBtn" class="button">
-            <a href="http://local.host/u/{{signedin.username}}">Uploads</a>
+            <a href="/u/{{signedin.username}}">Uploads</a>
           </div>
           <div id="settingsBtn" class="button">Settings</div>
           <div id="logoutBtn" class="button">
-            <a href="http://local.host/logout">Logout</a>
+            <a href="/logout">Logout</a>
           </div>
         {{else}}
           <div id="loginBtn" class="button">
-            <a href="http://local.host/login">Login</a>
+            <a href="/login">Login</a>
           </div>
           <div id="signupBtn" class="button">
-            <a href="http://local.host/signup">Sign up</a>
+            <a href="/signup">Sign up</a>
           </div>
         {{/if}}
       </div>
