@@ -6,6 +6,9 @@ module.exports = (config, app, common, route) => {
       return res.redirect('/')
     }
     if (req.body.username && req.body.password) {
+      if (!app.captcha.check(req, req.body.captcha)) {
+        return common.error(res, 400, new Error('captcha failed'))
+      }
       app.db.models.auth.authenticate(req.body.username, req.body.password, (error, user) => {
         if (error || !user) {
           return common.error(res, 401, new Error('incorrect username or password'))

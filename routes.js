@@ -10,7 +10,7 @@ module.exports = (config, app) => {
   .patch(route.notImplemented)
   .delete(route.notImplemented)
 
-  // Login / Sign Up / Logout / Profile
+  // Login / Sign Up / Logout / Captcha
   app.domain.router.route('/login')
   .get(route.viewPage)
   .put(route.notImplemented)
@@ -27,6 +27,13 @@ module.exports = (config, app) => {
 
   app.domain.router.route('/logout')
   .get(route.logout)
+  .put(route.notImplemented)
+  .post(route.notImplemented)
+  .patch(route.notImplemented)
+  .delete(route.notImplemented)
+
+  app.domain.router.route('/captcha')
+  .get(route.generateCaptcha)
   .put(route.notImplemented)
   .post(route.notImplemented)
   .patch(route.notImplemented)

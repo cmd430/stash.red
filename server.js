@@ -12,6 +12,16 @@ const busboy = require('connect-busboy')
 const hbs = require('hbs')
 const mongoose = require('mongoose')
 const mkdir = require('make-dir')
+const captcha = require('svg-captcha-express').create({
+  background: 'rgba(0, 0, 0, 0)',
+  fontSize: 40,
+  width: 100,
+  height: 40,
+  charPreset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()?',
+  size: 4,
+  noise: 0,
+  color: true
+})
 const config = require('./config.js')
 
 // Allow override config opts from args
@@ -44,6 +54,7 @@ const app = {
     }
   },
   db: mongoose,
+  captcha: captcha,
   console: {
     // Console functions with extra formatting
     log: function (message, color = 'cyan') {

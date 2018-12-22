@@ -28,7 +28,8 @@
     "response-time": "^2.3.2",
     "sharp": "^0.21.0",
     "simple-thumbnail": "^1.4.0",
-    "stream-meter": "^1.0.4"
+    "stream-meter": "^1.0.4",
+    "svg-captcha-express": "^1.0.3"
   },
   "devDependencies": {
     "sass": "^1.15.1"
