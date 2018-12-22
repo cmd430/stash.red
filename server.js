@@ -5,13 +5,12 @@ const responseTime = require('response-time')
 const chalk = require('chalk')
 const bodyParser = require('body-parser')
 const subdomain = require('express-subdomain')
-const session = require('express-session')
-const mongoStore = require('connect-mongo')(session)
 const cors = require('cors')
 const busboy = require('connect-busboy')
 const hbs = require('hbs')
 const mongoose = require('mongoose')
 const mkdir = require('make-dir')
+const session = require('express-session')
 const captcha = require('svg-captcha-express').create({
   cookie: 'captcha',
   background: 'rgba(0, 0, 0, 0)',
@@ -23,6 +22,7 @@ const captcha = require('svg-captcha-express').create({
   noise: 0,
   color: true
 })
+const mongoStore = require('connect-mongo')(session)
 const config = require('./config.js')
 
 // Allow override config opts from args
