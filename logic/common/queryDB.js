@@ -12,7 +12,13 @@ module.exports = (config, app, common) => {
     }
 
     let dbModel = app.db.models[model].find({
-      id: id
+      id: id,
+      'meta.public': {
+        $in: [
+          true,
+          !options.showPrivate
+        ]
+      }
     }, {
       _id: 0
     })
@@ -21,6 +27,12 @@ module.exports = (config, app, common) => {
         'meta.uploaded.by': id,
         'meta.album': {
           $exists : false
+        },
+        'meta.public': {
+          $in: [
+            true,
+            !options.showPrivate
+          ]
         }
       }, {
         _id: 0
@@ -28,7 +40,13 @@ module.exports = (config, app, common) => {
     }
     if (options.filesInAlbum) {
       dbModel = app.db.models[model].find({
-        'meta.album': id
+        'meta.album': id,
+        'meta.public': {
+          $in: [
+            true,
+            !options.showPrivate
+          ]
+        }
       }, {
         _id: 0
       })
