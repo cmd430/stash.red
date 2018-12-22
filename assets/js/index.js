@@ -232,9 +232,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       request.open('GET', `https://cors-anywhere.herokuapp.com/${url}`, true)
       request.responseType = 'blob'
-      // CORS Proxys
+      // Public CORS Proxys
       //  https://gobetween.oklabs.org/pipe/  <-- i think it died :(
       //  https://cors-anywhere.herokuapp.com/
+      //
+      //  Or host your own https://github.com/cmd430/CORS-Proxy
       request.send()
     })
   }
