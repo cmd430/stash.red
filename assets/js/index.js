@@ -168,7 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
     prepare('Uploading: 0%')
     upload(data)
     .then(response => {
-      localStorage.setItem('Username', response.meta.uploaded.by)
       let redirect = copyText = `${response.path}`
       if (setting__copylink.checked) {
         if (response.meta.type === 'image') {
