@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let file__dropzone = document.querySelector('#dropzone')
   let file_dropzonetext = document.querySelector('#dropstate')
 
+  let buttons = document.querySelector('#buttons')
   let button__settings = document.querySelector('#settingsBtn')
   let panel__settings = document.querySelector('#settings')
 
@@ -125,11 +126,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function prepare (statusText) {
-    if (button__settings.classList.contains('active')) {
-      button__settings.click()
+    if (button__settings) {
+      if (button__settings.classList.contains('active')) {
+        button__settings.click()
+      }
+      button__settings.classList.add('hidden')
     }
-    button__settings.classList.add('hidden')
-    button__uploads.classList.add('hidden')
+    buttons.classList.add('invisible')
+       setTimeout(() => {
+        buttons.classList.add('hidden')
+    }, 200)
     file_dropzonetext.classList.add('hidden')
     progress__text.textContent = statusText
     progress__fill.removeAttribute('style')
