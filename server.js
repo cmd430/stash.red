@@ -13,6 +13,7 @@ const hbs = require('hbs')
 const mongoose = require('mongoose')
 const mkdir = require('make-dir')
 const captcha = require('svg-captcha-express').create({
+  cookie: 'captcha',
   background: 'rgba(0, 0, 0, 0)',
   fontSize: 40,
   width: 100,
