@@ -170,6 +170,7 @@ Promise.all(Object.keys(config.storage).map(key => {
       fileSize: config.upload.maxsize
     }
   }))
+
   app.domain.router.use(subdomain(`${app.subdomain.image.name}`, app.subdomain.image.router))
   app.domain.router.use(subdomain(`${app.subdomain.audio.name}`, app.subdomain.audio.router))
   app.domain.router.use(subdomain(`${app.subdomain.video.name}`, app.subdomain.video.router))
@@ -177,11 +178,6 @@ Promise.all(Object.keys(config.storage).map(key => {
 
   require('./models/models.js')(config, app)
   require('./routes.js')(config, app)
-
-  app.domain.router.use(function (err, req, res, next) {
-    // Global Error Handler WIP
-    res.status(err.status || 500).send(err.message)
-  })
 
   app.console.debug('Starting Express')
   return new Promise ((resolve, reject) => {
