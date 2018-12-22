@@ -3,15 +3,11 @@ module.exports = (config, app, common, route) => {
   // Signup
   return async function signup (req, res, next) {
     if (!config.auth.allowSignup) {
-      let err = new Error('Account creation is disabled.')
-      err.status = 400
-      return next(err)
+      return common.error(res, 503, new Error('account creation is disabled'))
     }
     if (req.body.email && req.body.username && req.body.password && req.body.passwordConfirm) {
       if (req.body.password !== req.body.passwordConfirm) {
-        let err = new Error('Passwords do not match.')
-        err.status = 400
-        return next(err)
+        return common.error(res, 400, new Error('passwords do not match'))
       }
       app.db.models.auth.create({
         email: req.body.email,
@@ -26,9 +22,7 @@ module.exports = (config, app, common, route) => {
         }
       })
     } else {
-      let err = new Error('All fields required.')
-      err.status = 400
-      return next(err)
+      return common.error(res, 400, new Error('all fields required'))
     }
   }
 
