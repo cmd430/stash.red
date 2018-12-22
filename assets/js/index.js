@@ -230,10 +230,10 @@ document.addEventListener('DOMContentLoaded', () => {
       request.onerror = err => {
         return reject(err)
       }
-      request.open('GET', `https://gobetween.oklabs.org/pipe/${url}`, true)
+      request.open('GET', `https://cors-anywhere.herokuapp.com/${url}`, true)
       request.responseType = 'blob'
       // CORS Proxys
-      //  https://gobetween.oklabs.org/pipe/
+      //  https://gobetween.oklabs.org/pipe/  <-- i think it died :(
       //  https://cors-anywhere.herokuapp.com/
       request.send()
     })
