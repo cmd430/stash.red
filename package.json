@@ -8,7 +8,7 @@
     "server": "node server"
   },
   "author": "Bradley 'cmd430' Treweek",
-  "license": "GPL",
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "bcrypt": "^3.0.2",
     "buffer-signature": "^1.0.0",
