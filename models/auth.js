@@ -13,12 +13,6 @@ module.exports = (config, app) => {
       type: String,
       required: true
     },
-    email: {
-      type: String,
-      unique: true,
-      required: true,
-      trim: true
-    },
     isAdmin: {
       type: Boolean,
       required: false,

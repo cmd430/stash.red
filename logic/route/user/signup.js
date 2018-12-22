@@ -5,12 +5,11 @@ module.exports = (config, app, common, route) => {
     if (!config.auth.allowSignup) {
       return common.error(res, 503, new Error('account creation is disabled'))
     }
-    if (req.body.email && req.body.username && req.body.password && req.body.passwordConfirm) {
+    if (req.body.username && req.body.password && req.body.passwordConfirm) {
       if (req.body.password !== req.body.passwordConfirm) {
         return common.error(res, 400, new Error('passwords do not match'))
       }
       app.db.models.auth.create({
-        email: req.body.email,
         username: req.body.username,
         password: req.body.password
       }, (err, auth) => {
