@@ -4,7 +4,7 @@
 ![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.png?v=103)
 
 stash.red is a Small footprint File host (Specificly for Image/Video and Audio files) It contains:
- - Account creation with hased passwords
+ - Account creation with hashed and salted passwords
  - Private uploads (hidden unless you have the link)
  - Simple Album and Single file support
  - User pages to see files uploaded by specific users
