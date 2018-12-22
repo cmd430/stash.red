@@ -263,7 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return reject(err)
       }
       request.open('POST', '/upload', true)
-      request.setRequestHeader('Authorization', localStorage.getItem('AuthorizationKey'))
       request.send(formData)
     })
   }
