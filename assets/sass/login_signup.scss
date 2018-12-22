@@ -1,0 +1,48 @@
+@import 'shared';
+
+#content {
+  width: auto;
+  max-width: 750px;
+  min-width: 280px;
+  margin: calc(50vh - 85px) 0 0 50vw;
+  transform: translate(-50%, -33%);
+
+  #accountzone {
+    position: relative;
+    margin: 0 auto;
+    width: 280px;
+
+    color: rgb(36, 41, 46);
+    background-color: rgb(255, 255, 255);
+    border: 1px dashed rgb(218, 223, 227);
+    text-align: center;
+    form {
+      height: 100%;
+      padding: 10px;
+      input[type=text],
+      input[type=password] {
+        padding: 4px;
+        margin: 4px 0;
+        width: 100%;
+        font-size: 16px;
+        font-weight: 500;
+        text-align: center;
+        border: 1px solid rgb(227, 231, 234);
+        outline: none;
+        &::placeholder {
+          font-weight: 100;
+        }
+      }
+      input[type=submit] {
+        margin: 10px;
+        padding: 10px;
+        width: 50%;
+        border: 0;
+        font-size: 16px;
+        font-weight: 700;
+        background: rgba(0, 0, 0, 0);
+        cursor: pointer;
+      }
+    }
+  }
+}

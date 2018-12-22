@@ -2,11 +2,11 @@
   margin:  0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Segoe UI', 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 body {
   background-color: rgb(250, 250, 250);
-  font-family: 'Segoe UI', 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   overflow: hidden overlay;
 }
 
@@ -32,6 +32,7 @@ body {
     line-height: 75px;
     justify-self: start;
     user-select: none;
+    outline: none;
     span {
       font-weight: bold;
     }
