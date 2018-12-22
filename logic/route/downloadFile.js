@@ -10,8 +10,6 @@ module.exports = (config, app, common, route) => {
       return common.fileExists(res, file, () => {
         return res.download(`${file}`)
       })
-    } else {
-      return route.sendAsset(req, res)
     }
   }
 
