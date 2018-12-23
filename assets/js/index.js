@@ -161,16 +161,17 @@ document.addEventListener('DOMContentLoaded', () => {
       let fileCount = data.length
       for (var x = 0; x < fileCount; x++) {
         let blob = data[x]
-        if (data[x].type === 'image/jpeg') {
+        let filename = blob.name
+        if (blob.type === 'image/jpeg') {
           blob = await fixOrientation(blob)
         }
-        formData.append('files[]', blob)
+        formData.append('files[]', blob, filename)
       }
       data = formData
     } else if (data[Symbol.toStringTag] === 'Blob' || data[Symbol.toStringTag] === 'File') {
       let filename = data.name || `unknown.${data.type.split('/').pop()}`
       let blob = data
-      if (data.type === 'image/jpeg') {
+      if (blob.type === 'image/jpeg') {
         blob = await fixOrientation(blob)
       }
       formData.append('files[]', blob, filename)
@@ -288,9 +289,6 @@ function isValidURL(str) {
 }
 
 function getOrientation (blob, callback) {
-  // Much faster way to check orientation than
-  // using the load image lib as that does all
-  // EXIF
   let reader = new FileReader()
   reader.onload = function (e) {
     let view = new DataView(e.target.result)
@@ -332,23 +330,54 @@ function getOrientation (blob, callback) {
 async function fixOrientation (blob) {
   return new Promise((resolve, reject) => {
     getOrientation(blob, orientation => {
-      if (orientation === 1 || orientation === 0) {
+      let img = new Image()
+      img.onerror = function() {
+        // let the server handle it
         return resolve(blob)
-      } else {
-        loadImage(blob, (img, meta) => {
-          img.toBlob(blob => {
-            return resolve(new Blob([
-              meta.imageHead,
-              loadImage.blobSlice.call(blob, 20)
-            ], {
-              type: blob.type
-            }))
-          }, 'image/jpeg', 1)
-        }, {
-          orientation: true,
-          meta: true
-        })
       }
+      img.onload = function() {
+        let width = img.width
+        let height = img.height
+        let canvas = document.createElement('canvas')
+        let ctx = canvas.getContext('2d')
+        if (4 < orientation && orientation < 9) {
+          canvas.width = height
+          canvas.height = width
+        } else {
+          canvas.width = width
+          canvas.height = height
+        }
+        switch (orientation) {
+          case 2:
+            ctx.transform(-1, 0, 0, 1, width, 0)
+            break
+          case 3:
+            ctx.transform(-1, 0, 0, -1, width, height )
+            break
+          case 4:
+            ctx.transform(1, 0, 0, -1, 0, height )
+            break
+          case 5:
+            ctx.transform(0, 1, 1, 0, 0, 0)
+            break
+          case 6:
+            ctx.transform(0, 1, -1, 0, height , 0)
+            break
+          case 7:
+            ctx.transform(0, -1, -1, 0, height , width)
+            break
+          case 8:
+            ctx.transform(0, -1, 1, 0, 0, width)
+            break
+          default:
+            break
+        }
+        ctx.drawImage(img, 0, 0)
+        canvas.toBlob(blob => {
+          return resolve(blob)
+        }, 'image/jpeg', 1)
+      }
+      img.src = URL.createObjectURL(blob)
     })
   })
 }
