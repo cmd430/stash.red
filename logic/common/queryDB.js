@@ -6,11 +6,18 @@ module.exports = (config, app, common) => {
       options = {}
     }
     options = {
-      searchByUploader: options.searchByUploader || false,
-      filesInAlbum: options.filesInAlbum || false,
-      showPrivate: options.showPrivate || false
+      searchByUploader: options.searchByUploader ? true : false,
+      filesInAlbum: options.filesInAlbum ? true : false,
+      showPrivate: options.showPrivate ? true : false,
+      withThumbnail: options.withThumbnail ? true : false,
+      maxResults: options.maxResults ? options.maxResults : 0
     }
-
+    let projection = {
+      _id: 0
+    }
+    if (!options.withThumbnail) {
+      projection['meta.thumbnail'] = 0
+    }
     let dbModel = app.db.models[model].find({
       id: id,
       'meta.public': {
@@ -19,9 +26,7 @@ module.exports = (config, app, common) => {
           !options.showPrivate
         ]
       }
-    }, {
-      _id: 0
-    })
+    }, projection)
     if (options.searchByUploader) {
       dbModel = app.db.models[model].find({
         'meta.uploaded.by': id,
@@ -34,9 +39,7 @@ module.exports = (config, app, common) => {
             !options.showPrivate
           ]
         }
-      }, {
-        _id: 0
-      })
+      }, projection)
     }
     if (options.filesInAlbum) {
       dbModel = app.db.models[model].find({
@@ -47,11 +50,10 @@ module.exports = (config, app, common) => {
             !options.showPrivate
           ]
         }
-      }, {
-        _id: 0
-      })
+      }, projection)
     }
     return dbModel
+    .limit(options.maxResults)
     .sort({
       'meta.uploaded.at': 'descending'
     })

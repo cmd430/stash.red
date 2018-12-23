@@ -5,9 +5,15 @@ module.exports = (config, app, common) => {
       callback = options
       options = {}
     }
+    let withFiles = true
+    if (options.withFiles === false) {
+      withFiles = false
+    }
     options = {
-      searchByUploader: options.searchByUploader || false,
-      showPrivate: options.showPrivate || false
+      searchByUploader: options.searchByUploader ? true : false,
+      showPrivate: options.showPrivate ? true : false,
+      withThumbnail: options.withThumbnail ? true : false,
+      withFiles: withFiles
     }
     let fileOptions = {
       filesInAlbum: true,
@@ -18,15 +24,24 @@ module.exports = (config, app, common) => {
         return callback(err)
       }
       await common.asyncForEach(result, async album => {
-        await common.getDBFile(album.id, fileOptions, async (err, f_result) => {
-          if (err) {
-            return callback(err)
-          }
-          album.files = f_result
-          album.meta.thumbnail = album.files[0].meta.thumbnail
-        })
+        if (options.withFiles) {
+          await common.getDBFile(album.id, fileOptions, async (err, f_result) => {
+            if (err) {
+              return callback(err)
+            }
+            album.files = f_result
+          })
+        } else {
+          fileOptions.withThumbnail = true
+          fileOptions.maxResults = 1
+          await common.getDBFile(album.id, fileOptions, async (err, f_result) => {
+            if (err) {
+              return callback(err)
+            }
+            album.meta.thumbnail = f_result[0].meta.thumbnail
+          })
+        }
       })
-
       return callback(null, result)
     })
   }

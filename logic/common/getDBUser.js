@@ -6,8 +6,10 @@ module.exports = (config, app, common) => {
       options = {}
     }
     options = {
-      showPrivate: options.showPrivate || false,
-      searchByUploader: true
+      showPrivate: options.showPrivate ? true : false,
+      searchByUploader: true,
+      withThumbnail: true,
+      withFiles: false
     }
     let albums = await common.getDBAlbum(id, options, async (err, a_data) => {
       if (err) {

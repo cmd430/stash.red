@@ -17,7 +17,7 @@ module.exports = (config, app, common, route) => {
 
           let update = {
             'meta.title': req.body.title,       // WIP, needs client side JS done for editing
-            'meta.public': req.body.public      // values :- see notes file
+            'meta.public': req.body.public      // values :- see notes file if you're me
           }
 
           app.db.models.album.findOneAndUpdate({

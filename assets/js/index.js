@@ -330,6 +330,10 @@ function getOrientation (blob, callback) {
 async function fixOrientation (blob) {
   return new Promise((resolve, reject) => {
     getOrientation(blob, orientation => {
+      if (orientation === 1 || orientation === 0) {
+        // Dont need to rotate
+        return resolve(blob)
+      }
       let img = new Image()
       img.onerror = function() {
         // let the server handle it
@@ -368,8 +372,6 @@ async function fixOrientation (blob) {
             break
           case 8:
             ctx.transform(0, -1, 1, 0, 0, width)
-            break
-          default:
             break
         }
         ctx.drawImage(img, 0, 0)

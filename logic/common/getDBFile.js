@@ -6,9 +6,11 @@ module.exports = (config, app, common) => {
       options = {}
     }
     options = {
-      searchByUploader: options.searchByUploader || false,
-      filesInAlbum: options.filesInAlbum || false,
-      showPrivate: options.showPrivate || false
+      searchByUploader: options.searchByUploader ? true : false,
+      filesInAlbum: options.filesInAlbum  ? true : false,
+      showPrivate: options.showPrivate ? true : false,
+      withThumbnail: options.withThumbnail ? true : false,
+      maxResults: options.maxResults ? options.maxResults : 0,
     }
     return common.queryDB('file', id, options, callback)
   }
