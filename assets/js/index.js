@@ -70,11 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   file__picker.addEventListener('change', e => {
     if (file__picker.files.length > 0) {
-      let formData = new FormData()
-      for (var x = 0; x < file__picker.files.length; x++) {
-        formData.append('files[]', file__picker.files[x])
-      }
-      uploadFiles(formData)
+      uploadFiles(file__picker.files)
     }
   })
 
@@ -158,17 +154,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function uploadFiles (data) {
+  async function uploadFiles (data) {
+    prepare('Preparing Uploads')
     let formData = new FormData()
     if (data[Symbol.toStringTag] === 'FileList') {
       let fileCount = data.length
       for (var x = 0; x < fileCount; x++) {
-        formData.append('files[]', data[x])
+        let blob = data[x]
+        if (data[x].type === 'image/jpeg') {
+          blob = await fixOrientation(blob)
+        }
+        formData.append('files[]', blob)
       }
       data = formData
     } else if (data[Symbol.toStringTag] === 'Blob' || data[Symbol.toStringTag] === 'File') {
       let filename = data.name || `unknown.${data.type.split('/').pop()}`
-      formData.append('files[]', data, filename)
+      let blob = data
+      if (data.type === 'image/jpeg') {
+        blob = await fixOrientation(blob)
+      }
+      formData.append('files[]', blob, filename)
       data = formData
     }
     prepare('Uploading: 0%')
@@ -280,4 +285,70 @@ function isValidURL(str) {
   let a  = document.createElement('a')
   a.href = str
   return (a.host && a.host != location.host)
+}
+
+function getOrientation (blob, callback) {
+  // Much faster way to check orientation than
+  // using the load image lib as that does all
+  // EXIF
+  let reader = new FileReader()
+  reader.onload = function (e) {
+    let view = new DataView(e.target.result)
+    if (view.getUint16(0, false) != 0xFFD8) {
+      return callback(-2)
+    }
+    let length = view.byteLength, offset = 2
+    while (offset < length)
+    {
+      if (view.getUint16(offset+2, false) <= 8) {
+        return callback(-1)
+      }
+      let marker = view.getUint16(offset, false)
+      offset += 2
+      if (marker == 0xFFE1) {
+        if (view.getUint32(offset += 2, false) != 0x45786966) {
+          return callback(-1)
+        }
+        let little = view.getUint16(offset += 6, false) == 0x4949
+        offset += view.getUint32(offset + 4, little)
+        let tags = view.getUint16(offset, little)
+        offset += 2
+        for (let i = 0; i < tags; i++) {
+          if (view.getUint16(offset + (i * 12), little) == 0x0112) {
+            return callback(view.getUint16(offset + (i * 12) + 8, little))
+          }
+        }
+      } else if ((marker & 0xFF00) != 0xFF00) {
+        break
+      } else {
+        offset += view.getUint16(offset, false)
+      }
+    }
+    return callback(-1)
+  }
+  reader.readAsArrayBuffer(blob)
+}
+
+async function fixOrientation (blob) {
+  return new Promise((resolve, reject) => {
+    getOrientation(blob, orientation => {
+      if (orientation === 1 || orientation === 0) {
+        return resolve(blob)
+      } else {
+        loadImage(blob, (img, meta) => {
+          img.toBlob(blob => {
+            return resolve(new Blob([
+              meta.imageHead,
+              loadImage.blobSlice.call(blob, 20)
+            ], {
+              type: blob.type
+            }))
+          }, 'image/jpeg', 1)
+        }, {
+          orientation: true,
+          meta: true
+        })
+      }
+    })
+  })
 }

@@ -75,7 +75,7 @@ module.exports = (config, app, common, route) => {
           })
         })
         let size = meter()
-        let pipeline = file.pipe(signature.identifyStream(info => {
+        file.pipe(signature.identifyStream(info => {
           let mime = info.mimeType
           if (!mime.includes('image') && !mime.includes('audio') && !mime.includes('video')) {
             invailid = mime
@@ -83,12 +83,9 @@ module.exports = (config, app, common, route) => {
               file.resume()
             })
           }
-        })).pipe(size)
-        if (shorttype === 'image') {
-          pipeline.pipe(sharp().rotate().pipe(fstream))
-        } else {
-          pipeline.pipe(fstream)
-        }
+        }))
+        .pipe(size)
+        .pipe(fstream)
         file.on('data', () => {
           partial = {
             stream: fstream,
