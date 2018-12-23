@@ -236,6 +236,10 @@ document.addEventListener('DOMContentLoaded', () => {
       request.onerror = err => {
         return reject(err)
       }
+      if (url.includes('.gifv')) {
+        // Support GIFV
+        url = `${url.replace('.gifv', '.mp4')}`
+      }
       request.open('GET', `https://cors-anywhere.herokuapp.com/${url}`, true)
       request.responseType = 'blob'
       // Public CORS Proxys
