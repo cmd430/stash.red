@@ -1,8 +1,7 @@
 const fs = require('fs')
 const path = require('path')
-const sharp = require('sharp')
 const meter = require('stream-meter')
-const signature = require('buffer-signature')
+const signature = require('stream-signature')
 
 module.exports = (config, app, common, route) => {
 
@@ -74,19 +73,23 @@ module.exports = (config, app, common, route) => {
             file.resume()
           })
         })
-        let size = meter()
-        file.pipe(signature.identifyStream(info => {
-          let mime = info.mimeType
-          if (!mime.includes('image') && !mime.includes('audio') && !mime.includes('video')) {
-            invailid = mime
+        let size = new meter()
+        let type = new signature()
+
+        type.on('signature', signature => {
+          if (!signature.mimetype.includes(shorttype)) {
+            invailid = signature.mimetype
             fs.unlink(destination, () => {
               file.resume()
             })
           }
-        }))
+        })
+
+        file.pipe(type)
         .pipe(size)
         .pipe(fstream)
-        file.on('data', () => {
+
+        file.once('data', () => {
           partial = {
             stream: fstream,
             path: destination
