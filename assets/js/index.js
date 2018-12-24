@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function uploadFiles (data) {
     prepare('Preparing Uploads')
     let formData = new FormData()
-    if (data[Symbol.toStringTag] === 'FileList') {
+    if (data instanceof FileList) {
       let fileCount = data.length
       for (var x = 0; x < fileCount; x++) {
         let blob = data[x]
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('files[]', blob, filename)
       }
       data = formData
-    } else if (data[Symbol.toStringTag] === 'Blob' || data[Symbol.toStringTag] === 'File') {
+    } else if (data instanceof Blob || data instanceof File) {
       let filename = data.name || `unknown.${data.type.split('/').pop()}`
       let blob = data
       if (blob.type === 'image/jpeg') {
