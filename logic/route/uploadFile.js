@@ -17,7 +17,7 @@ module.exports = (config, app, common, route) => {
       let errors = []
       req.on('close', () => {
         if (!finished) {
-          app.console.debug(`Upload aborted removing files`)
+          app.console.debug(`Upload aborted removing files`, 'red')
           if (partial.path) {
             partial.stream.close()
             fs.unlink(partial.path, () => {
