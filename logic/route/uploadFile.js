@@ -75,7 +75,6 @@ module.exports = (config, app, common, route) => {
         })
         let size = new meter()
         let type = new signature()
-
         type.on('signature', signature => {
           if (!signature.mimetype.includes(shorttype)) {
             invailid = signature.mimetype
@@ -85,9 +84,7 @@ module.exports = (config, app, common, route) => {
           }
         })
 
-        file.pipe(type)
-        .pipe(size)
-        .pipe(fstream)
+        file.pipe(type).pipe(size).pipe(fstream)
 
         file.once('data', () => {
           partial = {
