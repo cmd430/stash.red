@@ -11,17 +11,7 @@ const hbs = require('hbs')
 const mongoose = require('mongoose')
 const mkdir = require('make-dir')
 const session = require('express-session')
-const captcha = require('svg-captcha-express').create({
-  cookie: 'captcha',
-  background: 'rgba(0, 0, 0, 0)',
-  fontSize: 40,
-  width: 100,
-  height: 40,
-  charPreset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()?',
-  size: 4,
-  noise: 0,
-  color: true
-})
+const expressCaptcha = require('express-svg-captcha')
 const mongoStore = require('connect-mongo')(session)
 const config = require('./config.js')
 
@@ -30,7 +20,6 @@ const args = process.argv.splice(process.execArgv.length + 2)
 if (args.includes('--debug')) {
   config.server.debug = true
 }
-
 const app = {
   domain: {
     name: config.server.name,
@@ -55,7 +44,7 @@ const app = {
     }
   },
   db: mongoose,
-  captcha: captcha,
+  captcha: new expressCaptcha(config.auth.captcha),
   console: {
     // Console functions with extra formatting
     log: function (message, color = 'cyan') {

@@ -101,7 +101,34 @@ const config = {
     // salt for password hashing as String
     // or number of rounds as Number
     // Default: 10
-    saltOrRounds: 10
+    saltOrRounds: 10,
+    captcha: {
+      // accepts any option that is accepted by
+      // https://github.com/lemonce/svg-captcha
+      //
+      // plus isMath (Boolen), useFont (String) and cookie (String)
+      //
+      // setting isMath to true will enable math expressions
+      // while false will use text strings defaults to false
+      //
+      // useFont can be set to the path of a ttf or otf font
+      // for use in the captcha
+      //
+      // cookie is the value for the key in the cookie to
+      // store the captcha information, this can be ommited
+      // to use the default of 'captcha'
+      isMath: true,
+      useFont: null,
+      cookie: 'captcha',
+      fontSize: 40,
+      width: 100,
+      height: 40,
+      charPreset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()?',
+      ignoreChars: '0o1i',
+      size: 4,
+      noise: 2,
+      color: false
+    }
   },
   mongo: {
     db: 'stash',

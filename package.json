@@ -18,6 +18,7 @@
     "express": "^4.15.5",
     "express-session": "^1.15.6",
     "express-subdomain": "^1.0.5",
+    "express-svg-captcha": "^1.0.1",
     "ffmpeg-static": "^2.4.0",
     "hbs": "^4.0.1",
     "jsmediatags": "^3.8.1",
@@ -28,8 +29,7 @@
     "sharp": "^0.21.0",
     "simple-thumbnail": "^1.4.0",
     "stream-meter": "^1.0.4",
-    "stream-signature": "^1.0.0",
-    "svg-captcha-express": "^1.0.3"
+    "stream-signature": "^1.0.0"
   },
   "devDependencies": {
     "sass": "^1.15.1"

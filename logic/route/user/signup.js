@@ -6,7 +6,7 @@ module.exports = (config, app, common, route) => {
       return common.error(res, 503, new Error('account creation is disabled'))
     }
     if (req.body.username && req.body.password && req.body.passwordConfirm) {
-      if (!app.captcha.check(req, req.body.captcha)) {
+      if (!app.captcha.validate(req, req.body.captcha)) {
         return common.error(res, 400, new Error('captcha failed'))
       }
       if (req.body.password !== req.body.passwordConfirm) {
