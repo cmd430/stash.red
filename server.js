@@ -114,7 +114,9 @@ Promise.all(Object.keys(config.storage).map(key => {
       `--dbpath=${config.storage.database}`
     ])
     mongo.stdout.on('data', data => {
-      return resolve()
+      if (data.toString().includes('waiting for connections')) {
+        return resolve()
+      }
     })
     mongo.on('error', err => {
       return reject(new Error(`Could not start MongoDB: ${err.message}`))
