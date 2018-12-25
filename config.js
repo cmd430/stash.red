@@ -102,6 +102,13 @@ const config = {
     // or number of rounds as Number
     // Default: 10
     saltOrRounds: 10,
+    session: {
+      secret: 'stash',
+      cookie: {
+        secure: 'auto',
+        maxAge: 259200000 // 3 days from last visit (in ms)
+      }
+    },
     captcha: {
       // accepts any option that is accepted by
       // https://github.com/lemonce/svg-captcha
