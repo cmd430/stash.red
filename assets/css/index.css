@@ -11,7 +11,7 @@ body {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .invisible {
@@ -125,6 +125,7 @@ header h1 {
   align-items: center;
   justify-content: center;
   margin: 10px 0 0 0;
+  transition: opacity 200ms;
 }
 #content #buttons .button {
   padding: 0 10px;

@@ -11,7 +11,7 @@ body {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .invisible {
@@ -80,6 +80,9 @@ header h1 {
 #content #accountzone form {
   height: 100%;
   padding: 10px;
+}
+#content #accountzone form img {
+  padding: 10px 0 0 0;
 }
 #content #accountzone form input[type=text],
 #content #accountzone form input[type=password] {
