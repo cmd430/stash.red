@@ -123,7 +123,7 @@ const config = {
       fontSize: 40,
       width: 100,
       height: 40,
-      charPreset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()?',
+      charPreset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&?',
       ignoreChars: '0o1i',
       size: 4,
       noise: 2,
