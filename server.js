@@ -146,8 +146,8 @@ Promise.all(Object.keys(config.storage).map(key => {
   app.domain.router.set('views', `${config.handelbars.views}`)
   app.domain.router.use(session({
     secret: 'work hard',
-    resave: true,
-    saveUninitialized: false,
+    resave: false,
+    saveUninitialized: true,
     cookie: {
       secure: 'auto',
       maxAge: 2592000000 // 30 days from now
