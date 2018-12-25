@@ -145,10 +145,10 @@ Promise.all(Object.keys(config.storage).map(key => {
   app.domain.router.set('view engine', 'hbs')
   app.domain.router.set('views', `${config.handelbars.views}`)
   app.domain.router.use(session({
-    secret: config.session.secret,
+    secret: config.auth.session.secret,
     resave: false,
     saveUninitialized: true,
-    cookie: config.session.cookie,
+    cookie: config.auth.session.cookie,
     store: new mongoStore({
       mongooseConnection: app.db.connection
     })
