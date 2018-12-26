@@ -42,7 +42,7 @@ module.exports = (config, app, common, route) => {
           mimetype: mimetype,
           encoding: encoding
         }
-        app.console.debug(`Upload of '${filename}' started`)
+        app.console.debug(`User: ${user.username}, Started upload of '${filename}'`)
         let shorttype = mimetype.split('/')[0]
         let extention = path.extname(fileinfo.originalname) || `.${mimetype.split('/').pop()}`
         let id = common.generateID()
