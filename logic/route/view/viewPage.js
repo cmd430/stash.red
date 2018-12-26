@@ -34,13 +34,15 @@ module.exports = (config, app, common, route) => {
           // We show private here because we
           // used a direct file link
           return common.getDBFile(id, {
-            showPrivate: true
+            showPrivate: true,
+            showArtwork: true
           }, render)
         case 'a': // Album
           // We show private here because we
           // used a direct album link
           return common.getDBAlbum(id, {
-            showPrivate: true
+            showPrivate: true,
+            showArtwork: true
           }, render)
         case 'u': // User
           if (dynamic.signedin) {

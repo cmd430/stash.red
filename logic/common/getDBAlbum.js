@@ -13,11 +13,13 @@ module.exports = (config, app, common) => {
       searchByUploader: options.searchByUploader ? true : false,
       showPrivate: options.showPrivate ? true : false,
       withThumbnail: options.withThumbnail ? true : false,
-      withFiles: withFiles
+      withFiles: withFiles,
+      showArtwork: options.showArtwork ? true : false,
     }
     let fileOptions = {
       filesInAlbum: true,
-      showPrivate: options.showPrivate
+      showPrivate: options.showPrivate,
+      showArtwork: options.showArtwork
     }
     return common.queryDB('album', id, options, async (err, result) => {
       if (err) {

@@ -10,12 +10,13 @@ module.exports = (config, app, common) => {
       filesInAlbum: options.filesInAlbum ? true : false,
       showPrivate: options.showPrivate ? true : false,
       withThumbnail: options.withThumbnail ? true : false,
-      maxResults: options.maxResults ? options.maxResults : 0
+      maxResults: options.maxResults ? options.maxResults : 0,
+      showArtwork: options.showArtwork ? true : false,
     }
     let projection = {
       _id: 0
     }
-    if (!options.withThumbnail) {
+    if (!options.withThumbnail && !options.showArtwork) {
       projection['meta.thumbnail'] = 0
     }
     let dbModel = app.db.models[model].find({
@@ -61,6 +62,20 @@ module.exports = (config, app, common) => {
     .exec()
     .then(result => {
       if (result) {
+        if (options.showArtwork) {
+          // handle showing art for songs
+          // on file/album pages where we
+          // disable thumbnails
+          result.forEach(doc => {
+            if (doc.meta.type === 'audio') {
+              doc.meta.song.artwork = doc.meta.thumbnail
+            }
+            if (!options.withThumbnail) {
+              delete doc.meta.thumbnail
+            }
+          })
+        }
+        console.log(result)
         return callback(null, result)
       } else {
         return callback({

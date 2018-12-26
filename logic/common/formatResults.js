@@ -23,6 +23,10 @@ module.exports = (config, app, common) => {
             // Use filename for audio missing title
             result.meta.song.title = path.parse(result.meta.originalname).name
           }
+          // add missing art
+          if (result.meta.song.artwork === null) {
+            result.meta.song.artwork = `${req.protocol}://${req.hostname}/img/generic_${type}.png`
+          }
         }
         result.directpath = `${req.protocol}://${subdomain}.${req.hostname}/${result.meta.filename}`
         result.downloadpath = `${req.protocol}://${app.subdomain.download.name}.${req.hostname}/${type}/${result.meta.filename}`

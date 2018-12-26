@@ -11,6 +11,7 @@ module.exports = (config, app, common) => {
       showPrivate: options.showPrivate ? true : false,
       withThumbnail: options.withThumbnail ? true : false,
       maxResults: options.maxResults ? options.maxResults : 0,
+      showArtwork: options.showArtwork ? true : false,
     }
     return common.queryDB('file', id, options, callback)
   }
