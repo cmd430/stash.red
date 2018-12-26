@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const meter = require('stream-meter')
 const signature = require('stream-signature')
 
 module.exports = (config, app, common, route) => {
@@ -67,22 +66,25 @@ module.exports = (config, app, common, route) => {
         let fstream = fs.createWriteStream(destination)
         fstream.on('error', () => {
           errored = true
-          fstream.close()
           file.resume()
           fs.unlink(destination, () => {})
         })
-        let size = new meter()
         let type = new signature()
         type.on('signature', signature => {
           if (!signature.mimetype.includes(shorttype)) {
             invailid = signature.mimetype
-            fstream.close()
-            file.resume()
-            fs.unlink(destination, () => {})
+            // This is a hack using a Dicer private method
+            // but its the only way to stop reading bytes
+            // without stalling busboy...
+            req.busboy._parser.parser._ignore()
+            fstream.end()
+            fs.unlink(destination, () => {
+              file.emit('end')
+            })
           }
         })
 
-        file.pipe(type).pipe(size).pipe(fstream)
+        file.pipe(type).pipe(fstream)
 
         file.once('data', () => {
           partial = {
@@ -92,9 +94,10 @@ module.exports = (config, app, common, route) => {
         })
         file.on('limit', () => {
           aborted = true
-          fstream.close()
-          file.resume()
-          fs.unlink(destination, () => {})
+          fstream.end()
+          fs.unlink(destination, () => {
+            file.emit('end')
+          })
         })
         file.on('end', async () => {
           if (invailid) {
@@ -123,7 +126,7 @@ module.exports = (config, app, common, route) => {
             fileinfo.path = destination
             fileinfo.destination = path.dirname(destination)
             fileinfo.filename = filepath
-            fileinfo.size = size.bytes
+            fileinfo.size = fstream.bytesWritten
             files.push(fileinfo)
           }
         })

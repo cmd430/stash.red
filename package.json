@@ -28,7 +28,6 @@
     "response-time": "^2.3.2",
     "sharp": "^0.21.0",
     "simple-thumbnail": "^1.4.0",
-    "stream-meter": "^1.0.4",
     "stream-signature": "^1.0.0"
   },
   "devDependencies": {
