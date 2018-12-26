@@ -15,14 +15,12 @@ module.exports = (config, app, common, route) => {
       let finished = false
       let errors = []
       req.on('close', () => {
-        if (!finished) {
+        if (!finished && partial.path) {
           app.console.debug(`Upload aborted removing files`, 'red')
-          if (partial.path) {
-            partial.stream.close()
-            fs.unlink(partial.path, () => {
-              app.console.debug(`Removed partial file '${path.basename(partial.path)}'`)
-            })
-          }
+          partial.stream.close()
+          fs.unlink(partial.path, () => {
+            app.console.debug(`Removed partial file '${path.basename(partial.path)}'`)
+          })
           files.forEach(file => {
             fs.unlink(file.path, () => {
               app.console.debug(`Removed file '${path.basename(partial.path)}'`)
@@ -67,7 +65,9 @@ module.exports = (config, app, common, route) => {
         fstream.on('error', () => {
           errored = true
           file.resume()
-          fs.unlink(destination, () => {})
+          fs.unlink(destination, () => {
+            partial = {}
+          })
         })
         let type = new signature()
         type.on('signature', signature => {
@@ -79,6 +79,7 @@ module.exports = (config, app, common, route) => {
             req.busboy._parser.parser._ignore()
             fstream.end()
             fs.unlink(destination, () => {
+              partial = {}
               file.emit('end')
             })
           }
@@ -96,6 +97,7 @@ module.exports = (config, app, common, route) => {
           aborted = true
           fstream.end()
           fs.unlink(destination, () => {
+            partial = {}
             file.emit('end')
           })
         })
