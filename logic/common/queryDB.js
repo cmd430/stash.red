@@ -75,7 +75,6 @@ module.exports = (config, app, common) => {
             }
           })
         }
-        console.log(result)
         return callback(null, result)
       } else {
         return callback({
