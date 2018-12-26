@@ -48,7 +48,7 @@ const app = {
   console: {
     // Console functions with extra formatting
     log: function (message, color = 'cyan') {
-      return console.log( `[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
+      return console.log(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
     },
     debug: function (message, color = 'deeppink') {
       if (config.server.debug) {
