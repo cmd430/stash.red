@@ -124,14 +124,14 @@ const config = {
       // cookie is the value for the key in the cookie to
       // store the captcha information, this can be ommited
       // to use the default of 'captcha'
-      isMath: true,
+      isMath: false,
       useFont: null,
       cookie: 'captcha',
       fontSize: 40,
       width: 100,
       height: 40,
-      charPreset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&?',
-      ignoreChars: '0o1i',
+      charPreset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&?*=<>',
+      ignoreChars: '0oO1iIlL',
       size: 4,
       noise: 2,
       color: false
