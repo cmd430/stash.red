@@ -8,7 +8,7 @@ function formatTime (seconds, guide) {
   const gh = Math.floor(guide / 3600)
 
   if (isNaN(seconds) || seconds === Infinity) {
-    h = m = s = '-'
+    return '-:--'
   }
 
   h = (h > 0 || gh > 0) ? h + ':' : ''

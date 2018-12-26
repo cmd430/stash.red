@@ -144,10 +144,10 @@ function initialiseVideoPlayers () {
     video.addEventListener('loadedmetadata', e => {
       playback__progress.max = video.duration
       playback__length.textContent = formatTime(video.duration)
-      playback__time.textContent = formatTime(0, video.duration)
+      playback__time.textContent = formatTime(video.duration === Infinity ? NaN : video.currentTime, video.duration)
     })
     video.addEventListener('timeupdate', e => {
-      playback__time.textContent = formatTime(video.currentTime, video.duration)
+      playback__time.textContent = formatTime(video.duration === Infinity ? NaN : video.currentTime, video.duration)
       let percent = (video.currentTime / video.duration) * 100
       playback__progress.setAttribute('style', `width: ${percent}%;`)
     })
@@ -292,10 +292,10 @@ function initialiseAudioPlayers () {
     audio.addEventListener('loadedmetadata', e => {
       playback__progress.max = audio.duration
       playback__length.textContent = formatTime(audio.duration)
-      playback__time.textContent = formatTime(0, audio.duration)
+      playback__time.textContent = formatTime(audio.duration === Infinity ? NaN : audio.currentTime, audio.duration)
     })
     audio.addEventListener('timeupdate', e => {
-      playback__time.textContent = formatTime(audio.currentTime, audio.duration)
+      playback__time.textContent = formatTime(audio.duration === Infinity ? NaN : audio.currentTime, audio.duration)
       let percent = (audio.currentTime / audio.duration) * 100
       playback__progress.setAttribute('style', `width: ${percent}%;`)
     })
