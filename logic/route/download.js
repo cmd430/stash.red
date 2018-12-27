@@ -20,7 +20,8 @@ module.exports = (config, app, common, route) => {
         } else {
           if (data.length > 0) {
             let files = []
-            await common.asyncForEach(data[0].files, async file => {
+            let album = data[0]
+            await common.asyncForEach(album.files, async file => {
               let type = file.meta.type
               files.push({
                 path: path.join(config.storage[type], file.meta.filename),
@@ -30,7 +31,7 @@ module.exports = (config, app, common, route) => {
             if (files.length > 0) {
               return res.zip({
                 files: files,
-                filename: `${id}.zip`
+                filename: `${album.meta.title} - ${id}.zip`
               })
             } else {
               return common.error(res, 404)
