@@ -31,7 +31,7 @@ module.exports = (config, app, common, route) => {
             if (files.length > 0) {
               return res.zip({
                 files: files,
-                filename: `${album.meta.title} - ${id}.zip`
+                filename: `${album.meta.title || 'Album'} - ${id}.zip`
               })
             } else {
               return common.error(res, 404)
