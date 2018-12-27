@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initialiseAudioPlayers()
 } , false)
 
+function pauseOtherPlayers() {
+  document.querySelectorAll('.icon-pause').forEach(button => {
+    button.click()
+  })
+}
 
 function initialiseVideoPlayers () {
   document.querySelectorAll('.video__player').forEach(player => {
@@ -70,6 +75,7 @@ function initialiseVideoPlayers () {
     // Play | Pasue | Replay
     let playback__playPause__icon = playback__playPause.querySelector('i')
     playback__playPause.addEventListener('click', e => {
+      pauseOtherPlayers()
       if (video.paused || video.ended) {
         if (video.ended) {
           video.currentTime = 0
@@ -93,7 +99,7 @@ function initialiseVideoPlayers () {
       playback__playPause__icon.classList.add('icon-cw')
     })
     video.addEventListener('click', e => {
-      playback__playPause.click();
+      playback__playPause.click()
     })
 
     // Volume / Mute
@@ -217,6 +223,7 @@ function initialiseAudioPlayers () {
     // Play | Pasue | Replay
     let playback__playPause__icon = playback__playPause.querySelector('i')
     playback__playPause.addEventListener('click', e => {
+      pauseOtherPlayers()
       if (audio.paused || audio.ended) {
         if (audio.ended) {
           audio.currentTime = 0
@@ -241,7 +248,7 @@ function initialiseAudioPlayers () {
     })
     let audioart = player.querySelector('.audio__artwork')
     audioart.addEventListener('click', e => {
-      playback__playPause.click();
+      playback__playPause.click()
     })
 
     // Volume / Mute
