@@ -534,3 +534,11 @@ header h1 {
   background: #e8ebed;
   border: 1px solid #e2e6e9;
 }
+
+.album__download {
+  top: 28px;
+  right: 0;
+  font-size: 12px;
+  color: #777777;
+  text-decoration: none;
+}
