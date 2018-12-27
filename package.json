@@ -16,6 +16,7 @@
     "connect-mongo": "^2.0.3",
     "cors": "^2.8.5",
     "express": "^4.15.5",
+    "express-easy-zip": "^1.1.4",
     "express-session": "^1.15.6",
     "express-subdomain": "^1.0.5",
     "express-svg-captcha": "^1.0.1",

@@ -4,8 +4,8 @@ const signature = require('stream-signature')
 
 module.exports = (config, app, common, route) => {
 
-  // Handle file uploads
-  return async function uploadFile (req, res, next) {
+  // Handle file/album uploads
+  return async function upload (req, res, next) {
     let user = await common.isAuthenticated(req)
     if (user) {
       // We are authorized

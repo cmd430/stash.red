@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 const subdomain = require('express-subdomain')
 const cors = require('cors')
 const busboy = require('connect-busboy')
+const zip = require('express-easy-zip')
 const hbs = require('hbs')
 const mongoose = require('mongoose')
 const mkdir = require('make-dir')
@@ -170,6 +171,7 @@ Promise.all(Object.keys(config.storage).map(key => {
       fileSize: config.upload.maxsize
     }
   }))
+  app.domain.router.use(zip())
 
   app.domain.router.use(subdomain(`${app.subdomain.image.name}`, app.subdomain.image.router))
   app.domain.router.use(subdomain(`${app.subdomain.audio.name}`, app.subdomain.audio.router))

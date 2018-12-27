@@ -7,8 +7,8 @@ module.exports = (config, app) => {
   module.exports.logout          = require('./route/user/logout.js')         (config, app, common, module.exports)
   module.exports.generateCaptcha = require('./route/user/generateCaptcha.js')(config, app, common, module.exports)
 
-  module.exports.uploadFile      = require('./route/uploadFile.js')          (config, app, common, module.exports)
-  module.exports.downloadFile    = require('./route/downloadFile.js')        (config, app, common, module.exports)
+  module.exports.upload          = require('./route/upload.js')              (config, app, common, module.exports)
+  module.exports.download        = require('./route/download.js')            (config, app, common, module.exports)
 
   module.exports.removeItem      = require('./route/remove/removeItem.js')   (config, app, common, module.exports)
   module.exports.removeFile      = require('./route/remove/removeFile.js')   (config, app, common, module.exports)
