@@ -201,6 +201,14 @@ function initialiseVideoPlayers () {
   })
 }
 
+// Visulizer Settings
+const bhm = 0.3      // Bar Height Multiplicator
+const gpm = 1.5   // Gradient Position Multiplicator
+const bwm = 1      // Bar Width Multiplicator
+const dbb = 0      // Distance betwwen Bars (px)
+const graphPos = 0 // 0 for normal bar graph
+
+
 function initialiseAudioPlayers () {
   document.querySelectorAll('.audio__player').forEach(player => {
     let audio = player.querySelector('audio')
@@ -216,6 +224,53 @@ function initialiseAudioPlayers () {
     let control__breakout = controls.querySelector('.control__breakout')
 
     audio.__mute = false
+
+    // Visualizer
+    const waveSize = 6
+    let audioCtx = new AudioContext()
+    let analyser = audioCtx.createAnalyser()
+    source = audioCtx.createMediaElementSource(audio)
+    source.connect(analyser)
+    analyser.connect(audioCtx.destination)
+    analyser.fftSize = 2048
+    let bufferLength = analyser.frequencyBinCount
+    let dataArray = new Uint8Array(bufferLength)
+    let canvas = player.querySelector('canvas')
+    let canvasCtx = canvas.getContext('2d')
+    function renderFrame() {
+      canvasCtx.clearRect(0, 0, canvas.width, canvas.height)
+      requestAnimationFrame(renderFrame)
+      analyser.getByteTimeDomainData(dataArray)
+      canvasCtx.lineWidth = waveSize
+      canvasCtx.strokeStyle = 'rgb(0, 0, 0)'
+      canvasCtx.beginPath()
+      let sliceWidth = canvas.width * 1 / bufferLength
+      let x = 0
+      for(let i = 0; i < bufferLength; i++) {
+        let v = dataArray[i] / 128.0
+        let y = v * canvas.height / 2
+        if(i === 0) {
+          canvasCtx.moveTo(x, y)
+        } else {
+          canvasCtx.lineTo(x, y)
+        }
+        x += sliceWidth
+      }
+      canvasCtx.lineTo(canvas.width, canvas.height / 2)
+      canvasCtx.stroke()
+      canvasCtx.lineWidth = waveSize / 2
+      canvasCtx.strokeStyle = 'rgb(255, 255, 255)'
+      canvasCtx.stroke()
+    }
+    renderFrame()
+    playback__playPause.addEventListener('click', e => {
+      audioCtx.resume()
+      if (audio.paused || audio.ended) {
+        canvas.classList.remove('invisible')
+      } else {
+        canvas.classList.add('invisible')
+      }
+    })
 
     // View on seperate page (hide if viewing the file page)
     if (location.href.includes('/f/')) {

@@ -1,10 +1,11 @@
 <div class="audio__player">
-  <audio>
+  <audio crossorigin="anonymous">
     <source src="{{this.directpath}}" type="{{this.meta.mimetype}}" />
   </audio>
   <ul>
     <li class="audio__artwork">
       <img src="{{this.meta.song.artwork}}" />
+      <canvas class="visualizer invisible"></canvas>
     </li>
     <li class="audio__info">
       <div class="audio__controls">

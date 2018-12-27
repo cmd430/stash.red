@@ -341,6 +341,14 @@
     img {
       padding: 6px 6px 0;
     }
+    .visualizer {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: calc(100% - 12px);
+      height: calc(100% - 6px);
+      transition: opacity 200ms;
+    }
   }
   ul {
     list-style: none;
