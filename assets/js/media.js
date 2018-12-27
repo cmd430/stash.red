@@ -3,12 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initialiseAudioPlayers()
 } , false)
 
-function pauseOtherPlayers() {
-  document.querySelectorAll('.icon-pause').forEach(button => {
-    button.click()
-  })
-}
-
 function initialiseVideoPlayers () {
   document.querySelectorAll('.video__player').forEach(player => {
     let video = player.querySelector('video')
@@ -75,7 +69,11 @@ function initialiseVideoPlayers () {
     // Play | Pasue | Replay
     let playback__playPause__icon = playback__playPause.querySelector('i')
     playback__playPause.addEventListener('click', e => {
-      pauseOtherPlayers()
+      window.dispatchEvent(new CustomEvent('pause_players', {
+        detail: {
+          player: video
+        }
+      }))
       if (video.paused || video.ended) {
         if (video.ended) {
           video.currentTime = 0
@@ -100,6 +98,11 @@ function initialiseVideoPlayers () {
     })
     video.addEventListener('click', e => {
       playback__playPause.click()
+    })
+    window.addEventListener('pause_players', e => {
+      if (!video.paused && e.detail.player !== video) {
+        playback__playPause.click()
+      }
     })
 
     // Volume / Mute
@@ -223,7 +226,11 @@ function initialiseAudioPlayers () {
     // Play | Pasue | Replay
     let playback__playPause__icon = playback__playPause.querySelector('i')
     playback__playPause.addEventListener('click', e => {
-      pauseOtherPlayers()
+      window.dispatchEvent(new CustomEvent('pause_players', {
+        detail: {
+          player: audio
+        }
+      }))
       if (audio.paused || audio.ended) {
         if (audio.ended) {
           audio.currentTime = 0
@@ -249,6 +256,11 @@ function initialiseAudioPlayers () {
     let audioart = player.querySelector('.audio__artwork')
     audioart.addEventListener('click', e => {
       playback__playPause.click()
+    })
+    window.addEventListener('pause_players', e => {
+      if (!audio.paused && e.detail.player !== audio) {
+        playback__playPause.click()
+      }
     })
 
     // Volume / Mute
