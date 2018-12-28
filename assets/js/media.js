@@ -201,14 +201,6 @@ function initialiseVideoPlayers () {
   })
 }
 
-// Visulizer Settings
-const bhm = 0.3      // Bar Height Multiplicator
-const gpm = 1.5   // Gradient Position Multiplicator
-const bwm = 1      // Bar Width Multiplicator
-const dbb = 0      // Distance betwwen Bars (px)
-const graphPos = 0 // 0 for normal bar graph
-
-
 function initialiseAudioPlayers () {
   document.querySelectorAll('.audio__player').forEach(player => {
     let audio = player.querySelector('audio')
@@ -263,13 +255,19 @@ function initialiseAudioPlayers () {
       canvasCtx.stroke()
     }
     renderFrame()
-    playback__playPause.addEventListener('click', e => {
-      audioCtx.resume()
-      if (audio.paused || audio.ended) {
-        canvas.classList.remove('invisible')
-      } else {
-        canvas.classList.add('invisible')
-      }
+    let events = [
+      'ended',
+      'pause',
+      'play'
+    ].forEach(event => {
+      audio.addEventListener(event, () => {
+        if (audio.paused || audio.ended) {
+          canvas.classList.add('invisible')
+        } else {
+          audioCtx.resume()
+          canvas.classList.remove('invisible')
+        }
+      })
     })
 
     // View on seperate page (hide if viewing the file page)
