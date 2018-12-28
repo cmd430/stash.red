@@ -10,12 +10,7 @@
     overflow: hidden;
     height: 200px;
     width: 200px;
-    background: linear-gradient(45deg, rgb(221, 221, 221) 25%, rgba(0, 0, 0, 0) 25%) 0 0 / 20px 20px,
-                  linear-gradient(-45deg, rgb(221, 221, 221) 25%, rgba(0, 0, 0, 0) 25%) 0 10px / 20px 20px,
-                  linear-gradient(45deg, rgba(0, 0, 0, 0) 75%, rgb(221, 221, 221) 75%) 10px -10px / 20px 20px,
-                  linear-gradient(-45deg, rgba(0, 0, 0, 0) 75%, rgb(221, 221, 221) 75%) -10px 0px / 20px 20px,
-                  rgb(255, 255, 255);
-    border: 1px solid rgb(218, 223, 227);
+    border: 1px solid;
     .image {
       position: absolute;
       top: 0;

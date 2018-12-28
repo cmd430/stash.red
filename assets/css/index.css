@@ -6,7 +6,6 @@
 }
 
 body {
-  background-color: #fafafa;
   overflow: hidden overlay;
 }
 
@@ -26,7 +25,6 @@ body {
   text-align: center;
 }
 #logo a {
-  color: #db0303;
   font-size: 40px;
   font-variant: small-caps;
   text-decoration: none;
@@ -52,7 +50,6 @@ header #logo {
 header h1 {
   height: 85px;
   max-width: 100%;
-  color: #777777;
   font-weight: 400;
   line-height: 85px;
   justify-self: end;
@@ -81,42 +78,29 @@ header h1 {
   height: 25vh;
   max-height: 240px;
   min-height: 100px;
-  background-color: white;
-  border: 1px dashed #dadfe3;
+  border: 1px dashed;
   text-align: center;
   cursor: pointer;
 }
 #content #dropzone #dropstate {
   font-size: 15px;
   font-weight: 600;
-  color: #9da2a5;
 }
 #content #dropzone #progress {
   position: absolute;
   margin-top: -12px;
   width: 80%;
   height: 20px;
-  border: 1px solid #dadfe3;
+  border: 1px solid;
   transition: opacity 200ms;
-}
-#content #dropzone #progress.proc #fill {
-  background-color: #88ea38;
-}
-#content #dropzone #progress.warn #fill {
-  background-color: #eaea38;
-}
-#content #dropzone #progress.error #fill {
-  background-color: #ea3838;
 }
 #content #dropzone #progress #fill {
   display: block;
   width: 0;
   height: 100%;
-  background-color: #3888ea;
   transition: width 200ms, background-color 200ms;
 }
 #content #dropzone #progress #text {
-  color: #9da2a5;
   font-weight: 600;
   text-transform: capitalize;
 }
@@ -133,15 +117,11 @@ header h1 {
 }
 #content #buttons .button, #content #buttons .button a {
   font-weight: 600;
-  color: #c6cbcf;
   transition: color 200ms;
   text-decoration: none;
 }
-#content #buttons .button:hover, #content #buttons .button.active, #content #buttons .button a:hover, #content #buttons .button a.active {
-  color: #24292e;
-}
 #content #buttons .button:not(:last-child), #content #buttons .button a:not(:last-child) {
-  border-right: 1px dotted #c6cbcf;
+  border-right: 1px dotted;
 }
 #content #settings {
   padding: 10px;
@@ -160,7 +140,6 @@ header h1 {
   position: relative;
   top: -6px;
   padding: 0 10px 0 0;
-  color: #24292e;
   font-weight: 500;
   cursor: default;
 }
@@ -173,9 +152,6 @@ header h1 {
 #content #settings .setting .switch input {
   display: none;
 }
-#content #settings .setting .switch input:checked + .slider {
-  background-color: #3888ea;
-}
 #content #settings .setting .switch input:checked + .slider::before {
   transform: translateX(20px);
 }
@@ -186,7 +162,6 @@ header h1 {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #5e6063;
   transition: 400ms;
 }
 #content #settings .setting .switch .slider::before {
@@ -196,7 +171,6 @@ header h1 {
   width: 16px;
   left: 2px;
   bottom: 2px;
-  background-color: white;
   transition: 400ms;
 }
 
@@ -210,9 +184,5 @@ header h1 {
 #footer a > svg {
   width: 24px;
   height: 24px;
-  fill: #dadfe3;
   transition: fill 200ms;
-}
-#footer a:hover > svg {
-  fill: #24292e;
 }

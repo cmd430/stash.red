@@ -8,14 +8,12 @@
   padding: 15px;
   max-width: 960px;
   min-height: calc(100vh - 85px);
-  background: rgb(232, 235, 237);
-  border: 1px solid rgb(226, 230, 233);
+  border: 1px solid;
 }
 
 .album__download {
   top: 28px;
   right: 0;
   font-size: 12px;
-  color: rgb(119, 119, 119);
   text-decoration: none;
 }

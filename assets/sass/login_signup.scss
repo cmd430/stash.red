@@ -6,13 +6,11 @@
   min-width: 280px;
   margin: calc(50vh - 85px) 0 0 50vw;
   transform: translate(-50%, -33%);
-
   #accountzone {
     position: relative;
     margin: 0 auto;
     width: 280px;
-    background-color: rgb(255, 255, 255);
-    border: 1px dashed rgb(218, 223, 227);
+    border: 1px dashed;
     text-align: center;
     form {
       height: 100%;
@@ -28,16 +26,11 @@
         font-size: 16px;
         font-weight: 500;
         text-align: center;
-        color: rgb(198, 203, 207);
-        border: 1px solid rgb(227, 231, 234);
+        border: 1px solid;
         transition: color 200ms;
         outline: none;
         &::placeholder {
           font-weight: 100;
-        }
-        &:hover,
-        &:focus {
-          color: rgb(36, 41, 46);
         }
       }
       input[type=submit] {
@@ -47,14 +40,8 @@
         border: 0;
         font-size: 16px;
         font-weight: 700;
-        color: rgb(198, 203, 207);
-        background: rgba(0, 0, 0, 0);
         transition: color 200ms;
         cursor: pointer;
-        &:hover,
-        &:focus {
-          color: rgb(36, 41, 46);
-        }
       }
     }
   }

@@ -6,7 +6,6 @@
 }
 
 body {
-  background-color: rgb(250, 250, 250);
   overflow: hidden overlay;
 }
 
@@ -25,7 +24,6 @@ body {
 #logo {
   text-align: center;
   a {
-    color: rgb(219, 3, 3);
     font-size: 40px;
     font-variant: small-caps;
     text-decoration: none;
@@ -50,7 +48,6 @@ header {
   h1 {
     height: 85px;
     max-width: 100%;
-    color: rgb(119, 119, 119);
     font-weight: 400;
     line-height: 85px;
     justify-self: end;

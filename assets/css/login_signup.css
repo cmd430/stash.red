@@ -6,7 +6,6 @@
 }
 
 body {
-  background-color: #fafafa;
   overflow: hidden overlay;
 }
 
@@ -26,7 +25,6 @@ body {
   text-align: center;
 }
 #logo a {
-  color: #db0303;
   font-size: 40px;
   font-variant: small-caps;
   text-decoration: none;
@@ -52,7 +50,6 @@ header #logo {
 header h1 {
   height: 85px;
   max-width: 100%;
-  color: #777777;
   font-weight: 400;
   line-height: 85px;
   justify-self: end;
@@ -73,8 +70,7 @@ header h1 {
   position: relative;
   margin: 0 auto;
   width: 280px;
-  background-color: white;
-  border: 1px dashed #dadfe3;
+  border: 1px dashed;
   text-align: center;
 }
 #content #accountzone form {
@@ -92,19 +88,13 @@ header h1 {
   font-size: 16px;
   font-weight: 500;
   text-align: center;
-  color: #c6cbcf;
-  border: 1px solid #e3e7ea;
+  border: 1px solid;
   transition: color 200ms;
   outline: none;
 }
 #content #accountzone form input[type=text]::placeholder,
 #content #accountzone form input[type=password]::placeholder {
   font-weight: 100;
-}
-#content #accountzone form input[type=text]:hover, #content #accountzone form input[type=text]:focus,
-#content #accountzone form input[type=password]:hover,
-#content #accountzone form input[type=password]:focus {
-  color: #24292e;
 }
 #content #accountzone form input[type=submit] {
   margin: 10px;
@@ -113,11 +103,6 @@ header h1 {
   border: 0;
   font-size: 16px;
   font-weight: 700;
-  color: #c6cbcf;
-  background: rgba(0, 0, 0, 0);
   transition: color 200ms;
   cursor: pointer;
-}
-#content #accountzone form input[type=submit]:hover, #content #accountzone form input[type=submit]:focus {
-  color: #24292e;
 }
