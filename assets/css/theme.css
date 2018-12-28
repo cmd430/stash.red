@@ -12,16 +12,16 @@ header h1, header h1 .album__download {
 
 #container {
   background: #e8ebed;
-  border-color: #e2e6e9;
+  border-color: #dadfe3;
 }
 
 #content #dropzone {
   background-color: white;
-  border-color: #e2e6e9;
+  border-color: #dadfe3;
 }
 #content #dropzone #dropstate,
 #content #dropzone #text {
-  color: #9da2a5;
+  color: #c6cbcf;
 }
 #content #dropzone #progress {
   border-color: #dadfe3;
@@ -45,7 +45,7 @@ header h1, header h1 .album__download {
   color: #24292e;
 }
 #content #buttons .button:not(:last-child), #content #buttons .button a:not(:last-child) {
-  border-color: #e2e6e9;
+  border-color: #dadfe3;
 }
 #content #settings .setting span {
   color: #24292e;
@@ -85,7 +85,7 @@ header h1, header h1 .album__download {
 }
 #content #accountzone form input[type=text],
 #content #accountzone form input[type=password] {
-  border-color: #e2e6e9;
+  border-color: #dadfe3;
 }
 #content #accountzone form input[type=submit] {
   background: rgba(0, 0, 0, 0);

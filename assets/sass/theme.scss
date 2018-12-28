@@ -29,14 +29,14 @@ header {
 // Index
 #content {
   #dropzone {
-    background-color: $color-contentbackground-alt;
+    background-color: $color-white;
     border-color: $color-contentborder;
     #dropstate,
     #text {
-      color: $color-contenttext-alt;
+      color: $color-contenttext;
     }
     #progress {
-      border-color: $color-contentborder-alt;
+      border-color: $color-progressborder;
       #fill {
         background-color: $color-progressfill
       }
@@ -87,7 +87,7 @@ header {
         .slider {
           background-color: $color-headertext;
           &::before {
-            background-color: $color-contentbackground-alt;
+            background-color: $color-white;
           }
         }
       }
@@ -98,11 +98,11 @@ header {
 #footer {
   a {
     > svg {
-      fill: $color-contentborder-alt;
+      fill: $color-footertext;
     }
     &:hover {
       > svg {
-        fill: $color-contenttext-hover;
+        fill: $color-footertext-hover;
       }
     }
   }
@@ -111,8 +111,8 @@ header {
 // Login / Signup
 #content {
   #accountzone {
-    background-color: $color-contentbackground-alt;
-    border-color: $color-contentborder-alt;
+    background-color: $color-white;
+    border-color: $color-contentborder;
     form {
       input[type=text],
       input[type=password],
@@ -138,7 +138,7 @@ header {
 #container {
   .preview {
     background: $color-transparent-gradiant;
-    border-color: $color-contentborder-alt;
+    border-color: $color-contentborder;
   }
 }
 
@@ -146,16 +146,16 @@ header {
 .image {
   img {
     background: $color-transparent-gradiant;
-    border-color: $color-contentborder-alt;
+    border-color: $color-contentborder;
   }
 }
 .video__player {
-  border-color: $color-contentborder-alt;
+  border-color: $color-contentborder;
   video {
-    background: $color-videobackground;
+    background: $color-black;
   }
   .video__controls {
-    background-color: $color-contentbackground-alt;
+    background-color: $color-white;
     color: $color-contenttext-hover;
     .playback__bar {
       background-color: $color-contenttext-hover;
@@ -195,8 +195,8 @@ header {
   }
 }
 .audio__player {
-  background-color: $color-contentbackground-alt;
-  border-color: $color-contentborder-alt;
+  background-color: $color-white;
+  border-color: $color-contentborder;
   .audio__info {
     .artist,
     .title {
