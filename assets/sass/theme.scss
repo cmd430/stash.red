@@ -33,12 +33,12 @@ header {
     border-color: $color-contentborder;
     #dropstate,
     #text {
-      color: $color-contenttext;
+      color: $color-progresstext;
     }
     #progress {
       border-color: $color-progressborder;
       #fill {
-        background-color: $color-progressfill
+        background-color: $color-progressfill;
       }
       &.proc {
         #fill {
