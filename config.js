@@ -78,12 +78,17 @@ const config = {
       // if diabled shows generic filetype placeholder
       enabled: true,
       // Size in pixels
-      // can use null for width OR height
-      // to maintain aspect ratio of image
-      width: 250,
-      height: 250,
+      size: 250,
       fit: 'cover',
-      position: 'entropy'
+      position: 'entropy',
+      background: {
+        r: 0,
+        g: 0,
+        b: 0,
+        alpha: 0
+      },
+      kernel: 'lanczos3',
+      withoutEnlargement: true
       // http://sharp.pixelplumbing.com/en/stable/api-resize/#parameters
     }
   },

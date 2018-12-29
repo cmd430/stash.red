@@ -54,10 +54,13 @@ module.exports = (config, app, common) => {
       app.console.debug(`Scaling thumbnail for file: ${path.basename(file)}`)
       return sharp(buffer)
       .resize({
-        width: config.upload.thumbnail.width,
-        height: config.upload.thumbnail.height,
+        width: config.upload.thumbnail.size,
+        height: config.upload.thumbnail.size,
         fit: config.upload.thumbnail.fit,
-        position: config.upload.thumbnail.position
+        position: config.upload.thumbnail.position,
+        background: config.upload.thumbnail.background,
+        kernel: config.upload.thumbnail.kernel,
+        withoutEnlargement: config.upload.thumbnail.withoutEnlargement
       })
       .png()
       .toBuffer()
