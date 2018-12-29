@@ -1,7 +1,8 @@
 module.exports = (config, app) => {
 
+  module.exports.isAuthenticated   = require('./common/isAuthenticated.js')  (config, app, module.exports)
+
   module.exports.asyncForEach      = require('./common/asyncForEach.js')     (config, app, module.exports)
-  module.exports.auth              = require('./common/auth.js')             (config, app, module.exports)
   module.exports.error             = require('./common/error.js')            (config, app, module.exports)
   module.exports.fileExists        = require('./common/fileExists.js')       (config, app, module.exports)
   module.exports.formatResults     = require('./common/formatResults.js')    (config, app, module.exports)

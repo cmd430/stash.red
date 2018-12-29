@@ -3,7 +3,7 @@ const path = require('path')
 module.exports = (config, app, common, route) => {
 
   // Send Asset Files
-  return async function sendAsset (req, res) {
+  return async function sendAsset (req, res, next) {
     let file = req.path
     let subdomains = req.subdomains
     if (file.includes('favicon.ico')) {

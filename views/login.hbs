@@ -5,30 +5,27 @@
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
     <meta name="theme-color" content="{{server.opengraph.theme}}" />
     <meta property="twitter:card" content="summary" />
-    <meta property="og:title" content="{{user.meta.username}}" />
+    <meta property="og:title" content="{{server.name.fullname}} | Login" />
     <meta property="og:site_name" content="{{server.name.fullname}}" />
     <meta property="og:url" content="{{server.opengraph.url}}" />
     <link rel="icon" type="image/png" href="/img/favicon.png" />
     <link rel="apple-touch-icon" href="/img/favicon.png" />
-    <link rel="stylesheet" href="/css/common.css" />
-    <link rel="stylesheet" href="/css/user.css" />
+    <link rel="stylesheet" href="/css/login_signup.css" />
     <link rel="stylesheet" href="/css/theme.css" />
-    <script src="/js/common.js"></script>
-    <script src="/js/user.js"></script>
-    <title>{{server.name.fullname}} | {{user.meta.username}}</title>
+    <title>{{server.name.fullname}} | Login</title>
   </head>
   <body class="light">
-    <header>
+    <div id="content">
       {{> logo server}}
-      <h1>{{user.meta.username}}</h1>
-    </header>
-    <div id="container">
-      {{#each user.albums}}
-        {{> preview this}}
-      {{/each}}
-      {{#each user.files}}
-        {{> preview this}}
-      {{/each}}
+      <div id="accountzone">
+        <form method="POST" action="/login">
+          <input name="username" type="text" placeholder="Username" />
+          <input name="password" type="password" placeholder="Password" />
+          <img src="/captcha"/>
+          <input type="text" name="captcha" placeholder="Captcha" />
+          <input name="submit" type="submit" value="login" />
+        </form>
+      </div>
     </div>
   </body>
 </html>

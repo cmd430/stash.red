@@ -5,15 +5,15 @@ module.exports = (config, app, common, route) => {
 
   // Delete single Uploaded File
   return async function removeFile (req, res) {
-    let user = await common.auth(req, res)
-    if (user !== false) {
+    let user = await common.isAuthenticated(req)
+    if (user) {
       let fileID = req.params.id
       return common.queryDB('file', fileID, (err, data) => {
         if (err) {
           return common.error(res, err.status)
         }
         data = data[0]
-        if (data.meta.uploaded.by !== user.username && user.username !== 'admin') {
+        if (data.meta.uploaded.by !== user.username && user.isAdmin === false) {
           return common.error(res, 401)
         }
         fs.unlink(path.join(config.storage[data.meta.type], data.meta.filename), err => {

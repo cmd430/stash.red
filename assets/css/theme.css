@@ -1,0 +1,182 @@
+body {
+  background-color: #fafafa;
+}
+
+#logo a {
+  color: #db0303;
+}
+
+header h1, header h1 .album__download {
+  color: #777777;
+}
+
+#container {
+  background: #e8ebed;
+  border-color: #dadfe3;
+}
+
+#content #dropzone {
+  background-color: white;
+  border-color: #dadfe3;
+}
+#content #dropzone #dropstate,
+#content #dropzone #text {
+  color: #9da2a5;
+}
+#content #dropzone #progress {
+  border-color: #dadfe3;
+}
+#content #dropzone #progress #fill {
+  background-color: #3888ea;
+}
+#content #dropzone #progress.proc #fill {
+  background-color: #88ea38;
+}
+#content #dropzone #progress.warn #fill {
+  background-color: #eaea38;
+}
+#content #dropzone #progress.error #fill {
+  background-color: #ea3838;
+}
+#content #buttons .button, #content #buttons .button a {
+  color: #c6cbcf;
+}
+#content #buttons .button:hover, #content #buttons .button.active, #content #buttons .button a:hover, #content #buttons .button a.active {
+  color: #24292e;
+}
+#content #buttons .button:not(:last-child), #content #buttons .button a:not(:last-child) {
+  border-color: #dadfe3;
+}
+#content #settings .setting span {
+  color: #24292e;
+}
+#content #settings .setting .switch input:checked + .slider {
+  background-color: #3888ea;
+}
+#content #settings .setting .switch .slider {
+  background-color: #777777;
+}
+#content #settings .setting .switch .slider::before {
+  background-color: white;
+}
+
+#footer a > svg {
+  fill: #dadfe3;
+}
+#footer a:hover > svg {
+  fill: #24292e;
+}
+
+#content #accountzone {
+  background-color: white;
+  border-color: #dadfe3;
+}
+#content #accountzone form input[type=text],
+#content #accountzone form input[type=password],
+#content #accountzone form input[type=submit] {
+  color: #c6cbcf;
+}
+#content #accountzone form input[type=text]:hover, #content #accountzone form input[type=text]:focus,
+#content #accountzone form input[type=password]:hover,
+#content #accountzone form input[type=password]:focus,
+#content #accountzone form input[type=submit]:hover,
+#content #accountzone form input[type=submit]:focus {
+  color: #24292e;
+}
+#content #accountzone form input[type=text],
+#content #accountzone form input[type=password] {
+  border-color: #dadfe3;
+}
+#content #accountzone form input[type=submit] {
+  background: rgba(0, 0, 0, 0);
+}
+
+#container .preview {
+  background: linear-gradient(45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 0/20px 20px, linear-gradient(-45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 10px/20px 20px, linear-gradient(45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) 10px -10px/20px 20px, linear-gradient(-45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) -10px 0px/20px 20px, white;
+  border-color: #dadfe3;
+}
+
+.image img {
+  background: linear-gradient(45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 0/20px 20px, linear-gradient(-45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 10px/20px 20px, linear-gradient(45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) 10px -10px/20px 20px, linear-gradient(-45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) -10px 0px/20px 20px, white;
+  border-color: #dadfe3;
+}
+
+.video__player {
+  border-color: #dadfe3;
+}
+.video__player video {
+  background: black;
+}
+.video__player .video__controls {
+  background-color: white;
+  color: #24292e;
+}
+.video__player .video__controls .playback__bar {
+  background-color: #24292e;
+}
+.video__player .video__controls .playback__bar .playback__buffer {
+  background-color: #4c5053;
+}
+.video__player .video__controls .playback__bar .playback__progress {
+  background-color: #3888ea;
+}
+.video__player .video__controls .playback__bar .playback__progress::after {
+  background: #24292e;
+}
+.video__player .video__controls .playback__extra .control__breakout,
+.video__player .video__controls .playback__extra .control__download {
+  color: #24292e;
+}
+.video__player .video__controls .playback__playPause i,
+.video__player .video__controls .playback__volume > .volume__muteUnmute i,
+.video__player .video__controls .playback__extra > .control__fullscreen i,
+.video__player .video__controls .playback__extra > .control__download i {
+  color: #24292e;
+}
+.video__player .video__controls .playback__volume .volume__control {
+  -webkit-tap-highlight-color: #24292e;
+  background-image: linear-gradient(to right, #3888ea 0%, #3888ea 100%, black 100%, black 100%);
+}
+.video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb {
+  background-color: #24292e;
+}
+
+.audio__player {
+  background-color: white;
+  border-color: #dadfe3;
+}
+.audio__player .audio__info .artist,
+.audio__player .audio__info .title {
+  color: #24292e;
+}
+.audio__player .audio__info .audio__controls .playback__bar {
+  background-color: #24292e;
+}
+.audio__player .audio__info .audio__controls .playback__bar .playback__buffer {
+  background-color: #4c5053;
+}
+.audio__player .audio__info .audio__controls .playback__bar .playback__progress {
+  background-color: #3888ea;
+}
+.audio__player .audio__info .audio__controls .playback__bar .playback__progress::after {
+  background: #24292e;
+}
+.audio__player .audio__info .audio__controls .playback__clock {
+  color: #24292e;
+}
+.audio__player .audio__info .audio__controls .playback__volume .volume__control {
+  -webkit-tap-highlight-color: #24292e;
+  background-image: linear-gradient(to right, #3888ea 0%, #3888ea 100%, black 100%, black 100%);
+}
+.audio__player .audio__info .audio__controls .playback__volume .volume__control::-webkit-slider-thumb {
+  background-color: #24292e;
+}
+.audio__player .audio__info .audio__controls .playback__extra .control__breakout {
+  color: #24292e;
+}
+.audio__player .audio__info .audio__controls .playback__playPause i,
+.audio__player .audio__info .audio__controls .playback__volume > .volume__muteUnmute i,
+.audio__player .audio__info .audio__controls .playback__extra > .control__fullscreen i,
+.audio__player .audio__info .audio__controls .playback__extra > .control__download i {
+  color: #24292e;
+}

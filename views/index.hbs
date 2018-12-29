@@ -13,10 +13,11 @@
     <link rel="icon" type="image/png" href="/img/favicon.png" />
     <link rel="apple-touch-icon" href="/img/favicon.png" />
     <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/theme.css" />
     <script src="/js/index.js"></script>
     <title>{{server.name.fullname}}</title>
   </head>
-  <body>
+  <body class="light">
     <div id="content">
       {{> logo server}}
       <div id="dropzone">
@@ -27,10 +28,22 @@
         </span>
       </div>
       <div id="buttons">
-        <div id="uploadsBtn" class="button hidden">
-          <a href="">Uploads</a>
-        </div>
-        <div id="settingsBtn" class="button">Settings</div>
+        {{#if signedin}}
+          <div id="uploadsBtn" class="button">
+            <a href="/u/{{signedin.username}}">Uploads</a>
+          </div>
+          <div id="settingsBtn" class="button">Settings</div>
+          <div id="logoutBtn" class="button">
+            <a href="/logout">Logout</a>
+          </div>
+        {{else}}
+          <div id="loginBtn" class="button">
+            <a href="/login">Login</a>
+          </div>
+          <div id="signupBtn" class="button">
+            <a href="/signup">Sign up</a>
+          </div>
+        {{/if}}
       </div>
       <div id="settings" class="hidden invisible">
         <div class="setting">
@@ -48,9 +61,6 @@
             <div class="slider round">
             </div>
           </label>
-        </div>
-        <div class="setting">
-          <input type="password" id="ak" placeholder="Authorization Key"/>
         </div>
       </div>
       <input id="files" class="hidden" name="files" type="file" accept="image/*,video/*,.mkv,audio/*" multiple />

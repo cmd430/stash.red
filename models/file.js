@@ -1,4 +1,4 @@
-module.exports = (app) => {
+module.exports = (config, app) => {
 
   let fileSchema = new app.db.Schema({
     id: {

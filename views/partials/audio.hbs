@@ -1,10 +1,11 @@
 <div class="audio__player">
-  <audio>
+  <audio crossorigin="anonymous">
     <source src="{{this.directpath}}" type="{{this.meta.mimetype}}" />
   </audio>
   <ul>
     <li class="audio__artwork">
-      <img src="{{this.meta.thumbnail}}" />
+      <img src="{{this.meta.song.artwork}}" />
+      <canvas class="visualizer invisible"></canvas>
     </li>
     <li class="audio__info">
       <div class="audio__controls">
@@ -13,7 +14,7 @@
           <span class="playback__progress"></span>
         </span>
         <span class="playback__clock">
-          <span class="playback__time">0:00</span> / <span class="playback__length">0:00</span>
+          <span class="playback__time">-:--</span> / <span class="playback__length">-:--</span>
         </span>
         <button class="playback__playPause paused" title="Play">
           <i class="icon-play"></i>
@@ -33,8 +34,8 @@
           </a>
         </span>
       </div>
-      <h1 class="title">{{this.meta.song.title}}</h1>
-      <h2 class="artist">{{this.meta.song.artist}}</h2>
+      <h1 class="title" title="{{this.meta.song.title}}">{{this.meta.song.title}}</h1>
+      <h2 class="artist" title="{{this.meta.song.artist}}">{{this.meta.song.artist}}</h2>
     </li>
   </ul>
 </div>

@@ -4,14 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let file__dropzone = document.querySelector('#dropzone')
   let file_dropzonetext = document.querySelector('#dropstate')
 
-  let button__uploads = document.querySelector('#uploadsBtn')
-  let button__uploads__anchor = button__uploads.querySelector('a')
+  let buttons = document.querySelector('#buttons')
   let button__settings = document.querySelector('#settingsBtn')
   let panel__settings = document.querySelector('#settings')
 
   let setting__copylink = document.querySelector('#cltcb')
   let setting__directlink = document.querySelector('#dlfi')
-  let setting__authkey = document.querySelector('#ak')
 
   let progress__bar = document.querySelector('#progress')
   let progress__fill = progress__bar.querySelector('#fill')
@@ -23,49 +21,33 @@ document.addEventListener('DOMContentLoaded', () => {
     file__picker.value = ''
   }
 
-  button__settings.addEventListener('click', e => {
-    if (button__settings.classList.contains('active')) {
-      button__settings.classList.remove('active')
-      panel__settings.classList.add('invisible')
-      setTimeout(() => {
-        panel__settings.classList.add('hidden')
-      }, 200)
-    } else {
-      button__settings.classList.add('active')
-      panel__settings.classList.remove('hidden')
-      setTimeout(() => {
-        // Hack to make shit work
-        panel__settings.classList.remove('invisible')
-      }, 0)
-    }
-  })
-
-  function __button__uploads () {
-    let username = localStorage.getItem('Username') || ''
-    if (username !== '') {
-      button__uploads.classList.remove('hidden')
-      button__uploads__anchor.setAttribute('href', `${location.protocol}//${location.host}/u/${username}`)
-    } else {
-      button__uploads.classList.add('hidden')
-      button__uploads__anchor.removeAttribute('href')
-    }
+  if (button__settings) {
+    button__settings.addEventListener('click', e => {
+      if (button__settings.classList.contains('active')) {
+        button__settings.classList.remove('active')
+        panel__settings.classList.add('invisible')
+        setTimeout(() => {
+          panel__settings.classList.add('hidden')
+        }, 200)
+      } else {
+        button__settings.classList.add('active')
+        panel__settings.classList.remove('hidden')
+        setTimeout(() => {
+          // Hack to make shit work
+          panel__settings.classList.remove('invisible')
+        }, 0)
+      }
+    })
   }
-  __button__uploads()
 
   setting__copylink.checked = JSON.parse(localStorage.getItem('AutoCopyLink')) || false
   setting__directlink.checked = JSON.parse(localStorage.getItem('CopyDirectLink')) || false
-  setting__authkey.value = localStorage.getItem('AuthorizationKey') || ''
 
   setting__copylink.addEventListener('change', e => {
     localStorage.setItem('AutoCopyLink', setting__copylink.checked)
   })
   setting__directlink.addEventListener('change', e => {
     localStorage.setItem('CopyDirectLink', setting__directlink.checked)
-  })
-  setting__authkey.addEventListener('change', e => {
-    localStorage.setItem('Username', '')
-    __button__uploads()
-    localStorage.setItem('AuthorizationKey', setting__authkey.value)
   })
 
   file__dropzone.addEventListener('click', e => {
@@ -88,11 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   file__picker.addEventListener('change', e => {
     if (file__picker.files.length > 0) {
-      let formData = new FormData()
-      for (var x = 0; x < file__picker.files.length; x++) {
-        formData.append('files[]', file__picker.files[x])
-      }
-      uploadFiles(formData)
+      uploadFiles(file__picker.files)
     }
   })
 
@@ -144,11 +122,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function prepare (statusText) {
-    if (button__settings.classList.contains('active')) {
-      button__settings.click()
+    if (button__settings) {
+      if (button__settings.classList.contains('active')) {
+        button__settings.click()
+      }
+      button__settings.classList.add('hidden')
     }
-    button__settings.classList.add('hidden')
-    button__uploads.classList.add('hidden')
+    buttons.classList.add('invisible')
+       setTimeout(() => {
+        buttons.classList.add('hidden')
+    }, 200)
     file_dropzonetext.classList.add('hidden')
     progress__text.textContent = statusText
     progress__fill.removeAttribute('style')
@@ -171,23 +154,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function uploadFiles (data) {
+  async function uploadFiles (data) {
+    prepare('Preparing Uploads')
     let formData = new FormData()
-    if (data[Symbol.toStringTag] === 'FileList') {
+    if (data instanceof FileList) {
       let fileCount = data.length
       for (var x = 0; x < fileCount; x++) {
-        formData.append('files[]', data[x])
+        let blob = data[x]
+        let filename = blob.name
+        if (blob.type === 'image/jpeg') {
+          blob = await fixOrientation(blob)
+        }
+        formData.append('files[]', blob, filename)
       }
       data = formData
-    } else if (data[Symbol.toStringTag] === 'Blob' || data[Symbol.toStringTag] === 'File') {
+    } else if (data instanceof Blob || data instanceof File) {
       let filename = data.name || `unknown.${data.type.split('/').pop()}`
-      formData.append('files[]', data, filename)
+      let blob = data
+      if (blob.type === 'image/jpeg') {
+        blob = await fixOrientation(blob)
+      }
+      formData.append('files[]', blob, filename)
       data = formData
     }
     prepare('Uploading: 0%')
     upload(data)
     .then(response => {
-      localStorage.setItem('Username', response.meta.uploaded.by)
       let redirect = copyText = `${response.path}`
       if (setting__copylink.checked) {
         if (response.meta.type === 'image') {
@@ -244,11 +236,17 @@ document.addEventListener('DOMContentLoaded', () => {
       request.onerror = err => {
         return reject(err)
       }
-      request.open('GET', `https://gobetween.oklabs.org/pipe/${url}`, true)
+      if (url.includes('.gifv')) {
+        // Support GIFV
+        url = `${url.replace('.gifv', '.mp4')}`
+      }
+      request.open('GET', `https://cors-anywhere.herokuapp.com/${url}`, true)
       request.responseType = 'blob'
-      // CORS Proxys
-      //  https://gobetween.oklabs.org/pipe/
+      // Public CORS Proxys
+      //  https://gobetween.oklabs.org/pipe/  <-- i think it died :(
       //  https://cors-anywhere.herokuapp.com/
+      //
+      //  Or host your own https://github.com/cmd430/CORS-Proxy
       request.send()
     })
   }
@@ -282,7 +280,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return reject(err)
       }
       request.open('POST', '/upload', true)
-      request.setRequestHeader('Authorization', localStorage.getItem('AuthorizationKey'))
       request.send(formData)
     })
   }
@@ -293,4 +290,100 @@ function isValidURL(str) {
   let a  = document.createElement('a')
   a.href = str
   return (a.host && a.host != location.host)
+}
+
+function getOrientation (blob, callback) {
+  let reader = new FileReader()
+  reader.onload = function (e) {
+    let view = new DataView(e.target.result)
+    if (view.getUint16(0, false) != 0xFFD8) {
+      return callback(-2)
+    }
+    let length = view.byteLength, offset = 2
+    while (offset < length)
+    {
+      if (view.getUint16(offset+2, false) <= 8) {
+        return callback(-1)
+      }
+      let marker = view.getUint16(offset, false)
+      offset += 2
+      if (marker == 0xFFE1) {
+        if (view.getUint32(offset += 2, false) != 0x45786966) {
+          return callback(-1)
+        }
+        let little = view.getUint16(offset += 6, false) == 0x4949
+        offset += view.getUint32(offset + 4, little)
+        let tags = view.getUint16(offset, little)
+        offset += 2
+        for (let i = 0; i < tags; i++) {
+          if (view.getUint16(offset + (i * 12), little) == 0x0112) {
+            return callback(view.getUint16(offset + (i * 12) + 8, little))
+          }
+        }
+      } else if ((marker & 0xFF00) != 0xFF00) {
+        break
+      } else {
+        offset += view.getUint16(offset, false)
+      }
+    }
+    return callback(-1)
+  }
+  reader.readAsArrayBuffer(blob)
+}
+
+async function fixOrientation (blob) {
+  return new Promise((resolve, reject) => {
+    getOrientation(blob, orientation => {
+      if (orientation === 1 || orientation === 0) {
+        // Dont need to rotate
+        return resolve(blob)
+      }
+      let img = new Image()
+      img.onerror = function() {
+        // let the server handle it
+        return resolve(blob)
+      }
+      img.onload = function() {
+        let width = img.width
+        let height = img.height
+        let canvas = document.createElement('canvas')
+        let ctx = canvas.getContext('2d')
+        if (4 < orientation && orientation < 9) {
+          canvas.width = height
+          canvas.height = width
+        } else {
+          canvas.width = width
+          canvas.height = height
+        }
+        switch (orientation) {
+          case 2:
+            ctx.transform(-1, 0, 0, 1, width, 0)
+            break
+          case 3:
+            ctx.transform(-1, 0, 0, -1, width, height )
+            break
+          case 4:
+            ctx.transform(1, 0, 0, -1, 0, height )
+            break
+          case 5:
+            ctx.transform(0, 1, 1, 0, 0, 0)
+            break
+          case 6:
+            ctx.transform(0, 1, -1, 0, height , 0)
+            break
+          case 7:
+            ctx.transform(0, -1, -1, 0, height , width)
+            break
+          case 8:
+            ctx.transform(0, -1, 1, 0, 0, width)
+            break
+        }
+        ctx.drawImage(img, 0, 0)
+        canvas.toBlob(blob => {
+          return resolve(blob)
+        }, 'image/jpeg', 1)
+      }
+      img.src = URL.createObjectURL(blob)
+    })
+  })
 }

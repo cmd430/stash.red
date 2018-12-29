@@ -11,14 +11,20 @@
     <link rel="icon" type="image/png" href="/img/favicon.png" />
     <link rel="apple-touch-icon" href="/img/favicon.png" />
     <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/theme.css" />
     <script src="/js/common.js"></script>
     <script src="/js/media.js"></script>
     <title>{{server.name.fullname}} | {{album.meta.title}}</title>
   </head>
-  <body>
+  <body class="light">
     <header>
       {{> logo server}}
-      <h1>{{album.meta.title}}</h1>
+      <h1>
+        <a class="album__download" title="Download this Album" href="{{album.downloadpath}}">
+          <i class="icon-download"></i>
+        </a>
+        {{album.meta.title}}
+      </h1>
     </header>
     <div id="container">
       {{#each album.files}}

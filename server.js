@@ -3,12 +3,17 @@ const express = require('express')
 const logger = require('morgan')
 const responseTime = require('response-time')
 const chalk = require('chalk')
+const bodyParser = require('body-parser')
 const subdomain = require('express-subdomain')
 const cors = require('cors')
 const busboy = require('connect-busboy')
+const zip = require('express-easy-zip')
 const hbs = require('hbs')
 const mongoose = require('mongoose')
 const mkdir = require('make-dir')
+const session = require('express-session')
+const expressCaptcha = require('express-svg-captcha')
+const mongoStore = require('connect-mongo')(session)
 const config = require('./config.js')
 
 // Allow override config opts from args
@@ -16,7 +21,6 @@ const args = process.argv.splice(process.execArgv.length + 2)
 if (args.includes('--debug')) {
   config.server.debug = true
 }
-
 const app = {
   domain: {
     name: config.server.name,
@@ -41,10 +45,11 @@ const app = {
     }
   },
   db: mongoose,
+  captcha: new expressCaptcha(config.auth.captcha),
   console: {
     // Console functions with extra formatting
     log: function (message, color = 'cyan') {
-      return console.log( `[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
+      return console.log(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
     },
     debug: function (message, color = 'deeppink') {
       if (config.server.debug) {
@@ -99,7 +104,9 @@ Promise.all(Object.keys(config.storage).map(key => {
       `--dbpath=${config.storage.database}`
     ])
     mongo.stdout.on('data', data => {
-      return resolve()
+      if (data.toString().includes('waiting for connections')) {
+        return resolve()
+      }
     })
     mongo.on('error', err => {
       return reject(new Error(`Could not start MongoDB: ${err.message}`))
@@ -138,6 +145,19 @@ Promise.all(Object.keys(config.storage).map(key => {
   app.domain.router.enable('trust proxy')
   app.domain.router.set('view engine', 'hbs')
   app.domain.router.set('views', `${config.handelbars.views}`)
+  app.domain.router.use(session({
+    secret: config.auth.session.secret,
+    resave: false,
+    saveUninitialized: true,
+    cookie: config.auth.session.cookie,
+    store: new mongoStore({
+      mongooseConnection: app.db.connection
+    })
+  }))
+  app.domain.router.use(bodyParser.json())
+  app.domain.router.use(bodyParser.urlencoded({
+    extended: false
+  }))
   app.domain.router.use(responseTime())
   app.domain.router.use(logger(config.log))
   app.domain.router.use(cors({
@@ -151,12 +171,14 @@ Promise.all(Object.keys(config.storage).map(key => {
       fileSize: config.upload.maxsize
     }
   }))
+  app.domain.router.use(zip())
+
   app.domain.router.use(subdomain(`${app.subdomain.image.name}`, app.subdomain.image.router))
   app.domain.router.use(subdomain(`${app.subdomain.audio.name}`, app.subdomain.audio.router))
   app.domain.router.use(subdomain(`${app.subdomain.video.name}`, app.subdomain.video.router))
   app.domain.router.use(subdomain(`${app.subdomain.download.name}`, app.subdomain.download.router))
 
-  require('./models/models.js')(app)
+  require('./models/models.js')(config, app)
   require('./routes.js')(config, app)
 
   app.console.debug('Starting Express')

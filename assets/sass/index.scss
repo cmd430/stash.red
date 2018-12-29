@@ -18,46 +18,27 @@
     height: 25vh;
     max-height: 240px;
     min-height: 100px;
-    background-color: rgb(255, 255, 255);
-    border: 1px dashed rgb(218, 223, 227);
+    border: 1px dashed;
     text-align: center;
     cursor: pointer;
     #dropstate {
       font-size: 15px;
       font-weight: 600;
-      color: rgb(157, 162, 165);
     }
     #progress {
       position: absolute;
       margin-top: -12px;
       width: 80%;
       height: 20px;
-      border: 1px solid rgb(218, 223, 227);
+      border: 1px solid;
       transition: opacity 200ms;
-      &.proc {
-        #fill {
-          background-color: rgb(136, 234, 56);
-        }
-      }
-      &.warn {
-        #fill {
-          background-color: rgb(234, 234, 56);
-        }
-      }
-      &.error {
-        #fill {
-          background-color: rgb(234, 56, 56);
-        }
-      }
       #fill {
         display: block;
         width: 0;
         height: 100%;
-        background-color: rgb(56, 136, 234);
         transition: width 200ms, background-color 200ms;
       }
       #text {
-        color: rgb(157, 162, 165);
         font-weight: 600;
         text-transform: capitalize;
       }
@@ -68,20 +49,16 @@
     align-items: center;
     justify-content: center;
     margin: 10px 0 0 0;
+    transition: opacity 200ms;
     .button {
       padding: 0 10px;
       cursor: pointer;
       &, a {
         font-weight: 600;
-        color: rgb(198, 203, 207);
         transition: color 200ms;
         text-decoration: none;
-        &:hover,
-        &.active {
-          color: rgb(36, 41, 46);
-        }
         &:not(:last-child) {
-          border-right: 1px dotted rgb(198, 203, 207);
+          border-right: 1px dotted;
         }
       }
     }
@@ -101,7 +78,6 @@
         position: relative;
         top: -6px;
         padding: 0 10px 0 0;
-        color: rgb(36, 41, 46);
         font-weight: 500;
         cursor: default;
       }
@@ -114,7 +90,6 @@
           display:none;
           &:checked {
             &+ .slider {
-              background-color: rgb(56, 136, 234);
               &::before {
                 transform: translateX(20px);
               }
@@ -128,7 +103,6 @@
           left: 0;
           right: 0;
           bottom: 0;
-          background-color: rgb(94, 96, 99);
           transition: 400ms;
           &::before {
             position: absolute;
@@ -137,17 +111,9 @@
             width: 16px;
             left: 2px;
             bottom: 2px;
-            background-color: rgb(255, 255, 255);
             transition: 400ms;
           }
         }
-      }
-      input[type=password] {
-        border: 1px solid rgb(94, 96, 99);
-        padding: 2px;
-        position: absolute;
-        width: 220px;
-        font-size: 16px;
       }
     }
   }
@@ -163,13 +129,7 @@
     > svg {
       width: 24px;
       height: 24px;
-      fill: rgb(218, 223, 227);
       transition: fill 200ms;
-    }
-    &:hover {
-      > svg {
-        fill: rgb(36, 41, 46);
-      }
     }
   }
 }

@@ -5,19 +5,14 @@
   img {
     margin: 0 auto;
     max-width: 100%;
-    max-height: 550px; /* was 750px */
-    background: linear-gradient(45deg, rgb(221, 221, 221) 25%, rgba(0, 0, 0, 0) 25%) 0 0 / 20px 20px,
-                linear-gradient(-45deg, rgb(221, 221, 221) 25%, rgba(0, 0, 0, 0) 25%) 0 10px / 20px 20px,
-                linear-gradient(45deg, rgba(0, 0, 0, 0) 75%, rgb(221, 221, 221) 75%) 10px -10px / 20px 20px,
-                linear-gradient(-45deg, rgba(0, 0, 0, 0) 75%, rgb(221, 221, 221) 75%) -10px 0px / 20px 20px,
-                rgb(255, 255, 255);
-    border: 1px solid rgb(218, 223, 227);
+    max-height: 550px;
+    border: 1px solid;
   }
 }
 .video__player {
   position: relative;
   margin: 10px auto;
-  border: 1px solid rgb(218, 223, 227);
+  border: 1px solid;
   box-sizing: content-box;
   &:-webkit-full-screen { //:fullscreen
     border: none;
@@ -34,8 +29,7 @@
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
-    max-height: calc(100vh - 180px); /* max-height: 750px; */
-    background: rgb(0, 0, 0);
+    max-height: calc(100vh - 180px);
     cursor: pointer;
   }
   .video__controls {
@@ -44,7 +38,6 @@
     height: 41px;
     width: 100%;
     padding: 0 5px;
-    background-color: rgb(255, 255, 255);
     color: rgb(36, 41, 46);
     font-size: 18px;
     user-select: none;
@@ -54,15 +47,12 @@
       left: 0;
       width: 100%;
       height: 6px;
-      background-color: rgb(36, 41, 46);
       cursor: pointer;
       .playback__buffer {
         width: 0%;
-        background-color: rgb(76, 80, 83);
       }
       .playback__progress {
         width: 0%;
-        background-color: rgb(56, 136, 234);
         &::after {
           content: '';
           position: absolute;
@@ -71,7 +61,6 @@
           top: -5px;
           width: 15px;
           height: 15px;
-          background: rgb(36, 41, 46);
           border-radius: 10px;
           opacity: 0;
           transition: opacity 200ms, linear left 250ms;
@@ -114,7 +103,6 @@
         top: 1px;
         height: 30px;
         font-size: 13px;
-        color: rgb(36, 41, 46);
         text-decoration: none;
       }
     }
@@ -128,14 +116,10 @@
       border: none;
       outline: none;
       cursor: pointer;
-      i {
-        color: rgb(36, 41, 46);
-      }
     }
     .playback__volume {
       .volume__control {
         -webkit-appearance: none;
-        -webkit-tap-highlight-color: rgb(36, 41, 46);
         position: relative;
         display: inline-block;
         top: -3px;
@@ -143,7 +127,6 @@
         height: 4px;
         margin: 0;
         border: none;
-        background-image: linear-gradient(to right, rgb(56, 136, 234) 0%, rgb(56, 136, 234) 100%, rgb(0,0,0) 100%, rgb(0,0,0) 100%);
         outline: none;
         cursor: pointer;
         &::-webkit-slider-thumb {
@@ -152,7 +135,6 @@
           height: 12px;
           border: none;
           border-radius: 6px;
-          background-color: rgb(36, 41, 46);
           opacity: 0;
           transition: opacity 200ms;
         }
@@ -173,9 +155,8 @@
   width: 250px;
   height: 337px;
   margin: 10px auto;
-  background-color: rgb(255, 255, 255);
-  border: 1px solid rgb(218, 223, 227);
   box-sizing: content-box;
+  border: 1px solid;
   user-select: none;
   .audio__info {
     position: relative;
@@ -192,7 +173,6 @@
     .title {
       width: calc(100% - 45px);
       font-size: 17px;
-      color: rgb(36, 41, 46);
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
@@ -206,15 +186,12 @@
         margin: 0 6px;
         width: calc(100% - 12px);
         height: 6px;
-        background-color: rgb(36, 41, 46);
         cursor: pointer;
         .playback__buffer {
           width: 0%;
-          background-color: rgb(76, 80, 83);
         }
         .playback__progress {
           width: 0%;
-          background-color: rgb(56, 136, 234);
           &::after {
             content: '';
             position: absolute;
@@ -223,7 +200,6 @@
             top: -5px;
             width: 15px;
             height: 15px;
-            background: rgb(36, 41, 46);
             border-radius: 10px;
             opacity: 0;
             transition: opacity 200ms, linear left 250ms;
@@ -247,7 +223,6 @@
         display: inline-block;
         width: 105px;
         height: 30px;
-        color: rgb(36, 41, 46);
         .playback__time,
         .playback__length {
           margin: 0 3px 0 0;
@@ -261,7 +236,6 @@
         left: 42px;
         .volume__control {
           -webkit-appearance: none;
-          -webkit-tap-highlight-color: rgb(36, 41, 46);
           position: relative;
           display: inline-block;
           top: -3px;
@@ -269,7 +243,6 @@
           height: 4px;
           margin: 0;
           border: none;
-          background-image: linear-gradient(to right, rgb(56, 136, 234) 0%, rgb(56, 136, 234) 100%, rgb(0,0,0) 100%, rgb(0,0,0) 100%);
           outline: none;
           cursor: pointer;
           &::-webkit-slider-thumb {
@@ -278,7 +251,6 @@
             height: 12px;
             border: none;
             border-radius: 6px;
-            background-color: rgb(36, 41, 46);
             opacity: 0;
             transition: opacity 200ms;
           }
@@ -301,7 +273,6 @@
         line-height: 1;
         .control__breakout {
           font-size: 13px;
-          color: rgb(36, 41, 46);
           text-decoration: none;
         }
       }
@@ -326,9 +297,6 @@
         border: none;
         outline: none;
         cursor: pointer;
-        i {
-          color: rgb(36, 41, 46);
-        }
       }
     }
   }
@@ -340,6 +308,13 @@
     }
     img {
       padding: 6px 6px 0;
+    }
+    .visualizer {
+      position: absolute;
+      top: 25%;
+      left: 6px;
+      width: calc(100% - 12px);
+      transition: opacity 200ms;
     }
   }
   ul {

@@ -13,7 +13,7 @@ module.exports = (config, app, common) => {
             error: 'unauthorized'
           }
           break
-          case 404:
+        case 404:
           message = {
             error: 'file not found'
           }
@@ -23,7 +23,12 @@ module.exports = (config, app, common) => {
             error: 'payload too large'
           }
           break
-          case 500:
+        case 422:
+          message = {
+            error: 'unprocessable entity'
+          }
+          break
+        case 500:
           message = {
             error: 'internal error'
           }

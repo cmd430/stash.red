@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initialiseAudioPlayers()
 } , false)
 
-
 function initialiseVideoPlayers () {
   document.querySelectorAll('.video__player').forEach(player => {
     let video = player.querySelector('video')
@@ -70,6 +69,11 @@ function initialiseVideoPlayers () {
     // Play | Pasue | Replay
     let playback__playPause__icon = playback__playPause.querySelector('i')
     playback__playPause.addEventListener('click', e => {
+      window.dispatchEvent(new CustomEvent('pause_players', {
+        detail: {
+          player: video
+        }
+      }))
       if (video.paused || video.ended) {
         if (video.ended) {
           video.currentTime = 0
@@ -93,7 +97,12 @@ function initialiseVideoPlayers () {
       playback__playPause__icon.classList.add('icon-cw')
     })
     video.addEventListener('click', e => {
-      playback__playPause.click();
+      playback__playPause.click()
+    })
+    window.addEventListener('pause_players', e => {
+      if (!video.paused && e.detail.player !== video) {
+        playback__playPause.click()
+      }
     })
 
     // Volume / Mute
@@ -144,10 +153,10 @@ function initialiseVideoPlayers () {
     video.addEventListener('loadedmetadata', e => {
       playback__progress.max = video.duration
       playback__length.textContent = formatTime(video.duration)
-      playback__time.textContent = formatTime(0, video.duration)
+      playback__time.textContent = formatTime(video.duration === Infinity ? NaN : video.currentTime, video.duration)
     })
     video.addEventListener('timeupdate', e => {
-      playback__time.textContent = formatTime(video.currentTime, video.duration)
+      playback__time.textContent = formatTime(video.duration === Infinity ? NaN : video.currentTime, video.duration)
       let percent = (video.currentTime / video.duration) * 100
       playback__progress.setAttribute('style', `width: ${percent}%;`)
     })
@@ -208,6 +217,59 @@ function initialiseAudioPlayers () {
 
     audio.__mute = false
 
+    // Visualizer
+    const waveSize = 6
+    let audioCtx = new AudioContext()
+    let analyser = audioCtx.createAnalyser()
+    source = audioCtx.createMediaElementSource(audio)
+    source.connect(analyser)
+    analyser.connect(audioCtx.destination)
+    analyser.fftSize = 2048
+    let bufferLength = analyser.frequencyBinCount
+    let dataArray = new Uint8Array(bufferLength)
+    let canvas = player.querySelector('canvas')
+    let canvasCtx = canvas.getContext('2d')
+    function renderFrame() {
+      canvasCtx.clearRect(0, 0, canvas.width, canvas.height)
+      requestAnimationFrame(renderFrame)
+      analyser.getByteTimeDomainData(dataArray)
+      canvasCtx.lineWidth = waveSize
+      canvasCtx.strokeStyle = 'rgb(0, 0, 0)'
+      canvasCtx.beginPath()
+      let sliceWidth = canvas.width * 1 / bufferLength
+      let x = 0
+      for(let i = 0; i < bufferLength; i++) {
+        let v = dataArray[i] / 128.0
+        let y = v * canvas.height / 2
+        if(i === 0) {
+          canvasCtx.moveTo(x, y)
+        } else {
+          canvasCtx.lineTo(x, y)
+        }
+        x += sliceWidth
+      }
+      canvasCtx.lineTo(canvas.width, canvas.height / 2)
+      canvasCtx.stroke()
+      canvasCtx.lineWidth = waveSize / 2
+      canvasCtx.strokeStyle = 'rgb(255, 255, 255)'
+      canvasCtx.stroke()
+    }
+    renderFrame()
+    let events = [
+      'ended',
+      'pause',
+      'play'
+    ].forEach(event => {
+      audio.addEventListener(event, () => {
+        if (audio.paused || audio.ended) {
+          canvas.classList.add('invisible')
+        } else {
+          audioCtx.resume()
+          canvas.classList.remove('invisible')
+        }
+      })
+    })
+
     // View on seperate page (hide if viewing the file page)
     if (location.href.includes('/f/')) {
       control__breakout.setAttribute('style', 'display: none;')
@@ -217,6 +279,11 @@ function initialiseAudioPlayers () {
     // Play | Pasue | Replay
     let playback__playPause__icon = playback__playPause.querySelector('i')
     playback__playPause.addEventListener('click', e => {
+      window.dispatchEvent(new CustomEvent('pause_players', {
+        detail: {
+          player: audio
+        }
+      }))
       if (audio.paused || audio.ended) {
         if (audio.ended) {
           audio.currentTime = 0
@@ -241,7 +308,12 @@ function initialiseAudioPlayers () {
     })
     let audioart = player.querySelector('.audio__artwork')
     audioart.addEventListener('click', e => {
-      playback__playPause.click();
+      playback__playPause.click()
+    })
+    window.addEventListener('pause_players', e => {
+      if (!audio.paused && e.detail.player !== audio) {
+        playback__playPause.click()
+      }
     })
 
     // Volume / Mute
@@ -292,10 +364,10 @@ function initialiseAudioPlayers () {
     audio.addEventListener('loadedmetadata', e => {
       playback__progress.max = audio.duration
       playback__length.textContent = formatTime(audio.duration)
-      playback__time.textContent = formatTime(0, audio.duration)
+      playback__time.textContent = formatTime(audio.duration === Infinity ? NaN : audio.currentTime, audio.duration)
     })
     audio.addEventListener('timeupdate', e => {
-      playback__time.textContent = formatTime(audio.currentTime, audio.duration)
+      playback__time.textContent = formatTime(audio.duration === Infinity ? NaN : audio.currentTime, audio.duration)
       let percent = (audio.currentTime / audio.duration) * 100
       playback__progress.setAttribute('style', `width: ${percent}%;`)
     })

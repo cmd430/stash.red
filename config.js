@@ -55,8 +55,8 @@ const config = {
     // on each page thanks to handelbars
     name: {
       fullname: `${serverName}`,
-      fragment_one: `${serverName.split('.')[0].toUpperCase()}`,
-      fragment_two: `${serverName.split('.')[1].toLowerCase()}`
+      fragmentOne: `${serverName.split('.')[0].toUpperCase()}`,
+      fragmentTwo: `${serverName.split('.')[1].toLowerCase()}`
     },
     opengraph: {
       icon: '/img/favicon.png',
@@ -95,10 +95,46 @@ const config = {
     asset: assetDir,
   },
   auth: {
-    enabled: true,
-    generation: {
-      enabled: true,
-      length: 8
+    // if you dont want to allow
+    // new accounts set this to false
+    allowSignup: true,
+    // salt for password hashing as String
+    // or number of rounds as Number
+    // Default: 10
+    saltOrRounds: 10,
+    session: {
+      secret: 'stash',
+      cookie: {
+        secure: 'auto',
+        maxAge: 259200000 // 3 days from last visit (in ms)
+      }
+    },
+    captcha: {
+      // accepts any option that is accepted by
+      // https://github.com/lemonce/svg-captcha
+      //
+      // plus isMath (Boolen), useFont (String) and cookie (String)
+      //
+      // setting isMath to true will enable math expressions
+      // while false will use text strings defaults to false
+      //
+      // useFont can be set to the path of a ttf or otf font
+      // for use in the captcha
+      //
+      // cookie is the value for the key in the cookie to
+      // store the captcha information, this can be ommited
+      // to use the default of 'captcha'
+      isMath: false,
+      useFont: null,
+      cookie: 'captcha',
+      fontSize: 40,
+      width: 100,
+      height: 40,
+      charPreset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&?*=<>',
+      ignoreChars: '0oO1iIlL',
+      size: 4,
+      noise: 2,
+      color: false
     }
   },
   mongo: {

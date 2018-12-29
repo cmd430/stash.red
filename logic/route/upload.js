@@ -1,34 +1,27 @@
 const fs = require('fs')
 const path = require('path')
-const sharp = require('sharp')
-const meter = require('stream-meter')
-const signature = require('buffer-signature')
+const signature = require('stream-signature')
 
 module.exports = (config, app, common, route) => {
 
-  // Handle file uploads
-  return async function uploadFile (req, res) {
-    let user = await common.auth(req, res)
-    if (user !== false) {
+  // Handle file/album uploads
+  return async function upload (req, res, next) {
+    let user = await common.isAuthenticated(req)
+    if (user) {
       // We are authorized
-      // or auth is disabled
       req.pipe(req.busboy)
       let files = []
       let partial = {}
       let finished = false
       let errors = []
       req.on('close', () => {
-        if (!finished) {
-          app.console.debug(`Upload aborted removing files`)
-          if (partial.path) {
-            partial.stream.close()
-            app.console.debug(`Removing partial file '${path.basename(partial.path)}'`)
-            fs.unlink(partial.path, () => {
-              app.console.debug(`Removed partial file '${path.basename(partial.path)}'`)
-            })
-          }
+        if (!finished && partial.path) {
+          app.console.debug(`Upload aborted removing files`, 'red')
+          partial.stream.close()
+          fs.unlink(partial.path, () => {
+            app.console.debug(`Removed partial file '${path.basename(partial.path)}'`)
+          })
           files.forEach(file => {
-            app.console.debug(`Removing file '${path.basename(partial.path)}'`)
             fs.unlink(file.path, () => {
               app.console.debug(`Removed file '${path.basename(partial.path)}'`)
             })
@@ -46,7 +39,7 @@ module.exports = (config, app, common, route) => {
           mimetype: mimetype,
           encoding: encoding
         }
-        app.console.debug(`Upload of '${filename}' started`)
+        app.console.debug(`'${user.username}' Started upload of '${filename}'`)
         let shorttype = mimetype.split('/')[0]
         let extention = path.extname(fileinfo.originalname) || `.${mimetype.split('/').pop()}`
         let id = common.generateID()
@@ -60,7 +53,7 @@ module.exports = (config, app, common, route) => {
             destination = `${config.storage[shorttype]}/${filepath}`
         }
         if (destination === null) {
-          app.console.debug(`Upload of '${filename}' aborted invaild filetype`, 'red')
+          app.console.debug(`Upload of '${filename}' aborted invaild filetype, file removed`, 'red')
           errors.push({
             file: filename,
             status: 415,
@@ -71,26 +64,30 @@ module.exports = (config, app, common, route) => {
         let fstream = fs.createWriteStream(destination)
         fstream.on('error', () => {
           errored = true
+          file.resume()
           fs.unlink(destination, () => {
-            file.resume()
+            partial = {}
           })
         })
-        let size = meter()
-        let pipeline = file.pipe(signature.identifyStream(info => {
-          let mime = info.mimeType
-          if (!mime.includes('image') && !mime.includes('audio') && !mime.includes('video')) {
-            invailid = mime
+        let type = new signature()
+        type.on('signature', signature => {
+          if (!signature.mimetype.includes(shorttype)) {
+            invailid = signature.mimetype
+            // This is a hack using a Dicer private method
+            // but its the only way to stop reading bytes
+            // without stalling busboy...
+            req.busboy._parser.parser._ignore()
+            fstream.end()
             fs.unlink(destination, () => {
-              file.resume()
+              partial = {}
+              file.emit('end')
             })
           }
-        })).pipe(size)
-        if (shorttype === 'image') {
-          pipeline.pipe(sharp().rotate().pipe(fstream))
-        } else {
-          pipeline.pipe(fstream)
-        }
-        file.on('data', () => {
+        })
+
+        file.pipe(type).pipe(fstream)
+
+        file.once('data', () => {
           partial = {
             stream: fstream,
             path: destination
@@ -98,27 +95,29 @@ module.exports = (config, app, common, route) => {
         })
         file.on('limit', () => {
           aborted = true
+          fstream.end()
           fs.unlink(destination, () => {
-            file.resume()
+            partial = {}
+            file.emit('end')
           })
         })
         file.on('end', async () => {
           if (invailid) {
-            app.console.debug(`Upload of '${filename}' rejected file magic is invaild ('${invailid}')`, 'red')
+            app.console.debug(`Upload of '${filename}' rejected file magic is invaild ('${invailid}'), file removed`, 'red')
             errors.push({
               file: filename,
               status: 415,
               message: 'invaild filetype'
             })
           } else if (aborted) {
-            app.console.debug(`Upload of '${filename}' aborted size limit reached`, 'red')
+            app.console.debug(`Upload of '${filename}' aborted size limit reached, file removed`, 'red')
             errors.push({
               file: filename,
               status: 413,
               message: 'file too large'
             })
           } else if (errored) {
-            app.console.debug(`Upload of '${filename}' aborted due to write error`, 'red')
+            app.console.debug(`Upload of '${filename}' aborted due to write error, file removed`, 'red')
             errors.push({
               file: filename,
               status: 500,
@@ -129,7 +128,7 @@ module.exports = (config, app, common, route) => {
             fileinfo.path = destination
             fileinfo.destination = path.dirname(destination)
             fileinfo.filename = filepath
-            fileinfo.size = size.bytes
+            fileinfo.size = fstream.bytesWritten
             files.push(fileinfo)
           }
         })
@@ -217,15 +216,10 @@ module.exports = (config, app, common, route) => {
             })
           }
         } else {
-          let error = errors[0]
           if (errors.length > 1) {
-            error = {
-              file: 'multiple',
-              status: 422,
-              message: 'unprocessable entity'
-            }
+            return common.error(res, 422)
           }
-          return res.status(error.status).json(error)
+          return res.status(errors[0].status).json(errors[0])
         }
       })
     } else {

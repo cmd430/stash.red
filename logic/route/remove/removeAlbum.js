@@ -5,15 +5,15 @@ module.exports = (config, app, common, route) => {
 
   // Delete entire Album
   return async function removeAlbum (req, res) {
-    let user = await common.auth(req, res)
-    if (user !== false) {
+    let user = await common.isAuthenticated(req)
+    if (user) {
       let albumID = req.params.id
       return common.queryDB('album', albumID, async (err, data) => {
         if (err) {
           return common.error(res, err.status)
         }
         data = data[0]
-        if (data.meta.uploaded.by !== user.username && user.username !== 'admin') {
+        if (data.meta.uploaded.by !== user.username && user.isAdmin === false) {
           return common.error(res, 401)
         }
         await common.queryDB('file', albumID, async (err, data) => {

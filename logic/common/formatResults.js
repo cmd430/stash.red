@@ -7,7 +7,10 @@ module.exports = (config, app, common) => {
     let addPaths = (result, isFile = true) => {
       let type = result.meta.type
       result.path = `${req.protocol}://${req.hostname}${result.path}`
-      if (!result.meta.thumbnail) {
+      if (result.meta.thumbnail === null) {
+        // We dont want thumbnails if not on
+        // use pages so no point setting it if
+        // it wasnt returned at all from the DB
         result.meta.thumbnail = `${req.protocol}://${req.hostname}/img/generic_${type}.png`
       }
       if (isFile) {
@@ -20,12 +23,15 @@ module.exports = (config, app, common) => {
             // Use filename for audio missing title
             result.meta.song.title = path.parse(result.meta.originalname).name
           }
-        }
-        if (!result.meta.thumbnail) {
-          result.meta.thumbnail = `${req.protocol}://${req.hostname}/img/generic_${type}.png`
+          // add missing art
+          if (result.meta.song.artwork === null) {
+            result.meta.song.artwork = `${req.protocol}://${req.hostname}/img/generic_${type}.png`
+          }
         }
         result.directpath = `${req.protocol}://${subdomain}.${req.hostname}/${result.meta.filename}`
         result.downloadpath = `${req.protocol}://${app.subdomain.download.name}.${req.hostname}/${type}/${result.meta.filename}`
+      } else {
+        result.downloadpath = `${req.protocol}://${app.subdomain.download.name}.${req.hostname}/${type}/${result.id}`
       }
     }
     let format = result => {
@@ -34,9 +40,11 @@ module.exports = (config, app, common) => {
         if (result.meta.title === null) {
           result.meta.title = 'Album'
         }
-        result.files.forEach(file => {
-          addPaths(file)
-        })
+        if (result.files) {
+          result.files.forEach(file => {
+            addPaths(file)
+          })
+        }
       } else if (result.meta.type === 'user') {
         addPaths(result, false)
         result.files.forEach(file => {
