@@ -11,14 +11,12 @@ module.exports = (config, app, common) => {
     return new Promise((resolve, reject) => {
       switch (type) {
         case 'image':
+          return resolve(file)
         case 'video':
-          let options = {
-            path: ffmpeg.path
-          }
-          if (type === 'video') {
-            options.seek = '00:00:03.00'
-          }
-          return simpleThumbnail(file, null, '100%', options)
+          return simpleThumbnail(file, null, '100%', {
+            path: ffmpeg.path,
+            seek: '00:00:01.00'
+          })
           .then(stream => {
             let buffer = []
             stream.on('data', data => {
@@ -56,10 +54,13 @@ module.exports = (config, app, common) => {
       app.console.debug(`Scaling thumbnail for file: ${path.basename(file)}`)
       return sharp(buffer)
       .resize({
-        width: config.upload.thumbnail.width,
-        height: config.upload.thumbnail.height,
+        width: config.upload.thumbnail.size,
+        height: config.upload.thumbnail.size,
         fit: config.upload.thumbnail.fit,
-        position: config.upload.thumbnail.position
+        position: config.upload.thumbnail.position,
+        background: config.upload.thumbnail.background,
+        kernel: config.upload.thumbnail.kernel,
+        withoutEnlargement: config.upload.thumbnail.withoutEnlargement
       })
       .png()
       .toBuffer()
