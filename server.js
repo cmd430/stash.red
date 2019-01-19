@@ -111,6 +111,9 @@ Promise.all(Object.keys(config.storage).map(key => {
     mongo.on('error', err => {
       return reject(new Error(`Could not start MongoDB: ${err.message}`))
     })
+    mongo.on('exit', (code, signal) => {
+      app.console.debug(`mongod has exited ${code || signal}`)
+    })
   })
 })
 .then(() => {
