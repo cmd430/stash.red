@@ -118,7 +118,7 @@ const config = {
       // accepts any option that is accepted by
       // https://github.com/lemonce/svg-captcha
       //
-      // plus isMath (Boolen), useFont (String) and cookie (String)
+      // plus enabled (Boolen), isMath (Boolen), useFont (String) and cookie (String)
       //
       // setting isMath to true will enable math expressions
       // while false will use text strings defaults to false
@@ -129,6 +129,7 @@ const config = {
       // cookie is the value for the key in the cookie to
       // store the captcha information, this can be ommited
       // to use the default of 'captcha'
+      enabled: false,
       isMath: false,
       useFont: null,
       cookie: 'captcha',

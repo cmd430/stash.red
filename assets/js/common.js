@@ -73,3 +73,24 @@ function createCSSSelector (selector, style) {
     styleSheet.insertRule(selector + '{' + style + '}', styleSheetLength)
   }
 }
+
+
+function getCSSRule(selector, sheet = 0) {
+  let CSS = document.styleSheets[sheet].cssRules
+  if(CSS !== undefined){
+    let ReturnedClass = Object.keys(CSS).map((key, index) => {
+      if(CSS[index].selectorText == selector){
+        return CSS[index]
+      }
+    }).filter(rule => {
+      return rule
+    })[0]
+    if(ReturnedClass !== undefined){
+      return ReturnedClass
+    } else {
+      return getCSSRule(selector, sheet + 1)
+    }
+  } else {
+    return
+  }
+}

@@ -4,7 +4,9 @@ module.exports = (config, app, common, route) => {
   return async function viewPage (req, res, next) {
     let type = req.params.type
     let dynamic = {
-      server: config.render,
+      server: Object.assign({}, config.render, {
+        captcha: config.auth.captcha.enabled
+      }),
       signedin: await common.isAuthenticated(req)
     }
     if (!dynamic['server']['opengraph']['icon'].includes(`${req.protocol}://${req.hostname}`)) {

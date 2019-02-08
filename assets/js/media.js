@@ -131,7 +131,9 @@ function initialiseVideoPlayers () {
         }
       }
       let percent = volume__control.value * 100
-      volume__control.setAttribute('style', `background-image: linear-gradient(to right, rgb(56, 136, 234) 0%, rgb(56, 136, 234) ${percent}%, rgb(0,0,0) ${percent}%, rgb(0,0,0) 100%)`)
+      let vol_css = getCSSRule('.video__player .video__controls .playback__volume .volume__control', 1).style.backgroundImage
+      vol_css = vol_css.replace(`100%`, `${percent}%`).replace(`100%`, `${percent}%`)
+      volume__control.setAttribute('style', `background-image: ${vol_css}`)
     })
     volume__control.addEventListener('input', e => {
       if (!video.__mute) {
@@ -342,7 +344,9 @@ function initialiseAudioPlayers () {
         }
       }
       let percent = volume__control.value * 100
-      volume__control.setAttribute('style', `background-image: linear-gradient(to right, rgb(56, 136, 234) 0%, rgb(56, 136, 234) ${percent}%, rgb(0,0,0) ${percent}%, rgb(0,0,0) 100%)`)
+      let vol_css = getCSSRule('.audio__player .audio__info .audio__controls .playback__volume .volume__control', 1).style.backgroundImage
+      vol_css = vol_css.replace(`100%`, `${percent}%`).replace(`100%`, `${percent}%`)
+      volume__control.setAttribute('style', `background-image: ${vol_css}`)
     })
     volume__control.addEventListener('input', e => {
       if (!audio.__mute) {
