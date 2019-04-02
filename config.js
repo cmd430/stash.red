@@ -110,6 +110,7 @@ const config = {
     session: {
       secret: 'stash',
       cookie: {
+        expires: true,    // if cookie is permadent or has maxAge (Boolen)
         secure: 'auto',
         maxAge: 259200000 // 3 days from last visit (in ms)
       }
