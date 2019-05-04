@@ -110,9 +110,8 @@ const config = {
     session: {
       secret: 'stash',
       cookie: {
-        expires: true,    // if cookie is permadent or has maxAge (Boolen)
         secure: 'auto',
-        maxAge: 259200000 // 3 days from last visit (in ms)
+        maxAge: 259200000 // 3 days from last visit (in ms) - can be a Date() object i.e new Date(253402300000000) for a cookie that expires in 31/12/9999
       }
     },
     captcha: {
