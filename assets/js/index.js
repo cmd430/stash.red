@@ -62,12 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault()
   })
   file__dropzone.addEventListener('drop', e => {
-    if (file__picker.files.length === 0) {
-      file__picker.files = e.dataTransfer.files
+    if (e.dataTransfer.files.length > 0) {
+      uploadFiles(e.dataTransfer.files)
     }
     e.preventDefault()
   })
-
   file__picker.addEventListener('change', e => {
     if (file__picker.files.length > 0) {
       uploadFiles(file__picker.files)
