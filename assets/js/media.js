@@ -1,7 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
-  initialiseVideoPlayers()
-  initialiseAudioPlayers()
+  loadPollyfills(() => {
+    initialiseVideoPlayers()
+    initialiseAudioPlayers()
+  })
 } , false)
+
+function loadPollyfills(cb) {
+  let fullscreenAPI = document.createElement('script')
+  fullscreenAPI.src = 'https://cdn.jsdelivr.net/gh/neovov/Fullscreen-API-Polyfill@master/fullscreen-api-polyfill.min.js'
+  document.head.appendChild(fullscreenAPI)
+  cb()
+}
 
 function initialiseVideoPlayers () {
   document.querySelectorAll('.video__player').forEach(player => {
@@ -30,15 +39,15 @@ function initialiseVideoPlayers () {
       window.thread = null
     }
     control__fullscreen.addEventListener('click', e => {
-      if (document.webkitFullscreenElement) {
-        document.webkitExitFullscreen()
+      if (document.fullscreenElement) {
+        document.exitFullscreen()
       } else {
-        player.webkitRequestFullscreen()
+        player.requestFullscreen()
       }
     })
     let control__fullscreen__icon = control__fullscreen.querySelector('i')
-    document.addEventListener('webkitfullscreenchange', () => {
-      if (document.webkitFullscreenElement) {
+    document.addEventListener('fullscreenchange', () => {
+      if (document.fullscreenElement) {
         if (!location.href.includes('/f/')) {
           control__breakout.setAttribute('style', 'display: none;')
         }
@@ -57,7 +66,7 @@ function initialiseVideoPlayers () {
       }
     })
     document.addEventListener('mousemove', () => {
-      if (document.webkitFullscreenElement) {
+      if (document.fullscreenElement) {
         controls.removeAttribute('style')
           clearTimeout(thread)
           window.thread = setTimeout(() => {

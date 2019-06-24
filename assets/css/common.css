@@ -201,13 +201,13 @@ header h1 {
   border: 1px solid;
   box-sizing: content-box;
 }
-.video__player:-webkit-full-screen {
+.video__player:fullscreen {
   border: none;
 }
-.video__player:-webkit-full-screen video {
+.video__player:fullscreen video {
   max-height: 100vh;
 }
-.video__player:-webkit-full-screen .video__controls {
+.video__player:fullscreen .video__controls {
   position: absolute;
   bottom: 0;
 }
