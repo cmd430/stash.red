@@ -112,22 +112,45 @@ Promise.all(Object.keys(config.storage).map(key => {
       return reject(new Error(`Could not start MongoDB: ${err.message}`))
     })
     mongo.on('exit', (code, signal) => {
-      app.console.debug(`mongod has exited ${code || signal}`)
+      if (code === 48 || code === 100) {
+        app.console.debug(`An instance of mongod is already running`)
+        app.console.debug(`Attempting unmanaged connection`)
+        return resolve(code)
+      } else {
+        app.console.debug(`mongod has exited ${code || signal}`)
+      }
     })
   })
 })
-.then(() => {
-  app.console.debug('Started mongod')
+.then(code => {
+  if (code === undefined) {
+    app.console.debug('Started mongod')
+  }
   // Connect to mongo
+  let hasConnected = false
   let mongoConnection = `${config.mongo.host}:${config.mongo.port}`
   if (config.mongo.auth.enabled) {
     mongoConnection = `${config.mongo.user}:${config.mongo.pass}@${config.mongo.host}:${config.mongo.port}`
   }
   app.console.debug('Connecting to mongodb')
+  app.db.connection.on('error', () => {
+    app.console.debug(`Could not connect to MongoDB`)
+  })
+  app.db.connection.on('disconnected', () => {
+    app.console.debug(`Lost connection to MongoDB`)
+  })
+  app.db.connection.on('connected', () => {
+    if (!hasConnected) {
+      app.console.debug('Connection established to MongoDB')
+      hasConnected = true
+    }
+  })
+  app.db.connection.on('reconnected', () => {
+    app.console.debug(`Connection to MongoDB re-established`)
+  })
   return app.db.connect(`mongodb://${mongoConnection}/${config.mongo.db}`, config.mongo.options)
 })
 .then(() => {
-  app.console.debug('Connected to mongodb')
   // Start HTTP server
   hbs.registerHelper('json', data => {
     return JSON.stringify(data)
