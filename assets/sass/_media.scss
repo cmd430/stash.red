@@ -14,7 +14,7 @@
   margin: 10px auto;
   border: 1px solid;
   box-sizing: content-box;
-  &:-webkit-full-screen { //:fullscreen
+  &:fullscreen {
     border: none;
     video {
       max-height: 100vh;
