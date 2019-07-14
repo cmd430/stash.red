@@ -166,6 +166,13 @@ Promise.all(Object.keys(config.storage).map(key => {
         return options.inverse(this)
     }
   })
+  hbs.registerHelper('if_eq', (a, b, opts) => {
+    if (a === b) {
+      return opts.fn(this)
+    } else {
+      return opts.inverse(this)
+    }
+  })
   hbs.registerPartials(`${config.handelbars.partials}`)
 
   app.domain.router.enable('trust proxy')
