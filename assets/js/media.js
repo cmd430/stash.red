@@ -421,3 +421,23 @@ function initialiseAudioPlayers () {
     })
   })
 }
+
+function deleteFile() {
+  // WIP
+  let request = new XMLHttpRequest()
+  request.onreadystatechange = () => {
+    if (request.readyState === 4) {
+      if (request.status === 200) {
+        alert('File Deleted')
+        return window.history.back()
+      } else {
+        return alert(request.responseText)
+      }
+    }
+  }
+  request.upload.onerror = err => {
+    return console.error(err)
+  }
+  request.open('DELETE', `${window.location.href}`, true)
+  request.send("")
+}
