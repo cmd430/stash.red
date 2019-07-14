@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "sass": "sass --no-source-map --watch assets/sass/:assets/css/",
-    "server": "node server"
+    "server": "node server",
+    "debug": "node server --debug"
   },
   "author": "Bradley 'cmd430' Treweek",
   "license": "GPL-3.0-or-later",
