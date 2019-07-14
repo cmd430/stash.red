@@ -429,7 +429,7 @@ function deleteFile() {
     if (request.readyState === 4) {
       if (request.status === 200) {
         alert('File Deleted')
-        return window.history.back()
+        return window.location = document.referrer
       } else {
         return alert(request.responseText)
       }
