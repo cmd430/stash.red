@@ -422,8 +422,13 @@ function initialiseAudioPlayers () {
   })
 }
 
-function deleteFile() {
+function deleteFile(fileURL) {
   // WIP
+  /*
+    - should redirect back to userpage if removing last item from album (or just removing album)
+    - should reload the page if removing single item from album
+    - shouldn't have the msg box
+  */
   let request = new XMLHttpRequest()
   request.onreadystatechange = () => {
     if (request.readyState === 4) {
@@ -438,6 +443,6 @@ function deleteFile() {
   request.upload.onerror = err => {
     return console.error(err)
   }
-  request.open('DELETE', `${window.location.href}`, true)
-  request.send("")
+  request.open('DELETE', `${fileURL}`, true)
+  request.send('')
 }

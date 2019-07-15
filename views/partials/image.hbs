@@ -1,9 +1,10 @@
-<a class="image" href="{{this.directpath}}">
-  <img src="{{this.directpath}}" />
-</a>
-<!-- WIP -->
-{{#if_eq @root.signedin.username this.meta.uploaded.by}}
-  <button onclick="deleteFile()">{{signedin.username}} Delete File</button>
-{{else}}
-  <p>CANT DELETE - DONT OWN FILE</p>
-{{/if_eq}}
+<span class="wrapper">
+  <a class="image" href="{{this.directpath}}">
+    <img src="{{this.directpath}}" />
+  </a>
+  {{#if_eq @root.signedin.username this.meta.uploaded.by this}}
+    <div class="actions">
+      <button class="delete" onclick="deleteFile('{{this.path}}')"><i class="icon-trash"></i></button>
+    </div>
+  {{/if_eq}}
+</span>
