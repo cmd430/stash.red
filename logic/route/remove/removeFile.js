@@ -16,19 +16,35 @@ module.exports = (config, app, common, route) => {
         if (data.meta.uploaded.by !== user.username && user.isAdmin === false) {
           return common.error(res, 401)
         }
-        fs.unlink(path.join(config.storage[data.meta.type], data.meta.filename), err => {
-          if (err) {
-            return common.error(res, 500)
-          }
-          app.db.models.file.findOneAndRemove({
-            id: fileID
-          }, err => {
+        if (data.meta.album !== undefined) {
+          app.db.models.file.find({
+            'meta.album': data.meta.album
+          }, (err, docs) => {
             if (err) {
               return common.error(res, 500)
             }
-            return res.sendStatus(200)
+            if (docs.length === 1) {
+              // Remove album if last image
+              req.params.id = data.meta.album
+              return route.removeAlbum(req, res)
+            } else {
+              //remove image
+              fs.unlink(path.join(config.storage[data.meta.type], data.meta.filename), err => {
+                if (err) {
+                  return common.error(res, 500)
+                }
+                app.db.models.file.findOneAndRemove({
+                  id: fileID
+                }, err => {
+                  if (err) {
+                    return common.error(res, 500)
+                  }
+                  return res.sendStatus(200)
+                })
+              })
+            }
           })
-        })
+        }
       })
     } else {
       return common.error(res, 401)
