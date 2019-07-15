@@ -166,11 +166,16 @@ Promise.all(Object.keys(config.storage).map(key => {
         return options.inverse(this)
     }
   })
-  hbs.registerHelper('if_eq', (a, b, opts) => {
+  hbs.registerHelper('if_eq', (a, b, context, opts) => {
+    if (context instanceof Function) {
+      opts = context
+    } else if (!context instanceof Object) {
+      context = this
+    }
     if (a === b) {
-      return opts.fn(this)
+      return opts.fn(context)
     } else {
-      return opts.inverse(this)
+      return opts.inverse(context)
     }
   })
   hbs.registerPartials(`${config.handelbars.partials}`)
