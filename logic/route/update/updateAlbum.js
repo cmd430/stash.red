@@ -4,8 +4,6 @@ module.exports = (config, app, common, route) => {
   return async function updateAlbum (req, res) {
     let user = await common.isAuthenticated(req)
     if (user) {
-      app.console.debug(req.body.title)
-      app.console.debug(req.body.public)
       if (req.body.title && req.body.public) {
         let albumID = req.params.id
         return common.queryDB('album', albumID, {
