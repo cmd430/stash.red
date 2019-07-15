@@ -20,7 +20,7 @@ function removeSingle(fileID, data, config, app, common, route, req, res) {
 
 module.exports = (config, app, common, route) => {
 
-  // Delete single Uploaded File
+  // Delete Uploaded File
   return async function removeFile (req, res) {
     let user = await common.isAuthenticated(req)
     if (user) {
@@ -41,7 +41,7 @@ module.exports = (config, app, common, route) => {
               return common.error(res, 500)
             }
             if (docs.length === 1) {
-              // Remove album if last image
+              // Remove album if last file
               req.params.id = data.meta.album
               return route.removeAlbum(req, res)
             } else {
