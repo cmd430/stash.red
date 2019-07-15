@@ -1,6 +1,23 @@
 const fs = require('fs')
 const path = require('path')
 
+function removeSingle(fileID, data, config, app, common, route, req, res) {
+  fs.unlink(path.join(config.storage[data.meta.type], data.meta.filename), err => {
+    if (err) {
+      app.console.debug(err)
+      return common.error(res, 500)
+    }
+    app.db.models.file.findOneAndRemove({
+      id: fileID
+    }, err => {
+      if (err) {
+        return common.error(res, 500)
+      }
+      return res.sendStatus(200)
+    })
+  })
+}
+
 module.exports = (config, app, common, route) => {
 
   // Delete single Uploaded File
@@ -28,22 +45,11 @@ module.exports = (config, app, common, route) => {
               req.params.id = data.meta.album
               return route.removeAlbum(req, res)
             } else {
-              //remove image
-              fs.unlink(path.join(config.storage[data.meta.type], data.meta.filename), err => {
-                if (err) {
-                  return common.error(res, 500)
-                }
-                app.db.models.file.findOneAndRemove({
-                  id: fileID
-                }, err => {
-                  if (err) {
-                    return common.error(res, 500)
-                  }
-                  return res.sendStatus(200)
-                })
-              })
+              return removeSingle(fileID, data, config, app, common, route, req, res)
             }
           })
+        } else {
+          return removeSingle(fileID, data, config, app, common, route, req, res)
         }
       })
     } else {
