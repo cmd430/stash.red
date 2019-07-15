@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
       for (var x = 0; x < fileCount; x++) {
         let blob = data[x]
         let filename = blob.name
-        if (blob.type === 'image/jpeg') {
+        if (blob.type === 'image/jpeg' || blob.type === 'image/jpg') {
           blob = await fixOrientation(blob)
         }
         formData.append('files[]', blob, filename)
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (data instanceof Blob || data instanceof File) {
       let filename = data.name || `unknown.${data.type.split('/').pop()}`
       let blob = data
-      if (blob.type === 'image/jpeg') {
+      if (blob.type === 'image/jpeg' || blob.type === 'image/jpg') {
         blob = await fixOrientation(blob)
       }
       formData.append('files[]', blob, filename)
