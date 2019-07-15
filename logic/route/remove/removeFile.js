@@ -4,7 +4,6 @@ const path = require('path')
 function removeSingle(fileID, data, config, app, common, route, req, res) {
   fs.unlink(path.join(config.storage[data.meta.type], data.meta.filename), err => {
     if (err) {
-      app.console.debug(err)
       return common.error(res, 500)
     }
     app.db.models.file.findOneAndRemove({
