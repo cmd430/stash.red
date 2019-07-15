@@ -4,6 +4,8 @@ const simpleThumbnail = require('simple-thumbnail')
 const jsmediatags = require('jsmediatags')
 const sharp = require('sharp')
 
+sharp.cache(false)
+
 module.exports = (config, app, common) => {
 
   return async function generateThumbnail (file, type) {
