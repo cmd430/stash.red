@@ -1,3 +1,10 @@
-<a class="image" href="{{this.directpath}}">
-  <img src="{{this.directpath}}" />
-</a>
+<span class="wrapper">
+  <a class="image" href="{{this.directpath}}">
+    <img src="{{this.directpath}}" />
+  </a>
+  {{#if_eq @root.signedin.username this.meta.uploaded.by this}}
+    <div class="actions">
+      <button class="delete" onclick="deleteFile('{{this.path}}')"><i class="icon-trash"></i></button>
+    </div>
+  {{/if_eq}}
+</span>

@@ -40,3 +40,8 @@ $color-progresstext:        rgb(157, 162, 165);
 $color-mediabuffer:         rgb(76, 80, 83);
 $color-media-gradiant:        linear-gradient(to right, rgb(56, 136, 234) 0%, rgb(56, 136, 234) 100%, rgb(0,0,0) 100%, rgb(0,0,0) 100%);
 // ^- need to make JS read the CSS rule to get the starting gradient
+
+// Action Button Colors
+$color-actionbackground:    rgb(218, 223, 227);
+$color-actionborder:        rgb(36, 41, 46);
+$color-action-delete:       rgb(234, 56, 56);

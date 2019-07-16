@@ -143,6 +143,15 @@ header {
 }
 
 // _media
+.wrapper {
+  .actions {
+    .delete {
+      color: $color-action-delete;
+      background-color: $color-actionbackground;
+      border-color: $color-actionborder;
+    }
+  }
+}
 .image {
   img {
     background: $color-transparent-gradiant;

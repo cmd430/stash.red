@@ -29,6 +29,7 @@ module.exports = (config, app) => {
   app.domain.router.route('/:type/:id')
   .get(route.viewPage)
   .patch(route.updateItem)
+  .delete(route.removeItem)
 
   // Static Assets
   app.domain.router.route('/*')

@@ -6,7 +6,9 @@ module.exports = (config, app, common, route) => {
     if (user) {
       if (req.body.title && req.body.public) {
         let albumID = req.params.id
-        return common.queryDB('album', albumID, async (err, data) => {
+        return common.queryDB('album', albumID, {
+          showPrivate: true
+        }, async (err, data) => {
           if (err) {
             return common.error(res, err.status)
           }
