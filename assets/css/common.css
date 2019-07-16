@@ -56,6 +56,7 @@ header h1 {
   line-height: 85px;
   justify-self: end;
   font-variant: small-caps;
+  text-transform: lowercase;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
