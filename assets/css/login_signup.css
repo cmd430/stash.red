@@ -58,6 +58,10 @@ header h1 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: default;
+}
+header h1.editable {
+  cursor: text;
 }
 header h1 .album__download,
 header h1 .album__delete {

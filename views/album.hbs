@@ -19,7 +19,7 @@
   <body class="light">
     <header>
       {{> logo server}}
-      <h1>
+      <h1 {{#if_eq @root.signedin.username album.meta.uploaded.by album}}class="editable"{{/if_eq}}>
         {{#if_eq @root.signedin.username album.meta.uploaded.by album}}
           <a class="album__delete" title="Delete this Album" data-url="{{this.path}}">
             <i class="icon-trash"></i>
