@@ -45,3 +45,12 @@ $color-media-gradiant:        linear-gradient(to right, rgb(56, 136, 234) 0%, rg
 $color-actionbackground:    rgb(218, 223, 227);
 $color-actionborder:        rgb(36, 41, 46);
 $color-action-delete:       rgb(234, 56, 56);
+
+// Delete Modal Colors
+$color-blackout:            rgba(0, 0 ,0, 0.8);
+$color-modal:               rgb(232, 235, 237);
+$color-modal-border:        rgb(208, 213, 217);
+$color-modal-header:        rgb(119, 119, 119);
+$color-modal-divider:       rgb(208, 213, 217);
+$color-modal-cancel:        rgb(250, 250, 250);
+$color-modal-delete:          $color-action-delete;

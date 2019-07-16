@@ -18,12 +18,59 @@ header {
     & .album__download {
       color: $color-headertext;
     }
+    & .album__delete {
+      color: $color-action-delete;
+    }
   }
 }
 
 #container {
   background: $color-contentbackground;
   border-color: $color-contentborder;
+}
+
+.wrapper {
+  .actions {
+    .action__delete {
+      color: $color-action-delete;
+      background-color: $color-actionbackground;
+      border-color: $color-actionborder;
+    }
+  }
+}
+
+.blackout {
+  background-color: $color-blackout;
+  #modal {
+    background-color: $color-modal;
+    border-color: $color-modal-border;
+    h2 {
+      color: $color-modal-header;
+    }
+    hr {
+      background-color: $color-modal-divider;
+    }
+    span {
+      button {
+        &.delete {
+          color: $color-modal;
+          background-color: $color-modal-delete;
+          border-color: $color-modal-delete;
+        }
+        &.cancel {
+          color: $color-modal-header;
+          border-color: $color-modal-border;
+          background-color: $color-modal-cancel;
+        }
+        &:hover {
+          &.delete {
+            color: $color-modal-delete;
+            background-color: $color-transparent;
+          }
+        }
+      }
+    }
+  }
 }
 
 // Index
@@ -143,15 +190,6 @@ header {
 }
 
 // _media
-.wrapper {
-  .actions {
-    .delete {
-      color: $color-action-delete;
-      background-color: $color-actionbackground;
-      border-color: $color-actionborder;
-    }
-  }
-}
 .image {
   img {
     background: $color-transparent-gradiant;

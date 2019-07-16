@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   loadPollyfills(() => {
-    initialiseVideoPlayers()
-    initialiseAudioPlayers()
+    initializeVideoPlayers()
+    initializeAudioPlayers()
+    initializeActions()
   })
 } , false)
 
@@ -12,7 +13,7 @@ function loadPollyfills(cb) {
   cb()
 }
 
-function initialiseVideoPlayers () {
+function initializeVideoPlayers () {
   document.querySelectorAll('.video__player').forEach(player => {
     let video = player.querySelector('video')
     let controls = player.querySelector('.video__controls')
@@ -212,7 +213,7 @@ function initialiseVideoPlayers () {
   })
 }
 
-function initialiseAudioPlayers () {
+function initializeAudioPlayers () {
   document.querySelectorAll('.audio__player').forEach(player => {
     let audio = player.querySelector('audio')
     let controls = player.querySelector('.audio__controls')
@@ -422,27 +423,90 @@ function initialiseAudioPlayers () {
   })
 }
 
-function deleteFile(fileURL) {
-  // WIP
-  /*
-    - should redirect back to userpage if removing last item from album (or just removing album)
-    - should reload the page if removing single item from album
-    - shouldn't have the msg box
-  */
-  let request = new XMLHttpRequest()
-  request.onreadystatechange = () => {
-    if (request.readyState === 4) {
-      if (request.status === 200) {
-        alert('File Deleted')
-        return window.location = document.referrer
-      } else {
-        return alert(request.responseText)
+function initializeActions() {
+  // Confirm Dialog
+  let deleteEvent = new Event('delete')
+  let cancelEvent = new Event('cancel')
+  document.querySelector('#modal .delete').addEventListener('click', () => {
+    document.querySelector('.blackout').classList.remove('visible')
+    document.dispatchEvent(deleteEvent)
+  })
+  document.querySelector('#modal .cancel').addEventListener('click', () => {
+    document.querySelector('.blackout').classList.remove('visible')
+    document.dispatchEvent(cancelEvent)
+  })
+  // Files
+  document.querySelectorAll('.action__delete').forEach(action__delete => {
+    action__delete.addEventListener('click', e => {
+      document.querySelector('.blackout').classList.add('visible')
+      deleteItem({
+        url: e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url,
+        username: e.dataset ? e.dataset.username : e.srcElement.parentElement.dataset.username
+      })
+    })
+  })
+  // Album
+  document.querySelector('.album__delete').addEventListener('click', e => {
+    document.querySelector('.blackout').classList.add('visible')
+    deleteItem({
+      url: e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url,
+      username: e.dataset ? e.dataset.username : e.srcElement.parentElement.dataset.username
+    })
+  })
+
+  let deleteItem = (params) => {
+   let cancelReq = () => {
+    document.removeEventListener('delete', sendReq)
+    document.removeEventListener('cancel', cancelReq)
+  }
+    let sendReq = () => {
+      let request = new XMLHttpRequest()
+      request.onreadystatechange = () => {
+        if (request.readyState === 4) {
+          if (request.status === 200) {
+            if (window.location.href.includes('/a/')) {
+              if (params.url.includes('/a/')) {
+                redirect = params.url.replace('/a/', '/u/')
+                redirect = redirect.substr(0, redirect.lastIndexOf('/') + 1)
+                redirect = redirect + params.username
+                return window.location = redirect
+              } else if (params.url.includes('/f/')) {
+                let videos = document.querySelectorAll('.video__player').length
+                let audios = document.querySelectorAll('.audio__player').length
+                let images = document.querySelectorAll('.image').length
+                let items = videos + audios + images
+                if (items === 1) {
+                  redirect = params.url.replace('/f/', '/u/')
+                  redirect = redirect.substr(0, redirect.lastIndexOf('/') + 1)
+                  redirect = redirect + params.username
+                  return window.location = redirect
+                } else {
+                  return window.location.reload()
+                }
+              }
+            } else if (window.location.href.includes('/f/')) {
+              redirect = params.url.replace('/f/', '/u/')
+              redirect = redirect.substr(0, redirect.lastIndexOf('/') + 1)
+              redirect = redirect + params.username
+              return window.location = redirect
+            } else if (window.location.href.includes('/u/')) {
+              return window.location.reload()
+            } else {
+              return window.location = '/'
+            }
+          } else {
+            return console.error(request.responseText)
+          }
+        }
       }
+      request.upload.onerror = err => {
+        return console.error(err)
+      }
+      request.open('DELETE', `${params.url}`, true)
+      request.send('')
+      document.removeEventListener('delete', sendReq)
     }
+    document.addEventListener('delete', sendReq)
+    document.addEventListener('cancel', cancelReq)
   }
-  request.upload.onerror = err => {
-    return console.error(err)
-  }
-  request.open('DELETE', `${fileURL}`, true)
-  request.send('')
 }

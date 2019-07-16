@@ -9,10 +9,47 @@ body {
 header h1, header h1 .album__download {
   color: #777777;
 }
+header h1 .album__delete {
+  color: #ea3838;
+}
 
 #container {
   background: #e8ebed;
   border-color: #dadfe3;
+}
+
+.wrapper .actions .action__delete {
+  color: #ea3838;
+  background-color: #dadfe3;
+  border-color: #24292e;
+}
+
+.blackout {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+.blackout #modal {
+  background-color: #e8ebed;
+  border-color: #d0d5d9;
+}
+.blackout #modal h2 {
+  color: #777777;
+}
+.blackout #modal hr {
+  background-color: #d0d5d9;
+}
+.blackout #modal span button.delete {
+  color: #e8ebed;
+  background-color: #ea3838;
+  border-color: #ea3838;
+}
+.blackout #modal span button.cancel {
+  color: #777777;
+  border-color: #d0d5d9;
+  background-color: #fafafa;
+}
+.blackout #modal span button:hover.delete {
+  color: #ea3838;
+  background-color: rgba(0, 0, 0, 0);
 }
 
 #content #dropzone {
@@ -94,12 +131,6 @@ header h1, header h1 .album__download {
 #container .preview {
   background: linear-gradient(45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 0/20px 20px, linear-gradient(-45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 10px/20px 20px, linear-gradient(45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) 10px -10px/20px 20px, linear-gradient(-45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) -10px 0px/20px 20px, white;
   border-color: #dadfe3;
-}
-
-.wrapper .actions .delete {
-  color: #ea3838;
-  background-color: #dadfe3;
-  border-color: #24292e;
 }
 
 .image img {
