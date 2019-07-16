@@ -35,7 +35,7 @@
   </div>
   {{#if_eq @root.signedin.username this.meta.uploaded.by this}}
     <div class="actions">
-      <a class="action__delete" title="Delete this Video" data-url="{{this.path}}">
+      <a class="action__delete" title="Delete this Video" data-url="{{this.path}}" data-username="{{@root.signedin.username}}">
         <i class="icon-trash"></i>
       </a>
     </div>

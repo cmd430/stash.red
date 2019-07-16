@@ -439,22 +439,22 @@ function initializeActions() {
   document.querySelectorAll('.action__delete').forEach(action__delete => {
     action__delete.addEventListener('click', e => {
       document.querySelector('.blackout').classList.add('visible')
-      deleteItem(e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url)
+      deleteItem({
+        url: e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url,
+        username: e.dataset ? e.dataset.username : e.srcElement.parentElement.dataset.username
+      })
     })
   })
   // Album
   document.querySelector('.album__delete').addEventListener('click', e => {
     document.querySelector('.blackout').classList.add('visible')
-    deleteItem(e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url)
+    deleteItem({
+      url: e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url,
+      username: e.dataset ? e.dataset.username : e.srcElement.parentElement.dataset.username
+    })
   })
 
-  let deleteItem = (itemURL) => {
-    // WIP
-    /*
-      - should redirect back to userpage if removing last item from album (or just removing album)
-      - should reload the page if removing single item from album
-      - shouldn't have the msg box
-    */
+  let deleteItem = (params) => {
    let cancelReq = () => {
     document.removeEventListener('delete', sendReq)
     document.removeEventListener('cancel', cancelReq)
@@ -464,17 +464,45 @@ function initializeActions() {
       request.onreadystatechange = () => {
         if (request.readyState === 4) {
           if (request.status === 200) {
-            console.log('File Deleted')
-            return window.location = document.referrer
+            if (window.location.href.includes('/a/')) {
+              if (params.url.includes('/a/')) {
+                redirect = params.url.replace('/a/', '/u/')
+                redirect = redirect.substr(0, redirect.lastIndexOf('/') + 1)
+                redirect = redirect + params.username
+                return window.location = redirect
+              } else if (params.url.includes('/f/')) {
+                let videos = document.querySelectorAll('.video__player').length
+                let audios = document.querySelectorAll('.audio__player').length
+                let images = document.querySelectorAll('.image').length
+                let items = videos + audios + images
+                if (items === 1) {
+                  redirect = params.url.replace('/f/', '/u/')
+                  redirect = redirect.substr(0, redirect.lastIndexOf('/') + 1)
+                  redirect = redirect + params.username
+                  return window.location = redirect
+                } else {
+                  return window.location.reload()
+                }
+              }
+            } else if (window.location.href.includes('/f/')) {
+              redirect = params.url.replace('/f/', '/u/')
+              redirect = redirect.substr(0, redirect.lastIndexOf('/') + 1)
+              redirect = redirect + params.username
+              return window.location = redirect
+            } else if (window.location.href.includes('/u/')) {
+              return window.location.reload()
+            } else {
+              return window.location = '/'
+            }
           } else {
-            return console.log(request.responseText)
+            return console.error(request.responseText)
           }
         }
       }
       request.upload.onerror = err => {
         return console.error(err)
       }
-      request.open('DELETE', `${itemURL}`, true)
+      request.open('DELETE', `${params.url}`, true)
       request.send('')
       document.removeEventListener('delete', sendReq)
     }
