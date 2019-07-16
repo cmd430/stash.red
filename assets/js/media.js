@@ -425,43 +425,53 @@ function initializeAudioPlayers () {
 
 function initializeActions() {
   // Confirm Dialog
+  let updateEvent = new Event('update')
+  let cancelUpdateEvent = new Event('cancel_update')
   let deleteEvent = new Event('delete')
-  let cancelEvent = new Event('cancel')
-  document.querySelector('#modal .delete').addEventListener('click', () => {
-    document.querySelector('.blackout').classList.remove('visible')
+  let cancelDeleteEvent = new Event('cancel_delete')
+  document.querySelector('#delete_modal .delete').addEventListener('click', () => {
+    document.querySelector('.blackout').classList.remove('delete')
     document.dispatchEvent(deleteEvent)
   })
-  document.querySelector('#modal .cancel').addEventListener('click', () => {
-    document.querySelector('.blackout').classList.remove('visible')
-    document.dispatchEvent(cancelEvent)
+  document.querySelector('#delete_modal .cancel').addEventListener('click', () => {
+    document.querySelector('.blackout').classList.remove('delete')
+    document.dispatchEvent(cancelDeleteEvent)
   })
-  // Files
-  document.querySelectorAll('.action__delete').forEach(action__delete => {
-    action__delete.addEventListener('click', e => {
-      document.querySelector('.blackout').classList.add('visible')
-      deleteItem({
-        url: e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url,
-        username: e.dataset ? e.dataset.username : e.srcElement.parentElement.dataset.username
-      })
-    })
+  document.querySelector('#update_modal .update').addEventListener('click', () => {
+    document.querySelector('.blackout').classList.remove('update')
+    document.dispatchEvent(deleteEvent)
   })
-  // Album
-  document.querySelectorAll('.album__delete').forEach(action__delete => {
-    action__delete.addEventListener('click', e => {
-      document.querySelector('.blackout').classList.add('visible')
-      deleteItem({
-        url: e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url,
-        username: e.dataset ? e.dataset.username : e.srcElement.parentElement.dataset.username
-      })
-    })
+  document.querySelector('#update_modal .cancel').addEventListener('click', () => {
+    document.querySelector('.blackout').classList.remove('update')
+    document.dispatchEvent(cancelUpdateEvent)
   })
 
-  let deleteItem = (params) => {
-   let cancelReq = () => {
-    document.removeEventListener('delete', sendReq)
-    document.removeEventListener('cancel', cancelReq)
-  }
-    let sendReq = () => {
+  // Files Delete
+  document.querySelectorAll('.action__delete').forEach(action__delete => {
+    action__delete.addEventListener('click', e => {
+      document.querySelector('.blackout').classList.add('delete')
+      deleteItem({
+        url: e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url,
+        username: e.dataset ? e.dataset.username : e.srcElement.parentElement.dataset.username
+      })
+    })
+  })
+  // Album Delete
+  document.querySelectorAll('.album__delete').forEach(action__delete => {
+    action__delete.addEventListener('click', e => {
+      document.querySelector('.blackout').classList.add('delete')
+      deleteItem({
+        url: e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url,
+        username: e.dataset ? e.dataset.username : e.srcElement.parentElement.dataset.username
+      })
+    })
+  })
+  let deleteItem = params => {
+    let cancelDelete = () => {
+      document.removeEventListener('delete', sendReq)
+      document.removeEventListener('cancel_delete', cancelReq)
+    }
+    let sendDelete = () => {
       let request = new XMLHttpRequest()
       request.onreadystatechange = () => {
         if (request.readyState === 4) {
@@ -506,9 +516,42 @@ function initializeActions() {
       }
       request.open('DELETE', `${params.url}`, true)
       request.send('')
-      document.removeEventListener('delete', sendReq)
+      document.removeEventListener('delete', sendDelete)
     }
-    document.addEventListener('delete', sendReq)
-    document.addEventListener('cancel', cancelReq)
+    document.addEventListener('delete', sendDelete)
+    document.addEventListener('cancel_delete', cancelDelete)
+  }
+
+  // Album Update
+  document.querySelectorAll('.album__title').forEach(action__update => {
+    action__update.addEventListener('click', e => {
+      if (e.target === action__update) {
+        action__update.contentEditable = 'true'
+      }
+    })
+  })
+  let updateItem = params => {
+    let cancelUpdate = () => {
+      document.removeEventListener('update', sendReq)
+      document.removeEventListener('cancel_update', cancelReq)
+    }
+    let sendUpdate = () => {
+      let request = new XMLHttpRequest()
+      request.onreadystatechange = () => {
+        if (request.readyState === 4) {
+          if (request.status === 200) {
+            return window.location.reload()
+          } else {
+            return console.error(request.responseText)
+          }
+        }
+      }
+      request.upload.onerror = err => {
+        return console.error(err)
+      }
+      request.open('PATCH', `${params.url}`, true)
+      request.send('')
+      document.removeEventListener('update', sendUpdate)
+    }
   }
 }

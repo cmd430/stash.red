@@ -27,28 +27,45 @@ header h1 .album__delete {
 .blackout {
   background-color: rgba(0, 0, 0, 0.8);
 }
-.blackout #modal {
+.blackout #delete_modal,
+.blackout #update_modal {
   background-color: #e8ebed;
   border-color: #d0d5d9;
 }
-.blackout #modal h2 {
+.blackout #delete_modal h2,
+.blackout #update_modal h2 {
   color: #777777;
 }
-.blackout #modal hr {
+.blackout #delete_modal hr,
+.blackout #update_modal hr {
   background-color: #d0d5d9;
 }
-.blackout #modal span button.delete {
+.blackout #delete_modal span button.delete,
+.blackout #update_modal span button.delete {
   color: #e8ebed;
   background-color: #ea3838;
   border-color: #ea3838;
 }
-.blackout #modal span button.cancel {
+.blackout #delete_modal span button.update,
+.blackout #update_modal span button.update {
+  color: #e8ebed;
+  background-color: #3888ea;
+  border-color: #3888ea;
+}
+.blackout #delete_modal span button.cancel,
+.blackout #update_modal span button.cancel {
   color: #777777;
   border-color: #d0d5d9;
   background-color: #fafafa;
 }
-.blackout #modal span button:hover.delete {
+.blackout #delete_modal span button:hover.delete,
+.blackout #update_modal span button:hover.delete {
   color: #ea3838;
+  background-color: rgba(0, 0, 0, 0);
+}
+.blackout #delete_modal span button:hover.update,
+.blackout #update_modal span button:hover.update {
+  color: #3888ea;
   background-color: rgba(0, 0, 0, 0);
 }
 
