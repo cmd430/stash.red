@@ -446,11 +446,13 @@ function initializeActions() {
     })
   })
   // Album
-  document.querySelector('.album__delete').addEventListener('click', e => {
-    document.querySelector('.blackout').classList.add('visible')
-    deleteItem({
-      url: e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url,
-      username: e.dataset ? e.dataset.username : e.srcElement.parentElement.dataset.username
+  document.querySelectorAll('.album__delete').forEach(action__delete => {
+    action__delete.addEventListener('click', e => {
+      document.querySelector('.blackout').classList.add('visible')
+      deleteItem({
+        url: e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url,
+        username: e.dataset ? e.dataset.username : e.srcElement.parentElement.dataset.username
+      })
     })
   })
 
