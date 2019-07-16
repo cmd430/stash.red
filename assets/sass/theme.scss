@@ -21,6 +21,9 @@ header {
     & .album__delete {
       color: $color-action-delete;
     }
+    & .album__title_input {
+      border-color: $color-contentborder;
+    }
   }
 }
 
@@ -41,7 +44,8 @@ header {
 
 .blackout {
   background-color: $color-blackout;
-  #modal {
+  #delete_modal,
+  #update_modal {
     background-color: $color-modal;
     border-color: $color-modal-border;
     h2 {
@@ -57,6 +61,11 @@ header {
           background-color: $color-modal-delete;
           border-color: $color-modal-delete;
         }
+        &.update {
+          color: $color-modal;
+          background-color: $color-modal-update;
+          border-color: $color-modal-update;
+        }
         &.cancel {
           color: $color-modal-header;
           border-color: $color-modal-border;
@@ -65,6 +74,10 @@ header {
         &:hover {
           &.delete {
             color: $color-modal-delete;
+            background-color: $color-transparent;
+          }
+          &.update {
+            color: $color-modal-update;
             background-color: $color-transparent;
           }
         }

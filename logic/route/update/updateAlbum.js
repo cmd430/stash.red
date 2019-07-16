@@ -4,7 +4,7 @@ module.exports = (config, app, common, route) => {
   return async function updateAlbum (req, res) {
     let user = await common.isAuthenticated(req)
     if (user) {
-      if (req.body.title && req.body.public) {
+      if (req.body.title || req.body.public) {
         let albumID = req.params.id
         return common.queryDB('album', albumID, {
           showPrivate: true
@@ -16,12 +16,17 @@ module.exports = (config, app, common, route) => {
           if (data.meta.uploaded.by !== user.username && user.isAdmin === false) {
             return common.error(res, 401)
           }
-
-          let update = {
-            'meta.title': req.body.title,       // WIP, needs client side JS done for editing
-            'meta.public': req.body.public      // values :- see notes file if you're me
+          let update = {}
+          if (req.body.title) {
+            let title = req.body.title.trim()
+            if (!title.replace(/\s/g, '').length) {
+              title = 'Album'
+            }
+            update['meta.title'] = title
           }
-
+          if (req.body.public) {
+            update['meta.public'] = req.body.public
+          }
           app.db.models.album.findOneAndUpdate({
             id: albumID
           }, update, (err, result) => {
