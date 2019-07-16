@@ -4,7 +4,9 @@
   </a>
   {{#if_eq @root.signedin.username this.meta.uploaded.by this}}
     <div class="actions">
-      <button class="delete" onclick="deleteFile('{{this.path}}')"><i class="icon-trash"></i></button>
+      <a class="action__delete" title="Delete this Image" data-url="{{this.path}}">
+        <i class="icon-trash"></i>
+      </a>
     </div>
   {{/if_eq}}
 </span>
