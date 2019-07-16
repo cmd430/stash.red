@@ -18,7 +18,11 @@ module.exports = (config, app, common, route) => {
           }
           let update = {}
           if (req.body.title) {
-            update['meta.title'] = req.body.title
+            let title = req.body.title.trim()
+            if (!title.replace(/\s/g, '').length) {
+              title = 'Album'
+            }
+            update['meta.title'] = title
           }
           if (req.body.public) {
             update['meta.public'] = req.body.public

@@ -439,7 +439,7 @@ function initializeActions() {
   })
   document.querySelector('#update_modal .update').addEventListener('click', () => {
     document.querySelector('.blackout').classList.remove('update')
-    document.dispatchEvent(deleteEvent)
+    document.dispatchEvent(updateEvent)
   })
   document.querySelector('#update_modal .cancel').addEventListener('click', () => {
     document.querySelector('.blackout').classList.remove('update')
@@ -467,9 +467,10 @@ function initializeActions() {
     })
   })
   let deleteItem = params => {
+    document.querySelector('#delete_modal .delete').focus()
     let cancelDelete = () => {
-      document.removeEventListener('delete', sendReq)
-      document.removeEventListener('cancel_delete', cancelReq)
+      document.removeEventListener('delete', sendDelete)
+      document.removeEventListener('cancel_delete', cancelDelete)
     }
     let sendDelete = () => {
       let request = new XMLHttpRequest()
@@ -517,23 +518,43 @@ function initializeActions() {
       request.open('DELETE', `${params.url}`, true)
       request.send('')
       document.removeEventListener('delete', sendDelete)
+      document.removeEventListener('cancel_delete', cancelDelete)
     }
     document.addEventListener('delete', sendDelete)
     document.addEventListener('cancel_delete', cancelDelete)
   }
 
   // Album Update
-  document.querySelectorAll('.album__title').forEach(action__update => {
+  document.querySelectorAll('header h1').forEach(action__update => {
+    let input = action__update.querySelector('.album__title_input')
+    input.addEventListener('blur', () => {
+      input.classList.remove('editable')
+      if (input.value !== input.dataset.title) {
+        document.querySelector('.blackout').classList.add('update')
+        updateItem({
+          title: input.value || 'Album'
+        })
+      }
+    })
+    input.addEventListener('keyup', e => {
+      e.preventDefault()
+      if (e.keyCode === 13) {
+        input.blur()
+      }
+    })
     action__update.addEventListener('click', e => {
       if (e.target === action__update) {
-        action__update.contentEditable = 'true'
+        input.classList.add('editable')
+        input.focus()
+        input.selectionStart = input.selectionEnd = input.value.length
       }
     })
   })
   let updateItem = params => {
+    document.querySelector('#update_modal .update').focus()
     let cancelUpdate = () => {
-      document.removeEventListener('update', sendReq)
-      document.removeEventListener('cancel_update', cancelReq)
+      document.removeEventListener('update', sendUpdate)
+      document.removeEventListener('cancel_update', cancelUpdate)
     }
     let sendUpdate = () => {
       let request = new XMLHttpRequest()
@@ -549,9 +570,13 @@ function initializeActions() {
       request.upload.onerror = err => {
         return console.error(err)
       }
-      request.open('PATCH', `${params.url}`, true)
-      request.send('')
+      request.open('PATCH', window.location.href, true)
+      request.setRequestHeader('Content-type', 'application/json')
+      request.send(JSON.stringify(params))
       document.removeEventListener('update', sendUpdate)
+      document.removeEventListener('cancel_update', cancelUpdate)
     }
+    document.addEventListener('update', sendUpdate)
+    document.addEventListener('cancel_update', cancelUpdate)
   }
 }

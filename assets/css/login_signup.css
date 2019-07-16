@@ -38,6 +38,7 @@ body {
 }
 
 header {
+  position: relative;
   display: grid;
   grid-template-columns: 220px auto;
   max-width: 960px;
@@ -70,6 +71,26 @@ header h1 .album__delete {
   opacity: 0;
   visibility: collapse;
   transition: opacity 250ms linear, visibility 250ms linear;
+}
+header h1 .album__title_input {
+  position: absolute;
+  top: 15px;
+  right: 1px;
+  padding: 5px;
+  width: 100%;
+  max-width: calc(100% - 250px);
+  font-size: 32px;
+  font-variant: small-caps;
+  text-align: right;
+  border: 1px dashed;
+  opacity: 0;
+  visibility: collapse;
+  transition: opacity 250ms linear, visibility 250ms linear;
+}
+header h1 .album__title_input.editable {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 250ms linear, visibility 0ms linear;
 }
 header:hover h1 .album__delete {
   opacity: 1;

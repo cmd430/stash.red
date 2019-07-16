@@ -24,6 +24,7 @@
           <a class="album__delete" title="Delete this Album" data-url="{{this.path}}">
             <i class="icon-trash"></i>
           </a>
+          <input type="text" class="album__title_input" placeholder="Album" value="{{this.meta.title}}" data-title="{{this.meta.title}}" maxlength="40" />
         {{/if_eq}}
         <a class="album__download" title="Download this Album" href="{{album.downloadpath}}">
           <i class="icon-download"></i>

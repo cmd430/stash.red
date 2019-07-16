@@ -12,6 +12,9 @@ header h1, header h1 .album__download {
 header h1 .album__delete {
   color: #ea3838;
 }
+header h1 .album__title_input {
+  border-color: #dadfe3;
+}
 
 #container {
   background: #e8ebed;

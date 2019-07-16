@@ -21,6 +21,9 @@ header {
     & .album__delete {
       color: $color-action-delete;
     }
+    & .album__title_input {
+      border-color: $color-contentborder;
+    }
   }
 }
 
