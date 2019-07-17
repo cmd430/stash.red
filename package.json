@@ -30,7 +30,7 @@
     "response-time": "^2.3.2",
     "sharp": "^0.21.0",
     "simple-thumbnail": "^1.4.0",
-    "stream-signature": "^1.0.0"
+    "stream-signature": "^1.0.1"
   },
   "devDependencies": {
     "sass": "^1.15.1"
