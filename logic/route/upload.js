@@ -14,6 +14,10 @@ module.exports = (config, app, common, route) => {
       let partial = {}
       let finished = false
       let errors = []
+      let options = {
+        title: 'Album',
+        public: true
+      }
       req.on('close', () => {
         if (!finished && partial.path) {
           app.console.debug(`Upload aborted removing files`, 'red')
@@ -26,6 +30,11 @@ module.exports = (config, app, common, route) => {
               app.console.debug(`Removed file '${path.basename(partial.path)}'`)
             })
           })
+        }
+      })
+      req.busboy.on('field', (fieldName, fieldValue) => {
+        if (fieldName === 'options') {
+          Object.assign(options, JSON.parse(fieldValue))
         }
       })
       req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
@@ -159,6 +168,7 @@ module.exports = (config, app, common, route) => {
                 uploaded: {
                   by: (typeof user !== null ? user.username : undefined)
                 },
+                public: options.public,
                 type: shorttype
               },
               path: `/f/${fileID}`
@@ -199,7 +209,7 @@ module.exports = (config, app, common, route) => {
                 uploaded: {
                   by: (typeof user !== null ? user.username : null)
                 },
-                title: null
+                title: options.title
               },
               path: `/a/${albumId}`
             }
