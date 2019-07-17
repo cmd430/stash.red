@@ -14,6 +14,10 @@ module.exports = (config, app, common, route) => {
       let partial = {}
       let finished = false
       let errors = []
+      let options = {
+        title: 'Album',
+        public: true
+      }
       req.on('close', () => {
         if (!finished && partial.path) {
           app.console.debug(`Upload aborted removing files`, 'red')
@@ -26,6 +30,11 @@ module.exports = (config, app, common, route) => {
               app.console.debug(`Removed file '${path.basename(partial.path)}'`)
             })
           })
+        }
+      })
+      req.busboy.on('field', (fieldName, fieldValue) => {
+        if (fieldName === 'options') {
+          Object.assign(options, JSON.parse(fieldValue))
         }
       })
       req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
@@ -175,6 +184,8 @@ module.exports = (config, app, common, route) => {
               case 'video':
                 if (albumId) {
                   fileinfo.meta.album = albumId
+                } else {
+                  fileinfo.meta.public = options.public
                 }
                 filesinfo.push(fileinfo)
                 break
@@ -196,10 +207,11 @@ module.exports = (config, app, common, route) => {
             let albuminfo = {
               id: albumId,
               meta: {
+                public: options.public,
                 uploaded: {
                   by: (typeof user !== null ? user.username : null)
                 },
-                title: null
+                title: options.title
               },
               path: `/a/${albumId}`
             }

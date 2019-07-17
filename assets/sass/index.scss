@@ -76,7 +76,9 @@
       margin: 6px;
       span {
         position: relative;
+        display: inline-block;
         top: -6px;
+        width: 172px;
         padding: 0 10px 0 0;
         font-weight: 500;
         cursor: default;

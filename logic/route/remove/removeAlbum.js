@@ -8,7 +8,9 @@ module.exports = (config, app, common, route) => {
     let user = await common.isAuthenticated(req)
     if (user) {
       let albumID = req.params.id
-      return common.queryDB('album', albumID, async (err, data) => {
+      return common.queryDB('album', albumID, {
+        showPrivate: true
+      }, async (err, data) => {
         if (err) {
           return common.error(res, err.status)
         }
@@ -16,7 +18,9 @@ module.exports = (config, app, common, route) => {
         if (data.meta.uploaded.by !== user.username && user.isAdmin === false) {
           return common.error(res, 401)
         }
-        await common.queryDB('file', albumID, async (err, data) => {
+        await common.queryDB('file', albumID, {
+          showPrivate: true
+        }, async (err, data) => {
           if (err) {
             return common.error(res, err.status)
           }

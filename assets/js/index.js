@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let setting__copylink = document.querySelector('#cltcb')
   let setting__directlink = document.querySelector('#dlfi')
+  let setting__private = document.querySelector('#pu')
 
   let progress__bar = document.querySelector('#progress')
   let progress__fill = progress__bar.querySelector('#fill')
@@ -42,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setting__copylink.checked = JSON.parse(localStorage.getItem('AutoCopyLink')) || false
   setting__directlink.checked = JSON.parse(localStorage.getItem('CopyDirectLink')) || false
+  //setting__private.checked = JSON.parse(localStorage.getItem('PrivateUpload')) || false
 
   setting__copylink.addEventListener('change', e => {
     localStorage.setItem('AutoCopyLink', setting__copylink.checked)
@@ -49,6 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setting__directlink.addEventListener('change', e => {
     localStorage.setItem('CopyDirectLink', setting__directlink.checked)
   })
+  //setting__private.addEventListener('change', e => {
+  //  localStorage.setItem('PrivateUpload', setting__private.checked)
+  //})
 
   file__dropzone.addEventListener('click', e => {
     if (file__picker.files.length === 0) {
@@ -166,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         formData.append('files[]', blob, filename)
       }
-      data = formData
     } else if (data instanceof Blob || data instanceof File) {
       let filename = data.name || `unknown.${data.type.split('/').pop()}`
       let blob = data
@@ -174,10 +178,13 @@ document.addEventListener('DOMContentLoaded', () => {
         blob = await fixOrientation(blob)
       }
       formData.append('files[]', blob, filename)
-      data = formData
     }
+    formData.append('options', JSON.stringify({
+      public: !setting__private.checked,
+      title: null //can upload with a title set for albums by passing in a string here
+    }))
     prepare('Uploading: 0%')
-    upload(data)
+    upload(formData)
     .then(response => {
       let redirect = copyText = `${response.path}`
       if (setting__copylink.checked) {
