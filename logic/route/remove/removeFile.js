@@ -24,7 +24,9 @@ module.exports = (config, app, common, route) => {
     let user = await common.isAuthenticated(req)
     if (user) {
       let fileID = req.params.id
-      return common.queryDB('file', fileID, (err, data) => {
+      return common.queryDB('file', fileID, {
+        showPrivate: true
+      }, (err, data) => {
         if (err) {
           return common.error(res, err.status)
         }
