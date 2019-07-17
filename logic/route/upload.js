@@ -8,232 +8,214 @@ module.exports = (config, app, common, route) => {
   return async function upload (req, res, next) {
     let user = await common.isAuthenticated(req)
     if (user) {
-      // We are authorized
-      req.pipe(req.busboy)
-      let files = []
-      let partial = {}
-      let finished = false
-      let errors = []
-      let options = {
-        title: 'Album',
-        public: true
+      let uploadState = {
+        files: {
+          total: 0,
+          written: 0,
+          removed: 0,
+          info: [],
+          paths: []
+        },
+        options: {
+          title: 'Album',
+          public: true
+        },
+        album: {
+          id: null
+        },
+        parsed: false,
+        complete: false,
+        abort: false
       }
-      req.on('close', () => {
-        if (!finished && partial.path) {
-          app.console.debug(`Upload aborted removing files`, 'red')
-          partial.stream.close()
-          fs.unlink(partial.path, () => {
-            app.console.debug(`Removed partial file '${path.basename(partial.path)}'`)
-          })
-          files.forEach(file => {
-            fs.unlink(file.path, () => {
-              app.console.debug(`Removed file '${path.basename(partial.path)}'`)
+      app.console.debug(`[${user.username}] Started upload`)
+      req.on('close', async () => {
+        if (!uploadState.complete) {
+          app.console.debug(`[${user.username}] Upload aborted removing ${uploadState.files.paths.length} files`, 'red')
+          await common.asyncForEach(uploadState.files.paths, async partial => {
+            if (partial.stream !== null) {
+              uploadState.abort = true
+              partial.stream.end()
+            }
+            return new Promise((resolve, reject) => {
+              fs.unlink(partial.file, () => {
+                uploadState.files.removed += 1
+                return resolve()
+              })
             })
           })
+          app.console.debug(`${uploadState.files.removed} Files removed`, 'red')
+        } else {
+          app.console.debug(`[${user.username}] Upload Completed`)
         }
       })
-      req.busboy.on('field', (fieldName, fieldValue) => {
-        if (fieldName === 'options') {
-          Object.assign(options, JSON.parse(fieldValue))
+      req.on('process', async () => {
+        app.console.debug(`${uploadState.files.total} Files parsed`)
+        app.console.debug(`${uploadState.files.written} Files saved`)
+        app.console.debug(`Processing ${uploadState.files.written} uploads`)
+        if (uploadState.files.total > 1) {
+          uploadState.album.id = common.generateID()
+          app.console.debug(`Generated album id '${uploadState.album.id}'`)
+        }
+        await common.asyncForEach(uploadState.files.info, async info => {
+          let file = {
+            id: info.id,
+            meta: {
+              thumbnail: (config.upload.thumbnail.enabled ? await common.generateThumbnail(info.destination, info.type) : null),
+              filename: path.basename(info.destination),
+              originalname: info.originalname,
+              mimetype: info.mimetype,
+              size: info.size,
+              uploaded: {
+                by: (typeof user !== null ? user.username : undefined)
+              },
+              type: info.type
+            },
+            path: `/f/${info.id}`
+          }
+          switch (info.type) {
+            case 'audio':
+              let audiometa = await common.getAudioMeta(info.destination)
+              file.meta.song = {
+                title: audiometa.title || 'Unknown',
+                album: audiometa.album || 'Unknown',
+                artist: audiometa.artist || 'Unknown'
+              }
+            case 'image':
+            case 'video':
+              if (uploadState.album.id !== null) {
+                file.meta.album = uploadState.album.id
+              } else {
+                file.meta.public = uploadState.options.public
+              }
+          }
+          app.console.debug(`Adding database entry for file '${info.id}'`)
+            app.db.models.file.create(file, (err, filedoc) => {
+              if (err) {
+                app.console.debug(`Unable to add database entry for file '${info.id}'`, 'red')
+                return common.error(res, 500)
+              } else {
+                app.console.debug(`Added database entry for file '${info.id}'`)
+                if (uploadState.album.id === null) {
+                  return res.status(200).json(common.formatResults(req, filedoc))
+                }
+              }
+            })
+        })
+        if (uploadState.album.id !== null) {
+          let album = {
+            id: uploadState.album.id,
+            meta: {
+              public: uploadState.options.public,
+              uploaded: {
+                by: (typeof user !== null ? user.username : null)
+              },
+              title: uploadState.options.title
+            },
+            path: `/a/${uploadState.album.id}`
+          }
+          app.console.debug(`Adding database entry for album '${uploadState.album.id}'`)
+          app.db.models.album.create(album, (err, albumdoc) => {
+            if (err) {
+              app.console.debug(`Unable to add database entry for album '${uploadState.album.id}'`, 'red')
+              return common.error(res, 500)
+            } else {
+              app.console.debug(`Added database entry for album '${uploadState.album.id}'`)
+              return res.status(200).json(common.formatResults(req, albumdoc))
+            }
+          })
+        }
+        uploadState.complete = true
+      })
+
+      // Busboy
+      req.busboy.on('field', (fieldname, fieldvalue) => {
+        if (fieldname === 'options') {
+          Object.assign(uploadState.options, JSON.parse(fieldvalue))
+          app.console.debug(`Upload options: ${JSON.stringify(uploadState.options, null, 2)}`)
         }
       })
       req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        let aborted = false
-        let errored = false
-        let invailid = false
-        partial = {}
+        uploadState.files.total += 1
         let fileinfo = {
+          id: common.generateID(),
+          type: mimetype.split('/')[0],
+          subtype: mimetype.split('/')[1],
+          extension: (path.extname(filename) || `.${mimetype.split('/').pop()}`).toLowerCase(),
           fieldname: fieldname,
           originalname: filename,
           mimetype: mimetype,
-          encoding: encoding
+          encoding: encoding,
+          destination: null,
+          size: 0
         }
-        app.console.debug(`'${user.username}' Started upload of '${filename}'`)
-        let shorttype = mimetype.split('/')[0]
-        let extention = path.extname(fileinfo.originalname) || `.${mimetype.split('/').pop()}`
-        let id = common.generateID()
-        app.console.debug(`ID Generated for '${filename}' => '${id}'`)
-        let filepath = `${id}${extention}`
-        let destination = null
-        switch (shorttype) {
+        app.console.debug(`Parsing file: '${filename}' => '${fileinfo.id}'`)
+        switch (fileinfo.type) {
           case 'image':
           case 'audio':
           case 'video':
-            destination = `${config.storage[shorttype]}/${filepath}`
+            fileinfo.destination = `${config.storage[fileinfo.type]}/${fileinfo.id}${fileinfo.extension}`
         }
-        if (destination === null) {
-          app.console.debug(`Upload of '${filename}' aborted invaild filetype, file removed`, 'red')
-          errors.push({
+        if (fileinfo.destination !== null) {
+          let fstream = fs.createWriteStream(`${fileinfo.destination}`)
+          let filetype = new signature()
+          uploadState.files.paths.push({
+            file: fileinfo.destination,
+            stream: fstream
+          })
+          filetype.on('signature', signature => {
+            if (!signature.mimetype.includes(fileinfo.type)) {
+              app.console.debug(`Upload of '${fileinfo.id}' rejected file magic is invaild ('${signature.mimetype}')`, 'red')
+              req.unpipe(req.busboy)
+              return res.status(415).json({
+                file: filename,
+                status: 415,
+                message: 'invaild filetype'
+              })
+            }
+          })
+          fstream.on('close', () => {
+            if (!uploadState.abort) {
+              uploadState.files.written += 1
+              fileinfo.size = fstream.bytesWritten
+              uploadState.files.info.push(fileinfo)
+              app.console.debug(`Saved file: ${fileinfo.id}`)
+              if (uploadState.parsed && uploadState.files.total === uploadState.files.written) {
+                req.emit('process')
+              }
+            }
+          })
+          file.once('limit', () => {
+            app.console.debug(`Upload of '${fileinfo.id}' aborted size limit reached`, 'red')
+            /*
+              Bug with unpiping causing no response to be returned by the server
+              https://github.com/mscdex/busboy/issues/209
+            */
+           // req.unpipe(req.busboy)
+            return res.status(413).json({
+              file: 'filename',
+              status: 413,
+              message: 'file too large'
+            })
+          })
+          file.pipe(filetype).pipe(fstream)
+        } else {
+          app.console.debug(`Upload of '${fileinfo.id}' aborted invaild filetype`, 'red')
+          req.unpipe(req.busboy)
+          return res.status(415).json({
             file: filename,
             status: 415,
             message: 'invaild filetype'
           })
-          return file.resume()
         }
-        let fstream = fs.createWriteStream(destination)
-        fstream.on('error', () => {
-          errored = true
-          file.resume()
-          fs.unlink(destination, () => {
-            partial = {}
-          })
-        })
-        let type = new signature()
-        type.on('signature', signature => {
-          if (!signature.mimetype.includes(shorttype)) {
-            invailid = signature.mimetype
-            // This is a hack using a Dicer private method
-            // but its the only way to stop reading bytes
-            // without stalling busboy...
-            req.busboy._parser.parser._ignore()
-            fstream.end()
-            fs.unlink(destination, () => {
-              partial = {}
-              file.emit('end')
-            })
-          }
-        })
-
-        file.pipe(type).pipe(fstream)
-
-        file.once('data', () => {
-          partial = {
-            stream: fstream,
-            path: destination
-          }
-        })
-        file.on('limit', () => {
-          aborted = true
-          fstream.end()
-          fs.unlink(destination, () => {
-            partial = {}
-            file.emit('end')
-          })
-        })
-        file.on('end', async () => {
-          if (invailid) {
-            app.console.debug(`Upload of '${filename}' rejected file magic is invaild ('${invailid}'), file removed`, 'red')
-            errors.push({
-              file: filename,
-              status: 415,
-              message: 'invaild filetype'
-            })
-          } else if (aborted) {
-            app.console.debug(`Upload of '${filename}' aborted size limit reached, file removed`, 'red')
-            errors.push({
-              file: filename,
-              status: 413,
-              message: 'file too large'
-            })
-          } else if (errored) {
-            app.console.debug(`Upload of '${filename}' aborted due to write error, file removed`, 'red')
-            errors.push({
-              file: filename,
-              status: 500,
-              message: 'error writing file'
-            })
-          } else {
-            app.console.debug(`Upload of '${filename}' finished`)
-            fileinfo.path = destination
-            fileinfo.destination = path.dirname(destination)
-            fileinfo.filename = filepath
-            fileinfo.size = fstream.bytesWritten
-            files.push(fileinfo)
-          }
-        })
       })
       req.busboy.on('finish', async () => {
-        finished = true
-        if (files.length > 0) {
-          let albumId = null
-          if (files.length > 1) {
-            albumId = common.generateID()
-            app.console.debug(`Generated album ID '${albumId}'`)
-          }
-          let filesinfo = []
-          await common.asyncForEach(files, async file => {
-            let filename = path.basename(file.path)
-            let extension = path.extname(filename)
-            let fileID = path.basename(filename, extension)
-            let mimetype = file.mimetype
-            let shorttype = mimetype.split('/')[0]
-            let fileinfo = {
-              id: fileID,
-              meta: {
-                thumbnail: (config.upload.thumbnail.enabled ? await common.generateThumbnail(file.path, shorttype) : null),
-                filename: filename,
-                originalname: file.originalname,
-                mimetype: mimetype,
-                size: file.size,
-                uploaded: {
-                  by: (typeof user !== null ? user.username : undefined)
-                },
-                type: shorttype
-              },
-              path: `/f/${fileID}`
-            }
-            switch (shorttype) {
-              case 'audio':
-                let audioMeta = await common.getAudioMeta(file.path)
-                fileinfo.meta.song = {
-                  title: audioMeta.title || 'Unknown',
-                  album: audioMeta.album || 'Unknown',
-                  artist: audioMeta.artist || 'Unknown'
-                }
-              case 'image':
-              case 'video':
-                if (albumId) {
-                  fileinfo.meta.album = albumId
-                } else {
-                  fileinfo.meta.public = options.public
-                }
-                filesinfo.push(fileinfo)
-                break
-            }
-            app.console.debug(`Adding database entry for file '${filename}'`)
-            app.db.models.file.create(fileinfo, (err, file) => {
-              if (err) {
-                app.console.debug(`Unable to add database entry for file '${filename}'`, 'red')
-                return common.error(res, 500)
-              } else {
-                app.console.debug(`Added database entry for file '${filename}'`)
-                if (!albumId) {
-                  return res.status(200).json(common.formatResults(req, file))
-                }
-              }
-            })
-          })
-          if (albumId) {
-            let albuminfo = {
-              id: albumId,
-              meta: {
-                public: options.public,
-                uploaded: {
-                  by: (typeof user !== null ? user.username : null)
-                },
-                title: options.title
-              },
-              path: `/a/${albumId}`
-            }
-            app.console.debug(`Adding database entry for album '${albumId}'`)
-            app.db.models.album.create(albuminfo, (err, album) => {
-              if (err) {
-                app.console.debug(`Unable to add database entry for album '${albumId}'`, 'red')
-                return common.error(res, 500)
-              } else {
-                app.console.debug(`Added database entry for album '${albumId}'`)
-                album.files = filesinfo
-                return res.status(200).json(common.formatResults(req, album))
-              }
-            })
-          }
-        } else {
-          if (errors.length > 1) {
-            return common.error(res, 422)
-          }
-          return res.status(errors[0].status).json(errors[0])
+        app.console.debug(`Upload parsing complete`)
+        uploadState.parsed = true
+        if (uploadState.files.total === uploadState.files.written) {
+          req.emit('process')
         }
       })
+      req.pipe(req.busboy)
     } else {
       return common.error(res, 401)
     }

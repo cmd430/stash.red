@@ -527,28 +527,30 @@ function initializeActions() {
   // Album Update
   document.querySelectorAll('header h1').forEach(action__update => {
     let input = action__update.querySelector('.album__title_input')
-    input.addEventListener('blur', () => {
-      input.classList.remove('editable')
-      if (input.value !== input.dataset.title) {
-        document.querySelector('.blackout').classList.add('update')
-        updateItem({
-          title: input.value || 'Album'
-        })
-      }
-    })
-    input.addEventListener('keyup', e => {
-      e.preventDefault()
-      if (e.keyCode === 13) {
-        input.blur()
-      }
-    })
-    action__update.addEventListener('click', e => {
-      if (e.target === action__update) {
-        input.classList.add('editable')
-        input.focus()
-        input.selectionStart = input.selectionEnd = input.value.length
-      }
-    })
+    if (input !== null) {
+      input.addEventListener('blur', () => {
+        input.classList.remove('editable')
+        if (input.value !== input.dataset.title) {
+          document.querySelector('.blackout').classList.add('update')
+          updateItem({
+            title: input.value || 'Album'
+          })
+        }
+      })
+      input.addEventListener('keyup', e => {
+        e.preventDefault()
+        if (e.keyCode === 13) {
+          input.blur()
+        }
+      })
+      action__update.addEventListener('click', e => {
+        if (e.target === action__update) {
+          input.classList.add('editable')
+          input.focus()
+          input.selectionStart = input.selectionEnd = input.value.length
+        }
+      })
+    }
   })
   let updateItem = params => {
     document.querySelector('#update_modal .update').focus()
