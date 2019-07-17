@@ -168,7 +168,6 @@ module.exports = (config, app, common, route) => {
                 uploaded: {
                   by: (typeof user !== null ? user.username : undefined)
                 },
-                public: options.public,
                 type: shorttype
               },
               path: `/f/${fileID}`
@@ -185,6 +184,8 @@ module.exports = (config, app, common, route) => {
               case 'video':
                 if (albumId) {
                   fileinfo.meta.album = albumId
+                } else {
+                  fileinfo.meta.public = options.public
                 }
                 filesinfo.push(fileinfo)
                 break
@@ -206,6 +207,7 @@ module.exports = (config, app, common, route) => {
             let albuminfo = {
               id: albumId,
               meta: {
+                public: options.public,
                 uploaded: {
                   by: (typeof user !== null ? user.username : null)
                 },
