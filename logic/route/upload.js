@@ -189,10 +189,6 @@ module.exports = (config, app, common, route) => {
           })
           file.once('limit', () => {
             app.console.debug(`Upload of '${fileinfo.id}' aborted size limit reached`, 'red')
-            /*
-              Bug with unpiping causing no response to be returned by the server
-              https://github.com/mscdex/busboy/issues/209
-            */
             req.unpipe(req.busboy)
             req.resume()
             return res.status(413).json({
