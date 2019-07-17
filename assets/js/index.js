@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setting__copylink.checked = JSON.parse(localStorage.getItem('AutoCopyLink')) || false
   setting__directlink.checked = JSON.parse(localStorage.getItem('CopyDirectLink')) || false
-  setting__private.checked = JSON.parse(localStorage.getItem('PrivateUpload')) || false
+  //setting__private.checked = JSON.parse(localStorage.getItem('PrivateUpload')) || false
 
   setting__copylink.addEventListener('change', e => {
     localStorage.setItem('AutoCopyLink', setting__copylink.checked)
@@ -51,9 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setting__directlink.addEventListener('change', e => {
     localStorage.setItem('CopyDirectLink', setting__directlink.checked)
   })
-  setting__private.addEventListener('change', e => {
-    localStorage.setItem('PrivateUpload', setting__private.checked)
-  })
+  //setting__private.addEventListener('change', e => {
+  //  localStorage.setItem('PrivateUpload', setting__private.checked)
+  //})
 
   file__dropzone.addEventListener('click', e => {
     if (file__picker.files.length === 0) {
