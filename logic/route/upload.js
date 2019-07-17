@@ -196,7 +196,7 @@ module.exports = (config, app, common, route) => {
             req.unpipe(req.busboy)
             req.resume()
             return res.status(413).json({
-              file: 'filename',
+              file: filename,
               status: 413,
               message: 'file too large'
             })
