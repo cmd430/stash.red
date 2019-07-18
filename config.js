@@ -157,6 +157,9 @@ const config = {
       useCreateIndex: true,
       useNewUrlParser: true,
       useFindAndModify: false
+    },
+    paginate: {
+      limit: 25
     }
   },
   log: logFormat

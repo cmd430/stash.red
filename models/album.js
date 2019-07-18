@@ -38,6 +38,7 @@ module.exports = (config, app) => {
     versionKey: false
   })
 
+  albumSchema.plugin(app.dbPlugins.paginate)
   return app.db.model('album', albumSchema)
 
 }
