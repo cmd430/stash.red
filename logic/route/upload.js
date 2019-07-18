@@ -91,7 +91,7 @@ module.exports = (config, app, common, route) => {
               }
           }
           app.console.debug(`Adding database entry for file '${info.id}'`)
-            app.db.models.file.create(file, (err, filedoc) => {
+            return app.db.models.file.create(file, (err, filedoc) => {
               if (err) {
                 app.console.debug(`Unable to add database entry for file '${info.id}'`, 'red')
                 return common.error(res, 500)
