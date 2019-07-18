@@ -9,9 +9,6 @@ module.exports = (config, app) => {
   module.exports.generateID        = require('./common/generateID.js')       (config, app, module.exports)
   module.exports.generateThumbnail = require('./common/generateThumbnail.js')(config, app, module.exports)
   module.exports.getAudioMeta      = require('./common/getAudioMeta.js')     (config, app, module.exports)
-  module.exports.getDBAlbum        = require('./common/getDBAlbum.js')       (config, app, module.exports)
-  module.exports.getDBFile         = require('./common/getDBFile.js')        (config, app, module.exports)
-  module.exports.getDBUser         = require('./common/getDBUser.js')        (config, app, module.exports)
   module.exports.queryDB           = require('./common/queryDB.js')          (config, app, module.exports)
 
   return module.exports
