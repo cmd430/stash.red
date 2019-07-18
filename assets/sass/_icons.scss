@@ -30,6 +30,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+
 .icon-download:before { content: '\e800'; }
 .icon-eye-off:before { content: '\e801'; }
 .icon-eye:before { content: '\e802'; }
@@ -53,5 +54,9 @@
 .icon-resize-full:before { content: '\e82c'; }
 .icon-resize-small:before { content: '\e82f'; }
 .icon-link-ext:before { content: '\f08e'; }
+.icon-angle-double-left:before { content: '\f100'; }
+.icon-angle-double-right:before { content: '\f101'; }
+.icon-angle-left:before { content: '\f104'; }
+.icon-angle-right:before { content: '\f105'; }
 .icon-info:before { content: '\f129'; }
 .icon-trash:before { content: '\f1f8'; }
