@@ -159,7 +159,11 @@ const config = {
       useFindAndModify: false
     },
     paginate: {
-      limit: 25
+      // Limit results per page on userpage, currently set to MAX_SAFE_INTEGER
+      // becasue no pagination UI has been done...
+      //
+      // Reccomended values are 50-100
+      limit: Number.MAX_SAFE_INTEGER
     }
   },
   log: logFormat
