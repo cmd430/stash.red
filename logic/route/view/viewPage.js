@@ -35,34 +35,37 @@ module.exports = (config, app, common, route) => {
         case 'f': // File
           // We show private here because we
           // used a direct file link
-          return common.getDBFile(id, {
+          return new common.queryDB({
             showPrivate: true,
             showArtwork: true
-          }, render)
+          }).getFile(id, render)
         case 'a': // Album
           // We show private here because we
           // used a direct album link
-          return common.getDBAlbum(id, {
+          return new common.queryDB({
             showPrivate: true,
             showArtwork: true
-          }, render)
+          }).getAlbum(id, render)
         case 'u': // User
           if (dynamic.signedin) {
             if (dynamic.signedin.username === id) {
               // We show private here because we
               // are logged in as the user we are
               // trying to see
-              return common.getDBUser(id, {
-                showPrivate: true
-              }, render)
+              return new common.queryDB({
+                showPrivate: true,
+                paginate: true,
+                page: 1 //tmp
+              }).getUser(id, render)
             }
           }
           // We dont show private here because
           // we are just viewing another uses
           // uploads
-          return common.getDBUser(id, {
-            showPrivate: false
-          }, render)
+          return new common.queryDB({
+            paginate: true,
+            page: 1 //tmp
+          }).getUser(id, render)
         default: // Error
           if (!rawJSON) {
             // We are probably trying to load an asset

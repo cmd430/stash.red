@@ -21,7 +21,7 @@
       {{> logo server}}
       <h1 {{#if_eq @root.signedin.username album.meta.uploaded.by album}}class="editable"{{/if_eq}}>
         {{#if_eq @root.signedin.username album.meta.uploaded.by album}}
-          <a class="album__delete" title="Delete this Album" data-url="{{this.path}}">
+          <a class="album__delete" title="Delete this Album" data-url="{{this.path}}" data-username="{{@root.signedin.username}}">
             <i class="icon-trash"></i>
           </a>
           <input type="text" class="album__title_input" placeholder="Album" value="{{this.meta.title}}" data-title="{{this.meta.title}}" maxlength="100" />
