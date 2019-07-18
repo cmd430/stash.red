@@ -51,6 +51,7 @@ module.exports = (config, app) => {
     versionKey: false
   })
 
+  fileSchema.plugin(app.dbPlugins.paginate)
   return app.db.model('file', fileSchema)
 
 }

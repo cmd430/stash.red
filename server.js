@@ -10,6 +10,7 @@ const busboy = require('connect-busboy')
 const zip = require('express-easy-zip')
 const hbs = require('hbs')
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 const mkdir = require('make-dir')
 const session = require('express-session')
 const expressCaptcha = require('express-svg-captcha')
@@ -45,6 +46,9 @@ const app = {
     }
   },
   db: mongoose,
+  dbPlugins: {
+    paginate: mongoosePaginate
+  },
   captcha: new expressCaptcha(config.auth.captcha),
   console: {
     // Console functions with extra formatting

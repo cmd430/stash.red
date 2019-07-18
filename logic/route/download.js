@@ -12,9 +12,9 @@ module.exports = (config, app, common, route) => {
         return res.download(`${file}`)
       })
     } else if (type === 'album') {
-      common.getDBAlbum(id, {
+      return new common.queryDB({
         showPrivate: true
-      }, async (err, data) => {
+      }).getAlbum(id, async (err, data) => {
         if (err) {
           return common.error(res, 500)
         } else {

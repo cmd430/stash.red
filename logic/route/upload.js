@@ -30,20 +30,22 @@ module.exports = (config, app, common, route) => {
       app.console.debug(`[${user.username}] Started upload`)
       req.on('close', async () => {
         if (!uploadState.complete) {
-          app.console.debug(`[${user.username}] Upload aborted removing ${uploadState.files.paths.length} files`, 'red')
-          await common.asyncForEach(uploadState.files.paths, async partial => {
-            if (partial.stream !== null) {
-              uploadState.abort = true
-              partial.stream.end()
-            }
-            return new Promise((resolve, reject) => {
-              fs.unlink(partial.file, () => {
-                uploadState.files.removed += 1
-                return resolve()
+          if (uploadState.files.paths.length > 0) {
+            app.console.debug(`[${user.username}] Upload aborted removing ${uploadState.files.paths.length} files`, 'red')
+            await common.asyncForEach(uploadState.files.paths, async partial => {
+              if (partial.stream !== null) {
+                uploadState.abort = true
+                partial.stream.end()
+              }
+              return new Promise((resolve, reject) => {
+                fs.unlink(partial.file, () => {
+                  uploadState.files.removed += 1
+                  return resolve()
+                })
               })
             })
-          })
-          app.console.debug(`${uploadState.files.removed} Files removed`, 'red')
+            app.console.debug(`${uploadState.files.removed} Files removed`, 'red')
+          }
         } else {
           app.console.debug(`[${user.username}] Upload Completed`)
         }
@@ -89,7 +91,7 @@ module.exports = (config, app, common, route) => {
               }
           }
           app.console.debug(`Adding database entry for file '${info.id}'`)
-            app.db.models.file.create(file, (err, filedoc) => {
+            return app.db.models.file.create(file, (err, filedoc) => {
               if (err) {
                 app.console.debug(`Unable to add database entry for file '${info.id}'`, 'red')
                 return common.error(res, 500)
@@ -166,6 +168,7 @@ module.exports = (config, app, common, route) => {
             if (!signature.mimetype.includes(fileinfo.type)) {
               app.console.debug(`Upload of '${fileinfo.id}' rejected file magic is invaild ('${signature.mimetype}')`, 'red')
               req.unpipe(req.busboy)
+              req.resume()
               return res.status(415).json({
                 file: filename,
                 status: 415,
@@ -186,13 +189,10 @@ module.exports = (config, app, common, route) => {
           })
           file.once('limit', () => {
             app.console.debug(`Upload of '${fileinfo.id}' aborted size limit reached`, 'red')
-            /*
-              Bug with unpiping causing no response to be returned by the server
-              https://github.com/mscdex/busboy/issues/209
-            */
-           // req.unpipe(req.busboy)
+            req.unpipe(req.busboy)
+            req.resume()
             return res.status(413).json({
-              file: 'filename',
+              file: filename,
               status: 413,
               message: 'file too large'
             })
@@ -201,6 +201,7 @@ module.exports = (config, app, common, route) => {
         } else {
           app.console.debug(`Upload of '${fileinfo.id}' aborted invaild filetype`, 'red')
           req.unpipe(req.busboy)
+          req.resume()
           return res.status(415).json({
             file: filename,
             status: 415,

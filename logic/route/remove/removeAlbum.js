@@ -8,9 +8,9 @@ module.exports = (config, app, common, route) => {
     let user = await common.isAuthenticated(req)
     if (user) {
       let albumID = req.params.id
-      return common.queryDB('album', albumID, {
+      return new common.queryDB({
         showPrivate: true
-      }, async (err, data) => {
+      }).getAlbum(albumID, async (err, data) => {
         if (err) {
           return common.error(res, err.status)
         }
@@ -18,27 +18,20 @@ module.exports = (config, app, common, route) => {
         if (data.meta.uploaded.by !== user.username && user.isAdmin === false) {
           return common.error(res, 401)
         }
-        await common.queryDB('file', albumID, {
-          showPrivate: true
-        }, async (err, data) => {
-          if (err) {
-            return common.error(res, err.status)
-          }
-          await common.asyncForEach(data, async file => {
-            fs.unlink(path.join(config.storage[file.meta.type], file.meta.filename), err => {
+        await common.asyncForEach(data.files, async file => {
+          fs.unlink(path.join(config.storage[file.meta.type], file.meta.filename), err => {
+            if (err) {
+              return common.error(res, 500)
+            }
+            return app.db.models.file.findOneAndRemove({
+              id: file.id
+            }, err => {
               if (err) {
                 return common.error(res, 500)
               }
-              return app.db.models.file.findOneAndRemove({
-                id: file.id
-              }, err => {
-                if (err) {
-                  return common.error(res, 500)
-                }
-              })
             })
           })
-        }, false, true)
+        })
         app.db.models.album.findOneAndRemove({
           id: albumID
         }, err => {

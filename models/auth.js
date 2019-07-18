@@ -54,6 +54,7 @@ module.exports = (config, app) => {
     })
   }
 
+  authSchema.plugin(app.dbPlugins.paginate)
   return app.db.model('auth', authSchema)
 
 }
