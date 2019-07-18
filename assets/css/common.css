@@ -317,6 +317,22 @@ header:hover h1 .album__delete {
   content: "";
 }
 
+.icon-angle-double-left:before {
+  content: "";
+}
+
+.icon-angle-double-right:before {
+  content: "";
+}
+
+.icon-angle-left:before {
+  content: "";
+}
+
+.icon-angle-right:before {
+  content: "";
+}
+
 .icon-info:before {
   content: "";
 }

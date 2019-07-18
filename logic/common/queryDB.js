@@ -169,7 +169,10 @@ module.exports = (config, app, common) => {
             meta: {
               username: id,
               type: 'user',
-              page: this.options.page
+              pagination: {
+                albums: {},
+                files: {}
+              }
             },
             albums: [],
             files: [],
@@ -194,6 +197,15 @@ module.exports = (config, app, common) => {
             select: this.projection
           })
           .then(result => {
+            user.meta.pagination.albums = {
+              hasPrevPage: result.hasPrevPage,
+              prevPage: result.prevPage,
+              currPage: result.page,
+              nextPage: result.nextPage,
+              hasNextPage: result.hasNextPage,
+              totalPages: result.totalPages,
+              totalAlbums: result.totalDocs
+            }
             return result.docs
           })
           await common.asyncForEach(albums, async album => {
@@ -244,6 +256,15 @@ module.exports = (config, app, common) => {
             select: this.projection
           })
           .then(result => {
+            user.meta.pagination.files = {
+              hasPrevPage: result.hasPrevPage,
+              prevPage: result.prevPage,
+              currPage: result.page,
+              nextPage: result.nextPage,
+              hasNextPage: result.hasNextPage,
+              totalPages: result.totalPages,
+              totalFiles: result.totalDocs
+            }
             return result.docs
           })
           user.albums = albums

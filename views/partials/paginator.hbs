@@ -1,0 +1,13 @@
+<div class="paginator">
+  <a class="prev{{#if @root.user.meta.pagination.files.prevPage}} enabled{{/if}}">
+    <i class="icon-angle-left"></i>
+  </a>
+  {{#times @root.user.meta.pagination.files.totalPages}}
+    <a class="curr">
+      {{this}}
+    </a>
+  {{/times}}
+  <a class="next{{#if @root.user.meta.pagination.files.nextPage}} enabled{{/if}}">
+    <i class="icon-angle-right"></i>
+  </a>
+</div>

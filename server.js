@@ -182,6 +182,13 @@ Promise.all(Object.keys(config.storage).map(key => {
       return opts.inverse(context)
     }
   })
+  hbs.registerHelper('times', (n, block) => {
+    let accum = ''
+    for(let i = 1; i - 1 < n; i++) {
+      accum += block.fn(i)
+    }
+    return accum
+  })
   hbs.registerPartials(`${config.handelbars.partials}`)
 
   app.domain.router.enable('trust proxy')
