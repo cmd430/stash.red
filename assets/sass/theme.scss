@@ -227,6 +227,21 @@ header {
       }
     }
   }
+  .tab_container {
+    border-bottom-color: $color-contentborder;
+    .tab {
+      border-right-color: $color-contentborder;
+      &.active,
+      &:hover {
+        a {
+          color: $color-contenttext-hover;
+        }
+      }
+      a {
+        color: $color-contenttext;
+      }
+    }
+  }
 }
 
 // _media

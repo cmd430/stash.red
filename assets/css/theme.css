@@ -166,6 +166,18 @@ header h1 .album__title_input {
 #container .pagination li.disabled a {
   color: #c6cbcf;
 }
+#container .tab_container {
+  border-bottom-color: #dadfe3;
+}
+#container .tab_container .tab {
+  border-right-color: #dadfe3;
+}
+#container .tab_container .tab.active a, #container .tab_container .tab:hover a {
+  color: #24292e;
+}
+#container .tab_container .tab a {
+  color: #c6cbcf;
+}
 
 .image img {
   background: linear-gradient(45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 0/20px 20px, linear-gradient(-45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 10px/20px 20px, linear-gradient(45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) 10px -10px/20px 20px, linear-gradient(-45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) -10px 0px/20px 20px, white;
