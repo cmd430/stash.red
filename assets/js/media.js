@@ -481,7 +481,7 @@ function initializeActions() {
               if (params.url.includes('/a/')) {
                 redirect = params.url.replace('/a/', '/u/')
                 redirect = redirect.substr(0, redirect.lastIndexOf('/') + 1)
-                redirect = redirect + params.username
+                redirect = redirect + `${params.username}?albums`
                 return window.location = redirect
               } else if (params.url.includes('/f/')) {
                 let videos = document.querySelectorAll('.video__player').length
@@ -491,7 +491,7 @@ function initializeActions() {
                 if (items === 1) {
                   redirect = params.url.replace('/f/', '/u/')
                   redirect = redirect.substr(0, redirect.lastIndexOf('/') + 1)
-                  redirect = redirect + params.username
+                  redirect = redirect + `${params.username}?albums`
                   return window.location = redirect
                 } else {
                   return window.location.reload()
