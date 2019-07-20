@@ -152,16 +152,19 @@ header h1 .album__title_input {
   background: linear-gradient(45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 0/20px 20px, linear-gradient(-45deg, #dddddd 25%, rgba(0, 0, 0, 0) 25%) 0 10px/20px 20px, linear-gradient(45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) 10px -10px/20px 20px, linear-gradient(-45deg, rgba(0, 0, 0, 0) 75%, #dddddd 75%) -10px 0px/20px 20px, white;
   border-color: #dadfe3;
 }
-#container .paginator .prev,
-#container .paginator .next {
+#container .pagination li:not(.disabled) a {
   color: #c6cbcf;
 }
-#container .paginator .prev.enabled:hover,
-#container .paginator .next.enabled:hover {
+#container .pagination li:not(.disabled).active a {
+  border-color: #24292e;
   color: #24292e;
 }
-#container .paginator .curr {
+#container .pagination li:not(.disabled):hover a, #container .pagination li:not(.disabled):active a {
+  border-color: #24292e;
   color: #24292e;
+}
+#container .pagination li.disabled a {
+  color: #c6cbcf;
 }
 
 .image img {

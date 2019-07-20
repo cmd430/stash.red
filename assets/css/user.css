@@ -58,22 +58,44 @@
   height: 0;
   margin: 0 10px;
 }
-#container .paginator {
+#container .pagination {
   position: relative;
   width: 100%;
   text-align: center;
   padding: 15px 0 0 0;
+  cursor: default;
 }
-#container .paginator .prev.enabled,
-#container .paginator .next.enabled {
-  cursor: pointer;
+#container .pagination li {
+  list-style: none;
+  display: inline-block;
+  padding: 4px;
 }
-#container .paginator .curr,
-#container .paginator .prev,
-#container .paginator .next {
-  font-size: 14px;
+#container .pagination li a {
+  font-size: 18px;
+  padding: 0 3px;
+}
+#container .pagination li a i::before {
+  margin: 0;
+  display: inline;
+}
+#container .pagination li:not(.disabled) a {
+  text-decoration: none;
+}
+#container .pagination li:not(.disabled).active a {
+  border-bottom: 1px dotted;
   font-weight: 600;
-  height: 20px;
-  vertical-align: middle;
+  cursor: default;
+}
+#container .pagination li:not(.disabled):hover a, #container .pagination li:not(.disabled):active a {
+  transition: color 200ms linear;
+}
+#container .pagination li:not(.disabled):not(:first-child):not(:nth-child(2)):not(:nth-last-child(2)):not(:last-child):hover a, #container .pagination li:not(.disabled):not(:first-child):not(:nth-child(2)):not(:nth-last-child(2)):not(:last-child):active a {
+  border-bottom: 1px dotted;
+  font-weight: 600;
+}
+#container .pagination li.disabled {
+  opacity: 0;
+}
+#container .pagination li.disabled a {
   cursor: default;
 }

@@ -1,13 +1,35 @@
-<div class="paginator">
-  <a class="prev{{#if @root.user.meta.pagination.files.prevPage}} enabled{{/if}}">
-    <i class="icon-angle-left"></i>
-  </a>
-  {{#times @root.user.meta.pagination.files.totalPages}}
-    <a class="curr">
-      {{this}}
-    </a>
-  {{/times}}
-  <a class="next{{#if @root.user.meta.pagination.files.nextPage}} enabled{{/if}}">
-    <i class="icon-angle-right"></i>
-  </a>
-</div>
+<ul class="pagination">
+  {{#paginate this.meta.pagination type="first"}}
+    <li {{#if disabled}}class="disabled"{{/if}}>
+      <a {{#unless disabled}}href="?p={{n}}{{#if ../this.meta.pagination.albumCount}}&a{{/if}}"{{/unless}}>
+        <i class="icon-angle-double-left"></i>
+      </a>
+    </li>
+  {{/paginate}}
+  {{#paginate this.meta.pagination type="previous"}}
+    <li {{#if disabled}}class="disabled"{{/if}}>
+      <a {{#unless disabled}}href="?p={{n}}{{#if ../this.meta.pagination.albumCount}}&a{{/if}}"{{/unless}}>
+        <i class="icon-angle-left"></i>
+      </a>
+    </li>
+  {{/paginate}}
+  {{#paginate this.meta.pagination type="middle" limit="7"}}
+    <li {{#if active}}class="active"{{/if}}>
+      <a {{#unless active}}href="?p={{n}}{{#if ../this.meta.pagination.albumCount}}&a{{/if}}"{{/unless}}>{{n}}</a>
+    </li>
+  {{/paginate}}
+  {{#paginate this.meta.pagination type="next"}}
+    <li {{#if disabled}}class="disabled"{{/if}}>
+      <a {{#unless disabled}}href="?p={{n}}{{#if ../this.meta.pagination.albumCount}}&a{{/if}}"{{/unless}}>
+        <i class="icon-angle-right"></i>
+      </a>
+    </li>
+  {{/paginate}}
+  {{#paginate this.meta.pagination type="last"}}
+    <li {{#if disabled}}class="disabled"{{/if}}>
+      <a {{#unless disabled}}href="?p={{n}}{{#if ../this.meta.pagination.albumCount}}&a{{/if}}"{{/unless}}>
+        <i class="icon-angle-double-right"></i>
+      </a>
+    </li>
+  {{/paginate}}
+</ul>

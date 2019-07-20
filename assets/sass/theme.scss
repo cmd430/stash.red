@@ -200,16 +200,31 @@ header {
     background: $color-transparent-gradiant;
     border-color: $color-contentborder;
   }
-  .paginator {
-    .prev,
-    .next {
-      color: $color-contenttext;
-      &.enabled:hover {
-        color: $color-contenttext-hover;
+  .pagination {
+    li {
+      &:not(.disabled) {
+        a {
+          color: $color-contenttext;
+        }
+        &.active {
+          a {
+            border-color: $color-contenttext-hover;
+            color: $color-contenttext-hover;
+          }
+        }
+        &:hover,
+        &:active {
+          a {
+            border-color: $color-contenttext-hover;
+            color: $color-contenttext-hover;
+          }
+        }
       }
-    }
-    .curr {
-      color: $color-contenttext-hover;
+      &.disabled {
+        a {
+          color: $color-contenttext;
+        }
+      }
     }
   }
 }

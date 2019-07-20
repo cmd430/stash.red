@@ -22,6 +22,7 @@
     "express-subdomain": "^1.0.5",
     "express-svg-captcha": "^1.0.1",
     "ffmpeg-static": "^2.4.0",
+    "handlebars-paginate": "^0.1.0",
     "hbs": "^4.0.4",
     "jsmediatags": "^3.8.1",
     "make-dir": "^1.3.0",

@@ -225,119 +225,119 @@ header:hover h1 .album__delete {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-download:before {
+.icon-download::before {
   content: "";
 }
 
-.icon-eye-off:before {
+.icon-eye-off::before {
   content: "";
 }
 
-.icon-eye:before {
+.icon-eye::before {
   content: "";
 }
 
-.icon-music:before {
+.icon-music::before {
   content: "";
 }
 
-.icon-video:before {
+.icon-video::before {
   content: "";
 }
 
-.icon-picture:before {
+.icon-picture::before {
   content: "";
 }
 
-.icon-trash-empty:before {
+.icon-trash-empty::before {
   content: "";
 }
 
-.icon-ok:before {
+.icon-ok::before {
   content: "";
 }
 
-.icon-cancel:before {
+.icon-cancel::before {
   content: "";
 }
 
-.icon-plus:before {
+.icon-plus::before {
   content: "";
 }
 
-.icon-upload:before {
+.icon-upload::before {
   content: "";
 }
 
-.icon-pencil:before {
+.icon-pencil::before {
   content: "";
 }
 
-.icon-cw:before {
+.icon-cw::before {
   content: "";
 }
 
-.icon-pause:before {
+.icon-pause::before {
   content: "";
 }
 
-.icon-stop:before {
+.icon-stop::before {
   content: "";
 }
 
-.icon-play:before {
+.icon-play::before {
   content: "";
 }
 
-.icon-volume-off:before {
+.icon-volume-off::before {
   content: "";
 }
 
-.icon-volume-down:before {
+.icon-volume-down::before {
   content: "";
 }
 
-.icon-volume-up:before {
+.icon-volume-up::before {
   content: "";
 }
 
-.icon-link:before {
+.icon-link::before {
   content: "";
 }
 
-.icon-resize-full:before {
+.icon-resize-full::before {
   content: "";
 }
 
-.icon-resize-small:before {
+.icon-resize-small::before {
   content: "";
 }
 
-.icon-link-ext:before {
+.icon-link-ext::before {
   content: "";
 }
 
-.icon-angle-double-left:before {
+.icon-angle-double-left::before {
   content: "";
 }
 
-.icon-angle-double-right:before {
+.icon-angle-double-right::before {
   content: "";
 }
 
-.icon-angle-left:before {
+.icon-angle-left::before {
   content: "";
 }
 
-.icon-angle-right:before {
+.icon-angle-right::before {
   content: "";
 }
 
-.icon-info:before {
+.icon-info::before {
   content: "";
 }
 
-.icon-trash:before {
+.icon-trash::before {
   content: "";
 }
 

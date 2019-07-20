@@ -4,6 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // look nice on non full rows
     let spacer = document.createElement('div')
     spacer.classList.add('spacer')
-    document.querySelector('#container').insertBefore(spacer, document.querySelector('.paginator'))
+    document.querySelector('#container').insertBefore(spacer, document.querySelector('.pagination'))
   }
 })
