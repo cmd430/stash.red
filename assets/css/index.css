@@ -282,7 +282,7 @@ header:hover h1 .album__delete {
   top: -6px;
   width: 172px;
   padding: 0 10px 0 0;
-  font-weight: 500;
+  font-weight: 400;
   cursor: default;
 }
 #content #settings .setting .switch {
