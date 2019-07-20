@@ -19,7 +19,8 @@ module.exports = (config, app) => {
       uploaded: {
         at: {
           type: Date,
-          default: Date.now
+          default: Date.now,
+          index: true
         },
         by: {
           type: String,
