@@ -57,7 +57,7 @@ module.exports = (config, app, common, route) => {
                 paginate: true,
                 page: req.query.p || 1
               }).getUser(id, {
-                type: (req.query.a !== undefined ? 'albums' : 'files')
+                type: (req.query.albums !== undefined ? 'albums' : 'files')
               }, render)
             }
           }
@@ -68,7 +68,7 @@ module.exports = (config, app, common, route) => {
             paginate: true,
             page: req.query.p || 1
           }).getUser(id, {
-            type: (req.query.a !== undefined ? 'albums' : 'files')
+            type: (req.query.albums !== undefined ? 'albums' : 'files')
           }, render)
         default: // Error
           if (!rawJSON) {
@@ -89,6 +89,9 @@ module.exports = (config, app, common, route) => {
         } else {
           if (data.length > 0) {
             dynamic[typeLong] = common.formatResults(req, data)[0]
+            if (typeLong === 'user') {
+              dynamic[typeLong].meta.showing = (req.query.albums !== undefined ? 'albums' : 'files')
+            }
             if (!rawJSON) {
               return res.status(200).render(`${typeLong}.hbs`, dynamic)
             } else {

@@ -163,7 +163,7 @@ const config = {
       // becasue no pagination UI has been done...
       //
       // Reccomended values are 24-60 (in multiples of 4)
-      limit: 24//Number.MAX_SAFE_INTEGER
+      limit: 24
     }
   },
   log: logFormat
