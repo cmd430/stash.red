@@ -162,8 +162,8 @@ const config = {
       // Limit results per page on userpage, currently set to MAX_SAFE_INTEGER
       // becasue no pagination UI has been done...
       //
-      // Reccomended values are 50-100
-      limit: Number.MAX_SAFE_INTEGER
+      // Reccomended values are 24-60 (in multiples of 4)
+      limit: 24
     }
   },
   log: logFormat

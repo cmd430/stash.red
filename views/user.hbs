@@ -23,12 +23,27 @@
       <h1>{{user.meta.username}}</h1>
     </header>
     <div id="container">
-      {{#each user.albums}}
+      <ul class="tab_container">
+        {{#if_eq user.meta.showing 'files' this}}
+          <li class="tab active">
+            <a>Files</a>
+          </li>
+          <li class="tab">
+            <a href="?albums">Albums</a>
+          </li>
+        {{else}}
+          <li class="tab">
+            <a href="?">Files</a>
+          </li>
+          <li class="tab active">
+            <a>Albums</a>
+          </li>
+        {{/if_eq}}
+      </ul>
+      {{#each user.items}}
         {{> preview this}}
       {{/each}}
-      {{#each user.files}}
-        {{> preview this}}
-      {{/each}}
+      {{> paginator user}}
     </div>
     {{> modal}}
   </body>

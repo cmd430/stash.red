@@ -1,8 +1,4 @@
-<div {{#if_eq this.meta.public true this}}
-  class="preview public"
-{{else}}
-  class="preview private"
-{{/if_eq}}>
+<div class="preview{{#unless this.meta.public}} private{{/unless}}">
   <a href="{{this.path}}">
     <img class="thumbnail" src="{{this.meta.thumbnail}}"></img>
     <span class="icon {{this.meta.type}}"></span>

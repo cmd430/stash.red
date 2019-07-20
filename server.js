@@ -9,6 +9,7 @@ const cors = require('cors')
 const busboy = require('connect-busboy')
 const zip = require('express-easy-zip')
 const hbs = require('hbs')
+const paginate = require('handlebars-paginate')
 const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
 const mkdir = require('make-dir')
@@ -182,6 +183,7 @@ Promise.all(Object.keys(config.storage).map(key => {
       return opts.inverse(context)
     }
   })
+  hbs.registerHelper('paginate', paginate)
   hbs.registerPartials(`${config.handelbars.partials}`)
 
   app.domain.router.enable('trust proxy')

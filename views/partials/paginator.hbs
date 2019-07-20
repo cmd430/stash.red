@@ -1,0 +1,35 @@
+<ul class="pagination">
+  {{#paginate this.meta.pagination type="first"}}
+    <li {{#if disabled}}class="disabled"{{/if}}>
+      <a {{#unless disabled}}href="?{{#if_eq ../this.meta.showing 'albums' this}}albums&{{/if_eq}}p={{n}}"{{/unless}}>
+        <i class="icon-angle-double-left"></i>
+      </a>
+    </li>
+  {{/paginate}}
+  {{#paginate this.meta.pagination type="previous"}}
+    <li {{#if disabled}}class="disabled"{{/if}}>
+      <a {{#unless disabled}}href="?{{#if_eq ../this.meta.showing 'albums' this}}albums&{{/if_eq}}p={{n}}"{{/unless}}>
+        <i class="icon-angle-left"></i>
+      </a>
+    </li>
+  {{/paginate}}
+  {{#paginate this.meta.pagination type="middle" limit="7"}}
+    <li {{#if active}}class="active"{{/if}}>
+      <a {{#unless active}}href="?{{#if_eq ../this.meta.showing 'albums' this}}albums&{{/if_eq}}p={{n}}"{{/unless}}>{{n}}</a>
+    </li>
+  {{/paginate}}
+  {{#paginate this.meta.pagination type="next"}}
+    <li {{#if disabled}}class="disabled"{{/if}}>
+      <a {{#unless disabled}}href="?{{#if_eq ../this.meta.showing 'albums' this}}albums&{{/if_eq}}p={{n}}"{{/unless}}>
+        <i class="icon-angle-right"></i>
+      </a>
+    </li>
+  {{/paginate}}
+  {{#paginate this.meta.pagination type="last"}}
+    <li {{#if disabled}}class="disabled"{{/if}}>
+      <a {{#unless disabled}}href="?{{#if_eq ../this.meta.showing 'albums' this}}albums&{{/if_eq}}p={{n}}"{{/unless}}>
+        <i class="icon-angle-double-right"></i>
+      </a>
+    </li>
+  {{/paginate}}
+</ul>

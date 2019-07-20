@@ -200,6 +200,48 @@ header {
     background: $color-transparent-gradiant;
     border-color: $color-contentborder;
   }
+  .pagination {
+    li {
+      &:not(.disabled) {
+        a {
+          color: $color-contenttext;
+        }
+        &.active {
+          a {
+            border-color: $color-contenttext-hover;
+            color: $color-contenttext-hover;
+          }
+        }
+        &:hover,
+        &:active {
+          a {
+            border-color: $color-contenttext-hover;
+            color: $color-contenttext-hover;
+          }
+        }
+      }
+      &.disabled {
+        a {
+          color: $color-contenttext;
+        }
+      }
+    }
+  }
+  .tab_container {
+    border-bottom-color: $color-contentborder;
+    .tab {
+      border-right-color: $color-contentborder;
+      &.active,
+      &:hover {
+        a {
+          color: $color-contenttext-hover;
+        }
+      }
+      a {
+        color: $color-contenttext;
+      }
+    }
+  }
 }
 
 // _media
