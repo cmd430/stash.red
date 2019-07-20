@@ -153,6 +153,9 @@ module.exports = (config, app, common) => {
         callback = opts
         opts = {}
       }
+      opts = {
+        type: opts.type || null
+      }
       return app.db.models.auth.paginate({
         'username': id,
       }, {
@@ -169,48 +172,14 @@ module.exports = (config, app, common) => {
             meta: {
               username: id,
               type: 'user',
-              pagination: {
-                albums: {},
-                files: {}
-              }
+              pagination: {}
             },
-            albums: [],
-            files: [],
+            items: [],
             path: `/u/${id}`
           }
-          let albums = await app.db.models.album.paginate({
-            'meta.uploaded.by': id,
-            'meta.public': {
-              $in: [
-                true,
-                !this.options.showPrivate
-              ]
-            }
-          }, {
-            lean: true,
-            leanWithId: false,
-            sort: {
-              'meta.uploaded.at': 'descending'
-            },
-            limit: (this.options.paginate ? config.mongo.paginate.limit : Number.MAX_SAFE_INTEGER),
-            page: this.options.page,
-            select: this.projection
-          })
-          .then(result => {
-            user.meta.pagination.albums = {
-              hasPrevPage: result.hasPrevPage,
-              prevPage: result.prevPage,
-              currPage: result.page,
-              nextPage: result.nextPage,
-              hasNextPage: result.hasNextPage,
-              totalPages: result.totalPages,
-              totalAlbums: result.totalDocs
-            }
-            return result.docs
-          })
-          await common.asyncForEach(albums, async album => {
-            await app.db.models.file.paginate({
-              'meta.album': album.id,
+          if (opts.type === 'albums') {
+            let albums = await app.db.models.album.paginate({
+              'meta.uploaded.by': id,
               'meta.public': {
                 $in: [
                   true,
@@ -223,52 +192,81 @@ module.exports = (config, app, common) => {
               sort: {
                 'meta.uploaded.at': 'descending'
               },
-              limit: 1,
-              page: 1,
-              select: {
-                _id: 0,
-                'meta.thumbnail': 1
-              }
+              limit: (this.options.paginate ? config.mongo.paginate.limit : Number.MAX_SAFE_INTEGER),
+              page: this.options.page,
+              select: this.projection
             })
             .then(result => {
-              album.meta.thumbnail = result.docs[0].meta.thumbnail
+              user.meta.pagination = {
+                hasPrevPage: result.hasPrevPage,
+                hasNextPage: result.hasNextPage,
+                page: result.page,
+                pageCount: result.totalPages,
+                albumCount: result.totalDocs
+              }
+              return result.docs
             })
-          })
-          let files = await app.db.models.file.paginate({
-            'meta.uploaded.by': id,
-            'meta.album': {
-              $exists: false
-            },
-            'meta.public': {
-              $in: [
-                true,
-                !this.options.showPrivate
-              ]
-            }
-          }, {
-            lean: true,
-            leanWithId: false,
-            sort: {
-              'meta.uploaded.at': 'descending'
-            },
-            limit: (this.options.paginate ? config.mongo.paginate.limit : Number.MAX_SAFE_INTEGER),
-            page: this.options.page,
-            select: this.projection
-          })
-          .then(result => {
-            user.meta.pagination.files = {
-              hasPrevPage: result.hasPrevPage,
-              prevPage: result.prevPage,
-              currPage: result.page,
-              nextPage: result.nextPage,
-              hasNextPage: result.hasNextPage,
-              totalPages: result.totalPages,
-              totalFiles: result.totalDocs
-            }
-            return result.docs
-          })
-          user.albums = albums
-          user.files = files
+            await common.asyncForEach(albums, async album => {
+              await app.db.models.file.paginate({
+                'meta.album': album.id,
+                'meta.public': {
+                  $in: [
+                    true,
+                    !this.options.showPrivate
+                  ]
+                }
+              }, {
+                lean: true,
+                leanWithId: false,
+                sort: {
+                  'meta.uploaded.at': 'descending'
+                },
+                limit: 1,
+                page: 1,
+                select: {
+                  _id: 0,
+                  'meta.thumbnail': 1
+                }
+              })
+              .then(result => {
+                album.meta.thumbnail = result.docs[0].meta.thumbnail
+              })
+            })
+            user.items = albums
+          } else if (opts.type === 'files') {
+            let files = await app.db.models.file.paginate({
+              'meta.uploaded.by': id,
+              'meta.album': {
+                $exists: false
+              },
+              'meta.public': {
+                $in: [
+                  true,
+                  !this.options.showPrivate
+                ]
+              }
+            }, {
+              lean: true,
+              leanWithId: false,
+              sort: {
+                'meta.uploaded.at': 'descending'
+              },
+              limit: (this.options.paginate ? config.mongo.paginate.limit : Number.MAX_SAFE_INTEGER),
+              page: this.options.page,
+              select: this.projection
+            })
+            .then(result => {
+              user.meta.pagination = {
+                hasPrevPage: result.hasPrevPage,
+                hasNextPage: result.hasNextPage,
+                page: result.page,
+                pageCount: result.totalPages,
+                fileCount: result.totalDocs
+              }
+              return result.docs
+            })
+            user.items = files
+          }
           return callback(null, [user])
         } else {
           return callback({

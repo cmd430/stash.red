@@ -55,8 +55,10 @@ module.exports = (config, app, common, route) => {
               return new common.queryDB({
                 showPrivate: true,
                 paginate: true,
-                page: 1 //tmp
-              }).getUser(id, render)
+                page: req.query.p || 1
+              }).getUser(id, {
+                type: (req.query.a !== undefined ? 'albums' : 'files')
+              }, render)
             }
           }
           // We dont show private here because
@@ -64,8 +66,10 @@ module.exports = (config, app, common, route) => {
           // uploads
           return new common.queryDB({
             paginate: true,
-            page: 1 //tmp
-          }).getUser(id, render)
+            page: req.query.p || 1
+          }).getUser(id, {
+            type: (req.query.a !== undefined ? 'albums' : 'files')
+          }, render)
         default: // Error
           if (!rawJSON) {
             // We are probably trying to load an asset

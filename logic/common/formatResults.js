@@ -47,11 +47,12 @@ module.exports = (config, app, common) => {
         }
       } else if (result.meta.type === 'user') {
         addPaths(result, false)
-        result.files.forEach(file => {
-          addPaths(file)
-        })
-        result.albums.forEach(album => {
-          format(album)
+        result.items.forEach(item => {
+          if (item.meta.type !== 'album') {
+            addPaths(item)
+          } else {
+            format(item)
+          }
         })
       } else {
         addPaths(result)
