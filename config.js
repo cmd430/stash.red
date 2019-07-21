@@ -35,7 +35,8 @@ const config = {
       image: 'image',
       audio: 'audio',
       video: 'video',
-      download: 'download'
+      download: 'download',
+      cors: 'cors'
       // can change the subdomain for
       // the file types here IE. 'image'
       // could be set to 'i' and the
