@@ -35,7 +35,8 @@ const config = {
       image: 'image',
       audio: 'audio',
       video: 'video',
-      download: 'download'
+      download: 'download',
+      cors: 'cors'
       // can change the subdomain for
       // the file types here IE. 'image'
       // could be set to 'i' and the
@@ -159,9 +160,7 @@ const config = {
       useFindAndModify: false
     },
     paginate: {
-      // Limit results per page on userpage, currently set to MAX_SAFE_INTEGER
-      // becasue no pagination UI has been done...
-      //
+      // Limit results per page on userpage
       // Reccomended values are 24-60 (in multiples of 4)
       limit: 24
     }

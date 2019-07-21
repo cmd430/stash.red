@@ -208,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function download(url) {
+    let cors = document.querySelector('#cors').value
     return new Promise((resolve, reject) => {
       let request = new XMLHttpRequest()
       request.onreadystatechange = () => {
@@ -246,13 +247,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Support GIFV
         url = `${url.replace('.gifv', '.mp4')}`
       }
-      request.open('GET', `https://cors-anywhere.herokuapp.com/${url}`, true)
+      request.open('GET', `${document.querySelector('#cors').value}${url}`, true)
       request.responseType = 'blob'
-      // Public CORS Proxys
-      //  https://gobetween.oklabs.org/pipe/  <-- i think it died :(
-      //  https://cors-anywhere.herokuapp.com/
-      //
-      //  Or host your own https://github.com/cmd430/CORS-Proxy
       request.send()
     })
   }
