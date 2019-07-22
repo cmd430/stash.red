@@ -5,8 +5,7 @@ module.exports = (config, app, common, route) => {
     let type = req.params.type
     let dynamic = {
       server: Object.assign({}, config.render, {
-        captcha: config.auth.captcha.enabled,
-        cors: `${req.protocol}://${config.server.subdomains.cors}.${req.hostname}/`
+        captcha: config.auth.captcha.enabled
       }),
       signedin: await common.isAuthenticated(req)
     }

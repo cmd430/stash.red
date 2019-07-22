@@ -43,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setting__copylink.checked = JSON.parse(localStorage.getItem('AutoCopyLink')) || false
   setting__directlink.checked = JSON.parse(localStorage.getItem('CopyDirectLink')) || false
-  //setting__private.checked = JSON.parse(localStorage.getItem('PrivateUpload')) || false
 
   setting__copylink.addEventListener('change', e => {
     localStorage.setItem('AutoCopyLink', setting__copylink.checked)
@@ -51,9 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setting__directlink.addEventListener('change', e => {
     localStorage.setItem('CopyDirectLink', setting__directlink.checked)
   })
-  //setting__private.addEventListener('change', e => {
-  //  localStorage.setItem('PrivateUpload', setting__private.checked)
-  //})
 
   file__dropzone.addEventListener('click', e => {
     if (file__picker.files.length === 0) {
@@ -89,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         } else if (clipboardItem.kind == 'string' && clipboardItem.type == 'text/plain') {
           clipboardItem.getAsString(text => {
-            downloadFiles(text)
+            uploadFiles(text)
           })
         }
       }
@@ -145,19 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 0)
   }
 
-  function downloadFiles (url) {
-    if (isValidURL(url)) {
-      prepare('Fetching: 0%')
-      download(url)
-      .then(data => {
-        uploadFiles(data)
-      })
-      .catch(err => {
-        error(err)
-      })
-    }
-  }
-
   async function uploadFiles (data) {
     prepare('Preparing Uploads')
     let formData = new FormData()
@@ -178,6 +161,8 @@ document.addEventListener('DOMContentLoaded', () => {
         blob = await fixOrientation(blob)
       }
       formData.append('files[]', blob, filename)
+    } else if (typeof data === 'string') {
+      formData.append('url', data)
     }
     formData.append('options', JSON.stringify({
       public: !setting__private.checked,
@@ -204,52 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch(err => {
       error(err)
-    })
-  }
-
-  async function download(url) {
-    let cors = document.querySelector('#cors').value
-    return new Promise((resolve, reject) => {
-      let request = new XMLHttpRequest()
-      request.onreadystatechange = () => {
-        if (request.readyState === 4) {
-          if (request.status === 200) {
-            let blob = new Blob([request.response], {
-              type: request.getResponseHeader('Content-Type')
-            })
-            if (blob.type.includes('image') || blob.type.includes('video') || blob.type.includes('audio')) {
-              return resolve(blob)
-            } else {
-              return reject({
-                message: 'invalid filetype'
-              })
-            }
-          } else {
-            return reject({
-              message: 'invalid url'
-            })
-          }
-        }
-      }
-      request.onprogress = e => {
-        if (e.lengthComputable) {
-          let percentage = (e.loaded / e.total) * 100
-          progress__text.textContent = `Fetching: ${Math.round(percentage)}%`
-          progress__fill.setAttribute('style', `width: ${percentage}%;`)
-        } else {
-          warn('Fetching: Progress Unavailable')
-        }
-      }
-      request.onerror = err => {
-        return reject(err)
-      }
-      if (url.includes('.gifv')) {
-        // Support GIFV
-        url = `${url.replace('.gifv', '.mp4')}`
-      }
-      request.open('GET', `${document.querySelector('#cors').value}${url}`, true)
-      request.responseType = 'blob'
-      request.send()
     })
   }
 

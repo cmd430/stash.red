@@ -209,10 +209,6 @@ Promise.all(Object.keys(config.storage).map(key => {
   app.domain.router.use(responseTime())
   app.domain.router.use(logger(config.log))
   app.domain.router.use(cors({
-    origin: '*',
-    methods: [
-      'GET'
-    ],
     exposedHeaders: [
       'Content-Length'
     ]
