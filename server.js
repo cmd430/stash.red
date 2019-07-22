@@ -44,10 +44,6 @@ const app = {
     download: {
       name: config.server.subdomains.download,
       router: express.Router()
-    },
-    cors: {
-      name: config.server.subdomains.cors,
-      router: express.Router()
     }
   },
   db: mongoose,
@@ -225,7 +221,6 @@ Promise.all(Object.keys(config.storage).map(key => {
   app.domain.router.use(subdomain(`${app.subdomain.audio.name}`, app.subdomain.audio.router))
   app.domain.router.use(subdomain(`${app.subdomain.video.name}`, app.subdomain.video.router))
   app.domain.router.use(subdomain(`${app.subdomain.download.name}`, app.subdomain.download.router))
-  app.domain.router.use(subdomain(`${app.subdomain.cors.name}`, app.subdomain.cors.router))
 
   require('./models/models.js')(config, app)
   require('./routes.js')(config, app)
