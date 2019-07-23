@@ -10,6 +10,7 @@ const storageDatabaseDir = path.join(storageBaseDir, 'database')
 const storageImageDir = path.join(storageBaseDir, 'image')
 const storageAudioDir = path.join(storageBaseDir, 'audio')
 const storageVideoDir = path.join(storageBaseDir, 'video')
+const storageTempDir = path.join(storageBaseDir, 'temp')
 
 const serverName = 'stash.red'
 const logFormat = (tokens, req, res) => {
@@ -98,6 +99,7 @@ const config = {
     audio: storageAudioDir,
     video: storageVideoDir,
     asset: assetDir,
+    temp: storageTempDir
   },
   auth: {
     // if you dont want to allow
