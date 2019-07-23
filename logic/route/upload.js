@@ -58,79 +58,87 @@ module.exports = (config, app, common, route) => {
         app.console.debug(`${uploadState.files.total} Files parsed`)
         app.console.debug(`${uploadState.files.written} Files saved`)
         app.console.debug(`Processing ${uploadState.files.written} uploads`)
-        if (uploadState.files.total > 1) {
-          uploadState.album.id = common.generateID()
-          app.console.debug(`Generated album id '${uploadState.album.id}'`)
-        }
-        await common.asyncForEach(uploadState.files.info, async info => {
-          let file = {
-            id: info.id,
-            meta: {
-              thumbnail: (config.upload.thumbnail.enabled ? await common.generateThumbnail(info.destination, info.type) : null),
-              filename: path.basename(info.destination),
-              originalname: info.originalname,
-              mimetype: info.mimetype,
-              size: info.size,
-              uploaded: {
-                by: (typeof user !== null ? user.username : undefined)
+        if (uploadState.files.total > 0) {
+          if (uploadState.files.total > 1) {
+            uploadState.album.id = common.generateID()
+            app.console.debug(`Generated album id '${uploadState.album.id}'`)
+          }
+          await common.asyncForEach(uploadState.files.info, async info => {
+            let file = {
+              id: info.id,
+              meta: {
+                thumbnail: (config.upload.thumbnail.enabled ? await common.generateThumbnail(info.destination, info.type) : null),
+                filename: path.basename(info.destination),
+                originalname: info.originalname,
+                mimetype: info.mimetype,
+                size: info.size,
+                uploaded: {
+                  by: (typeof user !== null ? user.username : undefined)
+                },
+                type: info.type
               },
-              type: info.type
-            },
-            path: `/f/${info.id}`
-          }
-          switch (info.type) {
-            case 'audio':
-              let audiometa = await common.getAudioMeta(info.destination)
-              file.meta.song = {
-                title: audiometa.title || 'Unknown',
-                album: audiometa.album || 'Unknown',
-                artist: audiometa.artist || 'Unknown'
-              }
-            case 'image':
-            case 'video':
-              if (uploadState.album.id !== null) {
-                file.meta.album = uploadState.album.id
-              } else {
-                file.meta.public = uploadState.options.public
-              }
-          }
-          app.console.debug(`Adding database entry for file '${info.id}'`)
-            return app.db.models.file.create(file, (err, filedoc) => {
+              path: `/f/${info.id}`
+            }
+            switch (info.type) {
+              case 'audio':
+                let audiometa = await common.getAudioMeta(info.destination)
+                file.meta.song = {
+                  title: audiometa.title || 'Unknown',
+                  album: audiometa.album || 'Unknown',
+                  artist: audiometa.artist || 'Unknown'
+                }
+              case 'image':
+              case 'video':
+                if (uploadState.album.id !== null) {
+                  file.meta.album = uploadState.album.id
+                } else {
+                  file.meta.public = uploadState.options.public
+                }
+            }
+            app.console.debug(`Adding database entry for file '${info.id}'`)
+              return app.db.models.file.create(file, (err, filedoc) => {
+                if (err) {
+                  app.console.debug(`Unable to add database entry for file '${info.id}'`, 'red')
+                  return common.error(res, 500)
+                } else {
+                  app.console.debug(`Added database entry for file '${info.id}'`)
+                  if (uploadState.album.id === null) {
+                    return res.status(200).json(common.formatResults(req, filedoc))
+                  }
+                }
+              })
+          })
+          if (uploadState.album.id !== null) {
+            let album = {
+              id: uploadState.album.id,
+              meta: {
+                public: uploadState.options.public,
+                uploaded: {
+                  by: (typeof user !== null ? user.username : null)
+                },
+                title: uploadState.options.title
+              },
+              path: `/a/${uploadState.album.id}`
+            }
+            app.console.debug(`Adding database entry for album '${uploadState.album.id}'`)
+            app.db.models.album.create(album, (err, albumdoc) => {
               if (err) {
-                app.console.debug(`Unable to add database entry for file '${info.id}'`, 'red')
+                app.console.debug(`Unable to add database entry for album '${uploadState.album.id}'`, 'red')
                 return common.error(res, 500)
               } else {
-                app.console.debug(`Added database entry for file '${info.id}'`)
-                if (uploadState.album.id === null) {
-                  return res.status(200).json(common.formatResults(req, filedoc))
-                }
+                app.console.debug(`Added database entry for album '${uploadState.album.id}'`)
+                return res.status(200).json(common.formatResults(req, albumdoc))
               }
             })
-        })
-        if (uploadState.album.id !== null) {
-          let album = {
-            id: uploadState.album.id,
-            meta: {
-              public: uploadState.options.public,
-              uploaded: {
-                by: (typeof user !== null ? user.username : null)
-              },
-              title: uploadState.options.title
-            },
-            path: `/a/${uploadState.album.id}`
           }
-          app.console.debug(`Adding database entry for album '${uploadState.album.id}'`)
-          app.db.models.album.create(album, (err, albumdoc) => {
-            if (err) {
-              app.console.debug(`Unable to add database entry for album '${uploadState.album.id}'`, 'red')
-              return common.error(res, 500)
-            } else {
-              app.console.debug(`Added database entry for album '${uploadState.album.id}'`)
-              return res.status(200).json(common.formatResults(req, albumdoc))
-            }
+          uploadState.complete = true
+        } else {
+          uploadState.complete = true
+          return res.status(413).json({
+            status: 422,
+            message: 'unprocessable entity'
           })
         }
-        uploadState.complete = true
       })
 
       // Busboy
