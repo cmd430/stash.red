@@ -35,10 +35,6 @@ module.exports = (config, app) => {
   app.domain.router.route('/*')
   .get(route.sendAsset)
 
-  // Cors Proxy
-  app.subdomain.cors.router.route('/*')
-  .get(route.cors)
-
   // Downloads
   app.subdomain.download.router.route('/:type/:download')
   .get(route.download)

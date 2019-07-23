@@ -21,8 +21,6 @@ module.exports = (config, app) => {
   module.exports.sendAsset       = require('./route/view/sendAsset.js')      (config, app, common, module.exports)
   module.exports.viewPage        = require('./route/view/viewPage.js')       (config, app, common, module.exports)
 
-  module.exports.cors            = require('./route/cors.js')                (config, app, common, module.exports)
-
   module.exports.notImplemented  = require('./route/notImplemented.js')      (config, app, common, module.exports)
 
   return module.exports

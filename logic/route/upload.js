@@ -1,5 +1,7 @@
 const fs = require('fs')
 const path = require('path')
+const http = require('http')
+const https = require('https')
 const signature = require('stream-signature')
 
 module.exports = (config, app, common, route) => {
@@ -45,6 +47,8 @@ module.exports = (config, app, common, route) => {
               })
             })
             app.console.debug(`${uploadState.files.removed} Files removed`, 'red')
+          } else {
+            app.console.debug(`Nothing Uploaded`)
           }
         } else {
           app.console.debug(`[${user.username}] Upload Completed`)
@@ -133,7 +137,94 @@ module.exports = (config, app, common, route) => {
       req.busboy.on('field', (fieldname, fieldvalue) => {
         if (fieldname === 'options') {
           Object.assign(uploadState.options, JSON.parse(fieldvalue))
-          app.console.debug(`Upload options: ${JSON.stringify(uploadState.options, null, 2)}`)
+          app.console.debug(`Upload options: ${JSON.stringify(uploadState.options)}`)
+        } else if (fieldname === 'url') {
+          if (fieldvalue.startsWith('http')) {
+            uploadState.files.total += 1
+            let download_uri = fieldvalue
+            app.console.debug(`Parsing url: '${download_uri}'`)
+            let httpReq = (download_uri.startsWith('https') ? https : http)
+            let rstream = httpReq.get(download_uri, response => {
+              let filename = response.req.path.split('/')
+              filename = filename[filename.length - 1]
+              if (response.statusCode === 200) {
+                if (response.headers['content-length'] <= config.upload.maxsize) {
+                  let mimetype = response.headers['content-type']
+                  let mimetype_parts = mimetype.split('/')
+                  let fileinfo = {
+                    id: common.generateID(),
+                    type: mimetype_parts[0],
+                    subtype: mimetype_parts[1],
+                    extension: `.${mimetype_parts[1]}`,
+                    originalname: `${download_uri}`,
+                    mimetype: mimetype,
+                    destination: null,
+                    size: 0
+                  }
+                  switch (fileinfo.type) {
+                    case 'image':
+                    case 'audio':
+                    case 'video':
+                      fileinfo.destination = `${config.storage[fileinfo.type]}/${fileinfo.id}${fileinfo.extension}`
+                  }
+                  if (fileinfo.destination !== null) {
+                    app.console.debug(`Downloading file '${filename}' => '${fileinfo.id}'`)
+                    let filetype = new signature()
+                    let fstream = fs.createWriteStream(`${fileinfo.destination}`)
+                    uploadState.files.paths.push({
+                      file: fileinfo.destination,
+                      stream: fstream
+                    })
+                    filetype.on('signature', signature => {
+                      if (!signature.mimetype.includes(fileinfo.type)) {
+                        app.console.debug(`Download of '${fileinfo.id}' rejected file magic is invaild ('${signature.mimetype}')`, 'red')
+                        rstream.abort()
+                        return res.status(415).json({
+                          file: filename,
+                          status: 415,
+                          message: 'invaild filetype'
+                        })
+                      }
+                    })
+                    fstream.on('close', () => {
+                      uploadState.files.written += 1
+                      fileinfo.size = fstream.bytesWritten
+                      uploadState.files.info.push(fileinfo)
+                      app.console.debug(`Saved file: ${fileinfo.id}`)
+                      if (uploadState.parsed && uploadState.files.total === uploadState.files.written) {
+                        req.emit('process')
+                      }
+                    })
+                    response.pipe(filetype).pipe(fstream)
+                  } else {
+                    app.console.debug(`Upload of '${filename}' aborted invaild filetype`, 'red')
+                    rstream.abort()
+                    return res.status(415).json({
+                      file: filename,
+                      status: 415,
+                      message: 'invaild filetype'
+                    })
+                  }
+                } else {
+                  app.console.debug(`Upload of '${filename}' aborted size limit reached`, 'red')
+                  rstream.abort()
+                  return res.status(413).json({
+                    file: filename,
+                    status: 413,
+                    message: 'file too large'
+                  })
+                }
+              } else {
+                app.console.debug(`Invaild url '${download_uri}' aborting `, 'red')
+                rstream.abort()
+                return res.status(400).json({
+                  file: filename,
+                  status: 400,
+                  message: 'invaild url'
+                })
+              }
+            })
+          }
         }
       })
       req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
