@@ -187,12 +187,14 @@ module.exports = (config, app, common, route) => {
                       }
                     })
                     fstream.on('close', () => {
-                      uploadState.files.written += 1
-                      fileinfo.size = fstream.bytesWritten
-                      uploadState.files.info.push(fileinfo)
-                      app.console.debug(`Saved file: ${fileinfo.id}`)
-                      if (uploadState.parsed && uploadState.files.total === uploadState.files.written) {
-                        req.emit('process')
+                      if (!uploadState.abort) {
+                        uploadState.files.written += 1
+                        fileinfo.size = fstream.bytesWritten
+                        uploadState.files.info.push(fileinfo)
+                        app.console.debug(`Saved file: ${fileinfo.id}`)
+                        if (uploadState.parsed && uploadState.files.total === uploadState.files.written) {
+                          req.emit('process')
+                        }
                       }
                     })
                     response.pipe(filetype).pipe(fstream)
