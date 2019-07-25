@@ -78,7 +78,6 @@ const config = {
     thumbnail: {
       // if diabled shows generic filetype placeholder
       enabled: true,
-      // Size in pixels
       size: 250,
       fit: 'cover',
       position: 'entropy',
@@ -89,7 +88,9 @@ const config = {
         alpha: 0
       },
       kernel: 'lanczos3',
-      withoutEnlargement: true
+      withoutEnlargement: true,
+      fastShrinkOnLoad: true,
+      quaility: 50 // 0-100
       // http://sharp.pixelplumbing.com/en/stable/api-resize/#parameters
     }
   },

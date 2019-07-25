@@ -9,7 +9,8 @@ sharp.cache(false)
 module.exports = (config, app, common) => {
 
   return async function generateThumbnail (file, type) {
-    app.console.debug(`Generating thumbnail for file: ${path.basename(file)}`)
+    let id = path.parse(file).name
+    app.console.debug(`Generating thumbnail for '${id}'`)
     return new Promise((resolve, reject) => {
       switch (type) {
         case 'image':
@@ -53,7 +54,7 @@ module.exports = (config, app, common) => {
       }
     })
     .then(buffer => {
-      app.console.debug(`Scaling thumbnail for file: ${path.basename(file)}`)
+      app.console.debug(`Scaling thumbnail for '${id}'`)
       return sharp(buffer)
       .resize({
         width: config.upload.thumbnail.size,
@@ -64,15 +65,17 @@ module.exports = (config, app, common) => {
         kernel: config.upload.thumbnail.kernel,
         withoutEnlargement: config.upload.thumbnail.withoutEnlargement
       })
-      .png()
+      .webp({
+        quality: config.upload.thumbnail.quaility
+      })
       .toBuffer()
     })
     .then(thumbnail => {
-      app.console.debug(`Generated thumbnail for file: ${path.basename(file)}`)
-      return `data:image/png;base64,${thumbnail.toString('base64')}`
+      app.console.debug(`Generated thumbnail for '${id}'`)
+      return `data:image/webp;base64,${thumbnail.toString('base64')}`
     })
     .catch(err => {
-      app.console.debug(`Unable to generate thumbnail for file: ${path.basename(file)}`, 'red')
+      app.console.debug(`Unable to generate thumbnail for '${id}'`, 'red')
       app.console.debug(err, 'red')
       return null
     })
