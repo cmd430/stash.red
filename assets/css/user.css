@@ -10,8 +10,8 @@
   position: relative;
   margin: 10px;
   overflow: hidden;
-  height: 200px;
-  width: 200px;
+  height: 150px;
+  width: 150px;
   border: 1px solid;
 }
 #container .preview .thumbnail {
@@ -55,7 +55,7 @@
   background-image: no-repeat left bottom/40px url("/img/private.png"), no-repeat right top/40px url("/img/album.png");
 }
 #container .spacer {
-  width: 200px;
+  width: 150px;
   height: 0;
   margin: 0 10px;
 }

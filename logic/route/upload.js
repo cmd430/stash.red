@@ -3,6 +3,9 @@ const path = require('path')
 const http = require('http')
 const https = require('https')
 const signature = require('stream-signature')
+const sharp = require('sharp')
+
+sharp.cache(false)
 
 module.exports = (config, app, common, route) => {
 
@@ -30,110 +33,8 @@ module.exports = (config, app, common, route) => {
         abort: false
       }
       app.console.debug(`[${user.username}] Started upload`)
-      req.on('close', async () => {
-        if (!uploadState.complete) {
-          if (uploadState.files.paths.length > 0) {
-            app.console.debug(`[${user.username}] Upload aborted removing ${uploadState.files.paths.length} files`, 'red')
-            await common.asyncForEach(uploadState.files.paths, async partial => {
-              if (partial.stream !== null) {
-                uploadState.abort = true
-                partial.stream.end()
-              }
-              return new Promise((resolve, reject) => {
-                fs.unlink(partial.file, () => {
-                  uploadState.files.removed += 1
-                  return resolve()
-                })
-              })
-            })
-            app.console.debug(`${uploadState.files.removed} Files removed`, 'red')
-          } else {
-            app.console.debug(`Nothing Uploaded`)
-          }
-        } else {
-          app.console.debug(`[${user.username}] Upload Completed`)
-        }
-      })
-      req.on('process', async () => {
-        app.console.debug(`${uploadState.files.total} Files parsed`)
-        app.console.debug(`${uploadState.files.written} Files saved`)
-        app.console.debug(`Processing ${uploadState.files.written} uploads`)
-        if (uploadState.files.total > 1) {
-          uploadState.album.id = common.generateID()
-          app.console.debug(`Generated album id '${uploadState.album.id}'`)
-        }
-        await common.asyncForEach(uploadState.files.info, async info => {
-          let file = {
-            id: info.id,
-            meta: {
-              thumbnail: (config.upload.thumbnail.enabled ? await common.generateThumbnail(info.destination, info.type) : null),
-              filename: path.basename(info.destination),
-              originalname: info.originalname,
-              mimetype: info.mimetype,
-              size: info.size,
-              uploaded: {
-                by: (typeof user !== null ? user.username : undefined)
-              },
-              type: info.type
-            },
-            path: `/f/${info.id}`
-          }
-          switch (info.type) {
-            case 'audio':
-              let audiometa = await common.getAudioMeta(info.destination)
-              file.meta.song = {
-                title: audiometa.title || 'Unknown',
-                album: audiometa.album || 'Unknown',
-                artist: audiometa.artist || 'Unknown'
-              }
-            case 'image':
-            case 'video':
-              if (uploadState.album.id !== null) {
-                file.meta.album = uploadState.album.id
-              } else {
-                file.meta.public = uploadState.options.public
-              }
-          }
-          app.console.debug(`Adding database entry for file '${info.id}'`)
-            return app.db.models.file.create(file, (err, filedoc) => {
-              if (err) {
-                app.console.debug(`Unable to add database entry for file '${info.id}'`, 'red')
-                return common.error(res, 500)
-              } else {
-                app.console.debug(`Added database entry for file '${info.id}'`)
-                if (uploadState.album.id === null) {
-                  return res.status(200).json(common.formatResults(req, filedoc))
-                }
-              }
-            })
-        })
-        if (uploadState.album.id !== null) {
-          let album = {
-            id: uploadState.album.id,
-            meta: {
-              public: uploadState.options.public,
-              uploaded: {
-                by: (typeof user !== null ? user.username : null)
-              },
-              title: uploadState.options.title
-            },
-            path: `/a/${uploadState.album.id}`
-          }
-          app.console.debug(`Adding database entry for album '${uploadState.album.id}'`)
-          app.db.models.album.create(album, (err, albumdoc) => {
-            if (err) {
-              app.console.debug(`Unable to add database entry for album '${uploadState.album.id}'`, 'red')
-              return common.error(res, 500)
-            } else {
-              app.console.debug(`Added database entry for album '${uploadState.album.id}'`)
-              return res.status(200).json(common.formatResults(req, albumdoc))
-            }
-          })
-        }
-        uploadState.complete = true
-      })
 
-      // Busboy
+      // URL Upload or Upload Options
       req.busboy.on('field', (fieldname, fieldvalue) => {
         if (fieldname === 'options') {
           Object.assign(uploadState.options, JSON.parse(fieldvalue))
@@ -195,18 +96,13 @@ module.exports = (config, app, common, route) => {
                     })
                     fstream.on('close', () => {
                       if (!uploadState.abort && fileinfo.destination !== null) {
-                        fs.rename(fileinfo.temp_destination, fileinfo.destination, err => {
-                          if (!err) {
-                            app.console.debug(`Moving '${fileinfo.id}' to from 'temp' to '${fileinfo.type}'`)
-                            uploadState.files.written += 1
-                            fileinfo.size = fstream.bytesWritten
-                            uploadState.files.info.push(fileinfo)
-                            app.console.debug(`Saved file: ${fileinfo.id}`)
-                            if (uploadState.parsed && uploadState.files.total === uploadState.files.written) {
-                              req.emit('process')
-                            }
-                          }
-                        })
+                        uploadState.files.written += 1
+                        fileinfo.size = fstream.bytesWritten
+                        uploadState.files.info.push(fileinfo)
+                        app.console.debug(`Saved file: ${fileinfo.id}`)
+                        if (uploadState.parsed && uploadState.files.total === uploadState.files.written) {
+                          req.emit('process')
+                        }
                       }
                     })
                     response.pipe(filetype).pipe(fstream)
@@ -251,6 +147,8 @@ module.exports = (config, app, common, route) => {
           }
         }
       })
+
+      // File Upload
       req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
         uploadState.files.total += 1
         let fileinfo = {
@@ -265,6 +163,7 @@ module.exports = (config, app, common, route) => {
           destination: null,
           size: 0
         }
+        fileinfo.temp_destination = `${config.storage.temp}/${fileinfo.id}`
         app.console.debug(`Parsing file: '${filename}' => '${fileinfo.id}'`)
         switch (fileinfo.type) {
           case 'image':
@@ -273,10 +172,10 @@ module.exports = (config, app, common, route) => {
             fileinfo.destination = `${config.storage[fileinfo.type]}/${fileinfo.id}${fileinfo.extension}`
         }
         if (fileinfo.destination !== null) {
-          let fstream = fs.createWriteStream(`${fileinfo.destination}`)
+          let fstream = fs.createWriteStream(`${fileinfo.temp_destination}`)
           let filetype = new signature()
           uploadState.files.paths.push({
-            file: fileinfo.destination,
+            file: fileinfo.temp_destination,
             stream: fstream
           })
           filetype.on('signature', signature => {
@@ -331,6 +230,179 @@ module.exports = (config, app, common, route) => {
           req.emit('process')
         }
       })
+
+      // Complete Upload
+      req.on('process', async () => {
+        app.console.debug(`${uploadState.files.total} Files parsed`)
+        app.console.debug(`${uploadState.files.written} Files saved`)
+        app.console.debug(`Processing ${uploadState.files.written} uploads`)
+        if (uploadState.files.total > 0) {
+          if (uploadState.files.total > 1) {
+            uploadState.album.id = common.generateID()
+            app.console.debug(`Generated album id '${uploadState.album.id}'`)
+          }
+          await common.asyncForEach(uploadState.files.info, async info => {
+            if (info.type === 'image') {
+              await sharp(info.temp_destination)
+              .metadata()
+              .then(async metadata => {
+                if (metadata.orientation !== 0 && metadata.orientation !== undefined) {
+                  app.console.debug(`Rotating image '${info.id}'`)
+                  await sharp(info.temp_destination)
+                  .rotate()
+                  .toFile(`${info.temp_destination}_sharp`)
+                  .then(() => {
+                    return new Promise((resolve, reject) => {
+                      app.console.debug(`Rotated image '${info.id}'`)
+                      fs.unlink(`${info.temp_destination}`, err => {
+                        if (!err) {
+                          fs.rename(`${info.temp_destination}_sharp`, info.temp_destination, err => {
+                            if (!err) {
+                              resolve()
+                            } else {
+                              reject(err)
+                            }
+                          })
+                        } else {
+                          reject(err)
+                        }
+                      })
+                    })
+                  })
+                }
+              })
+              .catch(err => {
+                fs.unlink(`${info.temp_destination}`, err => {})
+                return common.error(res, 500)
+              })
+            }
+            await new Promise((resolve, reject) => {
+              app.console.debug(`Moving '${info.id}' to from 'temp' to '${info.type}'`)
+              fs.rename(info.temp_destination, info.destination, err => {
+                if (!err) {
+                  app.console.debug(`Moved '${info.id}' to from 'temp' to '${info.type}'`)
+                  resolve()
+                } else {
+                  reject(err)
+                }
+              })
+            })
+            .catch(err => {
+              fs.unlink(info.temp_destination, err => {})
+              return common.error(res, 500)
+            })
+            let file = {
+              id: info.id,
+              meta: {
+                thumbnail: (config.upload.thumbnail.enabled ? await common.generateThumbnail(info.destination, info.type) : null),
+                filename: path.basename(info.destination),
+                originalname: info.originalname,
+                mimetype: info.mimetype,
+                size: info.size,
+                uploaded: {
+                  by: (typeof user !== null ? user.username : undefined)
+                },
+                type: info.type
+              },
+              path: `/f/${info.id}`
+            }
+            switch (info.type) {
+              case 'audio':
+                let audiometa = await common.getAudioMeta(info.destination)
+                file.meta.song = {
+                  title: audiometa.title || 'Unknown',
+                  album: audiometa.album || 'Unknown',
+                  artist: audiometa.artist || 'Unknown'
+                }
+              case 'image':
+              case 'video':
+                if (uploadState.album.id !== null) {
+                  file.meta.album = uploadState.album.id
+                } else {
+                  file.meta.public = uploadState.options.public
+                }
+            }
+            app.console.debug(`Adding database entry for file '${info.id}'`)
+            return await new Promise((resolve, reject) => {
+              app.db.models.file.create(file, (err, filedoc) => {
+                if (err) {
+                  app.console.debug(`Unable to add database entry for file '${info.id}'`, 'red')
+                  return common.error(res, 500)
+                } else {
+                  app.console.debug(`Added database entry for file '${info.id}'`)
+                  if (uploadState.album.id === null) {
+                    uploadState.complete = true
+                    return res.status(200).json(common.formatResults(req, filedoc))
+                  } else {
+                    resolve()
+                  }
+                }
+              })
+            })
+          })
+          if (uploadState.album.id !== null) {
+            let album = {
+              id: uploadState.album.id,
+              meta: {
+                public: uploadState.options.public,
+                uploaded: {
+                  by: (typeof user !== null ? user.username : null)
+                },
+                title: uploadState.options.title
+              },
+              path: `/a/${uploadState.album.id}`
+            }
+            app.console.debug(`Adding database entry for album '${uploadState.album.id}'`)
+            return app.db.models.album.create(album, (err, albumdoc) => {
+              if (err) {
+                app.console.debug(`Unable to add database entry for album '${uploadState.album.id}'`, 'red')
+                return common.error(res, 500)
+              } else {
+                app.console.debug(`Added database entry for album '${uploadState.album.id}'`)
+                uploadState.complete = true
+                return res.status(200).json(common.formatResults(req, albumdoc))
+              }
+            })
+          }
+        } else {
+          uploadState.complete = true
+          return res.status(413).json({
+            status: 422,
+            message: 'unprocessable entity'
+          })
+        }
+      })
+
+      // Done
+      req.on('close', async () => {
+        if (!uploadState.complete) {
+          if (uploadState.files.paths.length > 0) {
+            app.console.debug(`[${user.username}] Upload aborted removing ${uploadState.files.paths.length} files`, 'red')
+            await common.asyncForEach(uploadState.files.paths, async partial => {
+              if (partial.stream !== null) {
+                uploadState.abort = true
+                partial.stream.end()
+              }
+              return new Promise((resolve, reject) => {
+                fs.unlink(partial.file, err => {
+                  if (!err) {
+                    uploadState.files.removed += 1
+                    app.console.debug(`${uploadState.files.removed} Files removed`, 'red')
+                  } else {
+                    app.console.debug(`File unable to be removed`, 'red')
+                  }
+                  return resolve()
+                })
+              })
+            })
+          } else {
+            app.console.debug(`Nothing Uploaded`)
+          }
+        } else {
+          app.console.debug(`[${user.username}] Upload Completed`)
+        }
+      })
+
       req.pipe(req.busboy)
     } else {
       return common.error(res, 401)

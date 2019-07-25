@@ -43,8 +43,14 @@ const config = {
       // subdomain would change from
       // 'image.host.com' to `i.host.com`
     },
-    debug: false,
-    colors: true
+    logging: {
+      // Silent disables logging
+      // Debug overrides silent AND enables debug logging
+      // Colors to enable logging colors
+      silent: false,
+      debug: false,
+      colors: true
+    }
   },
   handelbars: {
     views: viewsDir,
@@ -78,7 +84,6 @@ const config = {
     thumbnail: {
       // if diabled shows generic filetype placeholder
       enabled: true,
-      // Size in pixels
       size: 250,
       fit: 'cover',
       position: 'entropy',
@@ -89,7 +94,9 @@ const config = {
         alpha: 0
       },
       kernel: 'lanczos3',
-      withoutEnlargement: true
+      withoutEnlargement: true,
+      fastShrinkOnLoad: true,
+      quaility: 50 // 0-100
       // http://sharp.pixelplumbing.com/en/stable/api-resize/#parameters
     }
   },
@@ -162,8 +169,8 @@ const config = {
     },
     paginate: {
       // Limit results per page on userpage
-      // Reccomended values are 24-60 (in multiples of 4)
-      limit: 24
+      // Reccomended values are 25-60 (in multiples of 5)
+      limit: 35
     }
   },
   log: logFormat
