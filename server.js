@@ -1,3 +1,5 @@
+const fs = require('fs')
+const path = require('path')
 const spawn = require('child_process').spawn
 const express = require('express')
 const logger = require('morgan')
@@ -107,6 +109,30 @@ Promise.all(Object.keys(config.storage).map(key => {
   // Create any missing directories
   return mkdir(config.storage[key])
 }))
+.then(async () => {
+  await new Promise((resolve, reject) => {
+    fs.readdir(config.storage.temp, async (err, files) => {
+      if (!err) {
+        if (files.length > 0) {
+          let removed = 0
+          app.console.debug(`Found ${files.length} temp files`)
+          for (let index = 0; index < files.length; index++) {
+            await new Promise((resolve, reject) => {
+              fs.unlink(path.join(config.storage.temp, files[index]), err => {
+                if (!err) {
+                  removed += 1
+                }
+                resolve()
+              })
+            })
+          }
+          app.console.debug(`Removed ${removed} temp files`)
+        }
+      }
+      resolve()
+    })
+  })
+})
 .then(() => {
   // Start mongod
   app.console.debug('Starting mongod')
