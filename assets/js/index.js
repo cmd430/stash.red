@@ -79,11 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
       let clipboardItems = e.clipboardData.items
       for (clipboardIndex in clipboardItems) {
         let clipboardItem = clipboardItems[clipboardIndex]
-        if (clipboardItem.kind == 'file') {
+        if (clipboardItem.kind === 'file') {
           if (clipboardItem.type.includes('image') || clipboardItem.type.includes('video') || clipboardItem.type.includes('audio')) {
             uploadFiles(clipboardItem.getAsFile())
           }
-        } else if (clipboardItem.kind == 'string' && clipboardItem.type == 'text/plain') {
+        } else if (clipboardItem.kind === 'string' && clipboardItem.type === 'text/plain') {
           clipboardItem.getAsString(text => {
             uploadFiles(text)
           })
@@ -149,17 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
       for (var x = 0; x < fileCount; x++) {
         let blob = data[x]
         let filename = blob.name
-        if (blob.type === 'image/jpeg' || blob.type === 'image/jpg') {
-          blob = await fixOrientation(blob)
-        }
         formData.append('files[]', blob, filename)
       }
     } else if (data instanceof Blob || data instanceof File) {
       let filename = data.name || `unknown.${data.type.split('/').pop()}`
       let blob = data
-      if (blob.type === 'image/jpeg' || blob.type === 'image/jpg') {
-        blob = await fixOrientation(blob)
-      }
       formData.append('files[]', blob, filename)
     } else if (typeof data === 'string') {
       formData.append('url', data)
@@ -230,101 +224,5 @@ document.addEventListener('DOMContentLoaded', () => {
 function isValidURL(str) {
   let a  = document.createElement('a')
   a.href = str
-  return (a.host && a.host != location.host)
-}
-
-function getOrientation (blob, callback) {
-  let reader = new FileReader()
-  reader.onload = function (e) {
-    let view = new DataView(e.target.result)
-    if (view.getUint16(0, false) != 0xFFD8) {
-      return callback(-2)
-    }
-    let length = view.byteLength, offset = 2
-    while (offset < length)
-    {
-      if (view.getUint16(offset+2, false) <= 8) {
-        return callback(-1)
-      }
-      let marker = view.getUint16(offset, false)
-      offset += 2
-      if (marker == 0xFFE1) {
-        if (view.getUint32(offset += 2, false) != 0x45786966) {
-          return callback(-1)
-        }
-        let little = view.getUint16(offset += 6, false) == 0x4949
-        offset += view.getUint32(offset + 4, little)
-        let tags = view.getUint16(offset, little)
-        offset += 2
-        for (let i = 0; i < tags; i++) {
-          if (view.getUint16(offset + (i * 12), little) == 0x0112) {
-            return callback(view.getUint16(offset + (i * 12) + 8, little))
-          }
-        }
-      } else if ((marker & 0xFF00) != 0xFF00) {
-        break
-      } else {
-        offset += view.getUint16(offset, false)
-      }
-    }
-    return callback(-1)
-  }
-  reader.readAsArrayBuffer(blob)
-}
-
-async function fixOrientation (blob) {
-  return new Promise((resolve, reject) => {
-    getOrientation(blob, orientation => {
-      if (orientation === 1 || orientation === 0) {
-        // Dont need to rotate
-        return resolve(blob)
-      }
-      let img = new Image()
-      img.onerror = function() {
-        // let the server handle it
-        return resolve(blob)
-      }
-      img.onload = function() {
-        let width = img.width
-        let height = img.height
-        let canvas = document.createElement('canvas')
-        let ctx = canvas.getContext('2d')
-        if (4 < orientation && orientation < 9) {
-          canvas.width = height
-          canvas.height = width
-        } else {
-          canvas.width = width
-          canvas.height = height
-        }
-        switch (orientation) {
-          case 2:
-            ctx.transform(-1, 0, 0, 1, width, 0)
-            break
-          case 3:
-            ctx.transform(-1, 0, 0, -1, width, height )
-            break
-          case 4:
-            ctx.transform(1, 0, 0, -1, 0, height )
-            break
-          case 5:
-            ctx.transform(0, 1, 1, 0, 0, 0)
-            break
-          case 6:
-            ctx.transform(0, 1, -1, 0, height , 0)
-            break
-          case 7:
-            ctx.transform(0, -1, -1, 0, height , width)
-            break
-          case 8:
-            ctx.transform(0, -1, 1, 0, 0, width)
-            break
-        }
-        ctx.drawImage(img, 0, 0)
-        canvas.toBlob(blob => {
-          return resolve(blob)
-        }, 'image/jpeg', 1)
-      }
-      img.src = URL.createObjectURL(blob)
-    })
-  })
+  return (a.host && a.host !== location.host)
 }

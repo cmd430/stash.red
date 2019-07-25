@@ -3,6 +3,9 @@ const path = require('path')
 const http = require('http')
 const https = require('https')
 const signature = require('stream-signature')
+const sharp = require('sharp')
+
+sharp.cache(false)
 
 module.exports = (config, app, common, route) => {
 
@@ -218,6 +221,15 @@ module.exports = (config, app, common, route) => {
                       }
                     })
                     response.pipe(filetype).pipe(fstream)
+                    if (contentType !== 'image') {
+                      // we will try fix image rotation but only if the init content-type is an image
+                      // if its an image but with an octet-stream we will just process like other files
+                      // becasue we can't be for certen that its an image until after the sig check
+                      // but then its too late
+                      response.pipe(filetype).pipe(fstream)
+                    } else {
+                      response.pipe(filetype).pipe(sharp().rotate()).pipe(fstream)
+                    }
                   } else {
                     if (contentLength > 0) {
                       app.console.debug(`Upload of '${filename}' aborted size limit reached`, 'red')
@@ -320,7 +332,11 @@ module.exports = (config, app, common, route) => {
               message: 'file too large'
             })
           })
-          file.pipe(filetype).pipe(fstream)
+          if (fileinfo.type !== 'image') {
+            file.pipe(filetype).pipe(fstream)
+          } else {
+            file.pipe(filetype).pipe(sharp().rotate()).pipe(fstream)
+          }
         } else {
           app.console.debug(`Upload of '${fileinfo.id}' aborted invaild filetype`, 'red')
           req.unpipe(req.busboy)
