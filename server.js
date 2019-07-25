@@ -21,7 +21,7 @@ const config = require('./config.js')
 // Allow override config opts from args
 const args = process.argv.splice(process.execArgv.length + 2)
 if (args.includes('--debug')) {
-  config.server.debug = true
+  config.server.logging.debug = true
 }
 const app = {
   domain: {
@@ -54,24 +54,30 @@ const app = {
   console: {
     // Console functions with extra formatting
     log: function (message, color = 'cyan') {
-      return console.log(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
+      if (!config.server.logging.silent || config.server.logging.debug) {
+        return console.log(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
+      }
     },
     debug: function (message, color = 'deeppink') {
-      if (config.server.debug) {
+      if (!config.server.logging.silent || config.server.logging.debug) {
         return console.debug(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
       }
     },
     warn: function (warn, stack = false) {
-      return console.error(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.yellow((stack ? warn.stack : warn.message))}`)
+      if (!config.server.logging.silent || config.server.logging.debug) {
+        return console.error(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.yellow((stack ? warn.stack : warn.message))}`)
+      }
     },
     error: function (error, stack = false) {
-      return console.error(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.red((stack ? error.stack : error.message))}`)
+      if (!config.server.logging.silent || config.server.logging.debug) {
+        return console.error(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.red((stack ? error.stack : error.message))}`)
+      }
     }
   }
 }
-chalk.enabled = config.server.colors
+chalk.enabled = config.server.logging.colors
 process.on('warning', warning => {
-  if (config.server.debug) {
+  if (config.server.logging.debug) {
     // Only show warnings when debuging
     app.console.warn(warning)
   }

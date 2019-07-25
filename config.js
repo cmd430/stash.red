@@ -43,8 +43,14 @@ const config = {
       // subdomain would change from
       // 'image.host.com' to `i.host.com`
     },
-    debug: false,
-    colors: true
+    logging: {
+      // Silent disables logging
+      // Debug overrides silent AND enables debug logging
+      // Colors to enable logging colors
+      silent: false,
+      debug: false,
+      colors: true
+    }
   },
   handelbars: {
     views: viewsDir,
