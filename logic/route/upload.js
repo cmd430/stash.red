@@ -43,13 +43,17 @@ module.exports = (config, app, common, route) => {
                 partial.stream.end()
               }
               return new Promise((resolve, reject) => {
-                fs.unlink(partial.file, () => {
-                  uploadState.files.removed += 1
+                fs.unlink(partial.file, err => {
+                  if (!err) {
+                    uploadState.files.removed += 1
+                    app.console.debug(`${uploadState.files.removed} Files removed`, 'red')
+                  } else {
+                    app.console.debug(`File unable to be removed`, 'red')
+                  }
                   return resolve()
                 })
               })
             })
-            app.console.debug(`${uploadState.files.removed} Files removed`, 'red')
           } else {
             app.console.debug(`Nothing Uploaded`)
           }
@@ -67,6 +71,55 @@ module.exports = (config, app, common, route) => {
             app.console.debug(`Generated album id '${uploadState.album.id}'`)
           }
           await common.asyncForEach(uploadState.files.info, async info => {
+            if (info.type === 'image') {
+              await sharp(info.temp_destination)
+              .metadata()
+              .then(async metadata => {
+                if (metadata.orientation !== 0 && metadata.orientation !== undefined) {
+                  app.console.debug(`Rotating image '${info.id}'`)
+                  await sharp(info.temp_destination)
+                  .rotate()
+                  .toFile(`${info.temp_destination}_sharp`)
+                  .then(() => {
+                    return new Promise((resolve, reject) => {
+                      app.console.debug(`Rotated image '${info.id}'`)
+                      fs.unlink(`${info.temp_destination}`, err => {
+                        if (!err) {
+                          fs.rename(`${info.temp_destination}_sharp`, info.temp_destination, err => {
+                            if (!err) {
+                              resolve()
+                            } else {
+                              reject()
+                            }
+                          })
+                        } else {
+                          reject()
+                        }
+                      })
+                    })
+                  })
+                }
+              })
+              .catch(err => {
+                fs.unlink(`${info.temp_destination}`, err => {})
+                return common.error(res, 500)
+              })
+            }
+            await new Promise((resolve, reject) => {
+              app.console.debug(`Moving '${info.id}' to from 'temp' to '${info.type}'`)
+              fs.rename(info.temp_destination, info.destination, err => {
+                if (!err) {
+                  app.console.debug(`Moved '${info.id}' to from 'temp' to '${info.type}'`)
+                  resolve()
+                } else {
+                  reject()
+                }
+              })
+            })
+            .catch(err => {
+              fs.unlink(info.temp_destination, err => {})
+              return common.error(res, 500)
+            })
             let file = {
               id: info.id,
               meta: {
@@ -99,17 +152,22 @@ module.exports = (config, app, common, route) => {
                 }
             }
             app.console.debug(`Adding database entry for file '${info.id}'`)
-              return app.db.models.file.create(file, (err, filedoc) => {
+            return await new Promise((resolve, reject) => {
+              app.db.models.file.create(file, (err, filedoc) => {
                 if (err) {
                   app.console.debug(`Unable to add database entry for file '${info.id}'`, 'red')
                   return common.error(res, 500)
                 } else {
                   app.console.debug(`Added database entry for file '${info.id}'`)
                   if (uploadState.album.id === null) {
+                    uploadState.complete = true
                     return res.status(200).json(common.formatResults(req, filedoc))
+                  } else {
+                    resolve()
                   }
                 }
               })
+            })
           })
           if (uploadState.album.id !== null) {
             let album = {
@@ -124,17 +182,17 @@ module.exports = (config, app, common, route) => {
               path: `/a/${uploadState.album.id}`
             }
             app.console.debug(`Adding database entry for album '${uploadState.album.id}'`)
-            app.db.models.album.create(album, (err, albumdoc) => {
+            return app.db.models.album.create(album, (err, albumdoc) => {
               if (err) {
                 app.console.debug(`Unable to add database entry for album '${uploadState.album.id}'`, 'red')
                 return common.error(res, 500)
               } else {
                 app.console.debug(`Added database entry for album '${uploadState.album.id}'`)
+                uploadState.complete = true
                 return res.status(200).json(common.formatResults(req, albumdoc))
               }
             })
           }
-          uploadState.complete = true
         } else {
           uploadState.complete = true
           return res.status(413).json({
@@ -221,15 +279,6 @@ module.exports = (config, app, common, route) => {
                       }
                     })
                     response.pipe(filetype).pipe(fstream)
-                    if (contentType !== 'image') {
-                      // we will try fix image rotation but only if the init content-type is an image
-                      // if its an image but with an octet-stream we will just process like other files
-                      // becasue we can't be for certen that its an image until after the sig check
-                      // but then its too late
-                      response.pipe(filetype).pipe(fstream)
-                    } else {
-                      response.pipe(filetype).pipe(sharp().rotate()).pipe(fstream)
-                    }
                   } else {
                     if (contentLength > 0) {
                       app.console.debug(`Upload of '${filename}' aborted size limit reached`, 'red')
@@ -285,6 +334,7 @@ module.exports = (config, app, common, route) => {
           destination: null,
           size: 0
         }
+        fileinfo.temp_destination = `${config.storage.temp}/${fileinfo.id}`
         app.console.debug(`Parsing file: '${filename}' => '${fileinfo.id}'`)
         switch (fileinfo.type) {
           case 'image':
@@ -293,10 +343,10 @@ module.exports = (config, app, common, route) => {
             fileinfo.destination = `${config.storage[fileinfo.type]}/${fileinfo.id}${fileinfo.extension}`
         }
         if (fileinfo.destination !== null) {
-          let fstream = fs.createWriteStream(`${fileinfo.destination}`)
+          let fstream = fs.createWriteStream(`${fileinfo.temp_destination}`)//fs.createWriteStream(`${fileinfo.destination}`)
           let filetype = new signature()
           uploadState.files.paths.push({
-            file: fileinfo.destination,
+            file: fileinfo.temp_destination,
             stream: fstream
           })
           filetype.on('signature', signature => {
@@ -332,11 +382,7 @@ module.exports = (config, app, common, route) => {
               message: 'file too large'
             })
           })
-          if (fileinfo.type !== 'image') {
-            file.pipe(filetype).pipe(fstream)
-          } else {
-            file.pipe(filetype).pipe(sharp().rotate()).pipe(fstream)
-          }
+          file.pipe(filetype).pipe(fstream)
         } else {
           app.console.debug(`Upload of '${fileinfo.id}' aborted invaild filetype`, 'red')
           req.unpipe(req.busboy)
