@@ -163,8 +163,8 @@ const config = {
     },
     paginate: {
       // Limit results per page on userpage
-      // Reccomended values are 24-60 (in multiples of 4)
-      limit: 24
+      // Reccomended values are 25-60 (in multiples of 5)
+      limit: 35
     }
   },
   log: logFormat
