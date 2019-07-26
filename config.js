@@ -13,20 +13,6 @@ const storageVideoDir = path.join(storageBaseDir, 'video')
 const storageTempDir = path.join(storageBaseDir, 'temp')
 
 const serverName = 'stash.red'
-const logFormat = (tokens, req, res) => {
-  // https://www.npmjs.com/package/morgan#tokens
-  let date = tokens['date'](req, res, 'web')
-  let method = tokens['method'](req, res)
-  let url = tokens['url'](req, res)
-  let status = tokens['status'](req, res) || 499
-  let responseTime = tokens['response-time'](req, res) || 0
-  let contentLength = tokens['res'](req, res, 'content-length')
-
-  status = chalk.keyword(status >= 500 ? 'red' : status >= 400 ? 'yellow' : status >= 300 ? 'cyan' : 'green')(status)
-  contentLength = contentLength ? `- ${contentLength}` : ''
-
-  return `[${date}][${serverName}] ${status} ${method} ${url} ${responseTime} ms ${contentLength}`
-}
 
 const config = {
   server: {
@@ -44,11 +30,17 @@ const config = {
       // 'image.host.com' to `i.host.com`
     },
     logging: {
-      // Silent disables logging
-      // Debug overrides silent AND enables debug logging
-      // Colors to enable logging colors
-      silent: false,
       debug: false,
+      express: {
+        incomming: {
+          format: '[:date[web]][:server-name]     :method :url',
+          enabled: false
+        },
+        outgoing: {
+          format: '[:date[web]][:server-name] :status :method :url :response-time[3] ms :content[auto]',
+          enabled: true
+        }
+      },
       colors: true
     }
   },
@@ -172,8 +164,7 @@ const config = {
       // Reccomended values are 25-60 (in multiples of 5)
       limit: 35
     }
-  },
-  log: logFormat
+  }
 }
 
 module.exports = config

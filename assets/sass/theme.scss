@@ -345,3 +345,11 @@ header {
     }
   }
 }
+
+// Admin
+.log_container {
+  background-color: $color-black;
+  .log {
+    color: $color-white;
+  }
+}

@@ -652,3 +652,30 @@ header:hover h1 .album__delete {
   min-height: calc(100vh - 85px);
   border: 1px solid;
 }
+#container .tab_container {
+  position: relative;
+  width: calc(100% + 30px);
+  cursor: default;
+  margin: -15px -15px 15px -15px;
+  border-bottom: 1px solid;
+}
+#container .tab_container .tab {
+  list-style: none;
+  display: inline-block;
+  border-right: 1px solid;
+  text-align: center;
+}
+#container .tab_container .tab.active, #container .tab_container .tab:hover {
+  font-weight: 600;
+}
+#container .tab_container .tab:not(.active) {
+  cursor: pointer;
+}
+#container .tab_container .tab a {
+  text-decoration: none;
+  padding: 8px 15px;
+  width: 140px;
+  height: 37px;
+  vertical-align: middle;
+  display: inline-block;
+}

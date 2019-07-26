@@ -1,0 +1,12 @@
+.log_container {
+  width: 100%;
+  height: calc(100vh - 155px);
+  border: 1px solid;
+  overflow: hidden scroll;
+}
+.log_container .log {
+  padding: 1px 5px;
+}
+.log_container .log span {
+  display: block;
+}

@@ -10,4 +10,32 @@
   max-width: 960px;
   min-height: calc(100vh - 85px);
   border: 1px solid;
+  .tab_container {
+    position: relative;
+    width: calc(100% + 30px);
+    cursor: default;
+    margin: -15px -15px 15px -15px;
+    border-bottom: 1px solid;
+    .tab {
+      list-style: none;
+      display: inline-block;
+      border-right: 1px solid;
+      text-align: center;
+      &.active,
+      &:hover {
+        font-weight: 600;
+      }
+      &:not(.active) {
+        cursor: pointer;
+      }
+      a {
+        text-decoration: none;
+        padding: 8px 15px;
+        width: 140px;
+        height: 37px;
+        vertical-align: middle;
+        display: inline-block;
+      }
+    }
+  }
 }

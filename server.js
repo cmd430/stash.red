@@ -1,10 +1,12 @@
 const fs = require('fs')
 const path = require('path')
 const spawn = require('child_process').spawn
+const eventEmitter = require('events')
 const express = require('express')
 const logger = require('morgan')
 const responseTime = require('response-time')
 const chalk = require('chalk')
+const stripAnsi = require('strip-ansi')
 const bodyParser = require('body-parser')
 const subdomain = require('express-subdomain')
 const cors = require('cors')
@@ -56,25 +58,76 @@ const app = {
   console: {
     // Console functions with extra formatting
     log: function (message, color = 'cyan') {
-      if (!config.server.logging.silent || config.server.logging.debug) {
-        return console.log(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
-      }
+      this.event.emit('message', {
+        type: 'log',
+        message: [
+          {
+            color: 'white',
+            text: `[${new Date().toUTCString()}][${app.domain.name}]`
+          },
+          {
+            color: `${color}`,
+            text: `${message}`
+          }
+        ]
+      })
+      return console.log(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
     },
     debug: function (message, color = 'deeppink') {
-      if (!config.server.logging.silent || config.server.logging.debug) {
+      if (config.server.logging.debug) {
+        this.event.emit('message', {
+          type: 'debug',
+          message: [
+            {
+              color: 'white',
+              text: `[${new Date().toUTCString()}][${app.domain.name}] `
+            },
+            {
+              color: `${color}`,
+              text: `${message}`
+            }
+          ]
+        })
         return console.debug(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.keyword(color)(message)}`)
       }
     },
     warn: function (warn, stack = false) {
-      if (!config.server.logging.silent || config.server.logging.debug) {
+      if (config.server.logging.debug) {
+        this.event.emit('message', {
+          type: 'debug',
+          message: [
+            {
+              color: 'white',
+              text: `[${new Date().toUTCString()}][${app.domain.name}] `
+            },
+            {
+              color: 'yellow',
+              text: `${(stack ? warn.stack : warn.message)}`
+            }
+          ]
+        })
         return console.error(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.yellow((stack ? warn.stack : warn.message))}`)
       }
     },
     error: function (error, stack = false) {
-      if (!config.server.logging.silent || config.server.logging.debug) {
+      if (config.server.logging.debug) {
+        this.event.emit('message', {
+          type: 'debug',
+          message: [
+            {
+              color: 'white',
+              text: `[${new Date().toUTCString()}][${app.domain.name}] `
+            },
+            {
+              color: 'lightred',
+              text: `${(stack ? error.stack : error.message)}`
+            }
+          ]
+        })
         return console.error(`[${new Date().toUTCString()}][${app.domain.name}] ${chalk.red((stack ? error.stack : error.message))}`)
       }
-    }
+    },
+    event: new eventEmitter()
   }
 }
 chalk.enabled = config.server.logging.colors
@@ -218,6 +271,45 @@ Promise.all(Object.keys(config.storage).map(key => {
   hbs.registerHelper('paginate', paginate)
   hbs.registerPartials(`${config.handelbars.partials}`)
 
+  logger.token('status', (req, res) => {
+    let status = (typeof res.headersSent !== `boolean` ? Boolean(res._header) : res.headersSent) ? res.statusCode : '-'
+    if (config.server.logging.colors) {
+      let statusColor = status >= 500 ? 'red' : status >= 400 ? 'yellow' : status >= 300 ? 'cyan' : status >= 200 ? 'green' : 'reset'
+      if (statusColor !== 'reset') {
+        return chalk.keyword(statusColor)(status)
+      } else {
+        return status
+      }
+    } else {
+      return status
+    }
+  })
+  logger.token('content', function (req, res, format) {
+    if (typeof res.headersSent !== 'boolean' ? Boolean(res._header) : res.headersSent) {
+      let content_length = res.getHeader('content-length') || '-'
+      if (content_length !== '-') {
+        switch (format || 'bytes') {
+          case 'bytes':
+            return `${content_length} ${format}`
+          case 'kb':
+            return `${(content_length / 1024).toFixed(2)} ${format}`
+          case 'mb':
+            return `${(content_length / 1024 / 1024).toFixed(2)} ${format}`
+          case 'gb':
+            return `${(content_length / 1024 / 1024 / 1024).toFixed(2)} ${format}`
+          case 'auto':
+            const i = Math.floor(Math.log(content_length) / Math.log(1024))
+            return `${parseFloat((content_length / Math.pow(1024, i)).toFixed((i === 0 ? 0 : 2)))} ${['bytes', 'kb', 'mb', 'gb'][i]}`
+        }
+      } else {
+        return content_length
+      }
+    }
+  })
+  logger.token('server-name', (req, res) => {
+    return config.server.name
+  })
+
   app.domain.router.enable('trust proxy')
   app.domain.router.set('view engine', 'hbs')
   app.domain.router.set('views', `${config.handelbars.views}`)
@@ -235,7 +327,61 @@ Promise.all(Object.keys(config.storage).map(key => {
     extended: false
   }))
   app.domain.router.use(responseTime())
-  app.domain.router.use(logger(config.log))
+  if (config.server.logging.express.incomming.enabled) {
+    app.domain.router.use(logger(config.server.logging.express.incomming.format, {
+      immediate: true
+    }))
+    app.domain.router.use(logger(config.server.logging.express.incomming.format, {
+      immediate: true,
+      stream: {
+        write: log => {
+          log = stripAnsi(log)
+          app.console.event.emit('message', {
+            type: 'log',
+            message: [
+              {
+                color: 'white',
+                text: `${log}`
+              }
+            ]
+          })
+        }
+      }
+    }))
+  }
+  if (config.server.logging.express.outgoing.enabled) {
+    app.domain.router.use(logger(config.server.logging.express.outgoing.format, {
+      immediate: false
+    }))
+    app.domain.router.use(logger(config.server.logging.express.outgoing.format, {
+      immediate: false,
+      stream: {
+        write: log => {
+          log = stripAnsi(log)
+          let status = log.match(/\s\d\d\d\s/) ? log.match(/\s\d\d\d\s/)[0] : ' - '
+          let statusColor = status >= 500 ? 'lightred' : status >= 400 ? 'yellow' : status >= 300 ? 'cyan' : status >= 200 ? 'lightgreen' : 'white'
+          log = log.split(status)
+          app.console.event.emit('message', {
+            type: 'log',
+            message: [
+              {
+                color: 'white',
+                text: `${log[0]}`
+              },
+              {
+                color: `${statusColor}`,
+                text: `${status}`
+              },
+              {
+                color: 'white',
+                text: `${log[1]}`
+              }
+            ]
+          })
+        }
+      }
+    }))
+  }
   app.domain.router.use(cors({
     exposedHeaders: [
       'Content-Length'
@@ -248,7 +394,6 @@ Promise.all(Object.keys(config.storage).map(key => {
     }
   }))
   app.domain.router.use(zip())
-
   app.domain.router.use(subdomain(`${app.subdomain.image.name}`, app.subdomain.image.router))
   app.domain.router.use(subdomain(`${app.subdomain.audio.name}`, app.subdomain.audio.router))
   app.domain.router.use(subdomain(`${app.subdomain.video.name}`, app.subdomain.video.router))

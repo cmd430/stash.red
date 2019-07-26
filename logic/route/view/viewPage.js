@@ -18,6 +18,12 @@ module.exports = (config, app, common, route) => {
         return res.render('login.hbs', dynamic)
       } else if (req.url === '/signup') {
         return res.render('signup.hbs', dynamic)
+      } else if (req.url.split('?')[0] === '/admin') {
+        if (dynamic.signedin ? dynamic.signedin.isAdmin : false) {
+          return res.render('admin.hbs', dynamic)
+        } else {
+          return common.error(res, 401)
+        }
       } else if (req.subdomains.includes(app.subdomain.download.name)) {
         return next()
       }
