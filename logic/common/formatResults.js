@@ -31,7 +31,9 @@ module.exports = (config, app, common) => {
         result.directpath = `${req.protocol}://${subdomain}.${req.hostname}/${result.meta.filename}`
         result.downloadpath = `${req.protocol}://${app.subdomain.download.name}.${req.hostname}/${type}/${result.meta.filename}`
       } else {
-        result.downloadpath = `${req.protocol}://${app.subdomain.download.name}.${req.hostname}/${type}/${result.id}`
+        if (type !== 'user') {
+          result.downloadpath = `${req.protocol}://${app.subdomain.download.name}.${req.hostname}/${type}/${result.id}`
+        }
       }
     }
     let format = result => {

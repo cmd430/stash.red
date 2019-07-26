@@ -25,6 +25,12 @@ module.exports = (config, app) => {
   app.domain.router.route('/upload')
   .post(route.upload)
 
+  // Admin Panel
+  app.domain.router.route('/admin')
+  .get(route.viewPage)
+  app.domain.router.route('/events')
+  .get(route.events)
+
   // View Album/User/Image/Audio/Video (with HTML wrapper)
   app.domain.router.route('/:type/:id')
   .get(route.viewPage)

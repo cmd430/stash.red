@@ -263,3 +263,10 @@ header h1 .album__title_input {
 .audio__player .audio__info .audio__controls .playback__extra > .control__download i {
   color: #24292e;
 }
+
+.log_container {
+  background-color: black;
+}
+.log_container .log {
+  color: white;
+}

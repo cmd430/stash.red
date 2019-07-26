@@ -10,6 +10,8 @@ module.exports = (config, app) => {
   module.exports.upload          = require('./route/upload.js')              (config, app, common, module.exports)
   module.exports.download        = require('./route/download.js')            (config, app, common, module.exports)
 
+  module.exports.events          = require('./route/events.js')              (config, app, common, module.exports)
+
   module.exports.removeItem      = require('./route/remove/removeItem.js')   (config, app, common, module.exports)
   module.exports.removeFile      = require('./route/remove/removeFile.js')   (config, app, common, module.exports)
   module.exports.removeAlbum     = require('./route/remove/removeAlbum.js')  (config, app, common, module.exports)
