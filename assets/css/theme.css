@@ -124,6 +124,13 @@ header h1 .album__title_input {
   fill: #24292e;
 }
 
+.adminBtn {
+  color: #dadfe3;
+}
+.adminBtn:hover {
+  color: #24292e;
+}
+
 #content #accountzone {
   background-color: white;
   border-color: #dadfe3;

@@ -19,6 +19,11 @@
     <title>{{server.name.fullname}}</title>
   </head>
   <body class="light">
+    {{#if signedin.isAdmin}}
+      <a class="adminBtn" href="/admin">
+        <i class="icon-cog"></i>
+      </a>
+    {{/if}}
     <div id="content">
       {{> logo server}}
       <div id="dropzone">

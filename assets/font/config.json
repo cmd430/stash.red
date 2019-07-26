@@ -179,6 +179,18 @@
       "css": "angle-double-left",
       "code": 61696,
       "src": "fontawesome"
+    },
+    {
+      "uid": "e99461abfef3923546da8d745372c995",
+      "css": "cog",
+      "code": 59395,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "ca90da02d2c6a3183f2458e4dc416285",
+      "css": "adjust",
+      "code": 59396,
+      "src": "fontawesome"
     }
   ]
 }
