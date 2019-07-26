@@ -5,8 +5,12 @@
   overflow: hidden scroll;
 }
 .log_container .log {
-  padding: 1px 5px;
+  font-family: Consalas, monospace;
+  font-size: 12px;
+  white-space: normal;
+  padding: 5px 5px;
 }
 .log_container .log span {
   display: block;
+  padding: 1px 0;
 }
