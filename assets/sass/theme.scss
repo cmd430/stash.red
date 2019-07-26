@@ -168,6 +168,13 @@ header {
   }
 }
 
+.adminBtn {
+  color: $color-footertext;
+  &:hover {
+    color: $color-footertext-hover;
+  }
+}
+
 // Login / Signup
 #content {
   #accountzone {
