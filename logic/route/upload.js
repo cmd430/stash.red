@@ -68,6 +68,26 @@ module.exports = (config, app, common, route) => {
                     }
                     fileinfo.temp_destination = `${config.storage.temp}/${fileinfo.id}`
                     app.console.debug(`Downloading file '${filename}' => '${fileinfo.id}'`)
+                    app.console.debug(`Downloading '${fileinfo.id}' 0%`)
+                    let received = 0
+                    let total = parseInt(response.headers['content-length'], 10)
+                    let __current = 0
+                    response.on('data', chunk => {
+                      received += chunk.length
+                      let percent = Math.round(100 * received / total)
+                      if (percent !== __current && percent % 10 === 0) {
+                        __current = percent
+                        app.console.debug(`Downloading '${fileinfo.id}' ${percent}%`)
+                        if (percent === 100 && fileinfo.destination === null) {
+                          rstream.abort()
+                          return res.status(415).json({
+                            file: filename,
+                            status: 415,
+                            message: 'invaild filetype'
+                          })
+                        }
+                      }
+                    })
                     let filetype = new signature()
                     let fstream = fs.createWriteStream(`${fileinfo.temp_destination}`)
                     uploadState.files.paths.push({
