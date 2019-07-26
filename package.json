@@ -11,30 +11,30 @@
   "author": "Bradley 'cmd430' Treweek",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "bcrypt": "^3.0.2",
-    "chalk": "^2.4.1",
+    "bcrypt": "^3.0.6",
+    "chalk": "^2.4.2",
     "connect-busboy": "0.0.2",
     "connect-mongo": "^2.0.3",
     "cors": "^2.8.5",
-    "express": "^4.15.5",
+    "express": "^4.17.1",
     "express-easy-zip": "^1.1.4",
-    "express-session": "^1.15.6",
+    "express-session": "^1.16.2",
     "express-subdomain": "^1.0.5",
     "express-svg-captcha": "^1.0.1",
-    "ffmpeg-static": "^2.4.0",
+    "ffmpeg-static": "^2.5.0",
     "handlebars-paginate": "^0.1.0",
     "hbs": "^4.0.4",
-    "jsmediatags": "^3.8.1",
+    "jsmediatags": "^3.9.2",
     "make-dir": "^1.3.0",
-    "mongoose": "^5.3.13",
+    "mongoose": "^5.6.6",
     "mongoose-paginate-v2": "^1.3.0",
     "morgan": "^1.9.1",
     "response-time": "^2.3.2",
-    "sharp": "^0.21.0",
-    "simple-thumbnail": "^1.4.0",
-    "stream-signature": "^1.0.1"
+    "sharp": "^0.21.3",
+    "simple-thumbnail": "^1.5.6",
+    "stream-signature": "^1.0.2"
   },
   "devDependencies": {
-    "sass": "^1.15.1"
+    "sass": "^1.22.7"
   }
 }
