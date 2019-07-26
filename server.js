@@ -272,7 +272,7 @@ Promise.all(Object.keys(config.storage).map(key => {
   hbs.registerPartials(`${config.handelbars.partials}`)
 
   logger.token('status', (req, res) => {
-    let status = (typeof res.headersSent !== `boolean` ? Boolean(res._header) : res.headersSent) ? res.statusCode : '-'
+    let status = (typeof res.headersSent !== `boolean` ? Boolean(res._header) : res.headersSent) ? res.statusCode : 499 // '-'
     if (config.server.logging.colors) {
       let statusColor = status >= 500 ? 'red' : status >= 400 ? 'yellow' : status >= 300 ? 'cyan' : status >= 200 ? 'green' : 'reset'
       if (statusColor !== 'reset') {
