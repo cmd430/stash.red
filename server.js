@@ -132,10 +132,7 @@ const app = {
 }
 chalk.enabled = config.server.logging.colors
 process.on('warning', warning => {
-  if (config.server.logging.debug) {
-    // Only show warnings when debuging
-    app.console.warn(warning)
-  }
+  app.console.warn(warning)
 })
 // Catch any unhandled errors
 // and add timestamp to output
