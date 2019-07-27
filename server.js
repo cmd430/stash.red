@@ -94,7 +94,7 @@ const app = {
     warn: function (warn, stack = false) {
       if (config.server.logging.debug) {
         this.event.emit('message', {
-          type: 'debug',
+          type: 'warn',
           message: [
             {
               color: 'white',
@@ -112,7 +112,7 @@ const app = {
     error: function (error, stack = false) {
       if (config.server.logging.debug) {
         this.event.emit('message', {
-          type: 'debug',
+          type: 'error',
           message: [
             {
               color: 'white',
