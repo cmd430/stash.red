@@ -1,41 +1,26 @@
 {
   "name": "stash.red",
-  "version": "1.0.0",
-  "description": "Stash.red is a Small footprint File host (Specificly for Image/Video and Audio files)",
-  "main": "server.js",
-  "scripts": {
-    "sass": "sass --no-source-map --watch assets/sass/:assets/css/",
-    "server": "node server",
-    "debug": "node server --debug"
-  },
+  "description": "stash.red is a Small footprint file host (specificly for image/video and audio files)",
+  "version": "2.0.0",
   "author": "Bradley 'cmd430' Treweek",
   "license": "GPL-3.0-or-later",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "debug": "node main.js --debug"
+  },
   "dependencies": {
     "bcrypt": "^3.0.6",
     "chalk": "^2.4.2",
-    "connect-busboy": "0.0.2",
-    "connect-mongo": "^2.0.3",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "express-easy-zip": "^1.1.4",
-    "express-session": "^1.16.2",
-    "express-subdomain": "^1.0.5",
-    "express-svg-captcha": "^1.0.1",
-    "ffmpeg-static": "^2.5.0",
+    "cookie-parser": "^1.4.4",
+    "debug": "^2.6.9",
+    "express": "^4.16.1",
+    "express-request-id": "^1.4.1",
     "handlebars-paginate": "^0.1.0",
     "hbs": "^4.0.4",
-    "jsmediatags": "^3.9.2",
-    "make-dir": "^1.3.0",
-    "mongoose": "^5.6.6",
-    "mongoose-paginate-v2": "^1.3.0",
-    "morgan": "^1.9.1",
-    "response-time": "^2.3.2",
-    "sharp": "^0.21.3",
-    "simple-thumbnail": "^1.5.6",
-    "stream-signature": "^1.0.2",
-    "strip-ansi": "^5.2.0"
-  },
-  "devDependencies": {
-    "sass": "^1.22.7"
+    "http-errors": "^1.6.3",
+    "json5": "^2.1.0",
+    "morgan": "^1.9.1"
   }
 }

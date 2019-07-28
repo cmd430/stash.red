@@ -1,0 +1,6 @@
+{
+  port: 3000,
+  log: {
+    format: '[:date[web]][:server-name][:id] :status :method :url :response-time[3] ms :content-length[auto]'
+  }
+}

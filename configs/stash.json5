@@ -1,0 +1,10 @@
+{
+  server: {
+    name: 'stash.red',
+    env: 'dev', // `[dev]elopment` or `[prod]uction`
+  },
+  log: {
+    level: 'debug', // silent, info, debug, warn, error
+    color: true
+  }
+}
