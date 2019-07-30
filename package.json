@@ -26,7 +26,7 @@
     "debug": "^2.6.9",
     "esm": "^3.2.25",
     "express": "^4.16.1",
-    "express-compile-sass": "^4.0.0",
+    "express-compile-sass": "git+https://git@github.com/cmd430/express-compile-sass.git",
     "express-request-id": "^1.4.1",
     "handlebars-paginate": "^0.1.0",
     "hbs": "^4.0.4",
