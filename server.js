@@ -30,12 +30,10 @@ function onError(err) {
 
 function onListening() {
   info('Server is',
-  [
-    'Listening on port',
-    { color: 'limegreen' }
-  ],
-  [
-    server.address().port,
-    { color: 'yellow' }
-  ])
+    ['Listening at address', {color: 'limegreen'}],
+    [server.address().address, {color: 'yellow'}],
+    ['on port', {color: 'limegreen'}],
+    [server.address().port, {color: 'yellow'}],
+    ['using', {color: 'limegreen'}],
+    [server.address().family, {color: 'yellow'}])
 }
