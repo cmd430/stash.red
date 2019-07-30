@@ -3,8 +3,24 @@ import chalk from 'chalk'
 
 // setup morgan tokens
 token('server-name', (req, res) => config.server.name)
-token('id', (req, res) => chalk.magentaBright(req.id))
-token('url', (req, res) => chalk.greenBright(req.url))
+token('id', (req, res) => chalk.magenta(req.id))
+token('url', (req, res) => chalk.green(req.url))
+token('method', (req, res) => {
+  switch (req.method) {
+    case 'HEAD':
+      return 'HEAD  '
+    case 'GET':
+      return 'GET   '
+    case 'POST':
+      return 'POST  '
+    case 'PATCH':
+      return 'PATCH '
+    case 'DELETE':
+      return 'DELETE'
+    default:
+      return '  --  '
+  }
+})
 token('status', (req, res) => {
   if (!res.headersSent) return ' - '
   let status = res.statusCode
@@ -14,30 +30,31 @@ token('status', (req, res) => {
   if (status >= 200) return chalk.bold.green(status)
   if (status >= 100) return chalk.bold.grey(status)
 })
+token('response-time', (req, res, digits) => {
+  if (!req._startAt || !res._startAt) return ' '
+  return `${((res._startAt[0] - req._startAt[0]) * 1e3 + (res._startAt[1] - req._startAt[1]) * 1e-6).toFixed(digits === undefined ? 3 : digits)} ms`
+})
 token('content-length', (req, res, format) => {
-  if (res.headersSent) {
-    let content_length = res.getHeader('content-length') || '-'
-    if (content_length !== '-') {
-      switch (format || 'bytes') {
-        case 'bytes':
-          return `${content_length} ${format}`
-        case 'kb':
-          return `${(content_length / 1024).toFixed(2)} ${format}`
-        case 'mb':
-          return `${(content_length / 1024 / 1024).toFixed(2)} ${format}`
-        case 'gb':
-          return `${(content_length / 1024 / 1024 / 1024).toFixed(2)} ${format}`
-        case 'auto':
-          const i = Math.floor(Math.log(content_length) / Math.log(1024))
-          return `${parseFloat((content_length / Math.pow(1024, i)).toFixed((i === 0 ? 0 : 2)))} ${['bytes', 'kb', 'mb', 'gb'][i]}`
-      }
-    } else {
-      return content_length
+  let content_length
+  if (res.headersSent) content_length = res.getHeader('content-length')
+  if (!res.headersSent) content_length = req.headers['content-length']
+  if (!content_length) return ' '
+    switch (format || 'bytes') {
+      case 'bytes':
+        return `${content_length} ${format}`
+      case 'kb':
+        return `${(content_length / 1024).toFixed(2)} ${format}`
+      case 'mb':
+        return `${(content_length / 1024 / 1024).toFixed(2)} ${format}`
+      case 'gb':
+        return `${(content_length / 1024 / 1024 / 1024).toFixed(2)} ${format}`
+      case 'auto':
+        const i = Math.floor(Math.log(content_length) / Math.log(1024))
+        return `${parseFloat((content_length / Math.pow(1024, i)).toFixed((i === 0 ? 0 : 2)))} ${['bytes', 'kb', 'mb', 'gb'][i]}`
     }
-  }
 })
 
-function expressLogging () {
+function expressResponseLogging () {
   return morgan(config.log.format, {
     stream: {
       write: msg => print({
@@ -46,6 +63,17 @@ function expressLogging () {
     }
   })
 }
+function expressRequestLogging () {
+  return morgan(config.log.format, {
+    immediate: true,
+    stream: {
+      write: msg => print({
+        logLevel: 3
+      }, msg)
+    }
+  })
+}
+
 
 function print (opts, args) {
   let msg = ''
@@ -90,4 +118,4 @@ function error () {
   }, arguments)
 }
 
-export { info, warn, debug, error, expressLogging }
+export { info, warn, debug, error, expressResponseLogging, expressRequestLogging }

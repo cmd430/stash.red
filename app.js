@@ -1,7 +1,7 @@
 import express from 'express'
 import requestId from 'express-request-id'
 import compileSass  from 'express-compile-sass'
-import { expressLogging } from './utils/logger'
+import { expressResponseLogging, expressRequestLogging } from './utils/logger'
 import viewEngine from './utils/renderer'
 import createError from 'http-errors'
 import { join } from 'path'
@@ -23,7 +23,8 @@ app.locals.title = config.server.name
 
 // middleware setup
 app.use(requestId())
-app.use(expressLogging())
+app.use(expressRequestLogging())
+app.use(expressResponseLogging())
 app.use(compileSass({
   root: join(__dirname, 'public'),
   sourceMap: true,
