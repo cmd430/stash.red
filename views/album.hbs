@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
+    <meta name="theme-color" content="{{server.opengraph.theme}}" />
+    <meta property="twitter:card" content="summary" />
+    <meta property="og:title" content="{{album.meta.title}}" />
+    <meta property="og:site_name" content="{{server.name.fullname}}" />
+    <meta property="og:url" content="{{server.opengraph.url}}" />
+    <link rel="icon" type="image/png" href="/img/favicon.png" />
+    <link rel="apple-touch-icon" href="/img/favicon.png" />
+    <link rel="stylesheet" href="/scss/common.scss" />
+    <link rel="stylesheet" href="/scss/theme.scss" />
+    <script src="/js/common.js"></script>
+    <script src="/js/media.js"></script>
+    <title>{{server.name.fullname}} | {{album.meta.title}}</title>
+  </head>
+  <body class="light">
+    <header>
+      {{> logo server}}
+      <h1 {{#if_eq @root.signedin.username album.meta.uploaded.by album}}class="editable"{{/if_eq}}>
+        {{#if_eq @root.signedin.username album.meta.uploaded.by album}}
+          <a class="album__delete" title="Delete this Album" data-url="{{this.path}}" data-username="{{@root.signedin.username}}">
+            <i class="icon-trash"></i>
+          </a>
+          <input type="text" class="album__title_input" placeholder="Album" value="{{this.meta.title}}" data-title="{{this.meta.title}}" maxlength="100" />
+        {{/if_eq}}
+        <a class="album__download" title="Download this Album" href="{{album.downloadpath}}">
+          <i class="icon-download"></i>
+        </a>
+        {{album.meta.title}}
+      </h1>
+    </header>
+    <div id="container">
+      {{#each album.files}}
+        {{#is this 'image'}}
+          {{> image this}}
+        {{/is}}
+        {{#is this 'video'}}
+          {{> video this}}
+        {{/is}}
+        {{#is this 'audio'}}
+          {{> audio this}}
+        {{/is}}
+      {{/each}}
+    </div>
+    {{> modals}}
+  </body>
+</html>

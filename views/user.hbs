@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
+    <meta name="theme-color" content="{{server.opengraph.theme}}" />
+    <meta property="twitter:card" content="summary" />
+    <meta property="og:title" content="{{user.meta.username}}" />
+    <meta property="og:site_name" content="{{server.name.fullname}}" />
+    <meta property="og:url" content="{{server.opengraph.url}}" />
+    <link rel="icon" type="image/png" href="/img/favicon.png" />
+    <link rel="apple-touch-icon" href="/img/favicon.png" />
+    <link rel="stylesheet" href="/scss/common.scss" />
+    <link rel="stylesheet" href="/scss/user.scss" />
+    <link rel="stylesheet" href="/scss/theme.scss" />
+    <script src="/js/common.js"></script>
+    <script src="/js/user.js"></script>
+    <title>{{server.name.fullname}} | {{user.meta.username}}</title>
+  </head>
+  <body class="light">
+    <header>
+      {{> logo server}}
+      <h1>{{user.meta.username}}</h1>
+    </header>
+    <div id="container">
+      <ul class="tab_container">
+        {{#if_eq user.meta.showing 'files' this}}
+          <li class="tab active">
+            <a>Files</a>
+          </li>
+          <li class="tab">
+            <a href="?albums">Albums</a>
+          </li>
+        {{else}}
+          <li class="tab">
+            <a href="?">Files</a>
+          </li>
+          <li class="tab active">
+            <a>Albums</a>
+          </li>
+        {{/if_eq}}
+      </ul>
+      {{#each user.items}}
+        {{> preview this}}
+      {{/each}}
+      {{> paginator user}}
+    </div>
+    {{> modals}}
+  </body>
+</html>
