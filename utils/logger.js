@@ -71,7 +71,8 @@ function log (opts, args) {
     msg = args
   }
   if (opts.logLevel <= config.log.level) {
-    process.stdout.write(msg)
+    if (opts.logLevel <= 3) return process.stdout.write(msg)
+    if (opts.logLevel === 4) return process.stderr.write(msg)
   }
 }
 
