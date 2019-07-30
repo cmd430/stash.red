@@ -6,21 +6,13 @@ token('server-name', (req, res) => config.server.name)
 token('id', (req, res) => chalk.magentaBright(req.id))
 token('url', (req, res) => chalk.greenBright(req.url))
 token('status', (req, res) => {
-  if (res.headersSent) {
-    let status = res.statusCode
-    if (status >= 500) {
-      return chalk.bold.red(status)
-    } else if (status >= 400) {
-      return chalk.bold.yellow(status)
-    } else if (status >= 300) {
-      return chalk.bold.cyan(status)
-    } else if (status >= 200) {
-      return chalk.bold.green(status)
-    } else if (status >= 100) {
-      return chalk.bold.grey(status)
-    }
-  }
-  return ' - '
+  if (!res.headersSent) return ' - '
+  let status = res.statusCode
+  if (status >= 500) return chalk.bold.red(status)
+  if (status >= 400) return chalk.bold.yellow(status)
+  if (status >= 300) return chalk.bold.cyan(status)
+  if (status >= 200) return chalk.bold.green(status)
+  if (status >= 100) return chalk.bold.grey(status)
 })
 token('content-length', (req, res, format) => {
   if (res.headersSent) {
@@ -60,17 +52,14 @@ function print (opts, args) {
   if (opts.color) {
     let colored = []
     Array.prototype.slice.call(args).forEach(arg => {
-      if (typeof arg === 'object') {
-        colored.push(chalk.keyword(arg[1].color)(arg[0]))
-      } else {
-        colored.push(chalk.keyword(opts.color)(arg))
-      }
+      if (typeof arg === 'object') return colored.push(chalk.keyword(arg[1].color)(arg[0]))
+      if (typeof arg === 'string') return colored.push(chalk.keyword(opts.color)(arg))
     })
     msg = `${colored.join(' ')}\n`
   } else {
     msg = args
   }
-  if (opts.logLevel <= config.log.level) {
+  if (opts.logLevel <= config.log.level && msg.length > 0) {
     if (opts.logLevel <= 3) return process.stdout.write(msg)
     if (opts.logLevel === 4) return process.stderr.write(msg)
   }

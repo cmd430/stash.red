@@ -8,21 +8,12 @@ function renderer (app) {
   hbs.registerPartials(join(app.get('views'), 'partials'))
   hbs.registerHelper('paginate', hbsPaginate)
   hbs.registerHelper('if_eq', (a, b, context, opts) => {
-    if (context instanceof Function) {
-      opts = context
-    }
-    if (!context instanceof Object) {
-      context = this
-    }
-    if (a === b) {
-      return opts.fn(context)
-    } else {
-      return opts.inverse(context)
-    }
+    if (context instanceof Function) opts = context
+    if (!context instanceof Object) context = this
+    if (a === b) return opts.fn(context)
+    return opts.inverse(context)
   })
-  hbs.registerHelper('json', data => {
-    return JSON.stringify(data)
-  })
+  hbs.registerHelper('json', data => JSON.stringify(data))
   return hbs
 }
 
