@@ -1,10 +1,27 @@
 {
   server: {
     name: 'stash.red',
-    env: 'dev', // `[dev]elopment` or `[prod]uction`
+    env: 'prod', // `[dev]elopment` or `[prod]uction`
   },
   log: {
-    level: 'debug', // silent, info, debug, warn, error
-    color: true
+    /*
+     * level
+     *  0 -  silent
+     *  1 -  info
+     *  2 -  warn
+     *  3 -  debug
+     *  4 -  error
+     */
+    level: 1,
+    color: {
+      enabled: true,
+      /*
+       * level
+       *  1 -  Basic color support (16 colors)
+       *  2 -  256 color support
+       *  3 -  Truecolor support (16 million colors)
+       */
+      level: 3
+    }
   }
 }

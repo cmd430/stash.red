@@ -1,11 +1,6 @@
-const express = require('express')
-const router = express.Router()
+import { Router } from 'express'
 
-/* GET home page. */
-router.get('/', (req, res, next) => {
-  res.render('index', {
-    title_fragment: 'home'
-  })
-})
-
-module.exports = router
+export default Router()
+.get('/', (req, res, next) => res.render('index', { // GET home page.
+  title_fragment: 'home'
+}))

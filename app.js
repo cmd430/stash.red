@@ -1,17 +1,11 @@
-const path = require('path')
+import express from 'express'
+import requestId from 'express-request-id'
+import { expressLogging } from './utils/logger'
+import viewEngine from './utils/renderer'
+import createError from 'http-errors'
+import { join } from 'path'
 
-const express = require('express')
-const requestId = require('express-request-id')
-const { morgan } = require('./logger.js')
-const createError = require('http-errors')
-
-const config = {
-  stash: require('./configs/stash.json5')
-}
-
-const routes = {
-  index: require('./routes/index.js')
-}
+import route_index from './routes/index'
 
 const app = express()
 
@@ -20,19 +14,19 @@ app.set('trust proxy', true)
 
 // view engine setup
 app.set('view engine', 'hbs')
-app.set('views', path.join(__dirname, 'views'))
-require('./renderer.js')(app)
+app.set('views', join(__dirname, 'views'))
+viewEngine(app)
 
 // locals
-app.locals.title = config.stash.server.name
+app.locals.title = config.server.name
 
 // middleware setup
 app.use(requestId())
-app.use(morgan())
+app.use(expressLogging())
 app.use(express.json())
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(join(__dirname, 'public')))
 
-app.use('/', routes.index)
+app.use('/', route_index)
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -50,4 +44,4 @@ app.use((err, req, res, next) => {
   res.render('error')
 })
 
-module.exports = app
+export default app

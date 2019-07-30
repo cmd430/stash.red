@@ -1,6 +1,18 @@
 {
-  port: 3000,
+  server: {
+    port: 3000,
+  },
   log: {
+    /*
+     * format
+     *  accepts any named format or string or tokens from 'morgan'
+     *   https://github.com/expressjs/morgan#predefined-formats
+     *   https://github.com/expressjs/morgan#tokens
+     *  also accepts some aditional tokens
+     *   :id                     - id of the request
+     *   :server-name            - name of server
+     *   :content-lenth[format]  - content length, format can be: auto, bytes, kb, mb, gb
+     */
     format: '[:date[web]][:server-name][:id] :status :method :url :response-time[3] ms :content-length[auto]'
   }
 }

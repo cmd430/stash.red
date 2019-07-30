@@ -5,22 +5,36 @@
   "author": "Bradley 'cmd430' Treweek",
   "license": "GPL-3.0-or-later",
   "private": true,
-  "main": "main.js",
+  "main": "loader.js",
   "scripts": {
-    "start": "node main.js",
-    "debug": "node main.js --debug"
+    "start": "node loader.js",
+    "debug": "nodemon loader.js --logLevel=debug --env=dev --port=80"
+  },
+  "nodemonConfig": {
+    "quiet": true,
+    "verbose": false,
+    "ignore": [
+      "storage/*",
+      "docs/*",
+      "node_modules/*"
+    ],
+    "ext": "js,json,json5,hbs"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
     "chalk": "^2.4.2",
-    "cookie-parser": "^1.4.4",
     "debug": "^2.6.9",
+    "esm": "^3.2.25",
     "express": "^4.16.1",
     "express-request-id": "^1.4.1",
     "handlebars-paginate": "^0.1.0",
     "hbs": "^4.0.4",
     "http-errors": "^1.6.3",
     "json5": "^2.1.0",
+    "minimist2": "^1.0.2",
     "morgan": "^1.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
   }
 }

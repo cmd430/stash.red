@@ -1,11 +1,11 @@
-const path = require('path')
-const hbs = require('hbs')
-const hbsPaginate = require('handlebars-paginate')
+import { join } from 'path'
+import hbs from 'hbs'
+import hbsPaginate from 'handlebars-paginate'
 
-module.exports = app => {
+function renderer (app) {
   // setup handlebars (for view engine)
   hbs.localsAsTemplateData(app)
-  hbs.registerPartials(path.join(app.get('views'), 'partials'))
+  hbs.registerPartials(join(app.get('views'), 'partials'))
   hbs.registerHelper('paginate', hbsPaginate)
   hbs.registerHelper('if_eq', (a, b, context, opts) => {
     if (context instanceof Function) {
@@ -20,12 +20,10 @@ module.exports = app => {
       return opts.inverse(context)
     }
   })
-  hbs.registerHelper('typeof', file => {
-    let type = file.meta.type
-    return `${type.charAt(0).toUpperCase()}${type.slice(1)}`
-  })
   hbs.registerHelper('json', data => {
     return JSON.stringify(data)
   })
   return hbs
 }
+
+export default renderer
