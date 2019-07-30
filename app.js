@@ -1,5 +1,6 @@
 import express from 'express'
 import requestId from 'express-request-id'
+import compileSass  from 'express-compile-sass'
 import { expressLogging } from './utils/logger'
 import viewEngine from './utils/renderer'
 import createError from 'http-errors'
@@ -23,9 +24,17 @@ app.locals.title = config.server.name
 // middleware setup
 app.use(requestId())
 app.use(expressLogging())
+app.use(compileSass({
+  root: join(__dirname, 'public'),
+  sourceMap: true,
+  sourceComments: false,
+  watchFiles: true,
+  logToConsole: false
+}))
 app.use(express.json())
 app.use(express.static(join(__dirname, 'public')))
 
+// routes
 app.use('/', route_index)
 
 // catch 404 and forward to error handler
