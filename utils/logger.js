@@ -48,14 +48,14 @@ token('content-length', (req, res, format) => {
 function expressLogging () {
   return morgan(config.log.format, {
     stream: {
-      write: msg => log({
+      write: msg => print({
         logLevel: 1
       }, msg)
     }
   })
 }
 
-function log (opts, args) {
+function print (opts, args) {
   let msg = ''
   if (opts.color) {
     let colored = []
@@ -77,25 +77,25 @@ function log (opts, args) {
 }
 
 function info () {
-  log({
+  print({
     color: 'cyan',
     logLevel: 1 // info
   }, arguments)
 }
 function warn () {
-  log({
+  print({
     color: 'yellow',
     logLevel: 2 // warn
   }, arguments)
 }
 function debug () {
-  log({
+  print({
     color: 'orchid',
     logLevel: 3 // debug
   }, arguments)
 }
 function error () {
-  log({
+  print({
     color: 'red',
     logLevel: 4 // error
   }, arguments)
