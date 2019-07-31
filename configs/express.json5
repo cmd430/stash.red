@@ -13,6 +13,6 @@
      *   :server-name            - name of server
      *   :content-lenth[format]  - content length, format can be: auto, bytes, kb, mb, gb
      */
-    format: '[:date[web]][:id] :status :method :url :response-time[3] :content-length[auto]'
+    format: ':date[web] :id :status :method :url :response-time[3] :content-length[auto]'
   }
 }

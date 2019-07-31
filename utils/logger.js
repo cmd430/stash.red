@@ -2,8 +2,8 @@ import morgan, { token } from 'morgan'
 import chalk from 'chalk'
 
 // setup morgan tokens
-token('server-name', (req, res) => config.server.name)
-token('id', (req, res) => chalk.magenta(req.id.split('-').reverse().pop()))
+token('server-name', (req, res) => chalk.grey(config.server.name))
+token('id', (req, res) => chalk.grey(req.id.split('-').reverse().pop()))
 token('url', (req, res) => chalk.green(req.url))
 token('method', (req, res) => {
   switch (req.method) {
@@ -25,7 +25,7 @@ morgan.token('date', function getDateToken (req, res, format) {
   let dateTime = new Date()
   switch (format || 'web') {
     case 'clf':
-      return chalk.grey(() => {
+      return () => {
         let date = dateTime.getUTCDate()
         let hour = dateTime.getUTCHours()
         let mins = dateTime.getUTCMinutes()
@@ -36,12 +36,12 @@ morgan.token('date', function getDateToken (req, res, format) {
           let str = String(num)
           return (str.length === 1 ? '0' : '') + str
         }
-        return `${pad2(date)}/${month}/${year}:${pad2(hour)}:${pad2(mins)}:${pad2(secs)} +0000`
-      })
+        return chalk.grey(`[${pad2(date)}/${month}/${year}:${pad2(hour)}:${pad2(mins)}:${pad2(secs)} +0000]`)
+      }
     case 'iso':
-      return chalk.grey(dateTime.toISOString())
+      return chalk.grey(`[${dateTime.toISOString()}]`)
     case 'web':
-      return chalk.grey(dateTime.toUTCString())
+      return chalk.grey(`[${dateTime.toUTCString()}]`)
   }
 })
 token('status', (req, res) => {
