@@ -1,6 +1,11 @@
 {
   server: {
     port: 3000,
+    subdomains: {
+      image: 'i',
+      audio: 'a',
+      video: 'v'
+    }
   },
   log: {
     /*

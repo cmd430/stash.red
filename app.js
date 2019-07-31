@@ -1,14 +1,22 @@
 import express from 'express'
+import compression from 'compression'
 import requestId from 'express-request-id'
-import compileSass  from 'express-compile-sass'
+import compileSass from 'express-compile-sass'
+import favicon  from 'serve-favicon'
+import subdomain from 'express-subdomain'
 import { expressResponseLogging, expressRequestLogging } from './utils/logger'
 import viewEngine from './utils/renderer'
 import createError from 'http-errors'
 import { join } from 'path'
 
-import route_index from './routes/index'
+import routes_index from './routes/index'
+import routes_user from './routes/user'
+import routes_file from './routes/file'
+import routes_album from './routes/album'
+import routes_direct from './routes/direct'
 
 const app = express()
+const www = join(__dirname, 'public')
 
 // allow reverse proxy
 app.set('trust proxy', true)
@@ -22,21 +30,31 @@ viewEngine(app)
 app.locals.title = config.server.name
 
 // middleware setup
+app.use(favicon(join(www, 'favicon.ico')))
+app.use(compression())
 app.use(requestId())
 app.use(expressRequestLogging())
 app.use(expressResponseLogging())
 app.use(compileSass({
-  root: join(__dirname, 'public'),
+  root: www,
   sourceMap: true,
   sourceComments: false,
   watchFiles: true,
   logToConsole: false
 }))
 app.use(express.json())
-app.use(express.static(join(__dirname, 'public')))
+app.use(express.static(www))
 
-// routes
-app.use('/', route_index)
+// subdomain routes
+app.use(subdomain(config.server.subdomains.image, routes_direct))
+app.use(subdomain(config.server.subdomains.audio, routes_direct))
+app.use(subdomain(config.server.subdomains.video, routes_direct))
+
+// domain routes
+app.use('/', routes_index)
+app.use('/u/:username', routes_user)
+app.use('/f/:file_id', routes_file)
+app.use('/a/:album_id', routes_album)
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

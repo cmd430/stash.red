@@ -1,0 +1,15 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: rgb(32, 32, 32);
+  h1, h2 {
+    color: rgb(240, 240, 240);
+  }
+  pre {
+    background: rgb(240, 240, 240);
+    white-space: normal;
+    code {
+      color: rgb(32, 32, 32);
+      white-space: pre;
+    }
+  }
+}

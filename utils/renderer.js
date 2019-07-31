@@ -4,7 +4,7 @@ import hbsPaginate from 'handlebars-paginate'
 
 function renderer (app) {
   // setup handlebars (for view engine)
-  hbs.localsAsTemplateData(app)
+  //hbs.localsAsTemplateData(app)
   hbs.registerPartials(join(app.get('views'), 'partials'))
   hbs.registerHelper('paginate', hbsPaginate)
   hbs.registerHelper('if_eq', (a, b, context, opts) => {
@@ -13,7 +13,7 @@ function renderer (app) {
     if (a === b) return opts.fn(context)
     return opts.inverse(context)
   })
-  hbs.registerHelper('json', data => JSON.stringify(data))
+  hbs.registerHelper('json', data => JSON.stringify(data, null, 2))
   return hbs
 }
 

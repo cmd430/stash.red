@@ -4,7 +4,7 @@ import chalk from 'chalk'
 // setup morgan tokens
 token('server-name', (req, res) => chalk.grey(config.server.name))
 token('id', (req, res) => chalk.grey(req.id.split('-').reverse().pop()))
-token('url', (req, res) => chalk.green(req.url))
+token('url', (req, res) => chalk.green(req.originalUrl))
 token('method', (req, res) => {
   switch (req.method) {
     case 'HEAD':
@@ -18,10 +18,10 @@ token('method', (req, res) => {
     case 'DELETE':
       return 'DELETE'
     default:
-      return '  --  '
+      return '      '
   }
 })
-morgan.token('date', function getDateToken (req, res, format) {
+morgan.token('date', (req, res, format) => {
   let dateTime = new Date()
   switch (format || 'web') {
     case 'clf':
@@ -96,7 +96,6 @@ function expressRequestLogging () {
     }
   })
 }
-
 
 function print (opts, args) {
   let msg = ''

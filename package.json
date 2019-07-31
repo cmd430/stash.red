@@ -23,18 +23,21 @@
   "dependencies": {
     "bcrypt": "^3.0.6",
     "chalk": "^2.4.2",
+    "compression": "^1.7.4",
     "debug": "^2.6.9",
     "esm": "^3.2.25",
     "express": "^4.16.1",
     "express-compile-sass": "git+https://git@github.com/cmd430/express-compile-sass.git",
     "express-request-id": "^1.4.1",
+    "express-subdomain": "^1.0.5",
     "handlebars-paginate": "^0.1.0",
     "hbs": "^4.0.4",
     "http-errors": "^1.6.3",
     "json5": "^2.1.0",
     "minimist2": "^1.0.2",
     "morgan": "^1.9.1",
-    "node-sass": "^4.12.0"
+    "node-sass": "^4.12.0",
+    "serve-favicon": "^2.5.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
+    <link rel="stylesheet" href="/scss/debug.scss" />
+    <title>{{title}} | {{title_fragment}}</title>
+  </head>
+  <body>
+    <h1>DEBUG</h1>
+    <h2>{{route}}</h2>
+    <pre>
+      <code>
+        {{json @root}}
+      </code>
+    </pre>
+    <script>
+      let code = document.querySelector('pre code')
+      let text = code.textContent
+      code.textContent = text.replace(new RegExp(text.match(/\s*\n[\t\s]*/), 'g'), '\n')
+    </script>
+  </body>
+</html>
