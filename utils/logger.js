@@ -21,29 +21,6 @@ token('method', (req, res) => {
       return '      '
   }
 })
-morgan.token('date', (req, res, format) => {
-  let dateTime = new Date()
-  switch (format || 'web') {
-    case 'clf':
-      return () => {
-        let date = dateTime.getUTCDate()
-        let hour = dateTime.getUTCHours()
-        let mins = dateTime.getUTCMinutes()
-        let secs = dateTime.getUTCSeconds()
-        let year = dateTime.getUTCFullYear()
-        let month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dateTime.getUTCMonth()]
-        let pad2 = num => {
-          let str = String(num)
-          return (str.length === 1 ? '0' : '') + str
-        }
-        return chalk.grey(`[${pad2(date)}/${month}/${year}:${pad2(hour)}:${pad2(mins)}:${pad2(secs)} +0000]`)
-      }
-    case 'iso':
-      return chalk.grey(`[${dateTime.toISOString()}]`)
-    case 'web':
-      return chalk.grey(`[${dateTime.toUTCString()}]`)
-  }
-})
 token('status', (req, res) => {
   if (!res.headersSent) return ' - '
   let status = res.statusCode
@@ -109,6 +86,7 @@ function print (opts, args) {
   } else {
     msg = args
   }
+  msg = `${chalk.grey(`[${new Date().toUTCString()}]`)} ${msg}`
   if (opts.logLevel <= config.log.level && msg.length > 0) {
     if (opts.logLevel <= 3) return process.stdout.write(msg)
     if (opts.logLevel === 4) return process.stderr.write(msg)

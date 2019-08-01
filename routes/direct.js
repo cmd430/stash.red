@@ -9,7 +9,7 @@ import createError from 'http-errors'
 
 export default Router()
 
-  // Server Static
+  // Serve Static
   .use(express.static(join(__dirname,'..', 'storage', 'image')))
   .use(express.static(join(__dirname,'..', 'storage', 'audio')))
   .use(express.static(join(__dirname,'..', 'storage', 'video')))
