@@ -18,6 +18,11 @@ import routes_direct from './routes/direct'
 const app = express()
 const www = join(__dirname, 'public')
 
+// locals
+app.locals = {
+  title: config.server.name
+}
+
 // allow reverse proxy
 app.set('trust proxy', true)
 
@@ -26,14 +31,9 @@ app.set('view engine', 'hbs')
 app.set('views', join(__dirname, 'views'))
 viewEngine(app)
 
-// locals
-app.locals.title = config.server.name
-
 // https upgrade
-app.use(function(req, res, next) {
-  if (config.server.https) {
-    if (!req.secure) return res.redirect(301, `https://${req.headers.host}${req.originalUrl}`)
-  }
+app.use((req, res, next) => {
+  if (config.server.https && !req.secure) return res.redirect(301, `https://${req.headers.host}${req.originalUrl}`)
   return next()
 })
 
