@@ -29,6 +29,14 @@ viewEngine(app)
 // locals
 app.locals.title = config.server.name
 
+// https upgrade
+app.use(function(req, res, next) {
+  if (config.server.https) {
+    if (!req.secure) return res.redirect(301, `https://${req.headers.host}${req.originalUrl}`)
+  }
+  return next()
+})
+
 // middleware setup
 app.use(favicon(join(www, 'favicon.ico')))
 app.use(compression())
@@ -46,9 +54,7 @@ app.use(express.json())
 app.use(express.static(www))
 
 // subdomain routes
-app.use(subdomain(config.server.subdomains.image, routes_direct))
-app.use(subdomain(config.server.subdomains.audio, routes_direct))
-app.use(subdomain(config.server.subdomains.video, routes_direct))
+app.use(subdomain('direct', routes_direct))
 
 // domain routes
 app.use('/', routes_index)

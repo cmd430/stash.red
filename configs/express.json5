@@ -1,10 +1,9 @@
 {
   server: {
-    port: 3000,
-    subdomains: {
-      image: 'i',
-      audio: 'a',
-      video: 'v'
+    https: false,
+    ports: {
+      http: 80,
+      https: 443,
     }
   },
   log: {

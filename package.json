@@ -8,7 +8,7 @@
   "main": "loader.js",
   "scripts": {
     "start": "node loader.js",
-    "debug": "nodemon loader.js --logLevel=debug --env=dev --port=80"
+    "debug": "nodemon loader.js --logLevel=error --env=dev"
   },
   "nodemonConfig": {
     "quiet": true,

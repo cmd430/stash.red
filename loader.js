@@ -32,7 +32,17 @@ if (__argv.env) {
 }
 if (__argv.port) {
   if (!argv.server) argv.server = {}
-  argv.server.port = __argv.port || 80
+  if (!argv.server.ports) argv.server.ports = {}
+  argv.server.ports.http = __argv.port || 80
+}
+if (__argv.secure_port) {
+  if (!argv.server) argv.server = {}
+  if (!argv.server.ports) argv.server.ports = {}
+  argv.server.ports.https = __argv.secure_port || 443
+}
+if (__argv.https) {
+  if (!argv.server) argv.server = {}
+  argv.server.https = __argv.https || false
 }
 
 global.config = require('./utils/helpers').merge(

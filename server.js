@@ -1,39 +1,58 @@
-import { createServer } from 'http'
+import { readFileSync } from 'fs'
+import { join } from 'path'
+
+import http, { createServer } from 'http'
+import https, { createServer as createSecureServer } from 'https'
 import { info, debug, error } from './utils/logger'
 import app from './app'
 
 /**
  * Create HTTP server.
  */
-let server = createServer(app)
-server.listen(config.server.port)
-server.on('error', onError)
-server.on('listening', onListening)
+createServer(app)
+.on('error', onError)
+.on('listening', onListening)
+.listen(config.server.ports.http)
 
-function onError(err) {
-  if (err.syscall !== 'listen') {
-    throw err
-  }
-  switch (err.code) {
-    case 'EACCES':
-      error(`Port '${config.express.port}' requires elevated privileges`)
-      process.exit(1)
-      break
-    case 'EADDRINUSE':
-      error(`Port '${config.express.port}' is already in use`)
-      process.exit(1)
-      break
-    default:
-      throw err
+if (config.server.https) {
+  try {
+    createSecureServer({
+      key: readFileSync(join(__dirname, 'configs', 'keys', 'server.key')),
+      cert: readFileSync(join(__dirname, 'configs', 'keys', 'server.cert'))
+    }, app)
+    .on('error', onError)
+    .on('listening', onListening)
+    .listen(config.server.ports.https)
+  } catch (err) {
+    // should only fail if missing a valid key
+    error(`Missing valid SSL cert/key fallingback to http only (${err.message})`)
+    config.server.https = false
   }
 }
 
+function onError(err) {
+  this instanceof http.Server
+    ? debug('HTTP server error')
+    : this instanceof https.Server
+      ? debug('HTTPS server error')
+      : debug('Unknown server error')
+  if (err.syscall !== 'listen') throw err
+  if (err.code === 'EADDRINUSE') {
+    error(`Port '${config.server.ports[this instanceof http.Server ? 'http' : 'https']}' is already in use`)
+    process.exit(1)
+  }
+  throw err
+}
+
 function onListening() {
-  info('Server is',
+  info(
+    this instanceof http.Server
+      ? 'Server'
+      : 'Secure Server',
     ['Listening at address', {color: 'limegreen'}],
-    [server.address().address, {color: 'yellow'}],
+    [this.address().address, {color: 'yellow'}],
     ['on port', {color: 'limegreen'}],
-    [server.address().port, {color: 'yellow'}],
+    [this.address().port, {color: 'yellow'}],
     ['using', {color: 'limegreen'}],
-    [server.address().family, {color: 'yellow'}])
+    [this.address().family, {color: 'yellow'}])
 }
