@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import createError from 'http-errors'
+import database from 'better-sqlite3-helper'
 
 /*
  *  User Files       /u/<:username>
@@ -8,27 +9,64 @@ import createError from 'http-errors'
  *  User Update      /u/<:username>/update
  */
 
-export default Router()
+// TEMP ONLY
+let logged_in_own_page = true
 
+export default Router()
+/*
+  // Global Method
+  .all('*', (req, res, next) => {
+    // if logged in set var...
+    next()
+  })
+*/
   // GET Method Routes
-  .get('/', (req, res, next) => res.render('debug', {
-    title_fragment: 'user',
-    route: `${req.baseUrl}${req.path}`
-  }))
-  .get('/albums', (req, res, next) => res.render('debug', {
-    title_fragment: 'user albums',
-    route: `${req.baseUrl}${req.path}`
-  }))
-  .get('/settings', (req, res, next) => res.render('debug', {
+  .get('/:username', (req, res, next) => {
+    let username = req.params.username
+    let limit = config.pagination.limit
+    let page = req.query.page || 0
+    if (database().queryFirstRow('SELECT username FROM users WHERE username=?', username)) {
+      let files = logged_in_own_page // logged in user viewing own page
+        ? database().query('SELECT * FROM files WHERE uploaded_by=? AND in_album IS NULL ORDER BY uploaded_at LIMIT ? OFFSET ?', username, limit, page)
+        : database().query('SELECT * FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0 ORDER BY uploaded_at LIMIT ? OFFSET ?', username, limit, page)
+      return res.render('debug', {
+        title_fragment: username,
+        route: `${req.baseUrl}${req.path}`,
+        uploads: files
+      })
+    }
+    next()
+  })
+  .get('/:username/albums', (req, res, next) => {
+    let username = req.params.username
+    let limit = config.pagination.limit
+    let page = req.query.page || 0
+    if (database().queryFirstRow('SELECT username FROM users WHERE username=?', username)) {
+      let albums = logged_in_own_page // logged in user viewing own page
+        ? database().query('SELECT * FROM albums WHERE uploaded_by=? LIMIT ? OFFSET ?', username, limit, page)
+        : database().query('SELECT * FROM files WHERE uploaded_by=? AND NOT public=0 LIMIT ? OFFSET ?', username, limit, page)
+      return res.render('debug', {
+        title_fragment: username,
+        route: `${req.baseUrl}${req.path}`,
+        albums: albums
+      })
+    }
+    next()
+  })
+  .get('/:username/settings', (req, res, next) => res.render('debug', {
     title_fragment: 'user settings',
     route: `${req.baseUrl}${req.path}`
   }))
 
   // POST Method Routes
-  .post('/update', (req, res, next) => res.sendStatus(200))
+  .post('/:username/update', (req, res, next) => res.sendStatus(200))
 
   // Method Not Implimented
-  .all('/', (req, res, next) => next(createError(501)))
-  .all('/albums', (req, res, next) => next(createError(501)))
-  .all('/settings', (req, res, next) => next(createError(501)))
-  .all('/update', (req, res, next) => next(createError(501)))
+  .all('/:username/update', (req, res, next) => {
+    if (!req.method === 'POST') return next(createError(501))
+    next()
+  })
+  .all('*', (req, res, next) => {
+    if (!req.method === 'GET') return next(createError(501))
+    next()
+  })

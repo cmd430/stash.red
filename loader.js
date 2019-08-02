@@ -1,4 +1,7 @@
 require('json5/lib/register')
+const { join } = require('path')
+const database = require('better-sqlite3-helper')
+require = require('esm')(module)
 
 const __argv = require('minimist')(process.argv.slice(2))
 let argv = {}
@@ -48,7 +51,7 @@ if (__argv.https) {
 global.config = require('./utils/helpers').merge(
   require('./configs/stash'),
   require('./configs/express'),
-  require('./configs/mongoose'),
+  require('./configs/sqlite3'),
   argv
 )
 
@@ -64,5 +67,17 @@ process.noDeprecation = config.log.level <= 2
   ? true
   : false
 
-require = require('esm')(module)
+database({
+  path: join(__dirname, 'storage', 'database', 'sqlite3.db'),
+  memory: false,
+  readonly: false,
+  fileMustExist: false,
+  WAL: true,
+  migrate: { // disable completely by setting `migrate: false`
+    force: false,
+    table: 'migration',
+    migrationsPath: join(__dirname, 'storage', 'database', 'migrations')
+  }
+})
+
 module.exports = require('./server')

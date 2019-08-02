@@ -22,6 +22,8 @@
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
+    "better-sqlite3": "^5.4.1",
+    "better-sqlite3-helper": "^2.1.0",
     "chalk": "^2.4.2",
     "compression": "^1.7.4",
     "debug": "^2.6.9",

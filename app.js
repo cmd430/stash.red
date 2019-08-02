@@ -1,3 +1,4 @@
+import { join } from 'path'
 import express from 'express'
 import compression from 'compression'
 import requestId from 'express-request-id'
@@ -7,7 +8,6 @@ import subdomain from 'express-subdomain'
 import { expressResponseLogging, expressRequestLogging } from './utils/logger'
 import viewEngine from './utils/renderer'
 import createError from 'http-errors'
-import { join } from 'path'
 
 import routes_index from './routes/index'
 import routes_user from './routes/user'
@@ -19,9 +19,8 @@ const app = express()
 const www = join(__dirname, 'public')
 
 // locals
-app.locals = {
-  title: config.server.name
-}
+app.locals.title = config.server.name
+
 
 // allow reverse proxy
 app.set('trust proxy', true)
@@ -58,9 +57,9 @@ app.use(subdomain('direct', routes_direct))
 
 // domain routes
 app.use('/', routes_index)
-app.use('/u/:username', routes_user)
-app.use('/f/:file_id', routes_file)
-app.use('/a/:album_id', routes_album)
+app.use('/u/', routes_user)
+app.use('/f/', routes_file)
+app.use('/a/', routes_album)
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

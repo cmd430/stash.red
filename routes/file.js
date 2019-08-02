@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import createError from 'http-errors'
+import database from 'better-sqlite3-helper'
 
 /*
  *  File             /f/<id>
@@ -12,13 +13,28 @@ import createError from 'http-errors'
 export default Router()
 
   // GET Method Routes
-  .get('/', (req, res, next) => res.render('debug', {
-    title_fragment: 'file',
-    route: `${req.baseUrl}${req.path}`
-  }))
+  .get('/:file_id', (req, res, next) => {
+    let file_id = req.params.file_id
+    let file = database().queryFirstRow('SELECT * FROM files WHERE id=?', file_id)
+    if (file) {
+      return res.render('debug', {
+        title_fragment: file_id,
+        route: `${req.baseUrl}${req.path}`,
+        file: file
+      })
+    }
+    next()
+  })
 
   // POST Method Routes
-  .post('/', (req, res, next) => res.sendStatus(200))
+  .post('/:file_id/update', (req, res, next) => res.sendStatus(200))
 
   // Method Not Implimented
-  .all('/', (req, res, next) => next(createError(501)))
+  .all('/:file_id/update', (req, res, next) => {
+  if (!req.method === 'POST') return next(createError(501))
+    next()
+  })
+  .all('*', (req, res, next) => {
+    if (!req.method === 'GET') return next(createError(501))
+    next()
+  })
