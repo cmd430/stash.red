@@ -38,13 +38,11 @@ export default Router()
       error(err.message)
     }
     try { // Add single file
-      let id = createID()
       database().insert('files', {
         uploaded_by: 'cmd430',
         uploaded_at: new Date().toUTCString(),
-        file_id: id,
-        filename: `${id}.jpg`,
-        original_name: 'image.jpg',
+        file_id: createID(),
+        original_filename: 'image.jpg',
         mimetype: 'image/jpg',
         filesize: 3255564,
         in_album: null,
@@ -55,42 +53,38 @@ export default Router()
       error(err.message)
     }
     try { // Add album with 2 files
-      const upload_time = new Date().toUTCString()
-      const album_id = createID()
-      const insert_album = database().prepare(`INSERT INTO albums (album_id, title, uploaded_by, uploaded_at, total_files, public) VALUES (@album_id, @title, @uploaded_by, @uploaded_at, @total_files, @public)`)
-      const insert_file = database().prepare(`INSERT INTO files (file_id, uploaded_by, uploaded_at, filename, original_name, mimetype, filesize, in_album, public) VALUES (@file_id, @uploaded_by, @uploaded_at, @filename, @original_name, @mimetype, @filesize, @in_album, @public)`)
+      const insert_album = database().prepare(`INSERT INTO albums (album_id, title, uploaded_by, uploaded_at, total_files, public)
+                                               VALUES (@album_id, @title, @uploaded_by, @uploaded_at, @total_files, @public)`)
+      const insert_file = database().prepare(`INSERT INTO files (file_id, uploaded_by, uploaded_at, original_filename, mimetype, filesize, in_album, public)
+                                              VALUES (@file_id, @uploaded_by, @uploaded_at, @original_filename, @mimetype, @filesize, @in_album, @public)`)
       const insert_files = database().transaction(files => { for (const file of files) insert_file.run(file) })
       const create_album = database().transaction(album => {
         insert_album.run(album)
-        const file_id = createID()
-        const file_id2 = createID()
         insert_files([
           {
             uploaded_by: 'cmd430',
-            uploaded_at: upload_time,
-            file_id: file_id,
-            filename: `${file_id}.jpg`,
-            original_name: 'image.jpg',
+            uploaded_at: new Date().toUTCString(),
+            file_id: createID(),
+            original_filename: 'image.jpg',
             mimetype: 'image/jpg',
             filesize: 3255564,
-            in_album: album_id,
+            in_album: album.album_id,
             public: +true
           },
           {
             uploaded_by: 'cmd430',
-            uploaded_at: upload_time,
-            file_id: file_id2,
-            filename: `${file_id2}.jpg`,
-            original_name: 'image3.jpg',
+            uploaded_at: new Date().toUTCString(),
+            file_id: createID(),
+            original_filename: 'image3.jpg',
             mimetype: 'image/jpg',
             filesize: 125524,
-            in_album: album_id,
+            in_album: album.album_id,
             public: +true
           }
         ])
       })
       create_album({
-        album_id: album_id,
+        album_id: createID(),
         title: 'TEST ALBUM',
         uploaded_by: 'cmd430',
         uploaded_at: upload_time,
