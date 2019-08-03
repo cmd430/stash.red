@@ -94,7 +94,6 @@ export default Router()
         title: 'TEST ALBUM',
         uploaded_by: 'cmd430',
         uploaded_at: upload_time,
-        total_files: 2,
         public: +true
       })
     } catch (err) {
