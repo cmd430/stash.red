@@ -116,7 +116,6 @@ export default Router()
     })
   })
 
-
   // POST Method Routes
   .post('/login', async (req, res, next) => {
     if (!req.body.username || !req.body.password) return next(createError(400, 'All Fields Required'))
