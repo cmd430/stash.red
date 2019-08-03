@@ -3,6 +3,14 @@
     name: 'stash.red',
     env: 'prod', // `[dev]elopment` or `[prod]uction`
   },
+  auth: {
+    /*
+     * rounds
+     *  Rounds as {Number} for salt generation
+     *  Default: 10
+     */
+    rounds: 10
+  },
   log: {
     /*
      * level

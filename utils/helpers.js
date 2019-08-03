@@ -1,4 +1,7 @@
-function mergeDeep(...objects) {
+import { hash as bcrypt_hash, compare } from 'bcrypt'
+import { randomBytes } from 'crypto'
+
+function mergeDeep (...objects) {
   const isObject = obj => obj && typeof obj === 'object'
   return objects.reduce((prev, obj) => {
     Object.keys(obj).forEach(key => {
@@ -18,6 +21,15 @@ function mergeDeep(...objects) {
   }, {})
 }
 
-module.exports = {
-  merge: mergeDeep
+function hash (password) {
+  return bcrypt_hash(password, config.auth.rounds)
 }
+function validate (password, hash, next) {
+  return compare(password, hash)
+}
+
+function createID () {
+  return randomBytes(6).toString('hex')
+}
+
+export { mergeDeep as merge, hash, validate, createID }

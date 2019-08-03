@@ -15,7 +15,7 @@ export default Router()
   // GET Method Routes
   .get('/:file_id', (req, res, next) => {
     let file_id = req.params.file_id
-    let file = database().queryFirstRow('SELECT * FROM files WHERE id=?', file_id)
+    let file = database().queryFirstRow(`SELECT * FROM files WHERE id=?`, file_id)
     if (file) {
       return res.render('debug', {
         title_fragment: file_id,

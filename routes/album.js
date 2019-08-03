@@ -18,11 +18,11 @@ export default Router()
     let album_id = req.params.album_id
     let limit = config.pagination.limit
     let page = req.query.page || 0
-    let album_meta = database().queryFirstRow('SELECT title,  FROM albums WHERE id=?', album_id)
-    if (album_meta) {
-      let files = database().query('SELECT * FROM files WHERE in_album=? ORDER BY uploaded_at LIMIT ? OFFSET ?', album_id, limit, page)
+    let album_title = database().queryFirstCell(`SELECT title,  FROM albums WHERE id=?`, album_id)
+    if (album_title) {
+      let files = database().query(`SELECT * FROM files WHERE in_album=? ORDER BY uploaded_at LIMIT ? OFFSET ?`, album_id, limit, page)
       return res.render('debug', {
-        title_fragment: album_meta.title || 'Album',
+        title_fragment: album_title || 'Album',
         route: `${req.baseUrl}${req.path}`,
         files: files
       })
