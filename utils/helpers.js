@@ -24,12 +24,18 @@ function mergeDeep (...objects) {
 function hash (password) {
   return bcrypt_hash(password, config.auth.rounds)
 }
-function validate (password, hash, next) {
-  return compare(password, hash)
+
+function clearDeadCookies () {
+  return (req, res, next) => {
+    if (req.cookies['connect.sid'] && !req.session.user) {
+      res.clearCookie('connect.sid')
+    }
+    next()
+  }
 }
 
 function createID () {
   return randomBytes(6).toString('hex')
 }
 
-export { mergeDeep as merge, hash, validate, createID }
+export { mergeDeep as merge, hash, compare as validate, createID, clearDeadCookies }

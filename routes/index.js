@@ -1,30 +1,43 @@
 import { Router } from 'express'
 import database from 'better-sqlite3-helper'
-import { createID, hash } from '../utils/helpers'
+import { createID, hash, validate } from '../utils/helpers'
 import { error } from '../utils/logger'
+import createError from 'http-errors'
+import expressCaptcha from 'express-svg-captcha'
+
+const captcha = new expressCaptcha(config.auth.captcha)
 
 /*
  *  Home             /
  *  Upload           /upload
  *  Login            /login
  *  Signup           /signup
+ *  Logout           /logout
+ *  Captcha          /captcha
  */
 
 export default Router()
 
   // GET Method Routes
-  .get('/', (req, res, next) => res.render('index', {
-    title_fragment: 'home',
-    route: `${req.baseUrl}${req.path}`
-  }))
-  .get('/login', (req, res, next) => res.render('debug', {
-    title_fragment: 'login',
-    route: `${req.baseUrl}${req.path}`
-  }))
-  .get('/signup', (req, res, next) => res.render('debug', {
-    title_fragment: 'signup',
-    route: `${req.baseUrl}${req.path}`
-  }))
+  .get('/', (req, res, next) => {
+    res.render('index', {
+      signedin: req.session.user
+    })
+  })
+  .get('/login', (req, res, next) => {
+    res.render('login', {})
+  })
+  .get('/signup', (req, res, next) => {
+    if (!config.auth.allowSignup) return next(createError(503, 'Account Creation Disabled'))
+    res.render('signup', {
+      captcha: config.auth.captcha.enabled
+    })
+  })
+  .get('/logout', (req, res, next) => {
+    if (req.session) req.session.destroy()
+    return res.redirect('/')
+  })
+  .get('/captcha', captcha.generate())
 
   .get('/debug', async (req, res, next) => {
     try { // Add user
@@ -105,10 +118,46 @@ export default Router()
 
 
   // POST Method Routes
+  .post('/login', async (req, res, next) => {
+    if (!req.body.username || !req.body.password) return next(createError(400, 'All Fields Required'))
+    try {
+      let user = database().queryFirstRow(`SELECT * FROM users WHERE username=?`, req.body.username)
+      if (await validate(req.body.password, user.password)) req.session.user = {
+        id: user.id,
+        username: user.username
+      }
+    } catch (err) {
+      error(err.message)
+      return next(createError(401))
+    }
+    return res.redirect('/')
+  })
+  .post('/signup', async (req, res, next) => {
+    if (!config.auth.allowSignup) return next(createError(503, 'Account Creation Disabled'))
+    if (!req.body.username || !req.body.password || !req.body.passwordConfirm || !req.body.email || (config.auth.captcha.enabled && !req.body.captcha)) return next(createError(400, 'All Fields Required'))
+    if (config.auth.captcha.enabled && !captcha.validate(req, req.body.captcha)) return next(createError(400, 'Captcha Failed'))
+    if (req.body.password !== req.body.passwordConfirm) return next(createError(400, 'Passwords Don\'t Match'))
+    try {
+      req.session.user = {
+        id: database().insert('users', {
+          username: req.body.username,
+          password: await hash(req.body.password),
+          email: req.body.email
+        }),
+        username: req.body.username
+      }
+    } catch (err) {
+      error(err.message)
+      return next(createError(409))
+    }
+    return res.status(201).redirect('/')
+  })
   .post('/upload', (req, res, next) => res.sendStatus(200))
 
   // Method Not Implimented
   .all('/', (req, res, next) => next(createError(501)))
   .all('/login', (req, res, next) => next(createError(501)))
   .all('/signup', (req, res, next) => next(createError(501)))
+  .all('/logout', (req, res, next) => next(createError(501)))
+  .all('/captcha', (req, res, next) => next(createError(501)))
   .all('/upload', (req, res, next) => next(createError(501)))

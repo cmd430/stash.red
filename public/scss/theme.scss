@@ -182,6 +182,7 @@ header {
     border-color: $color-contentborder;
     form {
       input[type=text],
+      input[type=email],
       input[type=password],
       input[type=submit] {
         color: $color-contenttext;

@@ -20,9 +20,10 @@
       <div id="accountzone">
         <form method="POST" action="/signup">
           <input name="username" type="text" placeholder="Username" />
+          <input name="email" type="email" placeholder="Email" />
           <input name="password" type="password" placeholder="Password" />
           <input name="passwordConfirm" type="password" placeholder="Confirm Password" />
-          {{#if server.captcha}}
+          {{#if captcha}}
             <img src="/captcha"/>
             <input type="text" name="captcha" placeholder="Captcha" />
           {{/if}}

@@ -3,11 +3,15 @@ import express from 'express'
 import compression from 'compression'
 import requestId from 'express-request-id'
 import compileSass from 'express-compile-sass'
+import session from 'express-session'
+import cookieParser from 'cookie-parser'
+import connectSqlite3 from 'connect-sqlite3'
 import favicon  from 'serve-favicon'
 import subdomain from 'express-subdomain'
 import { expressResponseLogging, expressRequestLogging } from './utils/logger'
 import viewEngine from './utils/renderer'
 import createError from 'http-errors'
+import { clearDeadCookies } from './utils/helpers'
 
 import routes_index from './routes/index'
 import routes_user from './routes/user'
@@ -17,6 +21,8 @@ import routes_direct from './routes/direct'
 
 const app = express()
 const www = join(__dirname, 'public')
+const database = join(__dirname, 'storage', 'database')
+const sessionStore = connectSqlite3(session)
 
 // locals
 app.locals.title = config.server.name
@@ -37,6 +43,20 @@ app.use((req, res, next) => {
 })
 
 // middleware setup
+app.use(session({
+  secret: config.auth.session.secret,
+  resave: false,
+  rolling: true,
+  saveUninitialized: false,
+  unset: 'destroy',
+  cookie: config.auth.session.cookie,
+  store: new sessionStore({
+    table: 'sessions',
+    db: 'sessions.db',
+    dir: database,
+    concurrentDB: true
+  })
+}))
 app.use(favicon(join(www, 'favicon.ico')))
 app.use(compression())
 app.use(requestId())
@@ -49,8 +69,11 @@ app.use(compileSass({
   watchFiles: true,
   logToConsole: false
 }))
+app.use(cookieParser())
 app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 app.use(express.static(www))
+app.use(clearDeadCookies())
 
 // subdomain routes
 app.use(subdomain('direct', routes_direct))

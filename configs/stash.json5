@@ -4,12 +4,55 @@
     env: 'prod', // `[dev]elopment` or `[prod]uction`
   },
   auth: {
+    allowSignup: true,
     /*
      * rounds
      *  Rounds as {Number} for salt generation
      *  Default: 10
      */
-    rounds: 10
+    rounds: 10,
+    captcha: {
+      enabled: true,
+      /*
+       *  accepts any option that is accepted by
+       *  https://github.com/lemonce/svg-captcha
+       *
+       *  plus useMath (Boolen), useFont (String) and cookie (String)
+       *
+       *  setting isMath to true will enable math expressions
+       *  while false will use text strings defaults to false
+       *
+       *  useFont can be set to the path of a ttf or otf font
+       *  for use in the captcha
+       *
+       *  cookie is the value for the key in the cookie to
+       *  store the captcha information, this can be ommited
+       *  to use the default of 'captcha'
+       */
+      useMath: false,
+      useFont: null,
+      cookie: 'captcha',
+      fontSize: 40,
+      width: 100,
+      height: 40,
+      charPreset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&?*=<>',
+      ignoreChars: '0oO1iIlL',
+      size: 4,
+      noise: 2,
+      color: false
+    },
+    session: {
+      secret: 'stash',
+      cookie: {
+        secure: 'auto',
+        /*
+         * maxAge
+         *  Max age of session in ms
+         *  Default: 604800000 (1 week)
+         */
+        maxAge: 604800000
+      }
+    },
   },
   log: {
     /*
