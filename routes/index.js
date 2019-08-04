@@ -43,7 +43,7 @@ export default Router()
     try { // Add single file
       database().insert('files', {
         uploaded_by: 'cmd430',
-        uploaded_at: new Date().toUTCString(),
+        uploaded_at: new Date().toISOString(),
         file_id: createID(),
         original_filename: 'image.jpg',
         mimetype: 'image/jpg',
@@ -90,7 +90,7 @@ export default Router()
         album_id: createID(),
         title: 'TEST ALBUM',
         uploaded_by: 'cmd430',
-        uploaded_at: new Date().toUTCString(),
+        uploaded_at: new Date().toISOString(),
         public: +true
       })
     } catch (err) {
