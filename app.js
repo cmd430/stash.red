@@ -5,7 +5,7 @@ import requestId from 'express-request-id'
 import compileSass from 'express-compile-sass'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
-import connectSqlite3 from 'connect-sqlite3'
+import expressSqlite3 from 'express-sqlite3'
 import favicon  from 'serve-favicon'
 import subdomain from 'express-subdomain'
 import { expressResponseLogging, expressRequestLogging } from './utils/logger'
@@ -22,7 +22,7 @@ import routes_direct from './routes/direct'
 const app = express()
 const www = join(__dirname, 'public')
 const database = join(__dirname, 'storage', 'database')
-const sessionStore = connectSqlite3(session)
+const sessionStore = expressSqlite3(session)
 
 // locals
 app.locals.title = config.server.name
@@ -51,10 +51,8 @@ app.use(session({
   unset: 'destroy',
   cookie: config.auth.session.cookie,
   store: new sessionStore({
-    table: 'sessions',
-    db: 'sessions.db',
-    dir: database,
-    concurrentDB: true
+    path: join(database, 'sessions.db'),
+    WAL: true
   })
 }))
 app.use(favicon(join(www, 'favicon.ico')))
