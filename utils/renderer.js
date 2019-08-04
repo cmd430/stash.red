@@ -19,6 +19,7 @@ function renderer (app) {
     if (b.includes(a)) return opts.fn(context)
     return opts.inverse(context)
   })
+  hbs.registerHelper('split', (data, split, index) => data.split(split)[index])
   hbs.registerHelper('ext', data => data.split('/')[1])
   hbs.registerHelper('json', data => JSON.stringify(data, null, 2))
   return hbs
