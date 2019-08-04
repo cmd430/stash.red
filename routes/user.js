@@ -11,49 +11,80 @@ import database from 'better-sqlite3-helper'
 
 export default Router()
 
+  .use((req, res, next) => {
+    let sort = req.query.sort || 'DESC'
+    req.viewPage = req.query.page || 1
+    req.viewLimit = config.pagination.limit
+    req.viewOffset = req.viewLimit * (req.viewPage - 1)
+    req.viewJson = Object.keys(req.query).includes('json')
+    ? true
+    : false
+    req.sortOrder = (sort !== 'DESC' && sort !== 'ASC')
+      ? 'DESC'
+      : sort
+    next()
+  })
+
   // GET Method Routes
   .get('/:username', (req, res, next) => {
     let username = req.params.username
-    let limit = config.pagination.limit
-    let page = req.query.page || 0
+    let showPrivate = req.session && req.session.user && req.session.user.username === username
 
     if (database().queryFirstCell(`SELECT username FROM users WHERE username=?`, username)) {
-      let files = (req.session && req.session.user.username === username)
-        ? database().query(`SELECT * FROM files WHERE uploaded_by=? AND in_album IS NULL ORDER BY uploaded_at LIMIT ? OFFSET ?`, username, limit, page)
-        : database().query(`SELECT * FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0 ORDER BY uploaded_at LIMIT ? OFFSET ?`, username, limit, page)
-      return res.render('user', {
+      let files = showPrivate
+        ? database().query(`SELECT id, file_id, mimetype FROM files WHERE uploaded_by=? AND in_album IS NULL ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
+        : database().query(`SELECT id, file_id, mimetype FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0 ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
+
+      let totalFiles = showPrivate
+        ? database().query(`SELECT COUNT(id) FROM files WHERE uploaded_by=? AND in_album IS NULL`, username)
+        : database().query(`SELECT COUNT(id) FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0`, username)
+
+      let locals = {
         pagination: {
-          page: 1,
-          pageCount: 1
+          page: req.viewPage,
+          pageCount:  Math.ceil(Object.values(totalFiles[0])[0] / req.viewLimit)
         },
         view: {
-          path: `${req.originalUrl}${req.originalUrl.endsWith('/') ? '' : '/'}`,
+          path: `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`,
           type: 'files'
         },
         uploads: files
-      })
+      }
+
+      return req.viewJson
+        ? res.json(locals)
+        : res.render('user', locals)
     }
     next()
   })
   .get('/:username/albums', (req, res, next) => {
     let username = req.params.username
-    let limit = config.pagination.limit
-    let page = req.query.page || 0
+    let showPrivate = (req.session && req.session.user && req.session.user.username === username)
+
     if (database().queryFirstCell(`SELECT username FROM users WHERE username=?`, username)) {
-      let albums = (req.session && req.session.user.username === username)
-        ? database().query(`SELECT * FROM albums WHERE uploaded_by=? LIMIT ? OFFSET ?`, username, limit, page)
-        : database().query(`SELECT * FROM files WHERE uploaded_by=? AND NOT public=0 LIMIT ? OFFSET ?`, username, limit, page)
-      return res.render('user', {
+      let albums = showPrivate
+        ? database().query(`SELECT * FROM albums WHERE uploaded_by=? ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
+        : database().query(`SELECT * FROM albums WHERE uploaded_by=? AND NOT public=0 ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
+
+      let totalAlbums = showPrivate
+        ? database().query(`SELECT COUNT(id) FROM albums WHERE uploaded_by=?`, username)
+        : database().query(`SELECT COUNT(id) FROM albums WHERE uploaded_by=? AND NOT public=0`, username)
+
+      let locals = {
         pagination: {
-          page: 1,
-          pageCount: 1
+          page: req.viewPage,
+          pageCount: Math.ceil(Object.values(totalAlbums[0])[0] / req.viewLimit)
         },
         view: {
-          path: `${req.originalUrl}${req.originalUrl.endsWith('/') ? '' : '/'}`,
+          path: `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`,
           type: 'albums'
         },
         uploads: albums
-      })
+      }
+
+      return req.viewJson
+      ? res.json(locals)
+      : res.render('user', locals)
     }
     next()
   })

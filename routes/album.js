@@ -20,7 +20,7 @@ export default Router()
     let page = req.query.page || 0
     let album_title = database().queryFirstCell(`SELECT title,  FROM albums WHERE id=?`, album_id)
     if (album_title) {
-      let files = database().query(`SELECT * FROM files WHERE in_album=? ORDER BY uploaded_at LIMIT ? OFFSET ?`, album_id, limit, page)
+      let files = database().query(`SELECT * FROM files WHERE in_album=? ORDER BY file_uploaded_at LIMIT ? OFFSET ?`, album_id, limit, page)
       return res.render('debug', {
         title_fragment: album_title || 'Album',
         route: `${req.baseUrl}${req.path}`,

@@ -110,8 +110,14 @@ export default Router()
 
   // POST Method Routes
   .post('/login', async (req, res, next) => {
-    if (!req.body.username || !req.body.password || (config.auth.captcha.enabled.login && !req.body.captcha)) return next(createError(400, 'All Fields Required'))
-    if (config.auth.captcha.enabled.login && !captcha.validate(req, req.body.captcha)) return next(createError(400, 'Captcha Failed'))
+    if (!req.body.username
+     || !req.body.password
+     || (config.auth.captcha.enabled.login && !req.body.captcha)
+    ) return next(createError(400, 'All Fields Required'))
+    if (config.auth.captcha.enabled.login
+     && !captcha.validate(req, req.body.captcha)
+    ) return next(createError(400, 'Captcha Failed'))
+
     try {
       let user = database().queryFirstRow(`SELECT id, username, password FROM users WHERE username=?`, req.body.username)
       if (await validate(req.body.password, user.password)) req.session.user = {
@@ -126,8 +132,15 @@ export default Router()
   })
   .post('/signup', async (req, res, next) => {
     if (!config.auth.allowSignup) return next(createError(503, 'Account Creation Disabled'))
-    if (!req.body.username || !req.body.password || !req.body.passwordConfirm || !req.body.email || (config.auth.captcha.enabled.signup && !req.body.captcha)) return next(createError(400, 'All Fields Required'))
-    if (config.auth.captcha.enabled.signup && !captcha.validate(req, req.body.captcha)) return next(createError(400, 'Captcha Failed'))
+    if (!req.body.username
+     || !req.body.password
+     || !req.body.passwordConfirm
+     || !req.body.email
+     || (config.auth.captcha.enabled.signup && !req.body.captcha)
+    ) return next(createError(400, 'All Fields Required'))
+    if (config.auth.captcha.enabled.signup
+     && !captcha.validate(req, req.body.captcha)
+    ) return next(createError(400, 'Captcha Failed'))
     if (req.body.password !== req.body.passwordConfirm) return next(createError(400, 'Passwords Don\'t Match'))
     try {
       req.session.user = {
