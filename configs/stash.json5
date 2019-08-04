@@ -1,6 +1,5 @@
 {
   server: {
-    name: 'stash.red',
     env: 'prod', // `[dev]elopment` or `[prod]uction`
   },
   auth: {

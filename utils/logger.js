@@ -2,7 +2,7 @@ import morgan, { token } from 'morgan'
 import chalk from 'chalk'
 
 // setup morgan tokens
-token('server-name', (req, res) => chalk.grey(config.server.name))
+token('host-name', (req, res) => chalk.grey(req.hostname))
 token('id', (req, res) => chalk.grey(req.id.split('-').reverse().pop()))
 token('url', (req, res) => chalk.green(req.originalUrl))
 token('method', (req, res) => {

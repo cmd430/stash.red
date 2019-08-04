@@ -69,7 +69,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.static(www))
 app.use(clearDeadCookies())
 app.use((req, res, next) => {
-  res.locals.title = config.server.name
+  res.locals.title = req.hostname
   res.locals.signedin = req.session.user
   res.locals.direct = `${req.protocol}://direct.${req.hostname}`
   next()
