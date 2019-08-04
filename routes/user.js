@@ -37,8 +37,10 @@ export default Router()
 
     if (database().queryFirstCell(`SELECT username FROM users WHERE username=?`, username)) {
       let files = showPrivate
-        ? database().query(`SELECT id, file_id, mimetype FROM files WHERE uploaded_by=? AND in_album IS NULL ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
-        : database().query(`SELECT id, file_id, mimetype FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0 ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
+        ? database().query(`SELECT id, file_id, mimetype FROM files WHERE uploaded_by=? AND in_album IS NULL
+                            ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
+        : database().query(`SELECT id, file_id, mimetype FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0
+                            ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
 
       let totalFiles = showPrivate
         ? database().query(`SELECT COUNT(id) FROM files WHERE uploaded_by=? AND in_album IS NULL`, username)
@@ -68,8 +70,10 @@ export default Router()
 
     if (database().queryFirstCell(`SELECT username FROM users WHERE username=?`, username)) {
       let albums = showPrivate
-        ? database().query(`SELECT * FROM albums WHERE uploaded_by=? ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
-        : database().query(`SELECT * FROM albums WHERE uploaded_by=? AND NOT public=0 ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
+        ? database().query(`SELECT id, album_id, (SELECT COUNT(id) FROM files WHERE in_album = albums.album_id) AS total_files
+                            FROM albums WHERE uploaded_by=? ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
+        : database().query(`SELECT id, album_id, (SELECT COUNT(id) FROM files WHERE in_album = albums.album_id) AS total_files
+                            FROM albums WHERE uploaded_by=? AND NOT public=0 ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
 
       let totalAlbums = showPrivate
         ? database().query(`SELECT COUNT(id) FROM albums WHERE uploaded_by=?`, username)
