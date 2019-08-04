@@ -1,5 +1,8 @@
 {
   pagination: {
-    limit: 35
+    limit: {
+      default: 35,
+      max: 70,
+    }
   }
 }
