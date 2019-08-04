@@ -7,7 +7,7 @@
     }
   },
   log: {
-    /*
+    /**
      * format
      *  accepts any named format or string or tokens from 'morgan'
      *   https://github.com/expressjs/morgan#predefined-formats

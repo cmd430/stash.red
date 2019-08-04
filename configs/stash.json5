@@ -5,7 +5,7 @@
   },
   auth: {
     allowSignup: true,
-    /*
+    /**
      * rounds
      *  Rounds as {Number} for salt generation
      *  Default: 10
@@ -16,7 +16,7 @@
         login: false,
         signup: true
       },
-      /*
+      /**
        *  accepts any option that is accepted by
        *  https://github.com/lemonce/svg-captcha
        *
@@ -48,7 +48,7 @@
       secret: 'stash',
       cookie: {
         secure: 'auto',
-        /*
+        /**
          * maxAge
          *  Max age of session in ms
          *  Default: 604800000 (1 week)
@@ -58,7 +58,7 @@
     },
   },
   log: {
-    /*
+    /**
      * level
      *  0 -  silent
      *  1 -  info
@@ -69,7 +69,7 @@
     level: 1,
     color: {
       enabled: true,
-      /*
+      /**
        * level
        *  1 -  Basic color support (16 colors)
        *  2 -  256 color support
