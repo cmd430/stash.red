@@ -42,16 +42,6 @@ export default Router()
   .get('/captcha', captcha.generate())
 
   .get('/debug', async (req, res, next) => {
-    try { // Add user
-      database().insert('users', {
-        username: 'cmd430',
-        password: await hash('hunter2'),
-        email: 'email@address.com'
-      })
-    } catch (err) {
-      // Error
-      error(err.message)
-    }
     try { // Add single file
       database().insert('files', {
         uploaded_by: 'cmd430',
@@ -68,8 +58,8 @@ export default Router()
       error(err.message)
     }
     try { // Add album with 2 files
-      const insert_album = database().prepare(`INSERT INTO albums (album_id, title, uploaded_by, uploaded_at, total_files, public)
-                                               VALUES (@album_id, @title, @uploaded_by, @uploaded_at, @total_files, @public)`)
+      const insert_album = database().prepare(`INSERT INTO albums (album_id, title, uploaded_by, uploaded_at, public)
+                                               VALUES (@album_id, @title, @uploaded_by, @uploaded_at, @public)`)
       const insert_file = database().prepare(`INSERT INTO files (file_id, uploaded_by, uploaded_at, original_filename, mimetype, filesize, in_album, public)
                                               VALUES (@file_id, @uploaded_by, @uploaded_at, @original_filename, @mimetype, @filesize, @in_album, @public)`)
       const insert_files = database().transaction(files => { for (const file of files) insert_file.run(file) })
@@ -78,7 +68,7 @@ export default Router()
         insert_files([
           {
             uploaded_by: 'cmd430',
-            uploaded_at: new Date().toUTCString(),
+            uploaded_at:  album.uploaded_at,
             file_id: createID(),
             original_filename: 'image.jpg',
             mimetype: 'image/jpg',
@@ -88,7 +78,7 @@ export default Router()
           },
           {
             uploaded_by: 'cmd430',
-            uploaded_at: new Date().toUTCString(),
+            uploaded_at: album.uploaded_at,
             file_id: createID(),
             original_filename: 'image3.jpg',
             mimetype: 'image/jpg',
@@ -102,7 +92,7 @@ export default Router()
         album_id: createID(),
         title: 'TEST ALBUM',
         uploaded_by: 'cmd430',
-        uploaded_at: upload_time,
+        uploaded_at: new Date().toUTCString(),
         public: +true
       })
     } catch (err) {
@@ -123,7 +113,7 @@ export default Router()
     if (!req.body.username || !req.body.password || (config.auth.captcha.enabled.login && !req.body.captcha)) return next(createError(400, 'All Fields Required'))
     if (config.auth.captcha.enabled.login && !captcha.validate(req, req.body.captcha)) return next(createError(400, 'Captcha Failed'))
     try {
-      let user = database().queryFirstRow(`SELECT * FROM users WHERE username=?`, req.body.username)
+      let user = database().queryFirstRow(`SELECT id, username, password FROM users WHERE username=?`, req.body.username)
       if (await validate(req.body.password, user.password)) req.session.user = {
         id: user.id,
         username: user.username
