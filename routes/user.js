@@ -55,7 +55,11 @@ export default Router()
           path: `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`,
           type: 'files'
         },
-        uploads: files
+        uploads: files.map(file => {
+          file.public = !!file.public
+          delete file.id
+          return file
+        })
       }
 
       return req.viewJson
@@ -88,7 +92,11 @@ export default Router()
           path: `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`,
           type: 'albums'
         },
-        uploads: albums
+        uploads: albums.map(album => {
+          album.public = !!album.public
+          delete album.id
+          return album
+        })
       }
 
       return req.viewJson

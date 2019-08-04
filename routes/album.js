@@ -29,7 +29,10 @@ export default Router()
       let locals = {
         album_title: album_data.title,
         uploaded_by: album_data.uploaded_by,
-        files: files
+        files: files.map(file => {
+          delete file.id
+          return file
+        })
       }
       return req.viewJson
         ? res.json(locals)
