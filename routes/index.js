@@ -20,9 +20,7 @@ export default Router()
 
   // GET Method Routes
   .get('/', (req, res, next) => {
-    res.render('index', {
-      signedin: req.session.user
-    })
+    res.render('index', {})
   })
   .get('/login', (req, res, next) => {
     res.render('login', {

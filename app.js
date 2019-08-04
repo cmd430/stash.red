@@ -24,10 +24,6 @@ const www = join(__dirname, 'public')
 const database = join(__dirname, 'storage', 'database')
 const sessionStore = expressSqlite3(session)
 
-// locals
-app.locals.title = config.server.name
-
-
 // allow reverse proxy
 app.set('trust proxy', true)
 
@@ -72,6 +68,12 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static(www))
 app.use(clearDeadCookies())
+app.use((req, res, next) => {
+  res.locals.title = config.server.name
+  res.locals.signedin = req.session.user
+  res.locals.direct = `${req.protocol}://direct.${req.hostname}`
+  next()
+})
 
 // subdomain routes
 app.use(subdomain('direct', routes_direct))
