@@ -24,7 +24,6 @@ function mergeDeep (...objects) {
 function hash (password) {
   return bcrypt_hash(password, config.auth.rounds)
 }
-
 function clearDeadCookies () {
   return (req, res, next) => {
     if (req.cookies['connect.sid'] && !req.session.user) {
@@ -33,7 +32,6 @@ function clearDeadCookies () {
     next()
   }
 }
-
 function createID () {
   return randomBytes(6).toString('hex')
 }
