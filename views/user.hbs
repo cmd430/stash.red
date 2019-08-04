@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <base href="{{view.path}}">
     {{> shared/head}}
     <link rel="stylesheet" href="/scss/common.scss" />
     <link rel="stylesheet" href="/scss/user.scss" />
@@ -14,26 +15,26 @@
     </header>
     <div id="container">
       <ul class="tab_container">
-        {{#if_eq user.meta.showing 'files' this}}
+        {{#if_eq view.type 'files' this}}
           <li class="tab active">
             <a>Files</a>
           </li>
           <li class="tab">
-            <a href="?albums">Albums</a>
+            <a href="albums/">Albums</a>
           </li>
         {{else}}
           <li class="tab">
-            <a href="?">Files</a>
+            <a href="..">Files</a>
           </li>
           <li class="tab active">
             <a>Albums</a>
           </li>
         {{/if_eq}}
       </ul>
-      {{#each user.items}}
+      {{#each uploads}}
         {{> preview this}}
       {{/each}}
-      {{> paginator user}}
+      {{> paginator}}
     </div>
     {{> modals}}
   </body>

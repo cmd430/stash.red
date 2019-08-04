@@ -9,9 +9,6 @@ import database from 'better-sqlite3-helper'
  *  User Update      /u/<:username>/update
  */
 
-// TEMP ONLY
-let logged_in_own_page = true
-
 export default Router()
 
   // GET Method Routes
@@ -19,13 +16,20 @@ export default Router()
     let username = req.params.username
     let limit = config.pagination.limit
     let page = req.query.page || 0
+
     if (database().queryFirstCell(`SELECT username FROM users WHERE username=?`, username)) {
-      let files = logged_in_own_page // logged in user viewing own page
+      let files = (req.session && req.session.user.username === username)
         ? database().query(`SELECT * FROM files WHERE uploaded_by=? AND in_album IS NULL ORDER BY uploaded_at LIMIT ? OFFSET ?`, username, limit, page)
         : database().query(`SELECT * FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0 ORDER BY uploaded_at LIMIT ? OFFSET ?`, username, limit, page)
-      return res.render('debug', {
-        title_fragment: username,
-        route: `${req.baseUrl}${req.path}`,
+      return res.render('user', {
+        pagination: {
+          page: 1,
+          pageCount: 1
+        },
+        view: {
+          path: `${req.originalUrl}${req.originalUrl.endsWith('/') ? '' : '/'}`,
+          type: 'files'
+        },
         uploads: files
       })
     }
@@ -36,13 +40,19 @@ export default Router()
     let limit = config.pagination.limit
     let page = req.query.page || 0
     if (database().queryFirstCell(`SELECT username FROM users WHERE username=?`, username)) {
-      let albums = logged_in_own_page // logged in user viewing own page
+      let albums = (req.session && req.session.user.username === username)
         ? database().query(`SELECT * FROM albums WHERE uploaded_by=? LIMIT ? OFFSET ?`, username, limit, page)
         : database().query(`SELECT * FROM files WHERE uploaded_by=? AND NOT public=0 LIMIT ? OFFSET ?`, username, limit, page)
-      return res.render('debug', {
-        title_fragment: username,
-        route: `${req.baseUrl}${req.path}`,
-        albums: albums
+      return res.render('user', {
+        pagination: {
+          page: 1,
+          pageCount: 1
+        },
+        view: {
+          path: `${req.originalUrl}${req.originalUrl.endsWith('/') ? '' : '/'}`,
+          type: 'albums'
+        },
+        uploads: albums
       })
     }
     next()
