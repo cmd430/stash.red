@@ -13,13 +13,7 @@ import database from 'better-sqlite3-helper'
 let logged_in_own_page = true
 
 export default Router()
-/*
-  // Global Method
-  .all('*', (req, res, next) => {
-    // if logged in set var...
-    next()
-  })
-*/
+
   // GET Method Routes
   .get('/:username', (req, res, next) => {
     let username = req.params.username
