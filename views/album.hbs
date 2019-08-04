@@ -9,8 +9,8 @@
   <body class="light">
     <header>
       {{> logo server}}
-      <h1 {{#if_eq @root.signedin.username album.meta.uploaded.by album}}class="editable"{{/if_eq}}>
-        {{#if_eq @root.signedin.username album.meta.uploaded.by album}}
+      <h1 {{#if_eq @root.signedin.username uploaded_by this}}class="editable"{{/if_eq}}>
+        {{#if_eq @root.signedin.username uploaded_by this}}
           <a class="album__delete" title="Delete this Album" data-url="{{this.path}}" data-username="{{@root.signedin.username}}">
             <i class="icon-trash"></i>
           </a>
