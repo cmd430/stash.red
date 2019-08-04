@@ -13,12 +13,17 @@ export default Router()
 
   .use((req, res, next) => {
     let sort = req.query.sort || 'DESC'
+    let limit = req.query.limit || config.pagination.limit
     req.viewPage = req.query.page || 1
-    req.viewLimit = config.pagination.limit
+    req.viewLimit = limit > config.pagination.limit
+      ? config.pagination.limit
+      : limit > 0
+        ? limit
+        : config.pagination.limit
     req.viewOffset = req.viewLimit * (req.viewPage - 1)
     req.viewJson = Object.keys(req.query).includes('json')
-    ? true
-    : false
+      ? true
+      : false
     req.sortOrder = (sort !== 'DESC' && sort !== 'ASC')
       ? 'DESC'
       : sort
