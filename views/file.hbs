@@ -12,15 +12,15 @@
       <h1></h1>
     </header>
     <div id="container">
-      {{#is file 'image'}}
+      {{#if_contains 'image' mimetype this}}
         {{> image this}}
-      {{/is}}
-      {{#is file 'video'}}
+      {{/if_contains}}
+      {{#if_contains 'video' mimetype this}}
         {{> video this}}
-      {{/is}}
-      {{#is file 'audio'}}
+      {{/if_contains}}
+      {{#if_contains 'audio' mimetype this}}
         {{> audio this}}
-      {{/is}}
+      {{/if_contains}}
     </div>
     {{> modals}}
   </body>

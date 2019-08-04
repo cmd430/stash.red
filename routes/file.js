@@ -12,16 +12,23 @@ import database from 'better-sqlite3-helper'
 
 export default Router()
 
+  .use((req, res, next) => {
+    req.viewJson = Object.keys(req.query).includes('json')
+      ? true
+      : false
+    next()
+  })
+
   // GET Method Routes
   .get('/:file_id', (req, res, next) => {
     let file_id = req.params.file_id
-    let file = database().queryFirstRow(`SELECT * FROM files WHERE id=?`, file_id)
+    let file = database().queryFirstRow(`SELECT id, file_id, mimetype, uploaded_by FROM files WHERE file_id=?`, file_id)
     if (file) {
-      return res.render('debug', {
-        title_fragment: file_id,
-        route: `${req.baseUrl}${req.path}`,
-        file: file
-      })
+      let locals = file
+
+      return req.viewJson
+        ? res.json(locals)
+        : res.render('file', locals)
     }
     next()
   })
