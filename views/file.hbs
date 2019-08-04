@@ -1,36 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
-    <meta name="theme-color" content="{{server.opengraph.theme}}" />
-    <meta property="og:title" content="{{file.id}}" />
-    <meta property="og:site_name" content="{{server.name.fullname}}" />
-    <meta property="og:url" content="{{server.opengraph.url}}" />
-    {{#is file 'image'}}
-      <meta property="twitter:card" content="summary_large_image" />
-      <meta property="og:image" content="{{this.directpath}}" />
-    {{/is}}
-    {{#is file 'audio'}}
-      <!-- The Player doesn't seem to work for audio :/ -->
-      <meta property="twitter:card" content="player" />
-      <meta property="twitter:player" content="{{this.directpath}}" />
-      <meta property="twitter:player:width" content="1920" />
-      <meta property="twitter:player:height" content="1080" />
-      <meta property="twitter:image" content="{{this.meta.thumbnail}}" />
-    {{/is}}
-    {{#is file 'video'}}
-      <meta property="twitter:card" content="player" />
-      <meta property="twitter:player" content="{{this.directpath}}" />
-      <meta property="twitter:player:width" content="1920" />
-      <meta property="twitter:player:height" content="1080" />
-    {{/is}}
-    <link rel="icon" type="image/png" href="/img/favicon.png" />
+    {{> shared/head}}
     <link rel="stylesheet" href="/scss/common.scss" />
-    <link rel="stylesheet" href="/scss/theme.scss" />
     <script src="/js/common.js"></script>
     <script src="/js/media.js"></script>
-    <title>{{server.name.fullname}} | {{file.id}}</title>
   </head>
   <body class="light">
     <header>

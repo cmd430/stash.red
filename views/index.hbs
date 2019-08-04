@@ -1,21 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
-    <meta name="theme-color" content="{{server.opengraph.theme}}" />
-    <meta property="twitter:card" content="summary" />
-    <meta property="og:image" content="{{server.opengraph.icon}}" />
-    <meta property="og:title" content="{{server.name.fullname}}" />
-    <meta property="og:description" content="An Image/Audio and Video Host" />
-    <meta property="og:site_name" content="{{server.name.fullname}}" />
-    <meta property="og:url" content="{{server.opengraph.url}}" />
-    <link rel="icon" type="image/png" href="/img/favicon.png" />
+    {{> shared/head}}
     <link rel="stylesheet" href="/scss/common.scss" />
     <link rel="stylesheet" href="/scss/index.scss" />
-    <link rel="stylesheet" href="/scss/theme.scss" />
     <script src="/js/index.js"></script>
-    <title>{{server.name.fullname}}</title>
   </head>
   <body class="light">
     {{#if signedin.isAdmin}}

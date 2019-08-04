@@ -12,7 +12,10 @@
      */
     rounds: 10,
     captcha: {
-      enabled: true,
+      enabled: {
+        login: false,
+        signup: true
+      },
       /*
        *  accepts any option that is accepted by
        *  https://github.com/lemonce/svg-captcha
