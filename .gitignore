@@ -1,6 +1,6 @@
+docs/.ignore/**
 node_modules/**
 storage/**
-docs/*.notes
 
 # VS Code workspace
 # (needs special rule thanks to the
