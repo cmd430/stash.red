@@ -40,12 +40,12 @@ export default Router()
     next()
   })
 
-  // POST Method Routes
-  .post('/:file_id/update', (req, res, next) => res.sendStatus(200))
+  // PATCH Method Routes
+  .patch('/:file_id/update', (req, res, next) => res.sendStatus(200))
 
   // Method Not Implimented
   .all('/:file_id/update', (req, res, next) => {
-  if (!req.method === 'POST') return next(createError(501))
+  if (!req.method === 'PATCH') return next(createError(501))
     next()
   })
   .all('*', (req, res, next) => {

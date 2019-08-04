@@ -48,7 +48,9 @@ export default Router()
 
   // POST Method Routes
   .post('/:album_id/upload', (req, res, next) => res.sendStatus(200))
-  .post('/:album_id/update', (req, res, next) => res.sendStatus(200))
+
+  // PATCH Method Routes
+  .patch('/:album_id/update', (req, res, next) => res.sendStatus(200))
 
   // Method Not Implimented
   .all('/:album_id/upload', (req, res, next) => {
@@ -56,7 +58,7 @@ export default Router()
     next()
   })
   .all('/:album_id/update', (req, res, next) => {
-    if (!req.method === 'POST') return next(createError(501))
+    if (!req.method === 'PATCH') return next(createError(501))
     next()
   })
   .all('*', (req, res, next) => {
