@@ -52,6 +52,7 @@ export default Router()
           pageCount:  Math.ceil(Object.values(totalFiles[0])[0] / req.viewLimit)
         },
         view: {
+          username: username,
           path: `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`,
           type: 'files'
         },
@@ -89,6 +90,7 @@ export default Router()
           pageCount: Math.ceil(Object.values(totalAlbums[0])[0] / req.viewLimit)
         },
         view: {
+          username: username,
           path: `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`,
           type: 'albums'
         },
