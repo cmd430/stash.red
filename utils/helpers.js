@@ -26,9 +26,7 @@ function hash (password) {
 }
 function clearDeadCookies () {
   return (req, res, next) => {
-    if (req.cookies['connect.sid'] && !req.session.user) {
-      res.clearCookie('connect.sid')
-    }
+    if (req.cookies['connect.sid'] && !req.session.user) res.clearCookie('connect.sid')
     next()
   }
 }
