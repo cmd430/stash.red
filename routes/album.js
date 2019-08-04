@@ -13,19 +13,26 @@ import database from 'better-sqlite3-helper'
 
 export default Router()
 
+  .use((req, res, next) => {
+    req.viewJson = Object.keys(req.query).includes('json')
+      ? true
+      : false
+    next()
+  })
+
   // GET Method Routes
   .get('/:album_id', (req, res, next) => {
     let album_id = req.params.album_id
-    let limit = config.pagination.limit
-    let page = req.query.page || 0
-    let album_title = database().queryFirstCell(`SELECT title,  FROM albums WHERE id=?`, album_id)
+    let album_title = database().queryFirstCell(`SELECT title FROM albums WHERE album_id=?`, album_id)
     if (album_title) {
-      let files = database().query(`SELECT * FROM files WHERE in_album=? ORDER BY file_uploaded_at LIMIT ? OFFSET ?`, album_id, limit, page)
-      return res.render('debug', {
-        title_fragment: album_title || 'Album',
-        route: `${req.baseUrl}${req.path}`,
+      let files = database().query(`SELECT id, file_id, mimetype, uploaded_by FROM files WHERE in_album=? ORDER BY id DESC`, album_id)
+      let locals = {
+        album_title: album_title,
         files: files
-      })
+      }
+      return req.viewJson
+        ? res.json(locals)
+        : res.render('album', locals)
     }
     next()
   })

@@ -1,7 +1,7 @@
 <span class="wrapper">
   <div class="video__player">
     <video>
-      <source src="{{this.directpath}}" />
+      <source src="{{@root.direct}}/{{this.file_id}}.{{ext this.mimetype}}" />
     </video>
     <div class="video__controls">
       <button class="playback__playPause paused" title="Play">
@@ -21,7 +21,7 @@
         <input class="volume__control" type="range" min="0" max="1" step="0.01" value="1" />
       </span>
       <span class="playback__extra">
-        <a class="control__breakout" title="View on seperate page" href="{{this.path}}">
+        <a class="control__breakout" title="View on seperate page" href="{{@root.direct}}/{{this.file_id}}.{{ext this.mimetype}}">
           <i class="icon-link-ext"></i>
         </a>
         <a class="control__download" title="Download this File" href="{{this.downloadpath}}">
@@ -33,9 +33,9 @@
       </span>
     </div>
   </div>
-  {{#if_eq @root.signedin.username this.meta.uploaded.by this}}
+  {{#if_eq @root.signedin.username this.uploaded_by this}}
     <div class="actions">
-      <a class="action__delete" title="Delete this Video" data-url="{{this.path}}" data-username="{{@root.signedin.username}}">
+      <a class="action__delete" title="Delete this Video" data-url="{{this.file_id}}" data-username="{{@root.signedin.username}}">
         <i class="icon-trash"></i>
       </a>
     </div>

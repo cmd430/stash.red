@@ -46,13 +46,13 @@
           background: no-repeat left bottom/40px url('/img/private.png'), no-repeat right top/40px url('/img/image.png');
         }
         &.audio {
-          background-image: no-repeat left bottom/40px url('/img/private.png'), no-repeat right top/40px url('/img/audio.png');
+          background: no-repeat left bottom/40px url('/img/private.png'), no-repeat right top/40px url('/img/audio.png');
         }
         &.video {
-          background-image: no-repeat left bottom/40px url('/img/private.png'), no-repeat right top/40px url('/img/video.png');
+          background: no-repeat left bottom/40px url('/img/private.png'), no-repeat right top/40px url('/img/video.png');
         }
         &.album {
-          background-image: no-repeat left bottom/40px url('/img/private.png'), no-repeat right top/40px url('/img/album.png');
+          background: no-repeat left bottom/40px url('/img/private.png'), no-repeat right top/40px url('/img/album.png');
         }
       }
     }

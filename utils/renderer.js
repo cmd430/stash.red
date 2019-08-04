@@ -13,6 +13,13 @@ function renderer (app) {
     if (a === b) return opts.fn(context)
     return opts.inverse(context)
   })
+  hbs.registerHelper('if_contains', (a, b, context, opts) => {
+    if (context instanceof Function) opts = context
+    if (!context instanceof Object) context = this
+    if (b.includes(a)) return opts.fn(context)
+    return opts.inverse(context)
+  })
+  hbs.registerHelper('ext', data => data.split('/')[1])
   hbs.registerHelper('json', data => JSON.stringify(data, null, 2))
   return hbs
 }
