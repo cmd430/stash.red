@@ -1,4 +1,5 @@
-import { Router } from 'express'
+import { join } from 'path'
+import express, { Router } from 'express'
 import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
 
@@ -18,6 +19,10 @@ export default Router()
       ? true
       : false
     next()
+  })
+  .use('/:album_id/thumbnail', (req, res, next) => {
+    let thumbnail_id = database().queryFirstCell(`SELECT file_id FROM files WHERE in_album=? ORDER BY id DESC`, req.params.album_id)
+    express.static(join(__dirname, '..', 'storage', 'thumbnail', `${thumbnail_id}.webp`))(req, res, next)
   })
 
   // GET Method Routes

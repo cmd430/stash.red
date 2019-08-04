@@ -1,14 +1,14 @@
 <div class="preview{{#unless this.public}} private{{/unless}}">
   {{#if this.mimetype}}
     <a href="/f/{{this.file_id}}">
-      <img class="thumbnail" src="{{this.meta.thumbnail}}"></img>
+      <img class="thumbnail" src="/f/{{this.file_id}}/thumbnail"></img>
       {{#if_contains 'image' this.mimetype this}}<span class="icon image"></span>{{/if_contains}}
       {{#if_contains 'audio' this.mimetype this}}<span class="icon audio"></span>{{/if_contains}}
       {{#if_contains 'video' this.mimetype this}}<span class="icon video"></span>{{/if_contains}}
     </a>
   {{else}}
     <a href="/a/{{this.album_id}}">
-      <img class="thumbnail" src="{{this.meta.thumbnail}}"></img>
+      <img class="thumbnail" src="/a/{{this.album_id}}/thumbnail"></img>
       <span class="icon album"></span>
     </a>
   {{/if}}

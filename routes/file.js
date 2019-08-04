@@ -1,4 +1,5 @@
-import { Router } from 'express'
+import { join } from 'path'
+import express, { Router } from 'express'
 import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
 
@@ -17,6 +18,9 @@ export default Router()
       ? true
       : false
     next()
+  })
+  .use('/:file_id/thumbnail', (req, res, next) => {
+    express.static(join(__dirname, '..', 'storage', 'thumbnail', `${req.params.file_id}.webp`))(req, res, next)
   })
 
   // GET Method Routes
