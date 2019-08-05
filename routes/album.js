@@ -31,7 +31,8 @@ export default Router()
     let album_data = database().queryFirstRow(`SELECT title, uploaded_by FROM albums WHERE album_id=?`, album_id)
     if (album_data) {
       let files = database().query(`SELECT id, file_id, mimetype, uploaded_by FROM files WHERE in_album=? ORDER BY id DESC`, album_id)
-      let locals = {
+
+      res.locals.album = {
         album_title: album_data.title,
         uploaded_by: album_data.uploaded_by,
         files: files.map(file => {
@@ -39,9 +40,10 @@ export default Router()
           return file
         })
       }
+
       return req.viewJson
-        ? res.json(locals)
-        : res.render('album', locals)
+        ? res.json(res.locals)
+        : res.render('album')
     }
     next()
   })

@@ -46,26 +46,24 @@ export default Router()
         ? database().query(`SELECT COUNT(id) FROM files WHERE uploaded_by=? AND in_album IS NULL`, username)
         : database().query(`SELECT COUNT(id) FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0`, username)
 
-      let locals = {
-        pagination: {
-          page: req.viewPage,
-          pageCount:  Math.ceil(Object.values(totalFiles[0])[0] / req.viewLimit)
-        },
-        view: {
-          username: username,
-          path: `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`,
-          type: 'files'
-        },
-        uploads: files.map(file => {
-          file.public = !!file.public
-          delete file.id
-          return file
-        })
+      res.locals.pagination = {
+        page: req.viewPage,
+        pageCount:  Math.ceil(Object.values(totalFiles[0])[0] / req.viewLimit)
       }
+      res.locals.view = {
+        username: username,
+        path: `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`,
+        type: 'files'
+      }
+      res.locals.uploads = files.map(file => {
+        file.public = !!file.public
+        delete file.id
+        return file
+      })
 
       return req.viewJson
-        ? res.json(locals)
-        : res.render('user', locals)
+        ? res.json(res.locals)
+        : res.render('user')
     }
     next()
   })
@@ -84,26 +82,24 @@ export default Router()
         ? database().query(`SELECT COUNT(id) FROM albums WHERE uploaded_by=?`, username)
         : database().query(`SELECT COUNT(id) FROM albums WHERE uploaded_by=? AND NOT public=0`, username)
 
-      let locals = {
-        pagination: {
-          page: req.viewPage,
-          pageCount: Math.ceil(Object.values(totalAlbums[0])[0] / req.viewLimit)
-        },
-        view: {
-          username: username,
-          path: `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`,
-          type: 'albums'
-        },
-        uploads: albums.map(album => {
-          album.public = !!album.public
-          delete album.id
-          return album
-        })
+      res.locals.pagination = {
+        page: req.viewPage,
+        pageCount: Math.ceil(Object.values(totalAlbums[0])[0] / req.viewLimit)
       }
+      res.locals.view = {
+        username: username,
+        path: `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`,
+        type: 'albums'
+      }
+      res.locals.uploads = albums.map(album => {
+        album.public = !!album.public
+        delete album.id
+        return album
+      })
 
       return req.viewJson
-      ? res.json(locals)
-      : res.render('user', locals)
+        ? res.json(res.locals)
+        : res.render('user')
     }
     next()
   })

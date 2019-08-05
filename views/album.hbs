@@ -9,21 +9,21 @@
   <body class="light">
     <header>
       {{> logo server}}
-      <h1 {{#if_eq @root.signedin.username uploaded_by this}}class="editable"{{/if_eq}}>
-        {{#if_eq @root.signedin.username uploaded_by this}}
-          <a class="album__delete" title="Delete this Album" data-url="{{this.path}}" data-username="{{@root.signedin.username}}">
+      <h1 {{#if_eq signedin.username album.uploaded_by this}}class="editable"{{/if_eq}}>
+        {{#if_eq signedin.username album.uploaded_by this}}
+          <a class="album__delete" title="Delete this Album" data-url="{{this.path}}" data-username="{{signedin.username}}">
             <i class="icon-trash"></i>
           </a>
-          <input type="text" class="album__title_input" placeholder="Album" value="{{album_title}}" data-title="{{album_title}}" maxlength="100" />
+          <input type="text" class="album__title_input" placeholder="Album" value="{{album.album_title}}" data-title="{{album.album_title}}" maxlength="100" />
         {{/if_eq}}
         <a class="album__download" title="Download this Album" href="{{album.downloadpath}}">
           <i class="icon-download"></i>
         </a>
-        {{album_title}}
+        {{album.album_title}}
       </h1>
     </header>
     <div id="container">
-      {{#each files}}
+      {{#each album.files}}
         {{#if_contains mimetype 'image' this}}
           {{> image this}}
         {{/if_contains}}

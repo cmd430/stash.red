@@ -28,14 +28,14 @@ export default Router()
     let file_id = req.params.file_id
     let file = database().queryFirstRow(`SELECT id, file_id, mimetype, uploaded_by FROM files WHERE file_id=?`, file_id)
     if (file) {
-      let locals = [file].map(file => {
+      res.locals.file = [file].map(file => {
         delete file.id
         return file
       })[0]
 
       return req.viewJson
-        ? res.json(locals)
-        : res.render('file', locals)
+        ? res.json(res.locals)
+        : res.render('file')
     }
     next()
   })

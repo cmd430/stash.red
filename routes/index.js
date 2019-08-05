@@ -20,7 +20,7 @@ export default Router()
 
   // GET Method Routes
   .get('/', (req, res, next) => {
-    res.render('index', {})
+    res.render('index')
   })
   .get('/login', (req, res, next) => {
     res.render('login', {
@@ -35,11 +35,9 @@ export default Router()
   })
   .get('/logout', (req, res, next) => {
     if (req.session) req.session.destroy()
-    return res.redirect('/')
+    res.redirect('/')
   })
   .get('/captcha', captcha.generate())
-
-
   .get('/debug', (req, res, next) => {
     res.render('debug', {})
   })
@@ -111,6 +109,7 @@ export default Router()
   })
 
   // POST Method Routes
+  .post('/upload', (req, res, next) => res.sendStatus(200))
   .post('/login', async (req, res, next) => {
     if (!req.body.username
      || !req.body.password
@@ -131,7 +130,7 @@ export default Router()
       return next(createError(401))
     }
 
-    return res.redirect('/')
+    res.redirect('/')
   })
   .post('/signup', async (req, res, next) => {
     if (!config.auth.allowSignup) return next(createError(503, 'Account Creation Disabled'))
@@ -158,9 +157,8 @@ export default Router()
       error(err.message)
       return next(createError(409))
     }
-    return res.status(201).redirect('/')
+    res.status(201).redirect('/')
   })
-  .post('/upload', (req, res, next) => res.sendStatus(200))
 
   // Method Not Implimented
   .all('/', (req, res, next) => next(createError(501)))
@@ -168,4 +166,8 @@ export default Router()
   .all('/signup', (req, res, next) => next(createError(501)))
   .all('/logout', (req, res, next) => next(createError(501)))
   .all('/captcha', (req, res, next) => next(createError(501)))
-  .all('/upload', (req, res, next) => next(createError(501)))
+  .all('/upload', (req, res, next) => next(createError(405, 'Method Not Allowed', {
+    headers: {
+      Allow: 'POST'
+    }
+  })))
