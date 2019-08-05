@@ -24,13 +24,13 @@
     </header>
     <div id="container">
       {{#each files}}
-        {{#if_contains 'image' mimetype this}}
+        {{#if_contains mimetype 'image' this}}
           {{> image this}}
         {{/if_contains}}
-        {{#if_contains 'video' mimetype this}}
+        {{#if_contains mimetype 'video' this}}
           {{> video this}}
         {{/if_contains}}
-        {{#if_contains 'audio' mimetype this}}
+        {{#if_contains mimetype 'audio' this}}
           {{> audio this}}
         {{/if_contains}}
       {{/each}}

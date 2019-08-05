@@ -16,7 +16,7 @@ function renderer (app) {
   hbs.registerHelper('if_contains', (a, b, context, opts) => {
     if (context instanceof Function) opts = context
     if (!context instanceof Object) context = this
-    if (b.includes(a)) return opts.fn(context)
+    if (a.includes(b)) return opts.fn(context)
     return opts.inverse(context)
   })
   hbs.registerHelper('split', (data, split, index) => data.split(split)[index])
