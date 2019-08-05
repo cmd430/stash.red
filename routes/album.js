@@ -1,5 +1,6 @@
 import { join } from 'path'
 import express, { Router } from 'express'
+import upload from '../utils/uploader'
 import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
 
@@ -49,7 +50,7 @@ export default Router()
   })
 
   // POST Method Routes
-  .post('/:album_id/upload', (req, res, next) => res.sendStatus(200))
+  .post('/:album_id/upload', upload)
 
   // PATCH Method Routes
   .patch('/:album_id/update', (req, res, next) => res.sendStatus(200))

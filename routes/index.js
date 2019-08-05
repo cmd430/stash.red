@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import database from 'better-sqlite3-helper'
 import { createID, hash, validate } from '../utils/helpers'
+import upload from '../utils/uploader'
 import { error } from '../utils/logger'
 import createError from 'http-errors'
 import expressCaptcha from 'express-svg-captcha'
@@ -109,7 +110,7 @@ export default Router()
   })
 
   // POST Method Routes
-  .post('/upload', (req, res, next) => res.sendStatus(200))
+  .post('/upload', upload)
   .post('/login', async (req, res, next) => {
     if (!req.body.username
      || !req.body.password
