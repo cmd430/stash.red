@@ -17,5 +17,8 @@ export default Router()
   // GET Method Routes
   .get('/', (req, res, next) => res.redirect(`${req.protocol}://${req.hostname.replace('direct.', '')}`))
 
-  // Method Not Implimented
-  .all('/', (req, res, next) => next(createError(501)))
+  // Method Not Allowed
+  .all('/', (req, res, next) => {
+    if (req.method !== 'GET') return next(createError(405, {headers: { Allow: 'GET' }}))
+    next()
+  })

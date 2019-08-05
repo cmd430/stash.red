@@ -111,12 +111,20 @@ export default Router()
   // POST Method Routes
   .post('/:username/update', (req, res, next) => res.sendStatus(200))
 
-  // Method Not Implimented
-  .all('/:username/update', (req, res, next) => {
-    if (!req.method === 'POST') return next(createError(501))
+  // Method Not Allowed
+  .all('/:username', (req, res, next) => {
+    if (req.method !== 'GET') return next(createError(405, {headers: { Allow: 'GET' }}))
     next()
   })
-  .all('*', (req, res, next) => {
-    if (!req.method === 'GET') return next(createError(501))
+  .all('/:username/albums', (req, res, next) => {
+    if (req.method !== 'GET') return next(createError(405, {headers: { Allow: 'GET' }}))
+    next()
+  })
+  .all('/:username/settings', (req, res, next) => {
+    if (req.method !== 'GET') return next(createError(405, {headers: { Allow: 'GET' }}))
+    next()
+  })
+  .all('/:username/update', (req, res, next) => {
+    if (req.method !== 'POST') return next(createError(405, {headers: { Allow: 'POST' }}))
     next()
   })

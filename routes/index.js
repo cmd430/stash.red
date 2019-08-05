@@ -160,14 +160,28 @@ export default Router()
     res.status(201).redirect('/')
   })
 
-  // Method Not Implimented
-  .all('/', (req, res, next) => next(createError(501)))
-  .all('/login', (req, res, next) => next(createError(501)))
-  .all('/signup', (req, res, next) => next(createError(501)))
-  .all('/logout', (req, res, next) => next(createError(501)))
-  .all('/captcha', (req, res, next) => next(createError(501)))
-  .all('/upload', (req, res, next) => next(createError(405, 'Method Not Allowed', {
-    headers: {
-      Allow: 'POST'
-    }
-  })))
+  // Method Not Allowed
+  .all('/', (req, res, next) => {
+    if (req.method !== 'GET') return next(createError(405, {headers: { Allow: 'GET' }}))
+    next()
+  })
+  .all('/login', (req, res, next) => {
+    if (req.method !== 'GET' || req.method !== 'POST') return next(createError(405, {headers: { Allow: 'GET, POST' }}))
+    next()
+  })
+  .all('/signup', (req, res, next) => {
+    if (req.method !== 'GET' || req.method !== 'POST') return next(createError(405, {headers: { Allow: 'GET, POST' }}))
+    next()
+  })
+  .all('/logout', (req, res, next) => {
+    if (req.method !== 'GET') return next(createError(405, {headers: { Allow: 'GET' }}))
+    next()
+  })
+  .all('/captcha', (req, res, next) => {
+    if (req.method !== 'GET') return next(createError(405, {headers: { Allow: 'GET' }}))
+    next()
+  })
+  .all('/upload', (req, res, next) => {
+    if (req.method !== 'POST') return next(createError(405, {headers: { Allow: 'POST' }}))
+    next()
+  })

@@ -19,9 +19,6 @@ export default Router()
       : false
     next()
   })
-  .use('/:file_id/thumbnail', (req, res, next) => {
-    express.static(join(__dirname, '..', 'storage', 'thumbnail', `${req.params.file_id}.webp`))(req, res, next)
-  })
 
   // GET Method Routes
   .get('/:file_id', (req, res, next) => {
@@ -39,16 +36,23 @@ export default Router()
     }
     next()
   })
+  .use('/:file_id/thumbnail', (req, res, next) => {
+    express.static(join(__dirname, '..', 'storage', 'thumbnail', `${req.params.file_id}.webp`))(req, res, next)
+  })
 
   // PATCH Method Routes
   .patch('/:file_id/update', (req, res, next) => res.sendStatus(200))
 
-  // Method Not Implimented
-  .all('/:file_id/update', (req, res, next) => {
-  if (!req.method === 'PATCH') return next(createError(501))
+  // Method Not Allowed
+  .all('/:file_id', (req, res, next) => {
+    if (req.method !== 'GET') return next(createError(405, {headers: { Allow: 'GET' }}))
     next()
   })
-  .all('*', (req, res, next) => {
-    if (!req.method === 'GET') return next(createError(501))
+  .all('/:file_id/thumbnail', (req, res, next) => {
+    if (req.method !== 'GET') return next(createError(405, {headers: { Allow: 'GET' }}))
+    next()
+  })
+  .all('/:file_id/update', (req, res, next) => {
+    if (req.method !== 'PATCH') return next(createError(405, {headers: { Allow: 'PATCH' }}))
     next()
   })

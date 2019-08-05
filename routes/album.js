@@ -20,10 +20,6 @@ export default Router()
       : false
     next()
   })
-  .use('/:album_id/thumbnail', (req, res, next) => {
-    let thumbnail_id = database().queryFirstCell(`SELECT file_id FROM files WHERE in_album=? ORDER BY id DESC`, req.params.album_id)
-    express.static(join(__dirname, '..', 'storage', 'thumbnail', `${thumbnail_id}.webp`))(req, res, next)
-  })
 
   // GET Method Routes
   .get('/:album_id', (req, res, next) => {
@@ -47,6 +43,10 @@ export default Router()
     }
     next()
   })
+  .use('/:album_id/thumbnail', (req, res, next) => {
+    let thumbnail_id = database().queryFirstCell(`SELECT file_id FROM files WHERE in_album=? ORDER BY id DESC`, req.params.album_id)
+    express.static(join(__dirname, '..', 'storage', 'thumbnail', `${thumbnail_id}.webp`))(req, res, next)
+  })
 
   // POST Method Routes
   .post('/:album_id/upload', (req, res, next) => res.sendStatus(200))
@@ -54,16 +54,20 @@ export default Router()
   // PATCH Method Routes
   .patch('/:album_id/update', (req, res, next) => res.sendStatus(200))
 
-  // Method Not Implimented
-  .all('/:album_id/upload', (req, res, next) => {
-    if (!req.method === 'POST') return next(createError(501))
+  // Method Not Allowed
+  .all('/:album_id', (req, res, next) => {
+    if (req.method !== 'GET') return next(createError(405, {headers: { Allow: 'GET' }}))
+    next()
+  })
+  .all('/:album_id/thumbnail', (req, res, next) => {
+    if (req.method !== 'GET') return next(createError(405, {headers: { Allow: 'GET' }}))
     next()
   })
   .all('/:album_id/update', (req, res, next) => {
-    if (!req.method === 'PATCH') return next(createError(501))
+    if (req.method !== 'PATCH') return next(createError(405, {headers: { Allow: 'PATCH' }}))
     next()
   })
-  .all('*', (req, res, next) => {
-    if (!req.method === 'GET') return next(createError(501))
+  .all('/:album_id/upload', (req, res, next) => {
+    if (req.method !== 'POST') return next(createError(405, {headers: { Allow: 'POST' }}))
     next()
   })
