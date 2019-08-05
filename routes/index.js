@@ -39,7 +39,11 @@ export default Router()
   })
   .get('/captcha', captcha.generate())
 
-  .get('/debug', async (req, res, next) => {
+
+  .get('/debug', (req, res, next) => {
+    res.render('debug', {})
+  })
+  .get('/seed', async (req, res, next) => {
     try { // Add single file
       database().insert('files', {
         uploaded_by: 'cmd430',
@@ -126,6 +130,7 @@ export default Router()
       error(err.message)
       return next(createError(401))
     }
+
     return res.redirect('/')
   })
   .post('/signup', async (req, res, next) => {
