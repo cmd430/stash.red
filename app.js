@@ -6,6 +6,7 @@ import compileSass from 'express-compile-sass'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import expressSqlite3 from 'express-sqlite3'
+import busboy from 'connect-busboy'
 import favicon  from 'serve-favicon'
 import subdomain from 'express-subdomain'
 import { error, expressResponseLogging, expressRequestLogging } from './utils/logger'
@@ -74,14 +75,14 @@ app.use((req, res, next) => {
     if (req.session && req.session.user && req.session.user.username) return req.session.user
     return false
   }
-
   res.locals.env = config.server.env
   res.locals.title = req.hostname
   res.locals.signedin = req.session.user
   res.locals.direct = `${req.protocol}://direct.${req.hostname}`
-
   next()
 })
+app.use(busboy(config.upload))
+
 
 // subdomain routes
 app.use(subdomain('direct', routes_direct))

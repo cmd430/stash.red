@@ -56,6 +56,19 @@
       }
     },
   },
+  upload: {
+    immediate: true,
+    /**
+     * limits
+     *  Accepts any options that busboy accepts
+     *
+     *  Defaults:
+     *    fileSize: 524288000  (500mb)
+     */
+    limits: {
+      fileSize: 524288000
+    }
+  },
   log: {
     /**
      * level
