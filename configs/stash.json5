@@ -57,7 +57,6 @@
     },
   },
   upload: {
-    immediate: true,
     /**
      * limits
      *  Accepts any options that busboy accepts
