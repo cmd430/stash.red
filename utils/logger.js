@@ -3,7 +3,6 @@ import chalk from 'chalk'
 
 // setup morgan tokens
 token('host-name', (req, res) => chalk.grey(req.hostname))
-token('id', (req, res) => chalk.grey(req.id.split('-').reverse().pop()))
 token('url', (req, res) => chalk.green(req.originalUrl))
 token('method', (req, res) => {
   switch (req.method) {
@@ -55,38 +54,48 @@ token('content-length', (req, res, format) => {
 })
 
 function expressResponseLogging () {
-  return morgan(config.log.format, {
-    stream: {
-      write: msg => print({
-        logLevel: 1
-      }, msg)
-    }
-  })
+  return (req, res, next) => {
+    return morgan(config.log.format, {
+      stream: {
+        write: msg => {
+          print({
+          logLevel: 1
+        }, msg, req)}
+      }
+    })(req, res, next)
+  }
 }
 function expressRequestLogging () {
-  return morgan(config.log.format, {
-    immediate: true,
-    stream: {
-      write: msg => print({
-        logLevel: 3
-      }, msg)
-    }
-  })
+  return (req, res, next) => {
+    return morgan(config.log.format, {
+      immediate: true,
+      stream: {
+        write: msg => {
+          print({
+          logLevel: 3
+        }, msg, req)}
+      }
+    })(req, res, next)
+  }
 }
 
-function print (opts, args) {
+function print (opts, args, req) {
   let msg = ''
   if (opts.color) {
     let colored = []
     Array.prototype.slice.call(args).forEach(arg => {
-      if (typeof arg === 'object') return colored.push(chalk.keyword(arg[1].color)(arg[0]))
-      if (typeof arg === 'string') return colored.push(chalk.keyword(opts.color)(arg))
+      if (!arg.hasOwnProperty('route')) {
+        if (typeof arg === 'object') return colored.push(chalk.keyword(arg[1].color)(arg[0]))
+        if (typeof arg === 'string') return colored.push(chalk.keyword(opts.color)(arg))
+      } else {
+        req = arg
+      }
     })
     msg = `${colored.join(' ')}\n`
   } else {
     msg = args
   }
-  msg = `${chalk.grey(`[${new Date().toUTCString()}]`)} ${msg}`
+  msg = `${chalk.grey(`[${new Date().toUTCString()}]`)}${req ? ` ${chalk.grey(req.id.split('-')[0])} ` : ' '}${msg}`
   if (opts.logLevel <= config.log.level && msg.length > 0) {
     if (opts.logLevel <= 3) return process.stdout.write(msg)
     if (opts.logLevel === 4) return process.stderr.write(msg)

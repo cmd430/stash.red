@@ -13,10 +13,9 @@
      *   https://github.com/expressjs/morgan#predefined-formats
      *   https://github.com/expressjs/morgan#tokens
      *  also accepts some aditional tokens
-     *   :id                     - id of the request
      *   :host-name              - host name of server
      *   :content-lenth[format]  - content length, format can be: auto, bytes, kb, mb, gb
      */
-    format: ':id :status :method :url :response-time[3] :content-length[auto]'
+    format: ':status :method :url :response-time[3] :content-length[auto]'
   }
 }
