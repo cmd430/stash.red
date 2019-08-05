@@ -9,6 +9,11 @@ body {
   a {
     color: $color-logo;
   }
+  &.dev {
+    a {
+      color: $color-logo-dev;
+    }
+  }
 }
 
 // Common

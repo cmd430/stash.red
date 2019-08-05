@@ -35,7 +35,7 @@ viewEngine(app)
 // https upgrade
 app.use((req, res, next) => {
   if (config.server.https && !req.secure) return res.redirect(301, `https://${req.headers.host}${req.originalUrl}`)
-  return next()
+  next()
 })
 
 // middleware setup
@@ -45,6 +45,7 @@ app.use(session({
   rolling: true,
   saveUninitialized: false,
   unset: 'destroy',
+  name: 'sid',
   cookie: config.auth.session.cookie,
   store: new sessionStore({
     path: join(database, 'sessions.db'),
@@ -69,6 +70,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.static(www))
 app.use(clearDeadCookies())
 app.use((req, res, next) => {
+  res.locals.env = config.server.env
   res.locals.title = req.hostname
   res.locals.signedin = req.session.user
   res.locals.direct = `${req.protocol}://direct.${req.hostname}`
