@@ -1,7 +1,7 @@
 <span class="wrapper">
   <div class="audio__player">
     <audio crossorigin="anonymous">
-      <source src="{{direct}}/{{file_id}}.{{ext mimetype}}" type="{{mimetype}}" />
+      <source src="{{@direct}}/{{file_id}}.{{ext mimetype}}" type="{{mimetype}}" />
     </audio>
     <ul>
       <li class="audio__artwork">
@@ -27,7 +27,7 @@
             <input class="volume__control" type="range" min="0" max="1" step="0.01" value="1" />
           </span>
           <span class="playback__extra">
-            <a class="control__breakout" title="View on seperate page" href="{{direct}}/{{file_id}}.{{ext mimetype}}">
+            <a class="control__breakout" title="View on seperate page" href="{{@direct}}/{{file_id}}.{{ext mimetype}}">
               <i class="icon-link-ext"></i>
             </a>
             <a class="control__download" title="Download this File" href="{{this.downloadpath}}">
