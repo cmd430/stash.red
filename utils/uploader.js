@@ -50,8 +50,11 @@ function upload (req, res, next) {
     if (key === 'options') Object.assign(upload_tracker.options, JSON.parse(value))
     if (key === 'url') {
       ++upload_tracker.parsed
+
+      // TEMP
       ++upload_tracker.written
       console.log(key, value)
+
       req.unpipe(req.busboy)
       req.resume()
     }
