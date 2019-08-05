@@ -7,6 +7,7 @@ import database from 'better-sqlite3-helper'
 import { get } from 'http'
 import { get as secureGet } from 'https'
 import signature from 'stream-signature'
+import { getExtension } from 'mime'
 import sharp from 'sharp'
 import { resolve } from 'url';
 
@@ -15,26 +16,26 @@ const storage = join(__dirname, '..', 'storage')
 sharp.cache(false)
 
 function upload (req, res, next) {
+  let upload_from = req.baseUrl.split('/').pop()
   let user = req.isAuthenticated()
   if (!user) return next(createError(401))
 
-  debug(`${user.username}`, ['Started upload', {color: 'limegreen'}], req)
-
-  let upload_from = req.baseUrl.split('/').pop()
-  if (upload_from === '') {
-    debug('Upload from', ['Homepage', {color: 'cyan'}], req)
-  } else if (upload_from === 'a') {
-    debug('Upload from', ['Album (', {color: 'cyan'}], [`${req.url.split('/')[1]}`, {color: 'yellow'}], [')', {color: 'cyan'}], req)
-  }
+  debug(`${user.username}`,
+    ['Started upload', {color: 'limegreen'}],
+    'from', (upload_from === ''
+      ? (['Homepage', {color: 'cyan'}])
+      : (['Album (', {color: 'cyan'}], [`${req.url.split('/')[1]}`, {color: 'yellow'}], [')', {color: 'cyan'}])
+    ), req)
 
   let upload_tracker = {
     parsed: 0,
     written: 0,
     removed: 0,
     options: {
-      title: '',
+      title: null,
       public: true
     },
+    file_info: [],
     status: 'parsing'
   }
   let temp = {
@@ -63,14 +64,10 @@ function upload (req, res, next) {
     ++upload_tracker.parsed
 
     let fileinfo = {
-      uploaded_by: user.username,
-      uploaded_at: new Date().toISOString(),
       file_id: createID(),
       original_filename: filename,
       mimetype: null,
-      filesize: 0,
-      in_album: null,
-      public: null
+      filesize: 0
     }
     let temp_dest = join(storage, 'temp', fileinfo.file_id)
 
@@ -83,12 +80,12 @@ function upload (req, res, next) {
     temp.files.push(temp_dest)
 
     fileSignature.on('signature', sig => {
-      mimetype = sig.mimetype
-      let mime_parts = mimetype.split('/')
+      fileinfo.mimetype = sig.mimetype
+      let mime_parts = sig.mimetype.split('/')
       if (mime_parts[0] !== 'image' && mime_parts[0] !== 'audio' && mime_parts[0] !== 'video') {
         upload_tracker.status = 'abort'
 
-        debug('Upload of', [`${fileinfo.file_id}`, {color: 'red'}], 'rejected file magic is invaild (', [`${mimetype}`, {color: 'red'}], ')', req)
+        debug('Upload of', [`${fileinfo.file_id}`, {color: 'red'}], 'rejected file magic is invaild (', [`${sig.mimetype}`, {color: 'red'}], ')', req)
 
         req.unpipe(req.busboy)
         req.resume()
@@ -103,6 +100,7 @@ function upload (req, res, next) {
 
         ++upload_tracker.written
         fileinfo.filesize = writeStream.bytesWritten
+        upload_tracker.file_info.push(fileinfo)
 
         if (upload_tracker.status === 'parsed' && upload_tracker.parsed === upload_tracker.written) req.emit('process')
       }
@@ -138,16 +136,39 @@ function upload (req, res, next) {
   req.on('process', () => {
     debug('Processing', [`${upload_tracker.written}`, {color: 'cyan'}],'uploads', req)
 
-    let uploadinfo = {
-      album: {},
-      file: {}
+    let uploadinfo = {}
+    if (upload_tracker.written > 1) {
+      // New album
+      uploadinfo = {
+        album: {
+          album_id: createID(),
+          title: upload_tracker.options.title,
+          uploaded_by: user.username,
+          uploaded_at: new Date().toISOString(),
+          public: +upload_tracker.options.public
+        },
+        files: []
+      }
+      upload_tracker.file_info.forEach((info, index) => {
+        uploadinfo.files.push(Object.assign(info, {
+          uploaded_by: uploadinfo.album.uploaded_by,
+          uploaded_at: uploadinfo.album.uploaded_at,
+          in_album: uploadinfo.album.album_id,
+          public: uploadinfo.album.public
+        }))
+      })
+    } else if (upload_tracker.written === 1) {
+      // Single file
+      uploadinfo = Object.assign(upload_tracker.file_info[0], {
+        uploaded_by: user.username,
+        uploaded_at: new Date().toISOString(),
+        public: +upload_tracker.options.public
+      })
+      if (upload_from === 'a') uploadinfo.in_album = req.url.split('/')[1]
     }
 
-    if (upload_tracker.written > 1) uploadinfo.album.album_id = upload_from === 'a'
-      ? req.url.split('/')[1]
-      : createID()
-
     //TEMP
+
     console.log(uploadinfo)
 
     // LAST!
@@ -163,18 +184,13 @@ function upload (req, res, next) {
 
     debug(`${user.username}`, ['Aborted upload removing', {color: 'red'}], [`${temp.files.length}`, {color: 'cyan'}], ['files', {color: 'red'}], req)
 
-    new Promise((resolve, reject) => {
-      temp.files.forEach((file, index) => {
-        temp.streams[index].end()
-        unlink(file, err => {
-          if (err) debug('File', [`${basename(file)}`, {color: 'red'}], 'unable to be removed', req)
-          if (!err) ++upload_tracker.removed
-          if (index === temp.files.length - 1) resolve()
-        })
+    temp.files.forEach((file, index) => {
+      temp.streams[index].end()
+      unlink(file, err => {
+        if (err) debug('File', [`${basename(file)}`, {color: 'red'}], 'unable to be removed (', [`${err.code}`, {color: 'red'}], ')', req)
+        if (!err) ++upload_tracker.removed
+        if (index === temp.files.length - 1) debug('Removed', [`${upload_tracker.removed}`, {color: 'cyan'}], 'files', req)
       })
-    })
-    .then(() => {
-      debug([`${upload_tracker.removed}`, {color: 'red'}], 'Files removed', req)
     })
   })
 
