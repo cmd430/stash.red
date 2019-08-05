@@ -95,7 +95,7 @@ function print (opts, args, req) {
   } else {
     msg = args
   }
-  msg = `${chalk.grey(`[${new Date().toUTCString()}]`)}${req ? ` ${chalk.grey(req.id.split('-')[0])} ` : ' '}${msg}`
+  msg = `${chalk.grey(`[${new Date().toUTCString()}]`)}${config.log.level >= 3 && req ? ` ${chalk.grey(req.id.split('-')[0])} ` : ' '}${msg}`
   if (opts.logLevel <= config.log.level && msg.length > 0) {
     if (opts.logLevel <= 3) return process.stdout.write(msg)
     if (opts.logLevel === 4) return process.stderr.write(msg)
