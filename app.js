@@ -71,7 +71,7 @@ app.use(express.static(www))
 app.use(clearDeadCookies())
 app.use((req, res, next) => {
   req.isAuthenticated = () => {
-    if (req.session && req.session.user && req.session.user.username) return req.session.user.username
+    if (req.session && req.session.user && req.session.user.username) return req.session.user
     return false
   }
 

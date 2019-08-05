@@ -33,7 +33,7 @@ export default Router()
   // GET Method Routes
   .get('/:username', (req, res, next) => {
     let username = req.params.username
-    let showPrivate = req.isAuthenticated() === username
+    let showPrivate = req.isAuthenticated().username === username
 
     if (database().queryFirstCell(`SELECT username FROM users WHERE username=?`, username)) {
       let files = showPrivate
@@ -69,7 +69,7 @@ export default Router()
   })
   .get('/:username/albums', (req, res, next) => {
     let username = req.params.username
-    let showPrivate = req.isAuthenticated() === username
+    let showPrivate = req.isAuthenticated().username === username
 
     if (database().queryFirstCell(`SELECT username FROM users WHERE username=?`, username)) {
       let albums = showPrivate
