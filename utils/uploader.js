@@ -164,7 +164,7 @@ function upload (req, res, next) {
         uploaded_at: new Date().toISOString(),
         public: +upload_tracker.options.public
       })
-      if (upload_from === 'a') uploadinfo.in_album = req.url.split('/')[1]
+      if (upload_from === 'a') uploadinfo.in_album = req.url.split('/')[1] // Adding to Album
     }
 
     //TEMP
