@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser'
 import expressSqlite3 from 'express-sqlite3'
 import favicon  from 'serve-favicon'
 import subdomain from 'express-subdomain'
-import { expressResponseLogging, expressRequestLogging } from './utils/logger'
+import { error, expressResponseLogging, expressRequestLogging } from './utils/logger'
 import viewEngine from './utils/renderer'
 import createError from 'http-errors'
 import { clearDeadCookies } from './utils/helpers'
@@ -70,10 +70,16 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.static(www))
 app.use(clearDeadCookies())
 app.use((req, res, next) => {
+  req.isAuthenticated = () => {
+    if (req.session && req.session.user && req.session.user.username) return req.session.user.username
+    return false
+  }
+
   res.locals.env = config.server.env
   res.locals.title = req.hostname
   res.locals.signedin = req.session.user
   res.locals.direct = `${req.protocol}://direct.${req.hostname}`
+
   next()
 })
 
@@ -96,6 +102,8 @@ app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message
   res.locals.error = req.app.get('env') === 'development' ? err : {}
+
+  if (err.status >= 500 || !err.status) error(err.stack)
 
   // render the error page
   res.set(err.headers)
