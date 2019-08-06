@@ -1,4 +1,5 @@
 require('json5/lib/register')
+const mkdirp = require('mkdirp')
 const { join } = require('path')
 const database = require('better-sqlite3-helper')
 require = require('esm')(module)
@@ -66,6 +67,13 @@ process.env['FORCE_COLOR'] = config.log.color.enabled
 process.noDeprecation = config.log.level <= 2
   ? true
   : false
+
+mkdirp.sync(join(__dirname, 'storage', 'temp'))
+mkdirp.sync(join(__dirname, 'storage', 'database'))
+mkdirp.sync(join(__dirname, 'storage', 'image'))
+mkdirp.sync(join(__dirname, 'storage', 'audio'))
+mkdirp.sync(join(__dirname, 'storage', 'video'))
+mkdirp.sync(join(__dirname, 'storage', 'thumbnail'))
 
 database({
   path: join(__dirname, 'storage', 'database', 'sqlite3.db'),
