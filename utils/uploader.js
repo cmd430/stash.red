@@ -170,12 +170,41 @@ function upload (req, res, next) {
       if (upload_from === 'a') uploadinfo.in_album = req.url.split('/')[1] // Adding to Album
     }
 
-    //TEMP
+    if (uploadinfo.hasOwnProperty('album')) {
+      try { // Add album with 2 files
+        const insert_album = database().prepare(`INSERT INTO albums (album_id, title, uploaded_by, uploaded_at, public)
+                                                 VALUES (@album_id, @title, @uploaded_by, @uploaded_at, @public)`)
+        const insert_file = database().prepare(`INSERT INTO files (file_id, uploaded_by, uploaded_at, original_filename, mimetype, filesize, in_album, public)
+                                                VALUES (@file_id, @uploaded_by, @uploaded_at, @original_filename, @mimetype, @filesize, @in_album, @public)`)
+        const insert_files = database().transaction(files => { for (const file of files) insert_file.run(file) })
+        const create_album = database().transaction(album => {
+          insert_album.run(album)
+          insert_files(uploadinfo.files)
+        })
+        create_album(uploadinfo.album)
+      } catch (err) {
+        upload_tracker.status = 'abort'
 
-    console.log(uploadinfo)
+        error(err.message) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
+
+        return res.status(409).json({ message: 'Could Not Add Database Entrys' })
+      }
+    } else {
+      try {
+        database().insert('files', uploadinfo)
+      } catch (err) {
+        upload_tracker.status = 'abort'
+
+        error(err.message) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
+
+        return res.status(409).json({ message: 'Could Not Add Database Entry' })
+      }
+    }
+
+
 
     // LAST!
-    //upload_tracker.status = 'complete'
+    upload_tracker.status = 'complete'
   })
 
   /**
