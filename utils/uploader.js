@@ -1,4 +1,4 @@
-import { createWriteStream, unlink } from 'fs'
+import { createWriteStream, unlink, rename } from 'fs'
 import { join, basename } from 'path'
 import createError from 'http-errors'
 import { createID } from '../utils/helpers'
@@ -160,18 +160,8 @@ function upload (req, res, next) {
           public: uploadinfo.album.public
         }))
       })
-    } else if (upload_tracker.written === 1) {
-      // Single file
-      uploadinfo = Object.assign(upload_tracker.file_info[0], {
-        uploaded_by: user.username,
-        uploaded_at: new Date().toISOString(),
-        public: +upload_tracker.options.public
-      })
-      if (upload_from === 'a') uploadinfo.in_album = req.url.split('/')[1] // Adding to Album
-    }
 
-    if (uploadinfo.hasOwnProperty('album')) {
-      try { // Add album with 2 files
+      try {
         const insert_album = database().prepare(`INSERT INTO albums (album_id, title, uploaded_by, uploaded_at, public)
                                                  VALUES (@album_id, @title, @uploaded_by, @uploaded_at, @public)`)
         const insert_file = database().prepare(`INSERT INTO files (file_id, uploaded_by, uploaded_at, original_filename, mimetype, filesize, in_album, public)
@@ -185,26 +175,52 @@ function upload (req, res, next) {
       } catch (err) {
         upload_tracker.status = 'abort'
 
-        error(err.message) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
+        debug(err.message, req) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
 
         return res.status(409).json({ message: 'Could Not Add Database Entrys' })
       }
-    } else {
+    } else if (upload_tracker.written === 1) {
+      // Single file
+      uploadinfo = Object.assign(upload_tracker.file_info[0], {
+        uploaded_by: user.username,
+        uploaded_at: new Date().toISOString(),
+        public: +upload_tracker.options.public
+      })
+
+      if (upload_from === 'a') uploadinfo.in_album = req.url.split('/')[1] // Adding to Album
+
       try {
         database().insert('files', uploadinfo)
       } catch (err) {
         upload_tracker.status = 'abort'
 
-        error(err.message) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
+        debug(err.message, req) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
 
         return res.status(409).json({ message: 'Could Not Add Database Entry' })
       }
     }
 
+    if (uploadinfo.hasOwnProperty('album')) {
 
+    } else {
 
-    // LAST!
-    upload_tracker.status = 'complete'
+    }
+
+    upload_tracker.file_info.forEach((file, index) => {
+      let type = file.mimetype.split('/')[0]
+      let temp_loc = join(storage, 'temp', file.file_id)
+      let final_loc = join(storage, type, `${file.file_id}.${getExtension(file.mimetype)}`)
+
+      rename(temp_loc, final_loc, err => {
+        if (!err) debug(`Moved '${file.file_id}' from 'temp' to '${type}'`, req) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
+        if (err) debug('File', [`${file.file_id}`, {color: 'red'}], 'unable to be moved (', [`${err.code}`, {color: 'red'}], ')', req)
+        if (index === temp.files.length - 1) {
+          upload_tracker.status = 'complete'
+
+          return res.status(201).json({ message: 'IT WORKS!' }) // TEMP
+        }
+      })
+    })
   })
 
   /**
