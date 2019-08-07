@@ -66,6 +66,21 @@
      */
     limits: {
       fileSize: 524288000
+    },
+    thumbnail: {
+      quality: 50,
+      size: 250,
+      fit: 'cover',
+      position: 'entropy',
+      background: {
+        r: 0,
+        g: 0,
+        b: 0,
+        alpha: 0
+      },
+      kernel: 'lanczos3',
+      withoutEnlargement: true,
+      fastShrinkOnLoad: true
     }
   },
   log: {

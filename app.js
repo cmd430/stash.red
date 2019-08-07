@@ -9,6 +9,7 @@ import expressSqlite3 from 'express-sqlite3'
 import busboy from 'connect-busboy'
 import favicon  from 'serve-favicon'
 import subdomain from 'express-subdomain'
+import cors from 'cors'
 import { error, expressResponseLogging, expressRequestLogging } from './utils/logger'
 import viewEngine from './utils/renderer'
 import createError from 'http-errors'
@@ -58,6 +59,7 @@ app.use(compression())
 app.use(requestId())
 app.use(expressRequestLogging())
 app.use(expressResponseLogging())
+app.use(cors({ exposedHeaders: ['Content-Length'] }))
 app.use(compileSass({
   root: www,
   sourceMap: true,

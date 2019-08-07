@@ -8,8 +8,10 @@ import { get } from 'http'
 import { get as secureGet } from 'https'
 import signature from 'stream-signature'
 import { getExtension } from 'mime'
+import { path as ffmpeg } from 'ffmpeg-static'
+import simpleThumbnail from 'simple-thumbnail'
+import { read as jsmediatags } from 'jsmediatags'
 import sharp from 'sharp'
-import { resolve } from 'url';
 
 const storage = join(__dirname, '..', 'storage')
 
@@ -200,20 +202,21 @@ function upload (req, res, next) {
       }
     }
 
-    if (uploadinfo.hasOwnProperty('album')) {
-
-    } else {
-
-    }
-
     upload_tracker.file_info.forEach((file, index) => {
       let type = file.mimetype.split('/')[0]
       let temp_loc = join(storage, 'temp', file.file_id)
       let final_loc = join(storage, type, `${file.file_id}.${getExtension(file.mimetype)}`)
 
       rename(temp_loc, final_loc, err => {
-        if (!err) debug(`Moved '${file.file_id}' from 'temp' to '${type}'`, req) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
         if (err) debug('File', [`${file.file_id}`, {color: 'red'}], 'unable to be moved (', [`${err.code}`, {color: 'red'}], ')', req)
+        if (!err) {
+          debug(`Moved '${file.file_id}' from 'temp' to '${type}'`, req) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
+          createThumbnail({
+            id: file.file_id,
+            type: type,
+            path: final_loc
+          }, req)
+        }
         if (index === temp.files.length - 1) {
           upload_tracker.status = 'complete'
 
@@ -243,6 +246,55 @@ function upload (req, res, next) {
   })
 
   req.pipe(req.busboy)
+}
+
+async function createThumbnail (fileinfo, req) {
+  let temp_thumbnail = null
+
+  try {
+    switch (fileinfo.type) {
+      case 'video':
+        temp_thumbnail = await new Promise((resolve, reject) => {
+          simpleThumbnail(fileinfo.path, null, '100%', { path: ffmpeg })
+          .then(stream => {
+            let image = []
+            stream.on('data', chunk => image.push(chunk))
+            stream.on('end', () => resolve(Buffer.concat(image)))
+            stream.on('error', reject)
+          })
+        })
+        break
+      case 'audio':
+        temp_thumbnail = await new Promise((resolve, reject) => {
+          jsmediatags(fileinfo.path, {
+            onSuccess: data => {
+              let picture = data.tags.picture || { data: [ 0 ]} // Prob needs a change...
+              resolve(Buffer.from(picture.data))
+            },
+            onError: reject
+          })
+        })
+        break
+      case 'image':
+        temp_thumbnail = fileinfo.path
+    }
+
+    await sharp(temp_thumbnail)
+    .resize({
+      width: config.upload.thumbnail.size,
+      height: config.upload.thumbnail.size,
+      fit: config.upload.thumbnail.fit,
+      position: config.upload.thumbnail.position,
+      background: config.upload.thumbnail.background,
+      kernel: config.upload.thumbnail.kernel,
+      withoutEnlargement: config.upload.thumbnail.withoutEnlargement,
+      fastShrinkOnLoad: config.upload.thumbnail.fastShrinkOnLoad
+    })
+    .webp({ quality: config.upload.thumbnail.quality })
+    .toFile(join(storage, 'thumbnail', `${fileinfo.id}.webp`))
+  } catch (err) {
+    debug(`ERROR: ${err.message}`, req) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
+  }
 }
 
 export default upload
