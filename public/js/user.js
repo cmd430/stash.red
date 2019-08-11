@@ -9,10 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.thumbnail').forEach(thumb => {
     thumb.addEventListener('error', e => {
-      if (thumb.src.includes('/a/')) return thumb.src = '/img/thumbnails/generic_album.png'
-      if (thumb.nextElementSibling.classList.contains('image')) return thumb.src = `/img/thumbnails/generic_image.png`
-      if (thumb.nextElementSibling.classList.contains('audio')) return thumb.src = `/img/thumbnails/generic_audio.png`
-      if (thumb.nextElementSibling.classList.contains('video')) return thumb.src = `/img/thumbnails/generic_video.png`
+      if (thumb.src.includes('/a/')) return thumb.src = '/img/thumbnails/album.png'
+      if (thumb.nextElementSibling.classList.contains('image')) return thumb.src = `/img/thumbnails/image.png`
+      if (thumb.nextElementSibling.classList.contains('audio')) return thumb.src = `/img/thumbnails/audio.png`
+      if (thumb.nextElementSibling.classList.contains('video')) return thumb.src = `/img/thumbnails/video.png`
     })
   })
 })
