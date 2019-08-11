@@ -165,10 +165,10 @@ document.addEventListener('DOMContentLoaded', () => {
     prepare('Uploading: 0%')
     upload(formData)
     .then(response => {
-      let redirect = copyText = `${response.path}`
+      let redirect = copyText = `${window.location.protocol}//${window.location.host}/${response.type === 'album' ? 'a' : 'f'}/${response.id}`
       if (setting__copylink.checked) {
-        if (response.meta.type === 'image') {
-          copyText = `${response.directpath}`
+        if (response.type === 'image') {
+          copyText = `${window.location.protocol}//direct.${window.location.host}/${response.id}.${response.ext}`
         }
         if (navigator.clipboard) {
           navigator.clipboard.writeText(`${copyText}`)
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let request = new XMLHttpRequest()
       request.onreadystatechange = () => {
         if (request.readyState === 4) {
-          if (request.status === 200) {
+          if (request.status === 200 || request.status === 201) {
             return resolve(JSON.parse(request.responseText))
           } else {
             return reject(JSON.parse(request.responseText))
