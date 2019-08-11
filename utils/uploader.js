@@ -51,14 +51,151 @@ function upload (req, res, next) {
   req.busboy.on('field', (key, value) => {
     if (key === 'options') Object.assign(upload_tracker.options, JSON.parse(value))
     if (key === 'url') {
-      ++upload_tracker.parsed
+      if (value.startsWith('http')) {
+        ++upload_tracker.parsed
 
-      // TEMP
-      ++upload_tracker.written
-      console.log(key, value)
+        let urlinfo = {
+          file_id: createID(),
+          original_filename: value,
+          mimetype: null,
+          filesize: 0
+        }
 
-      req.unpipe(req.busboy)
-      req.resume()
+        debug('Parsing url', [`${value}`, {color:'cyan'}], req)
+
+        let httpReq = value.startsWith('http')
+          ? secureGet
+          : get
+
+        let rstream = httpReq(value, response => {
+          if (response.statusCode === 200) {
+            let filename = response.req.path.split('/').pop()
+
+            debug('Found file', [`${filename}`, {color:'cyan'}], '=>', [`${urlinfo.file_id}`, {color:'cyan'}], req)
+
+            let contentLength = response.headers['content-length'] || 0
+            let contentType = response.headers['content-type']
+            let type = contentType.split('/').reverse().pop()
+
+            if (['image','audio','video','application','binary'].includes(type)) {
+              if (contentLength <= config.upload.limits.fileSize && contentLength > 0) {
+
+                debug('Downloading', [`${urlinfo.file_id}`, {color: 'cyan'}], '(',['0%', {color: 'cyan'}], ')', req)
+
+                let download_progress = {
+                  total: parseInt(response.headers['content-length'], 10),
+                  received: 0,
+                  __current: 0
+                }
+
+                response.on('data', chunk => {
+                  download_progress.received += chunk.length
+                  let percent = Math.round(100 * download_progress.received / download_progress.total)
+                  if (percent !== download_progress.__current && percent % 10 === 0) {
+                    download_progress.__current = percent
+
+                    debug('Downloading', [`${urlinfo.file_id}`, {color: 'cyan'}], '(',[`${percent}%`, {color: 'cyan'}], ')', req)
+
+                    if (percent === 100 && urlinfo === null) {
+                      upload_tracker.status = 'abort'
+
+                      debug('Upload of', [`${urlinfo.file_id}`, {color: 'red'}], 'rejected unprocessable entity', req)
+
+                      rstream.abort()
+                      req.unpipe(req.busboy)
+                      req.resume()
+
+                      return res.status(422).json({ message: 'Unprocessable Entity' })
+                    }
+                  }
+                })
+
+                let temp_dest = join(storage, 'temp', urlinfo.file_id)
+                let writeStream = createWriteStream(temp_dest)
+                let fileSignature = new signature()
+
+                temp.streams.push(writeStream)
+                temp.files.push(temp_dest)
+
+                fileSignature.on('signature', sig => {
+                  urlinfo.mimetype = sig.mimetype
+                  let mime_parts = sig.mimetype.split('/')
+                  if (mime_parts[0] !== 'image' && mime_parts[0] !== 'audio' && mime_parts[0] !== 'video') {
+                    upload_tracker.status = 'abort'
+
+                    debug('Upload of', [`${urlinfo.file_id}`, {color: 'red'}], 'rejected file magic is invaild (', [`${sig.mimetype}`, {color: 'red'}], ')', req)
+
+                    rstream.abort()
+                    req.unpipe(req.busboy)
+                    req.resume()
+
+                    return res.status(422).json({ message: 'Invaild File Type' })
+                  }
+                })
+
+                writeStream.on('close', () => {
+                  if (upload_tracker.status !== 'abort') {
+                    debug('Saved file', [`${urlinfo.file_id}`, {color: 'cyan'}], req)
+
+                    ++upload_tracker.written
+                    urlinfo.filesize = writeStream.bytesWritten
+                    upload_tracker.file_info.push(urlinfo)
+
+                    if (upload_tracker.status === 'parsed' && upload_tracker.parsed === upload_tracker.written) req.emit('process')
+                  }
+                })
+
+                response.pipe(fileSignature).pipe(writeStream)
+              } else {
+                upload_tracker.status = 'abort'
+
+                rstream.abort()
+                req.unpipe(req.busboy)
+                req.resume()
+
+                if (contentLength > 0) {
+                  debug('Upload of', [`${urlinfo.file_id}`, {color: 'red'}], 'aborted size limit reached', req)
+
+                  return res.status(413).json({ message: 'Payload Too Large' })
+                } else {
+                  debug('Upload of', [`${urlinfo.file_id}`, {color: 'red'}], 'rejected unprocessable entity', req)
+
+                  return res.status(422).json({ message: 'Unprocessable Entity' })
+                }
+              }
+            } else {
+              upload_tracker.status = 'abort'
+
+              debug('Upload of', [`${urlinfo.file_id}`, {color: 'red'}], 'rejected file magic is invaild (', [`${contentType}`, {color: 'red'}], ')', req)
+
+              rstream.abort()
+              req.unpipe(req.busboy)
+              req.resume()
+
+              return res.status(422).json({ message: 'Invaild File Type' })
+            }
+          } else {
+            upload_tracker.status = 'abort'
+
+            debug('Parsing of', [`${value}`, {color: 'red'}], 'aborted invalid url', req)
+
+            rstream.abort()
+            req.unpipe(req.busboy)
+            req.resume()
+
+            return res.status(422).json({ message: 'Invaild URL' })
+          }
+        })
+      } else {
+        upload_tracker.status = 'abort'
+
+        debug('Parsing of', [`${value}`, {color: 'red'}], 'aborted invalid url', req)
+
+        req.unpipe(req.busboy)
+        req.resume()
+
+        return res.status(422).json({ message: 'Invaild URL' })
+      }
     }
   })
 
