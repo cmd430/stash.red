@@ -1,4 +1,4 @@
-import { createWriteStream, unlink, rename } from 'fs'
+import { createWriteStream, unlink, rename, writeFile } from 'fs'
 import { join, basename } from 'path'
 import createError from 'http-errors'
 import { createID } from '../utils/helpers'
@@ -208,10 +208,38 @@ function upload (req, res, next) {
       }
     }
 
-    upload_tracker.file_info.forEach((file, index) => {
+    upload_tracker.file_info.forEach(async (file, index) => {
       let type = file.mimetype.split('/')[0]
       let temp_loc = join(storage, 'temp', file.file_id)
       let final_loc = join(storage, type, `${file.file_id}.${getExtension(file.mimetype)}`)
+
+      if (type === 'image') {
+        try {
+          let metadata = await sharp(temp_loc).metadata()
+
+          if (metadata.orientation !== 0 && metadata.orientation !== undefined) {
+            try {
+              debug('Rotating image', [`${file.file_id}`, {color: 'cyan'}], req)
+
+              await new Promise((resolve, reject) => {
+                sharp(temp_loc).withMetadata().rotate().toBuffer((err, buffer) => {
+                  if (err) reject(err)
+                  writeFile(temp_loc, buffer, err => {
+                    if (err) reject(err)
+                    resolve()
+                  })
+                })
+              })
+
+              debug('Rotated image', [`${file.file_id}`, {color: 'cyan'}], req)
+            } catch (err) {
+              debug('Could not rotate image', [`${file.file_id}`, {color: 'red'}], '(', [`${err.message}`, {color: 'red'}], ')', req)
+            }
+          }
+        } catch (err) {
+          error(err.message, req)
+        }
+      }
 
       rename(temp_loc, final_loc, err => {
         if (err) debug('File', [`${file.file_id}`, {color: 'red'}], 'unable to be moved (', [`${err.code}`, {color: 'red'}], ')', req)
@@ -276,12 +304,12 @@ async function createThumbnail (fileinfo, req) {
       case 'video':
         temp_thumbnail = await new Promise((resolve, reject) => {
           simpleThumbnail(fileinfo.path, null, '100%', { path: ffmpeg })
-          .then(stream => {
-            let image = []
-            stream.on('data', chunk => image.push(chunk))
-            stream.on('end', () => resolve(Buffer.concat(image)))
-            stream.on('error', reject)
-          })
+            .then(stream => {
+              let image = []
+              stream.on('data', chunk => image.push(chunk))
+              stream.on('end', () => resolve(Buffer.concat(image)))
+              stream.on('error', reject)
+            })
         })
         break
       case 'audio':
@@ -300,18 +328,18 @@ async function createThumbnail (fileinfo, req) {
     }
 
     await sharp(temp_thumbnail)
-    .resize({
-      width: config.upload.thumbnail.size,
-      height: config.upload.thumbnail.size,
-      fit: config.upload.thumbnail.fit,
-      position: config.upload.thumbnail.position,
-      background: config.upload.thumbnail.background,
-      kernel: config.upload.thumbnail.kernel,
-      withoutEnlargement: config.upload.thumbnail.withoutEnlargement,
-      fastShrinkOnLoad: config.upload.thumbnail.fastShrinkOnLoad
-    })
-    .webp({ quality: config.upload.thumbnail.quality })
-    .toFile(join(storage, 'thumbnail', `${fileinfo.id}.webp`))
+      .resize({
+        width: config.upload.thumbnail.size,
+        height: config.upload.thumbnail.size,
+        fit: config.upload.thumbnail.fit,
+        position: config.upload.thumbnail.position,
+        background: config.upload.thumbnail.background,
+        kernel: config.upload.thumbnail.kernel,
+        withoutEnlargement: config.upload.thumbnail.withoutEnlargement,
+        fastShrinkOnLoad: config.upload.thumbnail.fastShrinkOnLoad
+      })
+      .webp({ quality: config.upload.thumbnail.quality })
+      .toFile(join(storage, 'thumbnail', `${fileinfo.id}.webp`))
   } catch (err) {
     debug('Failed to create thumbnail for', [`${fileinfo.id}`, {color: 'red'}], '(', [`${err.message}`, {color: 'red'}],')', req)
   }
