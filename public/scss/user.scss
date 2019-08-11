@@ -28,31 +28,31 @@
       width: 100%;
       height: 100%;
       &.image {
-        background: no-repeat right top/40px url('/img/image.png');
+        background: no-repeat right top/40px url('/img/types/image.png');
       }
       &.audio {
-        background: no-repeat right top/40px url('/img/audio.png');
+        background: no-repeat right top/40px url('/img/types/audio.png');
       }
       &.video {
-        background: no-repeat right top/40px url('/img/video.png');
+        background: no-repeat right top/40px url('/img/types/video.png');
       }
       &.album {
-        background: no-repeat right top/40px url('/img/album.png');
+        background: no-repeat right top/40px url('/img/types/album.png');
       }
     }
     &.private {
       .icon {
         &.image {
-          background: no-repeat left bottom/40px url('/img/private.png'), no-repeat right top/40px url('/img/image.png');
+          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/image.png');
         }
         &.audio {
-          background: no-repeat left bottom/40px url('/img/private.png'), no-repeat right top/40px url('/img/audio.png');
+          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/audio.png');
         }
         &.video {
-          background: no-repeat left bottom/40px url('/img/private.png'), no-repeat right top/40px url('/img/video.png');
+          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/video.png');
         }
         &.album {
-          background: no-repeat left bottom/40px url('/img/private.png'), no-repeat right top/40px url('/img/album.png');
+          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/album.png');
         }
       }
     }
