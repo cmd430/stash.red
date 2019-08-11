@@ -164,6 +164,8 @@ function upload (req, res, next) {
       })
 
       try {
+        debug('Creating album with id of', [`${uploadinfo.album.album_id}`, {color: 'cyan'}], req)
+
         const insert_album = database().prepare(`INSERT INTO albums (album_id, title, uploaded_by, uploaded_at, public)
                                                  VALUES (@album_id, @title, @uploaded_by, @uploaded_at, @public)`)
         const insert_file = database().prepare(`INSERT INTO files (file_id, uploaded_by, uploaded_at, original_filename, mimetype, filesize, in_album, public)
@@ -177,7 +179,7 @@ function upload (req, res, next) {
       } catch (err) {
         upload_tracker.status = 'abort'
 
-        debug(err.message, req) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
+        debug('Upload aborted album', [`${uploadinfo.album.album_id}`, {color: 'red'}], 'could not be created (', [`${err.message}`, {color: 'red'}], ')', req)
 
         return res.status(409).json({ message: 'Could Not Add Database Entrys' })
       }
@@ -189,14 +191,18 @@ function upload (req, res, next) {
         public: +upload_tracker.options.public
       })
 
-      if (upload_from === 'a') uploadinfo.in_album = req.url.split('/')[1] // Adding to Album
+      if (upload_from === 'a') {
+        uploadinfo.in_album = req.url.split('/')[1]
+
+        debug('Adding file', [`${uploadinfo.file_id}`, {color: 'cyan'}], 'to album', [`${uploadinfo.in_album}`, {color: 'cyan'}], req)
+      }
 
       try {
         database().insert('files', uploadinfo)
       } catch (err) {
         upload_tracker.status = 'abort'
 
-        debug(err.message, req) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
+        debug('Upload aborted file', [`${uploadinfo.album.album_id}`, {color: 'red'}], 'could not be created (', [`${err.message}`, {color: 'red'}], ')', req)
 
         return res.status(409).json({ message: 'Could Not Add Database Entry' })
       }
@@ -210,7 +216,8 @@ function upload (req, res, next) {
       rename(temp_loc, final_loc, err => {
         if (err) debug('File', [`${file.file_id}`, {color: 'red'}], 'unable to be moved (', [`${err.code}`, {color: 'red'}], ')', req)
         if (!err) {
-          debug(`Moved '${file.file_id}' from 'temp' to '${type}'`, req) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
+          debug('Moved', [`${file.file_id}`, {color: 'cyan'}], 'from', ['temp', {color: 'cyan'}], 'to', [`${type}`, {color: 'cyan'}], req)
+
           createThumbnail({
             id: file.file_id,
             type: type,
@@ -220,7 +227,18 @@ function upload (req, res, next) {
         if (index === temp.files.length - 1) {
           upload_tracker.status = 'complete'
 
-          return res.status(201).json({ message: 'IT WORKS!' }) // TEMP
+          return res.status(201).json({
+            message: 'Upload Complete',
+            id: index > 0
+              ? file.in_album
+              : file.file_id,
+            type: index > 0
+              ? 'album'
+              : type,
+            ext: index > 0
+              ? null
+              : getExtension(file.mimetype)
+          })
         }
       })
     })
@@ -251,6 +269,8 @@ function upload (req, res, next) {
 async function createThumbnail (fileinfo, req) {
   let temp_thumbnail = null
 
+  debug('Creating thumbnail for', [`${fileinfo.id}`, {color: 'cyan'}], req)
+
   try {
     switch (fileinfo.type) {
       case 'video':
@@ -268,7 +288,7 @@ async function createThumbnail (fileinfo, req) {
         temp_thumbnail = await new Promise((resolve, reject) => {
           jsmediatags(fileinfo.path, {
             onSuccess: data => {
-              let picture = data.tags.picture || { data: [ 0 ]} // Prob needs a change...
+              let picture = data.tags.picture || { data: [ 0 ]}
               resolve(Buffer.from(picture.data))
             },
             onError: reject
@@ -293,7 +313,7 @@ async function createThumbnail (fileinfo, req) {
     .webp({ quality: config.upload.thumbnail.quality })
     .toFile(join(storage, 'thumbnail', `${fileinfo.id}.webp`))
   } catch (err) {
-    debug(`ERROR: ${err.message}`, req) // TEMP WILL BE BETTER DEBUG MSGS ONCE IM BACK HOME
+    debug('Failed to create thumbnail for', [`${fileinfo.id}`, {color: 'red'}], '(', [`${err.message}`, {color: 'red'}],')', req)
   }
 }
 
