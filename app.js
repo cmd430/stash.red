@@ -80,6 +80,7 @@ app.use((req, res, next) => {
   res.locals.env = config.server.env
   res.locals.title = req.hostname
   res.locals.signedin = req.session.user
+  res.locals.path = `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`
   res.locals.direct = `${req.protocol}://direct.${req.hostname}`
   next()
 })

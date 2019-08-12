@@ -52,7 +52,6 @@ export default Router()
       }
       res.locals.view = {
         username: username,
-        path: `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`,
         type: 'files'
       }
       res.locals.uploads = files.map(file => {
@@ -88,7 +87,6 @@ export default Router()
       }
       res.locals.view = {
         username: username,
-        path: `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`,
         type: 'albums'
       }
       res.locals.uploads = albums.map(album => {
