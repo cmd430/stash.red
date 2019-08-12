@@ -1,5 +1,5 @@
-@import 'shared';
-@import 'media';
+@import 'partials/shared';
+@import 'partials/media';
 
 #container {
   position: relative;
@@ -40,4 +40,4 @@
   }
 }
 
-@import 'theme';
+@import 'partials/theme';

@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 } , false)
 
-function loadPollyfills(cb) {
+function loadPollyfills (cb) {
   let fullscreenAPI = document.createElement('script')
   fullscreenAPI.src = 'https://cdn.jsdelivr.net/gh/neovov/Fullscreen-API-Polyfill@master/fullscreen-api-polyfill.min.js'
   document.head.appendChild(fullscreenAPI)

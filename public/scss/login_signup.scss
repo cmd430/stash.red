@@ -1,4 +1,4 @@
-@import 'shared';
+@import 'partials/shared';
 
 #content {
   width: auto;
@@ -48,4 +48,4 @@
   }
 }
 
-@import 'theme';
+@import 'partials/theme';
