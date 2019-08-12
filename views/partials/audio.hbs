@@ -5,7 +5,7 @@
     </audio>
     <ul>
       <li class="audio__artwork">
-        <img src="{{this.meta.song.artwork}}" />
+        <img src="/f/{{file_id}}/thumbnail" />
         <canvas class="visualizer invisible"></canvas>
       </li>
       <li class="audio__info">
@@ -30,13 +30,13 @@
             <a class="control__breakout" title="View on seperate page" href="{{@direct}}/{{file_id}}.{{ext mimetype}}">
               <i class="icon-link-ext"></i>
             </a>
-            <a class="control__download" title="Download this File" href="{{this.downloadpath}}">
+            <a class="control__download" title="Download this File" href="./download">
               <i class="icon-download"></i>
             </a>
           </span>
         </div>
-        <h1 class="title" title="{{this.meta.song.title}}">{{this.meta.song.title}}</h1>
-        <h2 class="artist" title="{{this.meta.song.artist}}">{{this.meta.song.artist}}</h2>
+        <h1 class="title" title="Loading...">Loading...</h1>
+        <h2 class="artist" title="Loading...">Loading...</h2>
       </li>
     </ul>
   </div>

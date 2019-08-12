@@ -10,6 +10,17 @@ function loadPollyfills (cb) {
   let fullscreenAPI = document.createElement('script')
   fullscreenAPI.src = 'https://cdn.jsdelivr.net/gh/neovov/Fullscreen-API-Polyfill@master/fullscreen-api-polyfill.min.js'
   document.head.appendChild(fullscreenAPI)
+
+  let ID3 = document.createElement('script')
+  ID3.setAttribute('type', 'module')
+  ID3.innerHTML = `
+    import * as id3 from 'https://unpkg.com/id3js@^2/lib/id3.js'
+    window.id3 = id3
+    document.dispatchEvent(new Event('id3_loaded'))
+  `
+  document.head.appendChild(ID3)
+  document.addEventListener('id3_loaded', loadAudioMeta)
+
   cb()
 }
 
@@ -327,6 +338,9 @@ function initializeAudioPlayers () {
         playback__playPause.click()
       }
     })
+    audioart.querySelector('img').addEventListener('error', e => {
+      e.target.src = `/img/thumbnails/audio.png`
+    })
 
     // Volume / Mute
     volume__muteUnmute__icon = volume__muteUnmute.querySelector('i')
@@ -581,4 +595,27 @@ function initializeActions() {
     document.addEventListener('update', sendUpdate)
     document.addEventListener('cancel_update', cancelUpdate)
   }
+}
+
+function loadAudioMeta () {
+  document.querySelectorAll('.audio__player').forEach(player => {
+    let audio = player.querySelector('audio')
+    let info = player.querySelector('.audio__info')
+    let audio__info__title = info.querySelector('.title')
+    let audio__info__artist = info.querySelector('.artist')
+
+    id3.fromUrl(audio.currentSrc).then(tags => {
+      if (tags) {
+        audio__info__title.textContent = tags.title || 'Unknown Title'
+        audio__info__title.setAttribute('title', tags.title || 'Unknown Title')
+        audio__info__artist.textContent = tags.artist || 'Unknown Artist'
+        audio__info__artist.setAttribute('title', tags.artist || 'Unknown Artist')
+      } else {
+        audio__info__title.textContent = 'Unknown Title'
+        audio__info__title.setAttribute('title', 'Unknown Title')
+        audio__info__artist.textContent = 'Unknown Artist'
+        audio__info__artist.setAttribute('title', 'Unknown Artist')
+      }
+    })
+  })
 }
