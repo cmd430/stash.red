@@ -1,7 +1,9 @@
+import { unlink } from 'fs'
 import { join } from 'path'
 import express, { Router } from 'express'
 import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
+import { getExtension } from 'mime'
 
 /*
  *  File             /f/<id>
@@ -49,10 +51,23 @@ export default Router()
 
     if (!user) return next(createError(401))
 
-//TODO: remove file and thumbnail
+    let file_id = req.params.file_id
 
     try {
-      database().run('DELETE FROM files WHERE file_id=? AND uploaded_by=?', req.params.file_id, user.username)
+      let mimetype = database().queryFirstCell('SELECT mimetype FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
+
+      unlink(join(__dirname, '..', 'storage', 'thumbnail', `${file_id}.webp`), err => {
+        if (err) {
+          if (err.code !== 'ENOENT') return res.sendStatus(405)
+        }
+      })
+      unlink(join(__dirname, '..', 'storage', mimetype.split('/').reverse().pop(), `${file_id}.${getExtension(mimetype)}`), err => {
+        if (err) {
+          if (err.code !== 'ENOENT') return res.sendStatus(405)
+        }
+      })
+
+      database().run('DELETE FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
     } catch (err) {
       return res.sendStatus(405)
     }

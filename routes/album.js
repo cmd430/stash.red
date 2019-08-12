@@ -1,8 +1,10 @@
+import { unlink } from 'fs'
 import { join } from 'path'
 import express, { Router } from 'express'
 import upload from '../utils/uploader'
 import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
+import { getExtension } from 'mime'
 
 /*
  *  Album            /a/<id>
@@ -58,10 +60,31 @@ export default Router()
     let user = req.isAuthenticated()
 
     if (!user) return next(createError(401))
+    if (!req.body.title && !req.body.public) return next(createError(400))
 
-    console.log(req.body)
+    let update = {}
 
-    res.sendStatus(200)
+    if (req.body.title) {
+      let title = req.body.title.trim()
+
+      if (!title.replace(/\s/g, '').length) title = 'Album'
+
+      update.title = title
+    }
+    if (req.body.public) {
+      update.public = +req.body.public
+    }
+
+    try {
+      database().update('albums', update, {
+        album_id: req.params.album_id,
+        uploaded_by: user.username
+      })
+    } catch (err) {
+      return res.sendStatus(405)
+    }
+
+    res.sendStatus(204)
   })
 
   // DELETE Method Routes
@@ -70,10 +93,24 @@ export default Router()
 
     if (!user) return next(createError(401))
 
-//TODO: remove album files and thumbnails
+    let album_id = req.params.album_id
 
     try {
-      database().run('DELETE FROM albums WHERE album_id=? AND uploaded_by=?', req.params.album_id, user.username)
+      database().query('SELECT file_id, mimetype FROM files WHERE in_album=? AND uploaded_by=?', album_id, user.username).forEach(file => {
+
+        unlink(join(__dirname, '..', 'storage', 'thumbnail', `${file.file_id}.webp`), err => {
+          if (err) {
+            if (err.code !== 'ENOENT') return res.sendStatus(405)
+          }
+        })
+        unlink(join(__dirname, '..', 'storage', file.mimetype.split('/').reverse().pop(), `${file.file_id}.${getExtension(file.mimetype)}`), err => {
+          if (err) {
+            if (err.code !== 'ENOENT') return res.sendStatus(405)
+          }
+        })
+      })
+
+      database().run('DELETE FROM albums WHERE album_id=? AND uploaded_by=?', album_id, user.username)
     } catch (err) {
       return res.sendStatus(405)
     }

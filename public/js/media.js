@@ -576,7 +576,7 @@ function initializeActions() {
       let request = new XMLHttpRequest()
       request.onreadystatechange = () => {
         if (request.readyState === 4) {
-          if (request.status === 200) {
+          if (request.status === 204 || request.status === 200) {
             return window.location.reload()
           } else {
             return console.error(request.responseText)
