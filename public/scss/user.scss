@@ -76,6 +76,7 @@
       a {
         font-size: 18px;
         padding: 0 3px;
+        position: relative;
         i::before {
           margin: 0;
           display: inline;
@@ -103,7 +104,15 @@
           &:active {
             a {
               border-bottom: 1px dotted;
-              font-weight: 600;
+              &::after {
+                content: attr(data-text);
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                text-align: center;
+                font-weight: 600;
+              }
             }
           }
         }

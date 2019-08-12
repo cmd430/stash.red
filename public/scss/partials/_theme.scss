@@ -230,6 +230,9 @@ header {
           a {
             border-color: $color-contenttext-hover;
             color: $color-contenttext-hover;
+            &::after {
+              color: $color-contenttext-hover;
+            }
           }
         }
       }
