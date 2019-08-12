@@ -465,7 +465,7 @@ function initializeActions() {
     action__delete.addEventListener('click', e => {
       document.querySelector('.blackout').classList.add('delete')
       deleteItem({
-        url: e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url,
+        url: e.dataset ? e.dataset.id : e.srcElement.parentElement.dataset.id,
         username: e.dataset ? e.dataset.username : e.srcElement.parentElement.dataset.username
       })
     })
@@ -475,7 +475,7 @@ function initializeActions() {
     action__delete.addEventListener('click', e => {
       document.querySelector('.blackout').classList.add('delete')
       deleteItem({
-        url: e.dataset ? e.dataset.url : e.srcElement.parentElement.dataset.url,
+        url: e.dataset ? e.dataset.id : e.srcElement.parentElement.dataset.id,
         username: e.dataset ? e.dataset.username : e.srcElement.parentElement.dataset.username
       })
     })
@@ -490,12 +490,12 @@ function initializeActions() {
       let request = new XMLHttpRequest()
       request.onreadystatechange = () => {
         if (request.readyState === 4) {
-          if (request.status === 200) {
+          if (request.status === 204 || request.status === 200) {
             if (window.location.href.includes('/a/')) {
               if (params.url.includes('/a/')) {
                 redirect = params.url.replace('/a/', '/u/')
                 redirect = redirect.substr(0, redirect.lastIndexOf('/') + 1)
-                redirect = redirect + `${params.username}?albums`
+                redirect = redirect + `${params.username}/albums`
                 return window.location = redirect
               } else if (params.url.includes('/f/')) {
                 let videos = document.querySelectorAll('.video__player').length
@@ -505,7 +505,7 @@ function initializeActions() {
                 if (items === 1) {
                   redirect = params.url.replace('/f/', '/u/')
                   redirect = redirect.substr(0, redirect.lastIndexOf('/') + 1)
-                  redirect = redirect + `${params.username}?albums`
+                  redirect = redirect + `${params.username}/albums`
                   return window.location = redirect
                 } else {
                   return window.location.reload()
@@ -529,7 +529,7 @@ function initializeActions() {
       request.upload.onerror = err => {
         return console.error(err)
       }
-      request.open('DELETE', `${params.url}`, true)
+      request.open('DELETE', `${params.url}/delete`, true)
       request.send('')
       document.removeEventListener('delete', sendDelete)
       document.removeEventListener('cancel_delete', cancelDelete)
@@ -586,7 +586,7 @@ function initializeActions() {
       request.upload.onerror = err => {
         return console.error(err)
       }
-      request.open('PATCH', window.location.href, true)
+      request.open('PATCH', './update', true)
       request.setRequestHeader('Content-type', 'application/json')
       request.send(JSON.stringify(params))
       document.removeEventListener('update', sendUpdate)

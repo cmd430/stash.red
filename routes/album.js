@@ -25,12 +25,13 @@ export default Router()
   // GET Method Routes
   .get('/:album_id', (req, res, next) => {
     let album_id = req.params.album_id
-    let album_data = database().queryFirstRow(`SELECT title, uploaded_by FROM albums WHERE album_id=?`, album_id)
+    let album_data = database().queryFirstRow(`SELECT album_id, title, uploaded_by FROM albums WHERE album_id=?`, album_id)
     if (album_data) {
       let files = database().query(`SELECT id, file_id, mimetype, uploaded_by FROM files WHERE in_album=? ORDER BY id DESC`, album_id)
 
       res.locals.album = {
-        album_title: album_data.title,
+        album_id: album_data.album_id,
+        album_title: album_data.title || 'Album',
         uploaded_by: album_data.uploaded_by,
         files: files.map(file => {
           delete file.id
@@ -53,7 +54,32 @@ export default Router()
   .post('/:album_id/upload', upload)
 
   // PATCH Method Routes
-  .patch('/:album_id/update', (req, res, next) => res.sendStatus(200))
+  .patch('/:album_id/update', (req, res, next) => {
+    let user = req.isAuthenticated()
+
+    if (!user) return next(createError(401))
+
+    console.log(req.body)
+
+    res.sendStatus(200)
+  })
+
+  // DELETE Method Routes
+  .delete('/:album_id/delete', (req, res, next) => {
+    let user = req.isAuthenticated()
+
+    if (!user) return next(createError(401))
+
+//TODO: remove album files and thumbnails
+
+    try {
+      database().run('DELETE FROM albums WHERE album_id=? AND uploaded_by=?', req.params.album_id, user.username)
+    } catch (err) {
+      return res.sendStatus(405)
+    }
+
+    res.sendStatus(204)
+  })
 
   // Method Not Allowed
   .all('/:album_id', (req, res, next) => {
@@ -70,5 +96,9 @@ export default Router()
   })
   .all('/:album_id/upload', (req, res, next) => {
     if (req.method !== 'POST') return next(createError(405, {headers: { Allow: 'POST' }}))
+    next()
+  })
+  .all('/:album_id/delete', (req, res, next) => {
+    if (req.method !== 'DELETE') return next(createError(405, {headers: { Allow: 'DELETE' }}))
     next()
   })

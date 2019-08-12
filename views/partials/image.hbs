@@ -4,7 +4,7 @@
   </a>
   {{#if_eq @signedin.username this.uploaded_by this}}
     <div class="actions">
-      <a class="action__delete" title="Delete this Image" data-id="{{file_id}}" data-username="{{@signedin.username}}">
+      <a class="action__delete" title="Delete this Image" data-id="/f/{{file_id}}" data-username="{{@signedin.username}}">
         <i class="icon-trash"></i>
       </a>
     </div>

@@ -43,6 +43,23 @@ export default Router()
   // PATCH Method Routes
   .patch('/:file_id/update', (req, res, next) => res.sendStatus(200))
 
+  // DELETE Method Routes
+  .delete('/:file_id/delete', (req, res, next) => {
+    let user = req.isAuthenticated()
+
+    if (!user) return next(createError(401))
+
+//TODO: remove file and thumbnail
+
+    try {
+      database().run('DELETE FROM files WHERE file_id=? AND uploaded_by=?', req.params.file_id, user.username)
+    } catch (err) {
+      return res.sendStatus(405)
+    }
+
+    res.sendStatus(204)
+  })
+
   // Method Not Allowed
   .all('/:file_id', (req, res, next) => {
     if (req.method !== 'GET') return next(createError(405, {headers: { Allow: 'GET' }}))
@@ -54,5 +71,9 @@ export default Router()
   })
   .all('/:file_id/update', (req, res, next) => {
     if (req.method !== 'PATCH') return next(createError(405, {headers: { Allow: 'PATCH' }}))
+    next()
+  })
+  .all('/:file_id/delete', (req, res, next) => {
+    if (req.method !== 'DELETE') return next(createError(405, {headers: { Allow: 'DELETE' }}))
     next()
   })
