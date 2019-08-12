@@ -5,6 +5,7 @@ import requestId from 'express-request-id'
 import compileSass from 'express-compile-sass'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
+import zip from 'express-easy-zip'
 import expressSqlite3 from 'express-sqlite3'
 import busboy from 'connect-busboy'
 import favicon  from 'serve-favicon'
@@ -84,6 +85,7 @@ app.use((req, res, next) => {
   res.locals.direct = `${req.protocol}://direct.${req.hostname}`
   next()
 })
+app.use(zip())
 app.use(busboy(config.upload))
 
 

@@ -33,6 +33,7 @@
     "esm": "^3.2.25",
     "express": "^4.16.1",
     "express-compile-sass": "git+https://git@github.com/cmd430/express-compile-sass.git",
+    "express-easy-zip": "^1.1.4",
     "express-request-id": "^1.4.1",
     "express-session": "^1.16.2",
     "express-sqlite3": "git+https://github.com/cmd430/express-sqlite3.git",

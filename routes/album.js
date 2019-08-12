@@ -51,6 +51,31 @@ export default Router()
     let thumbnail_id = database().queryFirstCell(`SELECT file_id FROM files WHERE in_album=? ORDER BY id DESC`, req.params.album_id)
     express.static(join(__dirname, '..', 'storage', 'thumbnail', `${thumbnail_id}.webp`))(req, res, next)
   })
+  .get('/:album_id/download', (req, res, next) => {
+    let album_id = req.params.album_id
+    let files = []
+    let zipname = ''
+
+    try {
+      zipname = database().queryFirstCell(`SELECT title FROM albums WHERE album_id=?`, album_id) || 'Album'
+
+      database().query('SELECT file_id, mimetype FROM files WHERE in_album=?', album_id).forEach(file => {
+        let filename = `${file.file_id}.${getExtension(file.mimetype)}`
+
+        files.push({
+          path: join(__dirname, '..', 'storage', file.mimetype.split('/').reverse().pop(), filename),
+          name: filename
+        })
+      })
+
+      res.zip({
+        files: files,
+        filename: `${zipname} - ${album_id}.zip`
+      })
+    } catch (err) {
+      return next(createError(404))
+    }
+  })
 
   // POST Method Routes
   .post('/:album_id/upload', upload)
@@ -91,7 +116,7 @@ export default Router()
   .delete('/:album_id/delete', (req, res, next) => {
     let user = req.isAuthenticated()
 
-    if (!user) return next(createError(401))
+    if (!user) return res.sendStatus(401)
 
     let album_id = req.params.album_id
 

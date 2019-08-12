@@ -41,6 +41,17 @@ export default Router()
   .use('/:file_id/thumbnail', (req, res, next) => {
     express.static(join(__dirname, '..', 'storage', 'thumbnail', `${req.params.file_id}.webp`))(req, res, next)
   })
+  .get('/:file_id/download', (req, res, next) => {
+    let file_id = req.params.file_id
+
+    try {
+      let mimetype = database().queryFirstCell(`SELECT mimetype FROM files WHERE file_id=?`, file_id)
+
+      res.download(join(__dirname, '..', 'storage', mimetype.split('/').reverse().pop(), `${file_id}.${getExtension(mimetype)}`))
+    } catch (err) {
+      return next(createError(404))
+    }
+  })
 
   // PATCH Method Routes
   .patch('/:file_id/update', (req, res, next) => res.sendStatus(200))
@@ -49,7 +60,7 @@ export default Router()
   .delete('/:file_id/delete', (req, res, next) => {
     let user = req.isAuthenticated()
 
-    if (!user) return next(createError(401))
+    if (!user) return res.sendStatus(401)
 
     let file_id = req.params.file_id
 
