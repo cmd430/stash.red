@@ -76,12 +76,12 @@ mkdirp.sync(join(__dirname, 'storage', 'video'))
 mkdirp.sync(join(__dirname, 'storage', 'thumbnail'))
 
 database({
-  path: join(__dirname, 'storage', 'database', 'sqlite3.db'),
+  path: join(__dirname, 'storage', 'database', 'stash.db'),
   memory: false,
   readonly: false,
   fileMustExist: false,
   WAL: true,
-  migrate: { // disable completely by setting `migrate: false`
+  migrate: {
     force: false,
     table: 'migration',
     migrationsPath: join(__dirname, 'storage', 'database', 'migrations')
