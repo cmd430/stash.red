@@ -14,7 +14,7 @@ export default Router()
   .use((req, res, next) => {
     let sort = req.query.sort || 'DESC'
     let limit = req.query.limit || config.pagination.limit.default
-    req.viewPage = req.query.page || 1
+    req.viewPage = +req.query.p || 1
     req.viewLimit = limit > config.pagination.limit.max
       ? config.pagination.limit.default
       : limit > 0
