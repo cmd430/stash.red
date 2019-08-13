@@ -1,5 +1,6 @@
 require('json5/lib/register')
 const mkdirp = require('mkdirp')
+const { readdir, unlink } = require('fs')
 const { join } = require('path')
 const database = require('better-sqlite3-helper')
 require = require('esm')(module)
@@ -74,6 +75,16 @@ mkdirp.sync(join(__dirname, 'storage', 'image'))
 mkdirp.sync(join(__dirname, 'storage', 'audio'))
 mkdirp.sync(join(__dirname, 'storage', 'video'))
 mkdirp.sync(join(__dirname, 'storage', 'thumbnail'))
+
+readdir(join(__dirname, 'storage', 'temp'), (err, files) => {
+  if (!err) {
+    if (files.length > 0) {
+      for (let index = 0; index < files.length; index++) {
+        unlink(join(__dirname, 'storage', 'temp', files[index]), err => {})
+      }
+    }
+  }
+})
 
 database({
   path: join(__dirname, 'storage', 'database', 'stash.db'),
