@@ -399,13 +399,13 @@ function upload (req, res, next) {
 
           return res.status(201).json({
             message: 'Upload Complete',
-            id: index > 0
+            id: file.hasOwnProperty('in_album')
               ? file.in_album
               : file.file_id,
-            type: index > 0
+            type: file.hasOwnProperty('in_album')
               ? 'album'
               : type,
-            ext: index > 0
+            ext: file.hasOwnProperty('in_album')
               ? null
               : getExtension(file.mimetype)
           })
