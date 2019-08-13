@@ -46,9 +46,6 @@ function onError(err) {
 
 function onListening() {
   info(
-    this instanceof http.Server
-      ? 'Server'
-      : 'Secure Server',
     ['Listening at address', {color: 'limegreen'}],
     [this.address().address, {color: 'yellow'}],
     ['on port', {color: 'limegreen'}],
