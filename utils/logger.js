@@ -37,7 +37,7 @@ token('content-length', (req, res, format) => {
   let content_length
   if (res.headersSent) content_length = res.getHeader('content-length')
   if (!res.headersSent) content_length = req.headers['content-length']
-  if (!content_length) return ' '
+  if (!content_length || !+content_length > 0) return ' '
     switch (format || 'bytes') {
       case 'bytes':
         return `${content_length} ${format}`
