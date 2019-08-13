@@ -12,14 +12,9 @@ function loadPollyfills (cb) {
   document.head.appendChild(fullscreenAPI)
 
   let ID3 = document.createElement('script')
-  ID3.setAttribute('type', 'module')
-  ID3.innerHTML = `
-    import * as id3 from 'https://unpkg.com/id3js@^2/lib/id3.js'
-    window.id3 = id3
-    document.dispatchEvent(new Event('id3_loaded'))
-  `
+  ID3.src = 'https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.0/jsmediatags.js'
+  ID3.addEventListener('load', loadAudioMeta)
   document.head.appendChild(ID3)
-  document.addEventListener('id3_loaded', loadAudioMeta)
 
   cb()
 }
@@ -604,17 +599,25 @@ function loadAudioMeta () {
     let audio__info__title = info.querySelector('.title')
     let audio__info__artist = info.querySelector('.artist')
 
-    id3.fromUrl(audio.currentSrc).then(tags => {
-      if (tags) {
-        audio__info__title.textContent = tags.title || 'Unknown Title'
-        audio__info__title.setAttribute('title', tags.title || 'Unknown Title')
-        audio__info__artist.textContent = tags.artist || 'Unknown Artist'
-        audio__info__artist.setAttribute('title', tags.artist || 'Unknown Artist')
-      } else {
-        audio__info__title.textContent = 'Unknown Title'
-        audio__info__title.setAttribute('title', 'Unknown Title')
-        audio__info__artist.textContent = 'Unknown Artist'
-        audio__info__artist.setAttribute('title', 'Unknown Artist')
+    let defaultName = audio.firstElementChild.dataset.original_filename.split('.').reverse().pop()
+
+    audio__info__title.textContent = defaultName
+    audio__info__title.setAttribute('title', 'Unknown Title')
+    audio__info__artist.textContent = '\u00a0'
+    audio__info__artist.setAttribute('title', 'Unknown Artist')
+
+    jsmediatags.read(audio.currentSrc, {
+      onSuccess: data => {
+        let tags = data.tags
+        if (tags) {
+          audio__info__title.textContent = tags.title || defaultName
+          audio__info__title.setAttribute('title', tags.title || 'Unknown Title')
+          audio__info__artist.textContent = tags.artist || '\u00a0'
+          audio__info__artist.setAttribute('title', tags.artist || 'Unknown Artist')
+        }
+      },
+      onError: err => {
+        console.log(err.message)
       }
     })
   })
