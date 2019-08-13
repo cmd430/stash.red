@@ -63,7 +63,8 @@ export default Router()
     let file_id = req.params.file_id
 
     try {
-      let info = database().queryFirstCell('SELECT mimetype, original_filename FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
+      let info = database().queryFirstRow('SELECT mimetype, original_filename FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
+      console.log(info)
       unlink(join(__dirname, '..', 'storage', 'thumbnail', `${file_id}.webp`), err => {
         if (err) {
           error(err.message)
