@@ -22,12 +22,13 @@ function upload (req, res, next) {
   let user = req.isAuthenticated()
   if (!user) return next(createError(401))
 
-  debug(`${user.username}`,
-    ['Started upload', {color: 'limegreen'}],
-    'from', (upload_from === ''
-      ? (['Homepage', {color: 'cyan'}])
-      : (['Album (', {color: 'cyan'}], [`${req.url.split('/')[1]}`, {color: 'yellow'}], [')', {color: 'cyan'}])
-    ), req)
+  if (upload_from === '') debug(`${user.username}`,
+                                 ['Started upload', {color: 'limegreen'}],
+                                 'from', ['Homepage', {color: 'cyan'}], req)
+  if (upload_from === 'a') debug(`${user.username}`,
+                                  ['Started upload', {color: 'limegreen'}],
+                                  'from', ['Album', {color: 'cyan'}],
+                                  '(', [`${req.url.split('/')[1]}`, {color: 'yellow'}], ')', req)
 
   let upload_tracker = {
     parsed: 0,
