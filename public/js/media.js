@@ -226,62 +226,8 @@ function initializeAudioPlayers () {
     let playback__buffer = controls.querySelector('.playback__buffer')
     let playback__time = controls.querySelector('.playback__time')
     let playback__length = controls.querySelector('.playback__length')
-    let control__breakout = controls.querySelector('.control__breakout')
 
     audio.__mute = false
-
-    // Visualizer
-    const waveSize = 6
-    let audioCtx = new AudioContext()
-    let analyser = audioCtx.createAnalyser()
-    source = audioCtx.createMediaElementSource(audio)
-    source.connect(analyser)
-    analyser.connect(audioCtx.destination)
-    analyser.fftSize = 2048
-    let bufferLength = analyser.frequencyBinCount
-    let dataArray = new Uint8Array(bufferLength)
-    let canvas = player.querySelector('canvas')
-    let canvasCtx = canvas.getContext('2d')
-    function renderFrame() {
-      canvasCtx.clearRect(0, 0, canvas.width, canvas.height)
-      requestAnimationFrame(renderFrame)
-      analyser.getByteTimeDomainData(dataArray)
-      canvasCtx.lineWidth = waveSize
-      canvasCtx.strokeStyle = 'rgb(0, 0, 0)'
-      canvasCtx.beginPath()
-      let sliceWidth = canvas.width * 1 / bufferLength
-      let x = 0
-      for(let i = 0; i < bufferLength; i++) {
-        let v = dataArray[i] / 128.0
-        let y = v * canvas.height / 2
-        if(i === 0) {
-          canvasCtx.moveTo(x, y)
-        } else {
-          canvasCtx.lineTo(x, y)
-        }
-        x += sliceWidth
-      }
-      canvasCtx.lineTo(canvas.width, canvas.height / 2)
-      canvasCtx.stroke()
-      canvasCtx.lineWidth = waveSize / 2
-      canvasCtx.strokeStyle = 'rgb(255, 255, 255)'
-      canvasCtx.stroke()
-    }
-    renderFrame()
-    let events = [
-      'ended',
-      'pause',
-      'play'
-    ].forEach(event => {
-      audio.addEventListener(event, () => {
-        if (audio.paused || audio.ended) {
-          canvas.classList.add('invisible')
-        } else {
-          audioCtx.resume()
-          canvas.classList.remove('invisible')
-        }
-      })
-    })
 
     // Play | Pasue | Replay
     let playback__playPause__icon = playback__playPause.querySelector('i')
@@ -601,7 +547,10 @@ function loadAudioMeta () {
         }
       },
       onError: err => {
-        console.log(err.message)
+        audio__info__title.textContent =  defaultName
+        audio__info__title.setAttribute('title', 'Unknown Title')
+        audio__info__artist.textContent = '\u00a0'
+        audio__info__artist.setAttribute('title', 'Unknown Artist')
       }
     })
   })
