@@ -18,6 +18,7 @@ const storage = join(__dirname, '..', 'storage')
 sharp.cache(false)
 
 function upload (req, res, next) {
+  if (!req.busboy) return next(createError(400))
   let upload_from = req.baseUrl.split('/').pop()
   let user = req.isAuthenticated()
   if (!user) return next(createError(401))
