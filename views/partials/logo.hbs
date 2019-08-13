@@ -1,5 +1,5 @@
-<div id="logo">
+<div id="logo" {{#if_contains @env 'dev' this}}class="dev"{{/if_contains}}>
   <a href="/">
-    {{this.name.fragmentOne}}<span>.{{this.name.fragmentTwo}}</span>
+    {{split @title '.' 0}}<span>.{{split @title '.' 1}}</span>
   </a>
 </div>

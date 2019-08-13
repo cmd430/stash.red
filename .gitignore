@@ -1,6 +1,13 @@
+docs/.ignore/**
 node_modules/**
-storage/**
-docs/*.notes
+
+storage/image/**
+storage/audio/**
+storage/video/**
+storage/thumbnail/**
+storage/temp/**
+storage/database/*.db*
+
 
 # VS Code workspace
 # (needs special rule thanks to the

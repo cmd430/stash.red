@@ -1,0 +1,372 @@
+@import 'colors';
+
+// _Shared
+body {
+  background-color: $color-pagebackground;
+}
+
+#logo {
+  a {
+    color: $color-logo;
+  }
+  &.dev {
+    a {
+      color: $color-logo-dev;
+    }
+  }
+}
+
+// Common
+header {
+  h1 {
+    &,
+    & .album__download {
+      color: $color-headertext;
+    }
+    & .album__delete {
+      color: $color-action-delete;
+    }
+    & .album__title_input {
+      border-color: $color-contentborder;
+    }
+  }
+}
+
+#container {
+  background: $color-contentbackground;
+  border-color: $color-contentborder;
+}
+
+.wrapper {
+  .actions {
+    .action__delete {
+      color: $color-action-delete;
+      background-color: $color-actionbackground;
+      border-color: $color-actionborder;
+    }
+  }
+}
+
+.blackout {
+  background-color: $color-blackout;
+  #delete_modal,
+  #update_modal {
+    background-color: $color-modal;
+    border-color: $color-modal-border;
+    h2 {
+      color: $color-modal-header;
+    }
+    hr {
+      background-color: $color-modal-divider;
+    }
+    span {
+      button {
+        &.delete {
+          color: $color-modal;
+          background-color: $color-modal-delete;
+          border-color: $color-modal-delete;
+        }
+        &.update {
+          color: $color-modal;
+          background-color: $color-modal-update;
+          border-color: $color-modal-update;
+        }
+        &.cancel {
+          color: $color-modal-header;
+          border-color: $color-modal-border;
+          background-color: $color-modal-cancel;
+        }
+        &:hover {
+          &.delete {
+            color: $color-modal-delete;
+            background-color: $color-transparent;
+          }
+          &.update {
+            color: $color-modal-update;
+            background-color: $color-transparent;
+          }
+        }
+      }
+    }
+  }
+}
+
+#dropzone {
+  background-color: $color-white;
+  border-color: $color-contentborder;
+  #dropstate,
+  #text {
+    color: $color-progresstext;
+  }
+  #progress {
+    border-color: $color-progressborder;
+    #fill {
+      background-color: $color-progressfill;
+    }
+    &.proc {
+      #fill {
+        background-color: $color-progressfillprocess;
+      }
+    }
+    &.warn {
+      #fill {
+        background-color: $color-progressfillwarn;
+      }
+    }
+    &.error {
+      #fill {
+        background-color: $color-progressfillerror;
+      }
+    }
+  }
+}
+
+// Index
+#content {
+  #buttons {
+    .button {
+      &, a {
+        color: $color-contenttext;
+        &:hover,
+        &.active {
+          color: $color-contenttext-hover;
+        }
+        &:not(:last-child) {
+          border-color: $color-contentborder;
+        }
+      }
+    }
+  }
+  #settings {
+    .setting {
+      span {
+        color: $color-contenttext-hover;
+      }
+      .switch {
+        input {
+          &:checked {
+            &+ .slider {
+              background-color: $color-progressfill;
+            }
+          }
+        }
+        .slider {
+          background-color: $color-headertext;
+          &::before {
+            background-color: $color-white;
+          }
+        }
+      }
+    }
+  }
+}
+
+#footer {
+  a {
+    > svg {
+      fill: $color-footertext;
+    }
+    &:hover {
+      > svg {
+        fill: $color-footertext-hover;
+      }
+    }
+  }
+}
+
+.adminBtn {
+  color: $color-footertext;
+  &:hover {
+    color: $color-footertext-hover;
+  }
+}
+
+// Login / Signup
+#content {
+  #accountzone {
+    background-color: $color-white;
+    border-color: $color-contentborder;
+    form {
+      input[type=text],
+      input[type=email],
+      input[type=password],
+      input[type=submit] {
+        color: $color-contenttext;
+        &:hover,
+        &:focus {
+          color: $color-contenttext-hover
+        }
+      }
+      input[type=text],
+      input[type=password] {
+        border-color: $color-contentborder;
+      }
+      input[type=submit] {
+        background: $color-transparent;
+      }
+    }
+  }
+}
+
+// User
+#container {
+  .preview {
+    background: $color-transparent-gradiant;
+    border-color: $color-contentborder;
+  }
+  .pagination {
+    li {
+      &:not(.disabled) {
+        a {
+          color: $color-contenttext;
+        }
+        &.active {
+          a {
+            border-color: $color-contenttext-hover;
+            color: $color-contenttext-hover;
+          }
+        }
+        &:hover,
+        &:active {
+          a {
+            border-color: $color-contenttext-hover;
+            color: $color-contenttext-hover;
+            &::after {
+              color: $color-contenttext-hover;
+            }
+          }
+        }
+      }
+      &.disabled {
+        a {
+          color: $color-contenttext;
+        }
+      }
+    }
+  }
+  .tab_container {
+    border-bottom-color: $color-contentborder;
+    .tab {
+      border-right-color: $color-contentborder;
+      &.active,
+      &:hover {
+        a {
+          color: $color-contenttext-hover;
+        }
+      }
+      a {
+        color: $color-contenttext;
+      }
+    }
+  }
+}
+
+// _media
+.image {
+  img {
+    background: $color-transparent-gradiant;
+    border-color: $color-contentborder;
+  }
+}
+.video__player {
+  border-color: $color-contentborder;
+  video {
+    background: $color-black;
+  }
+  .video__controls {
+    background-color: $color-white;
+    color: $color-contenttext-hover;
+    .playback__bar {
+      background-color: $color-contenttext-hover;
+      .playback__buffer {
+        background-color: $color-mediabuffer;
+      }
+      .playback__progress {
+        background-color: $color-progressfill;
+        &::after {
+          background: $color-contenttext-hover;
+        }
+      }
+    }
+    .playback__extra {
+      .control__breakout,
+      .control__download {
+        color: $color-contenttext-hover;
+      }
+    }
+    .playback__playPause,
+    .playback__volume > .volume__muteUnmute,
+    .playback__extra > .control__fullscreen,
+    .playback__extra > .control__download {
+      i {
+        color: $color-contenttext-hover;
+      }
+    }
+    .playback__volume {
+      .volume__control {
+        -webkit-tap-highlight-color: $color-contenttext-hover;
+        background-image: $color-media-gradiant;
+        &::-webkit-slider-thumb {
+          background-color: $color-contenttext-hover;
+        }
+      }
+    }
+  }
+}
+.audio__player {
+  background-color: $color-white;
+  border-color: $color-contentborder;
+  .audio__info {
+    .artist,
+    .title {
+      color: $color-contenttext-hover;
+    }
+    .audio__controls {
+      .playback__bar {
+        background-color: $color-contenttext-hover;
+        .playback__buffer {
+          background-color: $color-mediabuffer;
+        }
+        .playback__progress {
+          background-color: $color-progressfill;
+          &::after {
+            background: $color-contenttext-hover;
+          }
+        }
+      }
+      .playback__clock {
+        color: $color-contenttext-hover;
+      }
+      .playback__volume {
+        .volume__control {
+          -webkit-tap-highlight-color: $color-contenttext-hover;
+          background-image: $color-media-gradiant;
+          &::-webkit-slider-thumb {
+            background-color: $color-contenttext-hover;
+          }
+        }
+      }
+      .playback__extra {
+        .control__breakout {
+          color: $color-contenttext-hover;
+        }
+      }
+      .playback__playPause,
+      .playback__volume > .volume__muteUnmute,
+      .playback__extra > .control__fullscreen,
+      .playback__extra > .control__download {
+        i {
+          color: $color-contenttext-hover;
+        }
+      }
+    }
+  }
+}
+
+// Admin
+.log_container {
+  background-color: $color-black;
+  .log {
+    color: $color-white;
+  }
+}

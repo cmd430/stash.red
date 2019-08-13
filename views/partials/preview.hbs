@@ -1,6 +1,15 @@
-<div class="preview{{#unless this.meta.public}} private{{/unless}}">
-  <a href="{{this.path}}">
-    <img class="thumbnail" src="{{this.meta.thumbnail}}"></img>
-    <span class="icon {{this.meta.type}}"></span>
-  </a>
+<div class="preview{{#unless public}} private{{/unless}}">
+  {{#if mimetype}}
+    <a href="/f/{{file_id}}">
+      <img class="thumbnail" src="/f/{{file_id}}/thumbnail">
+      {{#if_contains mimetype 'image' this}}<span class="icon image"></span>{{/if_contains}}
+      {{#if_contains mimetype 'audio' this}}<span class="icon audio"></span>{{/if_contains}}
+      {{#if_contains mimetype 'video' this}}<span class="icon video"></span>{{/if_contains}}
+    </a>
+  {{else}}
+    <a href="/a/{{album_id}}">
+      <img class="thumbnail" src="/a/{{album_id}}/thumbnail">
+      <span class="icon album"></span>
+    </a>
+  {{/if}}
 </div>

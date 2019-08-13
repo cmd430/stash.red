@@ -1,0 +1,107 @@
+{
+  server: {
+    env: 'prod', // `[dev]elopment` or `[prod]uction`
+  },
+  auth: {
+    allowSignup: true,
+    /**
+     * rounds
+     *  Rounds as {Number} for salt generation
+     *  Default: 10
+     */
+    rounds: 10,
+    captcha: {
+      enabled: {
+        login: false,
+        signup: true
+      },
+      /**
+       *  accepts any option that is accepted by
+       *  https://github.com/lemonce/svg-captcha
+       *
+       *  plus useMath (Boolen), useFont (String) and cookie (String)
+       *
+       *  setting isMath to true will enable math expressions
+       *  while false will use text strings defaults to false
+       *
+       *  useFont can be set to the path of a ttf or otf font
+       *  for use in the captcha
+       *
+       *  cookie is the value for the key in the cookie to
+       *  store the captcha information, this can be ommited
+       *  to use the default of 'captcha'
+       */
+      useMath: false,
+      useFont: null,
+      cookie: 'captcha',
+      fontSize: 40,
+      width: 100,
+      height: 40,
+      charPreset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&?*=<>',
+      ignoreChars: '0oO1iIlL',
+      size: 4,
+      noise: 2,
+      color: false
+    },
+    session: {
+      secret: 'stash',
+      cookie: {
+        secure: 'auto',
+        /**
+         * maxAge
+         *  Max age of session in ms
+         *  Default: 604800000 (1 week)
+         */
+        maxAge: 604800000
+      }
+    },
+  },
+  upload: {
+    /**
+     * limits
+     *  Accepts any options that busboy accepts
+     *
+     *  Defaults:
+     *    fileSize: 524288000  (500mb)
+     */
+    limits: {
+      fileSize: 524288000
+    },
+    thumbnail: {
+      quality: 50,
+      size: 250,
+      fit: 'cover',
+      position: 'entropy',
+      background: {
+        r: 0,
+        g: 0,
+        b: 0,
+        alpha: 0
+      },
+      kernel: 'lanczos3',
+      withoutEnlargement: true,
+      fastShrinkOnLoad: true
+    }
+  },
+  log: {
+    /**
+     * level
+     *  0 -  silent
+     *  1 -  info
+     *  2 -  warn
+     *  3 -  debug
+     *  4 -  error
+     */
+    level: 1,
+    color: {
+      enabled: true,
+      /**
+       * level
+       *  1 -  Basic color support (16 colors)
+       *  2 -  256 color support
+       *  3 -  Truecolor support (16 million colors)
+       */
+      level: 3
+    }
+  }
+}
