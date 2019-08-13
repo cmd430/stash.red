@@ -150,7 +150,8 @@ header {
   visibility: collapse;
   transition: opacity 250ms linear, visibility 250ms linear;
   &.delete,
-  &.update {
+  &.update,
+  &.dropzone {
     opacity: 1;
     visibility: visible;
     transition: opacity 250ms linear, visibility 0ms linear;
@@ -162,6 +163,11 @@ header {
   }
   &.update {
     #update_modal {
+      visibility: visible;
+    }
+  }
+  &.dropzone {
+    #dropzone {
       visibility: visible;
     }
   }
@@ -205,5 +211,8 @@ header {
         }
       }
     }
+  }
+  #dropzone {
+    visibility: collapse;
   }
 }

@@ -91,37 +91,38 @@ header {
   }
 }
 
-// Index
-#content {
-  #dropzone {
-    background-color: $color-white;
-    border-color: $color-contentborder;
-    #dropstate,
-    #text {
-      color: $color-progresstext;
+#dropzone {
+  background-color: $color-white;
+  border-color: $color-contentborder;
+  #dropstate,
+  #text {
+    color: $color-progresstext;
+  }
+  #progress {
+    border-color: $color-progressborder;
+    #fill {
+      background-color: $color-progressfill;
     }
-    #progress {
-      border-color: $color-progressborder;
+    &.proc {
       #fill {
-        background-color: $color-progressfill;
+        background-color: $color-progressfillprocess;
       }
-      &.proc {
-        #fill {
-          background-color: $color-progressfillprocess;
-        }
+    }
+    &.warn {
+      #fill {
+        background-color: $color-progressfillwarn;
       }
-      &.warn {
-        #fill {
-          background-color: $color-progressfillwarn;
-        }
-      }
-      &.error {
-        #fill {
-          background-color: $color-progressfillerror;
-        }
+    }
+    &.error {
+      #fill {
+        background-color: $color-progressfillerror;
       }
     }
   }
+}
+
+// Index
+#content {
   #buttons {
     .button {
       &, a {
