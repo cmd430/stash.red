@@ -161,9 +161,13 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault()
     })
     document.addEventListener('dragleave', e => {
-      if (!isHome && blackout.classList.contains('dropzone')) blackout.classList.remove('dropzone')
+      if (/Chrome/.test(navigator.userAgent) && !e.clientX && !e.clientY) {
+        if (!isHome && blackout.classList.contains('dropzone')) blackout.classList.remove('dropzone')
+      } else if (!/Chrome/.test(navigator.userAgent)) {
+        if (!isHome && blackout.classList.contains('dropzone')) blackout.classList.remove('dropzone')
+      }
       e.preventDefault()
-    })
+    }, false)
     document.addEventListener('drop', e => {
       if (!isHome && blackout.classList.contains('dropzone') && e.target !== file__dropzone) blackout.classList.remove('dropzone')
       e.preventDefault()
