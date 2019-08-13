@@ -46,9 +46,9 @@ export default Router()
 
     try {
       let mimetype = database().queryFirstCell(`SELECT mimetype FROM files WHERE file_id=?`, file_id)
-
       res.download(join(__dirname, '..', 'storage', mimetype.split('/').reverse().pop(), `${file_id}.${getExtension(mimetype)}`))
     } catch (err) {
+      error(err.message)
       return next(createError(404))
     }
   })
@@ -59,27 +59,26 @@ export default Router()
   // DELETE Method Routes
   .delete('/:file_id/delete', (req, res, next) => {
     let user = req.isAuthenticated()
-
     if (!user) return res.sendStatus(401)
-
     let file_id = req.params.file_id
 
     try {
       let mimetype = database().queryFirstCell('SELECT mimetype FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
-
       unlink(join(__dirname, '..', 'storage', 'thumbnail', `${file_id}.webp`), err => {
         if (err) {
+          error(err.message)
           if (err.code !== 'ENOENT') return res.sendStatus(405)
         }
       })
       unlink(join(__dirname, '..', 'storage', mimetype.split('/').reverse().pop(), `${file_id}.${getExtension(mimetype)}`), err => {
         if (err) {
+          error(err.message)
           if (err.code !== 'ENOENT') return res.sendStatus(405)
         }
       })
-
       database().run('DELETE FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
     } catch (err) {
+      error(err.message)
       return res.sendStatus(405)
     }
 

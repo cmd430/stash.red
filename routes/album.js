@@ -57,24 +57,23 @@ export default Router()
     let zipname = ''
 
     try {
-      zipname = database().queryFirstCell(`SELECT title FROM albums WHERE album_id=?`, album_id) || 'Album'
-
+      zipname = `${database().queryFirstCell(`SELECT title FROM albums WHERE album_id=?`, album_id) || 'Album'} - `
       database().query('SELECT file_id, mimetype FROM files WHERE in_album=?', album_id).forEach(file => {
         let filename = `${file.file_id}.${getExtension(file.mimetype)}`
-
         files.push({
           path: join(__dirname, '..', 'storage', file.mimetype.split('/').reverse().pop(), filename),
           name: filename
         })
       })
-
-      res.zip({
-        files: files,
-        filename: `${zipname} - ${album_id}.zip`
-      })
     } catch (err) {
+      error(err.message)
       return next(createError(404))
     }
+
+    res.zip({
+      files: files,
+      filename: `${zipname}${album_id}.zip`
+    })
   })
 
   // POST Method Routes
@@ -83,17 +82,12 @@ export default Router()
   // PATCH Method Routes
   .patch('/:album_id/update', (req, res, next) => {
     let user = req.isAuthenticated()
-
     if (!user) return next(createError(401))
     if (!req.body.title && !req.body.public) return next(createError(400))
-
     let update = {}
-
     if (req.body.title) {
       let title = req.body.title.trim()
-
       if (!title.replace(/\s/g, '').length) title = 'Album'
-
       update.title = title
     }
     if (req.body.public) {
@@ -106,6 +100,7 @@ export default Router()
         uploaded_by: user.username
       })
     } catch (err) {
+      error(err.message)
       return res.sendStatus(405)
     }
 
@@ -115,28 +110,27 @@ export default Router()
   // DELETE Method Routes
   .delete('/:album_id/delete', (req, res, next) => {
     let user = req.isAuthenticated()
-
     if (!user) return res.sendStatus(401)
-
     let album_id = req.params.album_id
 
     try {
       database().query('SELECT file_id, mimetype FROM files WHERE in_album=? AND uploaded_by=?', album_id, user.username).forEach(file => {
-
         unlink(join(__dirname, '..', 'storage', 'thumbnail', `${file.file_id}.webp`), err => {
           if (err) {
+            error(err.message)
             if (err.code !== 'ENOENT') return res.sendStatus(405)
           }
         })
         unlink(join(__dirname, '..', 'storage', file.mimetype.split('/').reverse().pop(), `${file.file_id}.${getExtension(file.mimetype)}`), err => {
           if (err) {
+            error(err.message)
             if (err.code !== 'ENOENT') return res.sendStatus(405)
           }
         })
       })
-
       database().run('DELETE FROM albums WHERE album_id=? AND uploaded_by=?', album_id, user.username)
     } catch (err) {
+      error(err.message)
       return res.sendStatus(405)
     }
 

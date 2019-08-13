@@ -30,12 +30,14 @@ export default Router()
   })
   .get('/signup', (req, res, next) => {
     if (!config.auth.allowSignup) return next(createError(503, 'Account Creation Disabled'))
+
     res.render('signup', {
       captcha: config.auth.captcha.enabled.signup
     })
   })
   .get('/logout', (req, res, next) => {
     if (req.session) req.session.destroy()
+
     res.redirect('/')
   })
   .get('/captcha', captcha.generate())
@@ -79,6 +81,7 @@ export default Router()
      && !captcha.validate(req, req.body.captcha)
     ) return next(createError(400, 'Captcha Failed'))
     if (req.body.password !== req.body.passwordConfirm) return next(createError(400, 'Passwords Don\'t Match'))
+
     try {
       req.session.user = {
         id: database().insert('users', {
@@ -92,6 +95,7 @@ export default Router()
       error(err.message)
       return next(createError(409))
     }
+
     res.status(201).redirect('/')
   })
 

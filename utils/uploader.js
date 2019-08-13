@@ -316,6 +316,7 @@ function upload (req, res, next) {
       } catch (err) {
         upload_tracker.status = 'abort'
 
+        error(err.message)
         debug('Upload aborted album', [`${uploadinfo.album.album_id}`, {color: 'red'}], 'could not be created (', [`${err.message}`, {color: 'red'}], ')', req)
 
         return res.status(409).json({ message: 'Could Not Add Database Entrys' })
@@ -339,6 +340,7 @@ function upload (req, res, next) {
       } catch (err) {
         upload_tracker.status = 'abort'
 
+        error(err.message)
         debug('Upload aborted file', [`${uploadinfo.album.album_id}`, {color: 'red'}], 'could not be created (', [`${err.message}`, {color: 'red'}], ')', req)
 
         return res.status(409).json({ message: 'Could Not Add Database Entry' })
@@ -370,11 +372,12 @@ function upload (req, res, next) {
 
               debug('Rotated image', [`${file.file_id}`, {color: 'cyan'}], req)
             } catch (err) {
+              error(err.message)
               debug('Could not rotate image', [`${file.file_id}`, {color: 'red'}], '(', [`${err.message}`, {color: 'red'}], ')', req)
             }
           }
         } catch (err) {
-          error(err.message, req)
+          error(err.message)
         }
       }
 
@@ -478,6 +481,7 @@ async function createThumbnail (fileinfo, req) {
       .webp({ quality: config.upload.thumbnail.quality })
       .toFile(join(storage, 'thumbnail', `${fileinfo.id}.webp`))
   } catch (err) {
+    error(err.message)
     debug('Failed to create thumbnail for', [`${fileinfo.id}`, {color: 'red'}], '(', [`${err.message}`, {color: 'red'}],')', req)
   }
 }
