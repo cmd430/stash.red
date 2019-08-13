@@ -13,14 +13,8 @@
       </a>
     {{/if}}
     <div id="content">
-      {{> logo server}}
-      <div id="dropzone">
-        <span id="dropstate">Click here or Dropfiles</span>
-        <span id="progress" class="hidden invisible">
-          <span id="fill"></span>
-          <span id="text">Uploading: 0%</span>
-        </span>
-      </div>
+      {{> logo}}
+      {{> dropzone}}
       <div id="buttons">
         {{#if signedin}}
           <div id="uploadsBtn" class="button">
@@ -65,7 +59,6 @@
           </label>
         </div>
       </div>
-      <input id="files" class="hidden" name="files" type="file" accept="image/*,.webp,video/*,.mkv,audio/*" multiple />
     </div>
     <div id="footer">
       <a href="https://github.com/{{server.github}}">
