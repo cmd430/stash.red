@@ -590,12 +590,7 @@ function loadAudioMeta () {
 
     let defaultName = audio.firstElementChild.dataset.original_filename.split('.').reverse().pop()
 
-    audio__info__title.textContent = defaultName
-    audio__info__title.setAttribute('title', 'Unknown Title')
-    audio__info__artist.textContent = '\u00a0'
-    audio__info__artist.setAttribute('title', 'Unknown Artist')
-
-    jsmediatags.read(audio.currentSrc, {
+    jsmediatags.read(audio.firstElementChild.src, {
       onSuccess: data => {
         let tags = data.tags
         if (tags) {
