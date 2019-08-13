@@ -36,11 +36,6 @@ function initializeVideoPlayers () {
 
     video.__mute = false
 
-    // View on seperate page (hide if viewing the file page)
-    if (location.href.includes('/f/')) {
-      control__breakout.setAttribute('style', 'display: none;')
-    }
-
     // Fullscreen
     if (!window.thread) {
       window.thread = null
@@ -287,12 +282,6 @@ function initializeAudioPlayers () {
         }
       })
     })
-
-    // View on seperate page (hide if viewing the file page)
-    if (location.href.includes('/f/')) {
-      control__breakout.setAttribute('style', 'display: none;')
-      createCSSSelector('.title, .artist', 'width: calc(100% - 20px) !important;')
-    }
 
     // Play | Pasue | Replay
     let playback__playPause__icon = playback__playPause.querySelector('i')
