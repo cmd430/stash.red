@@ -1,5 +1,5 @@
 import { unlink } from 'fs'
-import { join, extname } from 'path'
+import { join, extname, basename } from 'path'
 import express, { Router } from 'express'
 import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
@@ -29,6 +29,7 @@ export default Router()
     if (file) {
       res.locals.file = [file].map(file => {
         delete file.id
+        file.original_filename = basename(file.original_filename)
         return file
       })[0]
 

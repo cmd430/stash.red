@@ -1,5 +1,5 @@
 import { unlink } from 'fs'
-import { join, extname } from 'path'
+import { join, extname, basename } from 'path'
 import express, { Router } from 'express'
 import upload from '../utils/uploader'
 import { error } from '../utils/logger'
@@ -35,7 +35,10 @@ export default Router()
         album_id: album_data.album_id,
         album_title: album_data.title || 'Album',
         uploaded_by: album_data.uploaded_by,
-        files: files
+        files: files.map(file => {
+          file.original_filename = basename(file.original_filename)
+          return file
+        })
       }
 
       return req.viewJson
