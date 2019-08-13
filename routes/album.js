@@ -36,7 +36,7 @@ export default Router()
         album_title: album_data.title || 'Album',
         uploaded_by: album_data.uploaded_by,
         files: files.map(file => {
-          delete file.uploaded_by
+          delete file.uploaded_at
           return file
         })
       }
