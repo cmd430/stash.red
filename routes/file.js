@@ -46,7 +46,7 @@ export default Router()
     let file_id = req.params.file_id
 
     try {
-      let info = database().queryFirstCell(`SELECT mimetype,  FROM files WHERE file_id=?`, file_id)
+      let info = database().queryFirstRow(`SELECT mimetype, original_filename FROM files WHERE file_id=?`, file_id)
       res.download(join(__dirname, '..', 'storage', info.mimetype.split('/').reverse().pop(), `${file_id}${extname(info.original_filename)}`))
     } catch (err) {
       error(err.message)
