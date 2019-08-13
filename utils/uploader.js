@@ -20,15 +20,22 @@ function upload (req, res, next) {
   if (!req.busboy) return next(createError(400))
   let upload_from = req.baseUrl.split('/').pop()
   let user = req.isAuthenticated()
-  if (!user) return next(createError(401))
+  if (!user) return res.status(401).json({ message: 'Unauthorized' })
 
   if (upload_from === '') debug(`${user.username}`,
                                  ['Started upload', {color: 'limegreen'}],
                                  'from', ['Homepage', {color: 'cyan'}], req)
-  if (upload_from === 'a') debug(`${user.username}`,
-                                  ['Started upload', {color: 'limegreen'}],
-                                  'from', ['Album', {color: 'cyan'}],
-                                  '(', [`${req.url.split('/')[1]}`, {color: 'yellow'}], ')', req)
+  if (upload_from === 'a') {
+    let album_id = req.url.split('/')[1]
+    let album_owner = database().queryFirstCell(`SELECT uploaded_by FROM albums WHERE album_id=?`, album_id)
+
+    if (album_owner !== user.username) return res.status(401).json({ message: 'Unauthorized' })
+
+    debug(`${user.username}`,
+      ['Started upload', {color: 'limegreen'}],
+      'from', ['Album', {color: 'cyan'}],
+      '(', [`${album_id}`, {color: 'yellow'}], ')', req)
+  }
 
   let upload_tracker = {
     parsed: 0,
