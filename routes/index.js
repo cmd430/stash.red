@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import database from 'better-sqlite3-helper'
-import { createID, hash, validate } from '../utils/helpers'
+import { hash, validate } from '../utils/helpers'
 import upload from '../utils/uploader'
 import { error } from '../utils/logger'
 import createError from 'http-errors'

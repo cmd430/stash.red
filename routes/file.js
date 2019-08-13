@@ -4,6 +4,7 @@ import express, { Router } from 'express'
 import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
 import { getExtension } from 'mime'
+import { error } from '../utils/logger'
 
 /*
  *  File             /f/<id>
