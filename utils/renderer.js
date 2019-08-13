@@ -1,7 +1,6 @@
-import { join } from 'path'
+import { join, extname } from 'path'
 import hbs from 'hbs'
 import hbsPaginate from 'handlebars-paginate'
-import { getExtension } from 'mime'
 
 function renderer (app) {
   // setup handlebars (for view engine)
@@ -21,7 +20,7 @@ function renderer (app) {
     return opts.inverse(context)
   })
   hbs.registerHelper('split', (data, split, index) => data.split(split)[index])
-  hbs.registerHelper('ext', data => getExtension(data))
+  hbs.registerHelper('ext', data => extname(data).substr(1))
   hbs.registerHelper('json', data => JSON.stringify(data, null, 2))
   return hbs
 }

@@ -1,9 +1,8 @@
 import { unlink } from 'fs'
-import { join } from 'path'
+import { join, extname } from 'path'
 import express, { Router } from 'express'
 import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
-import { getExtension } from 'mime'
 import { error } from '../utils/logger'
 
 /*
@@ -26,7 +25,7 @@ export default Router()
   // GET Method Routes
   .get('/:file_id', (req, res, next) => {
     let file_id = req.params.file_id
-    let file = database().queryFirstRow(`SELECT id, file_id, mimetype, uploaded_by FROM files WHERE file_id=?`, file_id)
+    let file = database().queryFirstRow(`SELECT id, file_id, mimetype, uploaded_by, original_filename FROM files WHERE file_id=?`, file_id)
     if (file) {
       res.locals.file = [file].map(file => {
         delete file.id
@@ -46,8 +45,8 @@ export default Router()
     let file_id = req.params.file_id
 
     try {
-      let mimetype = database().queryFirstCell(`SELECT mimetype FROM files WHERE file_id=?`, file_id)
-      res.download(join(__dirname, '..', 'storage', mimetype.split('/').reverse().pop(), `${file_id}.${getExtension(mimetype)}`))
+      let info = database().queryFirstCell(`SELECT mimetype,  FROM files WHERE file_id=?`, file_id)
+      res.download(join(__dirname, '..', 'storage', info.mimetype.split('/').reverse().pop(), `${file_id}${extname(info.original_filename)}`))
     } catch (err) {
       error(err.message)
       return next(createError(404))
@@ -64,14 +63,14 @@ export default Router()
     let file_id = req.params.file_id
 
     try {
-      let mimetype = database().queryFirstCell('SELECT mimetype FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
+      let info = database().queryFirstCell('SELECT mimetype, original_filename FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
       unlink(join(__dirname, '..', 'storage', 'thumbnail', `${file_id}.webp`), err => {
         if (err) {
           error(err.message)
           if (err.code !== 'ENOENT') return res.sendStatus(405)
         }
       })
-      unlink(join(__dirname, '..', 'storage', mimetype.split('/').reverse().pop(), `${file_id}.${getExtension(mimetype)}`), err => {
+      unlink(join(__dirname, '..', 'storage', info.mimetype.split('/').reverse().pop(), `${file_id}${extname(info.original_filename)}`), err => {
         if (err) {
           error(err.message)
           if (err.code !== 'ENOENT') return res.sendStatus(405)

@@ -45,7 +45,6 @@
     "http-errors": "^1.6.3",
     "jsmediatags": "^3.9.2",
     "json5": "^2.1.0",
-    "mime": "^2.4.4",
     "minimist2": "^1.0.2",
     "mkdirp": "^0.5.1",
     "morgan": "^1.9.1",

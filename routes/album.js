@@ -1,11 +1,10 @@
 import { unlink } from 'fs'
-import { join } from 'path'
+import { join, extname } from 'path'
 import express, { Router } from 'express'
 import upload from '../utils/uploader'
 import { error } from '../utils/logger'
 import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
-import { getExtension } from 'mime'
 
 /*
  *  Album            /a/<id>
@@ -30,16 +29,13 @@ export default Router()
     let album_id = req.params.album_id
     let album_data = database().queryFirstRow(`SELECT album_id, title, uploaded_by FROM albums WHERE album_id=?`, album_id)
     if (album_data) {
-      let files = database().query(`SELECT file_id, mimetype, uploaded_by, uploaded_at FROM files WHERE in_album=? ORDER BY uploaded_by ASC`, album_id)
+      let files = database().query(`SELECT file_id, mimetype, uploaded_by, uploaded_at, original_filename FROM files WHERE in_album=? ORDER BY uploaded_by ASC`, album_id)
 
       res.locals.album = {
         album_id: album_data.album_id,
         album_title: album_data.title || 'Album',
         uploaded_by: album_data.uploaded_by,
-        files: files.map(file => {
-          delete file.uploaded_at
-          return file
-        })
+        files: files
       }
 
       return req.viewJson
@@ -59,8 +55,8 @@ export default Router()
 
     try {
       zipname = `${database().queryFirstCell(`SELECT title FROM albums WHERE album_id=?`, album_id) || 'Album'} - `
-      database().query('SELECT file_id, mimetype FROM files WHERE in_album=?', album_id).forEach(file => {
-        let filename = `${file.file_id}.${getExtension(file.mimetype)}`
+      database().query('SELECT file_id, mimetype, original_filename FROM files WHERE in_album=?', album_id).forEach(file => {
+        let filename = `${file.file_id}${extname(file.original_filename)}`
         files.push({
           path: join(__dirname, '..', 'storage', file.mimetype.split('/').reverse().pop(), filename),
           name: filename
@@ -115,14 +111,14 @@ export default Router()
     let album_id = req.params.album_id
 
     try {
-      database().query('SELECT file_id, mimetype FROM files WHERE in_album=? AND uploaded_by=?', album_id, user.username).forEach(file => {
+      database().query('SELECT file_id, mimetype, original_filename FROM files WHERE in_album=? AND uploaded_by=?', album_id, user.username).forEach(file => {
         unlink(join(__dirname, '..', 'storage', 'thumbnail', `${file.file_id}.webp`), err => {
           if (err) {
             error(err.message)
             if (err.code !== 'ENOENT') return res.sendStatus(405)
           }
         })
-        unlink(join(__dirname, '..', 'storage', file.mimetype.split('/').reverse().pop(), `${file.file_id}.${getExtension(file.mimetype)}`), err => {
+        unlink(join(__dirname, '..', 'storage', file.mimetype.split('/').reverse().pop(), `${file.file_id}${extname(file.original_filename)}`), err => {
           if (err) {
             error(err.message)
             if (err.code !== 'ENOENT') return res.sendStatus(405)

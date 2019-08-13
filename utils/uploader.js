@@ -1,5 +1,5 @@
 import { createWriteStream, unlink, rename, writeFile } from 'fs'
-import { join, basename } from 'path'
+import { join, basename, extname } from 'path'
 import createError from 'http-errors'
 import { createID } from '../utils/helpers'
 import { debug, error } from './logger'
@@ -7,7 +7,6 @@ import database from 'better-sqlite3-helper'
 import { get } from 'http'
 import { get as secureGet } from 'https'
 import signature from 'stream-signature'
-import { getExtension } from 'mime'
 import { path as ffmpeg } from 'ffmpeg-static'
 import simpleThumbnail from 'simple-thumbnail'
 import { read as jsmediatags } from 'jsmediatags'
@@ -121,6 +120,7 @@ function upload (req, res, next) {
 
                 fileSignature.on('signature', sig => {
                   urlinfo.mimetype = sig.mimetype
+
                   let mime_parts = sig.mimetype.split('/')
                   if (mime_parts[0] !== 'image' && mime_parts[0] !== 'audio' && mime_parts[0] !== 'video') {
                     upload_tracker.status = 'abort'
@@ -132,6 +132,8 @@ function upload (req, res, next) {
                     req.resume()
 
                     return res.status(422).json({ message: 'Invaild File Type' })
+                  } else {
+                    if (extname(urlinfo.original_filename) === '') urlinfo.original_filename = `${urlinfo.original_filename}.${sig.extensions[0]}`
                   }
                 })
 
@@ -235,6 +237,8 @@ function upload (req, res, next) {
         req.resume()
 
         return res.status(422).json({ message: 'Invaild File Type' })
+      } else {
+        if (extname(fileinfo.original_filename) === '') fileinfo.original_filename = `${fileinfo.original_filename}.${sig.extensions[0]}`
       }
     })
 
@@ -343,7 +347,7 @@ function upload (req, res, next) {
         upload_tracker.status = 'abort'
 
         error(err.message)
-        debug('Upload aborted file', [`${uploadinfo.album.album_id}`, {color: 'red'}], 'could not be created (', [`${err.message}`, {color: 'red'}], ')', req)
+        debug('Upload aborted file', [`${uploadinfo.file_id}`, {color: 'red'}], 'could not be created (', [`${err.message}`, {color: 'red'}], ')', req)
 
         return res.status(409).json({ message: 'Could Not Add Database Entry' })
       }
@@ -352,7 +356,7 @@ function upload (req, res, next) {
     upload_tracker.file_info.forEach(async (file, index) => {
       let type = file.mimetype.split('/')[0]
       let temp_loc = join(storage, 'temp', file.file_id)
-      let final_loc = join(storage, type, `${file.file_id}.${getExtension(file.mimetype)}`)
+      let final_loc = join(storage, type, `${file.file_id}${extname(file.original_filename)}`)
 
       if (type === 'image') {
         try {
@@ -407,7 +411,7 @@ function upload (req, res, next) {
               : type,
             ext: file.hasOwnProperty('in_album')
               ? null
-              : getExtension(file.mimetype)
+              : extname(file.original_filename)
           })
         }
       })
