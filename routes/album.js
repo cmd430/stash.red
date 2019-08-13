@@ -29,14 +29,14 @@ export default Router()
     let album_id = req.params.album_id
     let album_data = database().queryFirstRow(`SELECT album_id, title, uploaded_by FROM albums WHERE album_id=?`, album_id)
     if (album_data) {
-      let files = database().query(`SELECT id, file_id, mimetype, uploaded_by FROM files WHERE in_album=? ORDER BY id DESC`, album_id)
+      let files = database().query(`SELECT file_id, mimetype, uploaded_by, uploaded_at FROM files WHERE in_album=? ORDER BY uploaded_by ASC`, album_id)
 
       res.locals.album = {
         album_id: album_data.album_id,
         album_title: album_data.title || 'Album',
         uploaded_by: album_data.uploaded_by,
         files: files.map(file => {
-          delete file.id
+          delete file.uploaded_by
           return file
         })
       }
