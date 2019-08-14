@@ -72,7 +72,7 @@ function upload (req, res, next) {
 
         debug('Parsing url', [`${value}`, {color:'cyan'}], req)
 
-        let httpReq = value.startsWith('http')
+        let httpReq = value.startsWith('https')
           ? secureGet
           : get
 
