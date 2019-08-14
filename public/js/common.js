@@ -109,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var setting__copylink = document.querySelector('#cltcb')
     var setting__directlink = document.querySelector('#dlfi')
     var setting__private = document.querySelector('#pu')
+    var setting__split = document.querySelector('#su')
   } else if (window.location.pathname.startsWith('/a/')) {
     var blackout = document.querySelector('.blackout')
     isHome = false
@@ -263,12 +264,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       formData.append('options', JSON.stringify({
         public: isHome ? !setting__private.checked : true,
-        title: null //can upload with a title set for albums by passing in a string here
+        title: null, //can upload with a title set for albums by passing in a string here
+        formAlbum: isHome ? !setting__split.checked : true
       }))
       prepare('Uploading: 0%')
       upload(formData)
       .then(response => {
-        let redirect = copyText = `${window.location.protocol}//${window.location.host}/${response.type === 'album' ? 'a' : 'f'}/${response.id}`
+        let redirect = copyText = `${window.location.protocol}//${window.location.host}/${response.type === 'user' ? 'u' : response.type === 'album' ? 'a' : 'f'}/${response.id}`
         if (isHome) {
           if (setting__copylink.checked) {
             if (response.type === 'image' && setting__directlink.checked) {

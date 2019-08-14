@@ -43,6 +43,7 @@ function upload (req, res, next) {
     removed: 0,
     options: {
       title: null,
+      formAlbum: true,
       public: true
     },
     file_info: [],
@@ -308,13 +309,15 @@ function upload (req, res, next) {
         uploadinfo.files.push(Object.assign(info, {
           uploaded_by: uploadinfo.album.uploaded_by,
           uploaded_at: uploadinfo.album.uploaded_at,
-          in_album: uploadinfo.album.album_id,
+          in_album: upload_tracker.options.formAlbum
+            ? uploadinfo.album.album_id
+            : undefined,
           public: uploadinfo.album.public
         }))
       })
 
       try {
-        debug('Creating album with id of', [`${uploadinfo.album.album_id}`, {color: 'cyan'}], req)
+        if (upload_tracker.options.formAlbum) debug('Creating album with id of', [`${uploadinfo.album.album_id}`, {color: 'cyan'}], req)
 
         const insert_album = database().prepare(`INSERT INTO albums (album_id, title, uploaded_by, uploaded_at, public)
                                                  VALUES (@album_id, @title, @uploaded_by, @uploaded_at, @public)`)
@@ -325,7 +328,8 @@ function upload (req, res, next) {
           insert_album.run(album)
           insert_files(uploadinfo.files)
         })
-        create_album(uploadinfo.album)
+        if (upload_tracker.options.formAlbum) create_album(uploadinfo.album)
+        if (!upload_tracker.options.formAlbum) insert_files(uploadinfo.files)
       } catch (err) {
         upload_tracker.status = 'abort'
 
@@ -407,6 +411,13 @@ function upload (req, res, next) {
         }
         if (index === temp.files.length - 1) {
           upload_tracker.status = 'complete'
+
+          if (!upload_tracker.options.formAlbum && temp.files.length > 1) return res.status(201).json({
+            message: 'Upload Complete',
+            id: user.username,
+            type: 'user',
+            ext: null
+          })
 
           return res.status(201).json({
             message: 'Upload Complete',
