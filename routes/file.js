@@ -64,7 +64,7 @@ export default Router()
     let file_id = req.params.file_id
 
     try {
-      let info = database().queryFirstRow('SELECT mimetype, original_filename FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
+      let info = database().queryFirstRow('SELECT mimetype, original_filename, in_album FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
 
       unlink(join(__dirname, '..', 'storage', 'thumbnail', `${file_id}.webp`), err => {
         if (err) {
@@ -78,7 +78,13 @@ export default Router()
           if (err.code !== 'ENOENT') return res.sendStatus(405)
         }
       })
-      database().run('DELETE FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
+
+      let fileCount= database().query('SELECT COUNT(id) FROM files WHERE in_album=? AND uploaded_by=?', info.in_album, user.username)
+
+      Object.values(fileCount[0])[0] === 1
+        ? database().run('DELETE FROM albums WHERE album_id=? AND uploaded_by=?', info.in_album, user.username)
+        : database().run('DELETE FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
+
     } catch (err) {
       error(err.message)
       return res.sendStatus(405)
