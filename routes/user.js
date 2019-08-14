@@ -13,6 +13,7 @@ export default Router()
 
   .use((req, res, next) => {
     let sort = req.query.sort || 'DESC'
+    let filter = req.query.filter || ''
     let limit = req.query.limit || config.pagination.limit.default
     req.viewPage = +req.query.p || 1
     req.viewLimit = limit > config.pagination.limit.max
@@ -27,6 +28,9 @@ export default Router()
     req.sortOrder = (sort !== 'DESC' && sort !== 'ASC')
       ? 'DESC'
       : sort
+    req.filter = (filter !== 'image' && filter !== 'audio' && filter !== 'video')
+    ? ''
+    : filter
     next()
   })
 
@@ -37,14 +41,14 @@ export default Router()
 
     if (database().queryFirstCell(`SELECT username FROM users WHERE username=?`, username)) {
       let files = showPrivate
-        ? database().query(`SELECT id, file_id, mimetype, public FROM files WHERE uploaded_by=? AND in_album IS NULL
+        ? database().query(`SELECT id, file_id, mimetype, public FROM files WHERE uploaded_by=? AND in_album IS NULL AND mimetype LIKE "${req.filter}%"
                             ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
-        : database().query(`SELECT id, file_id, mimetype, public FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0
+        : database().query(`SELECT id, file_id, mimetype, public FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0 AND mimetype LIKE "${req.filter}%"
                             ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
 
       let totalFiles = showPrivate
-        ? database().query(`SELECT COUNT(id) FROM files WHERE uploaded_by=? AND in_album IS NULL`, username)
-        : database().query(`SELECT COUNT(id) FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0`, username)
+        ? database().query(`SELECT COUNT(id) FROM files WHERE uploaded_by=? AND in_album IS NULL AND mimetype LIKE "${req.filter}%"`, username)
+        : database().query(`SELECT COUNT(id) FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0 AND mimetype LIKE "${req.filter}%"`, username)
 
       res.locals.pagination = {
         page: req.viewPage,
