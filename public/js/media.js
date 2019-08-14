@@ -459,6 +459,7 @@ function initializeActions() {
       request.upload.onerror = err => {
         return console.error(err)
       }
+      if (params.url.includes('/undefined')) params.url = params.url.replace('/undefined', '') // TEMP FIX, not sure what causes issue
       request.open('DELETE', `${params.url}/delete`, true)
       request.send('')
       document.removeEventListener('delete', sendDelete)
