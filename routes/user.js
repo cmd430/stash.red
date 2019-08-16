@@ -65,7 +65,7 @@ export default Router()
       })
 
       return req.viewJson
-        ? res.json(res.locals)
+        ? res.json(res.locals.uploads)
         : res.render('user')
     }
     next()
