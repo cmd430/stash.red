@@ -1,9 +1,10 @@
 require('json5/lib/register')
 const mkdirp = require('mkdirp')
 const { readdir, unlink } = require('fs')
-const { join } = require('path')
+const { join, extname } = require('path')
 const database = require('better-sqlite3-helper')
 require = require('esm')(module)
+const { error, debug } = require('./utils/logger')
 
 const __argv = require('minimist')(process.argv.slice(2))
 let argv = {}
@@ -98,5 +99,62 @@ database({
     migrationsPath: join(__dirname, 'storage', 'database', 'migrations')
   }
 })
+
+setInterval(() => {
+  try {
+    database().query('SELECT file_id, mimetype, original_filename FROM files WHERE uploaded_until < strftime("%Y-%m-%dT%H:%M:%fZ", "now") AND in_album IS NULL').forEach(file => {
+      try {
+        unlink(join(__dirname, 'storage', 'thumbnail', `${file.file_id}.webp`), err => {
+          if (err) {
+            error(err.message)
+            if (err.code !== 'ENOENT') throw err
+          }
+        })
+        unlink(join(__dirname, 'storage', file.mimetype.split('/').reverse().pop(), `${file.file_id}${extname(file.original_filename)}`), err => {
+          if (err) {
+            error(err.message)
+            if (err.code !== 'ENOENT') throw err
+          }
+        })
+
+        database().run('DELETE FROM files WHERE file_id=?', file.file_id)
+
+        debug('Removed temporary upload with file id', [file.file_id, {color: 'cyan'}])
+      } catch (err) {
+        error(err.message)
+      }
+    })
+  } catch (err) {
+    error(err.message)
+  }
+  try {
+    database().query('SELECT album_id FROM albums WHERE uploaded_until < strftime("%Y-%m-%dT%H:%M:%fZ", "now")').forEach(album => {
+      try {
+        database().query('SELECT file_id, mimetype, original_filename FROM files WHERE in_album=?', album.album_id).forEach(file => {
+          unlink(join(__dirname, 'storage', 'thumbnail', `${file.file_id}.webp`), err => {
+            if (err) {
+              error(err.message)
+              if (err.code !== 'ENOENT') throw err
+            }
+          })
+          unlink(join(__dirname, 'storage', file.mimetype.split('/').reverse().pop(), `${file.file_id}${extname(file.original_filename)}`), err => {
+            if (err) {
+              error(err.message)
+              if (err.code !== 'ENOENT') throw err
+            }
+          })
+        })
+
+        database().run('DELETE FROM albums WHERE album_id=?', album.album_id)
+
+        debug('Removed temporary upload with album id', [album.album_id, {color: 'cyan'}])
+      } catch (err) {
+        error(err.message)
+      }
+    })
+  } catch (err) {
+    error(err.message)
+  }
+}, 60000)
 
 module.exports = require('./server')

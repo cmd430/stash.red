@@ -44,7 +44,8 @@ function upload (req, res, next) {
     options: {
       title: null,
       formAlbum: true,
-      public: true
+      public: true,
+      keepFor: null
     },
     file_info: [],
     status: 'parsing'
@@ -301,6 +302,9 @@ function upload (req, res, next) {
           title: upload_tracker.options.title,
           uploaded_by: user.username,
           uploaded_at: new Date().toISOString(),
+          uploaded_until: upload_tracker.options.keepFor !== null
+            ? new Date(new Date().valueOf() + upload_tracker.options.keepFor * 60000).toISOString()
+            : undefined,
           public: +upload_tracker.options.public
         },
         files: []
@@ -319,8 +323,8 @@ function upload (req, res, next) {
       try {
         if (upload_tracker.options.formAlbum) debug('Creating album with id of', [`${uploadinfo.album.album_id}`, {color: 'cyan'}], req)
 
-        const insert_album = database().prepare(`INSERT INTO albums (album_id, title, uploaded_by, uploaded_at, public)
-                                                 VALUES (@album_id, @title, @uploaded_by, @uploaded_at, @public)`)
+        const insert_album = database().prepare(`INSERT INTO albums (album_id, title, uploaded_by, uploaded_at, uploaded_until, public)
+                                                 VALUES (@album_id, @title, @uploaded_by, @uploaded_at, @uploaded_until, @public)`)
         const insert_file = database().prepare(`INSERT INTO files (file_id, uploaded_by, uploaded_at, original_filename, mimetype, filesize, in_album, public)
                                                 VALUES (@file_id, @uploaded_by, @uploaded_at, @original_filename, @mimetype, @filesize, @in_album, @public)`)
         const insert_files = database().transaction(files => { for (const file of files) insert_file.run(file) })
@@ -343,11 +347,15 @@ function upload (req, res, next) {
       uploadinfo = Object.assign(upload_tracker.file_info[0], {
         uploaded_by: user.username,
         uploaded_at: new Date().toISOString(),
+        uploaded_until: upload_tracker.options.keepFor !== null
+          ? new Date(new Date().valueOf() + upload_tracker.options.keepFor * 60000).toISOString()
+          : undefined,
         public: +upload_tracker.options.public
       })
 
       if (upload_from === 'a') {
         uploadinfo.in_album = req.url.split('/')[1]
+        delete uploadinfo.uploaded_until
 
         debug('Adding file', [`${uploadinfo.file_id}`, {color: 'cyan'}], 'to album', [`${uploadinfo.in_album}`, {color: 'cyan'}], req)
       }

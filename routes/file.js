@@ -25,16 +25,17 @@ export default Router()
   // GET Method Routes
   .get('/:file_id', (req, res, next) => {
     let file_id = req.params.file_id
-    let file = database().queryFirstRow(`SELECT id, file_id, mimetype, uploaded_by, original_filename FROM files WHERE file_id=?`, file_id)
+    let file = database().queryFirstRow(`SELECT id, file_id, mimetype, uploaded_by, uploaded_until, original_filename FROM files WHERE file_id=?`, file_id)
     if (file) {
       res.locals.file = [file].map(file => {
         delete file.id
         file.original_filename = basename(file.original_filename)
+        file.uploaded_until = file.uploaded_until || 'infinity'
         return file
       })[0]
 
       return req.viewJson
-        ? res.json(res.locals)
+        ? res.json(res.locals.file)
         : res.render('file')
     }
     next()

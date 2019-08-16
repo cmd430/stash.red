@@ -27,7 +27,7 @@ export default Router()
   // GET Method Routes
   .get('/:album_id', (req, res, next) => {
     let album_id = req.params.album_id
-    let album_data = database().queryFirstRow(`SELECT album_id, title, uploaded_by FROM albums WHERE album_id=?`, album_id)
+    let album_data = database().queryFirstRow(`SELECT album_id, title, uploaded_by, uploaded_until FROM albums WHERE album_id=?`, album_id)
     if (album_data) {
       let files = database().query(`SELECT file_id, mimetype, uploaded_by, uploaded_at, original_filename FROM files WHERE in_album=? ORDER BY uploaded_by ASC`, album_id)
 
@@ -35,6 +35,7 @@ export default Router()
         album_id: album_data.album_id,
         album_title: album_data.title || 'Album',
         uploaded_by: album_data.uploaded_by,
+        uploaded_until: album_data.uploaded_until || 'infinity',
         files: files.map(file => {
           file.original_filename = basename(file.original_filename)
           return file
@@ -42,7 +43,7 @@ export default Router()
       }
 
       return req.viewJson
-        ? res.json(res.locals)
+        ? res.json(res.locals.album)
         : res.render('album')
     }
     next()
