@@ -72,7 +72,7 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static(www))
-app.use(clearDeadCookies())
+app.use(clearDeadCookies('sid'))
 app.use((req, res, next) => {
   req.isAuthenticated = () => {
     if (req.session && req.session.user && req.session.user.username) return req.session.user

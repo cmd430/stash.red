@@ -25,9 +25,9 @@ function mergeDeep (...objects) {
 function hash (password) {
   return bcrypt_hash(password, config.auth.rounds)
 }
-function clearDeadCookies () {
+function clearDeadCookies (cookieName) {
   return (req, res, next) => {
-    if (req.cookies['sid'] && !req.session.user) res.clearCookie('sid')
+    if (req.cookies[cookieName] && !req.session.user) res.clearCookie(cookieName)
     next()
   }
 }
