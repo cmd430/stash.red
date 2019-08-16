@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isHome) {
           if (setting__copylink.checked) {
             if (response.type === 'image' && setting__directlink.checked) {
-              copyText = `${window.location.protocol}//direct.${window.location.host}/${response.id}.${response.ext}`
+              copyText = `${window.location.protocol}//direct.${window.location.host}/${response.id}${response.ext}`
             }
             if (navigator.clipboard) {
               navigator.clipboard.writeText(`${copyText}`)
