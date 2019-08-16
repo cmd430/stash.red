@@ -119,7 +119,7 @@ setInterval(() => {
 
         database().run('DELETE FROM files WHERE file_id=?', file.file_id)
 
-        debug('Removed temp file (', [file.file_id, {color: 'cyan'}], ')')
+        debug('Removed temporary upload with file id', [file.file_id, {color: 'cyan'}])
       } catch (err) {
         error(err.message)
       }
@@ -147,7 +147,7 @@ setInterval(() => {
 
         database().run('DELETE FROM albums WHERE album_id=?', album.album_id)
 
-        debug('Removed temp album (', [album.album_id, {color: 'cyan'}], ')')
+        debug('Removed temporary upload with album id', [album.album_id, {color: 'cyan'}])
       } catch (err) {
         error(err.message)
       }
