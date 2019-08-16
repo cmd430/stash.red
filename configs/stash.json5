@@ -67,6 +67,18 @@
     limits: {
       fileSize: 524288000
     },
+    identifier: {
+      /**
+       * length
+       *  Can be changed at any time
+       *  To have a collision probability similar to UUID v4 length must be 21
+       *  Used for album and file ids
+       *
+       *  Defaults:
+       *    length: 8
+       */
+      length: 8
+    },
     thumbnail: {
       quality: 50,
       size: 250,
