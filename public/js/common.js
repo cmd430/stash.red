@@ -110,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var setting__directlink = document.querySelector('#dlfi')
     var setting__private = document.querySelector('#pu')
     var setting__split = document.querySelector('#su')
+    var setting__keepFor = document.querySelector('#tu')
   } else if (window.location.pathname.startsWith('/a/')) {
     var blackout = document.querySelector('.blackout')
     isHome = false
@@ -265,7 +266,8 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('options', JSON.stringify({
         public: isHome ? !setting__private.checked : true,
         title: null, //can upload with a title set for albums by passing in a string here
-        formAlbum: isHome ? !setting__split.checked : true
+        formAlbum: isHome ? !setting__split.checked : true,
+        keepFor: Math.ceil(Number(setting__keepFor.value)) || null
       }))
       prepare('Uploading: 0%')
       upload(formData)
