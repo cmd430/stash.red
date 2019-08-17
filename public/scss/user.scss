@@ -36,6 +36,9 @@
       &.video {
         background: no-repeat right top/40px url('/img/types/video.png');
       }
+      &.txt {
+        background: no-repeat right top/40px url('/img/types/text.png');
+      }
       &.album {
         background: no-repeat right top/40px url('/img/types/album.png');
       }
@@ -50,6 +53,9 @@
         }
         &.video {
           background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/video.png');
+        }
+        &.txt {
+          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/text.png');
         }
         &.album {
           background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/album.png');

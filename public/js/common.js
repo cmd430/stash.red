@@ -249,19 +249,71 @@ document.addEventListener('DOMContentLoaded', () => {
     async function uploadFiles (data) {
       prepare('Preparing Uploads')
       let formData = new FormData()
+      let types = [
+        'plain',
+        'javascript'
+      ]
       if (data instanceof FileList) {
         let fileCount = data.length
         for (var x = 0; x < fileCount; x++) {
           let blob = data[x]
           let filename = blob.name
-          formData.append('files[]', blob, filename)
+          let mimetype = blob.type
+          let isText = false
+          for (let type of types) {
+            if (mimetype.includes(type)) {
+              await new Promise((resolve, reject) => {
+                let reader = new FileReader()
+                reader.onload = e => {
+                  formData.append('text', JSON.stringify({
+                    text: e.target.result,
+                    mimetype: mimetype,
+                    filename: filename
+                  }))
+                  resolve()
+                }
+                reader.readAsText(blob)
+              })
+              isText = true
+              break
+            }
+          }
+          if (!isText) formData.append('files[]', blob, filename)
         }
       } else if (data instanceof Blob || data instanceof File) {
-        let filename = data.name || `unknown.${data.type.split('/').pop()}`
         let blob = data
-        formData.append('files[]', blob, filename)
+        let mimetype = blob.type
+        let filename = data.name || `unknown.${mimetype.split('/').pop()}`
+        let isText = false
+        for (let type of types) {
+          if (mimetype.includes(type)) {
+            await new Promise((resolve, reject) => {
+              let reader = new FileReader()
+              reader.onload = e => {
+                formData.append('text', JSON.stringify({
+                  text: e.target.result,
+                  mimetype: mimetype,
+                  filename: filename
+                }))
+                resolve()
+              }
+              reader.readAsText(blob)
+            })
+            isText = true
+            break
+          }
+        }
+        if (!isText) formData.append('files[]', blob, filename)
       } else if (typeof data === 'string') {
-        formData.append('url', data)
+        if (data.startsWith('http')) {
+          formData.append('url', data)
+        } else {
+          formData.append('text', JSON.stringify({
+            text: data,
+            mimetype: 'text/plain',
+            filename: 'unknown.txt'
+          }))
+        }
       }
       formData.append('options', JSON.stringify({
         public: isHome ? !setting__private.checked : true,
@@ -275,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let redirect = copyText = `${window.location.protocol}//${window.location.host}/${response.type === 'user' ? 'u' : response.type === 'album' ? 'a' : 'f'}/${response.id}`
         if (isHome) {
           if (setting__copylink.checked) {
-            if (response.type === 'image' && setting__directlink.checked) {
+            if (response.type !== 'album'&& setting__directlink.checked) {
               copyText = `${window.location.protocol}//direct.${window.location.host}/${response.id}${response.ext}`
             }
             if (navigator.clipboard) {

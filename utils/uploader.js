@@ -1,4 +1,4 @@
-import { createWriteStream, unlink, rename, writeFile } from 'fs'
+import { createWriteStream, unlink, rename, writeFile, symlink } from 'fs'
 import { join, basename, extname } from 'path'
 import createError from 'http-errors'
 import { createID } from '../utils/helpers'
@@ -212,14 +212,27 @@ function upload (req, res, next) {
     } else if (key === 'text') {
       ++upload_tracker.parsed
 
+      try {
+        var textdata = JSON.parse(value)
+      } catch (err) {
+        upload_tracker.status = 'abort'
+
+        debug('Upload aborted', ['invalid content', {color: 'red'}], req)
+
+        req.unpipe(req.busboy)
+        req.resume()
+
+        return res.status(422).json({ message: 'Invaild File Type' })
+      }
+
       let textinfo = {
         file_id: createID(),
-        original_filename: 'textupload.txt',
-        mimetype: 'text/plain',
+        original_filename: textdata.filename || 'unknown.txt',
+        mimetype: `text/${textdata.mimetype.split('/').pop()}` || 'text/plain',
         filesize: 0
       }
 
-      debug('Parsing text', [`${value.slice(0, 20).trim()} ...`, {color:'cyan'}], req)
+      debug('Parsing text', [`${textdata.text.slice(0, 20).trim()} ...`, {color:'cyan'}], req)
 
       let temp_dest = join(storage, 'temp', textinfo.file_id)
       let writeStream = createWriteStream(temp_dest)
@@ -239,7 +252,7 @@ function upload (req, res, next) {
         }
       })
 
-      writeStream.write(value, 'utf-8')
+      writeStream.write(textdata.text, 'utf-8')
       writeStream.end()
     }
   })
@@ -547,6 +560,10 @@ async function createThumbnail (fileinfo, req) {
   } catch (err) {
     error(err.message)
     debug('Failed to create thumbnail for', [`${fileinfo.id}`, {color: 'red'}], '(', [`${err.message}`, {color: 'red'}],')', req)
+  } finally {
+    symlink(join(__dirname, '..', 'public', 'img', 'thumbnails', `${fileinfo.type}.png`), join(storage, 'thumbnail', `${fileinfo.id}.webp`), err => {
+      if (!err) debug('Using default', [`${fileinfo.type}`, {color: 'cyan'}] ,'thumbnail for', [`${fileinfo.id}`, {color: 'cyan'}], req)
+    })
   }
 }
 
