@@ -74,6 +74,7 @@ mkdirp.sync(join(__dirname, 'storage', 'database'))
 mkdirp.sync(join(__dirname, 'storage', 'image'))
 mkdirp.sync(join(__dirname, 'storage', 'audio'))
 mkdirp.sync(join(__dirname, 'storage', 'video'))
+mkdirp.sync(join(__dirname, 'storage', 'text'))
 mkdirp.sync(join(__dirname, 'storage', 'thumbnail'))
 
 readdir(join(__dirname, 'storage', 'temp'), (err, files) => {

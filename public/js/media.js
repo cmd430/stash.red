@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadPollyfills(() => {
     initializeVideoPlayers()
     initializeAudioPlayers()
+    initializeTextAreas()
     initializeActions()
   })
 } , false)
@@ -363,6 +364,28 @@ function initializeAudioPlayers () {
       }
       audio.addEventListener('progress', update)
       update()
+    })
+  })
+}
+
+function initializeTextAreas() {
+  document.querySelectorAll('.text code').forEach(textArea => {
+    new Promise((resolve, reject) => {
+      let request = new XMLHttpRequest()
+      request.onreadystatechange = () => {
+        if (request.readyState === 4) {
+          if (request.status === 200) {
+            return resolve(request.responseText)
+          } else {
+            return resolve('')
+          }
+        }
+      }
+      request.open('GET', textArea.textContent, true)
+      request.send('')
+    })
+    .then(text => {
+      textArea.textContent = text
     })
   })
 }

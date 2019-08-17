@@ -19,6 +19,9 @@
       {{#if_contains file.mimetype 'audio' file}}
         {{> audio this}}
       {{/if_contains}}
+      {{#if_contains file.mimetype 'text' file}}
+        {{> text this}}
+      {{/if_contains}}
     </div>
     {{> modals}}
   </body>

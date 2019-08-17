@@ -4,6 +4,7 @@ node_modules/**
 storage/image/**
 storage/audio/**
 storage/video/**
+storage/text/**
 storage/thumbnail/**
 storage/temp/**
 storage/database/*.db*

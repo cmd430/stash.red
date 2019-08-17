@@ -209,6 +209,38 @@ function upload (req, res, next) {
 
         return res.status(422).json({ message: 'Invaild URL' })
       }
+    } else if (key === 'text') {
+      ++upload_tracker.parsed
+
+      let textinfo = {
+        file_id: createID(),
+        original_filename: 'textupload.txt',
+        mimetype: 'text/plain',
+        filesize: 0
+      }
+
+      debug('Parsing text', [`${value.slice(0, 20).trim()} ...`, {color:'cyan'}], req)
+
+      let temp_dest = join(storage, 'temp', textinfo.file_id)
+      let writeStream = createWriteStream(temp_dest)
+
+      temp.streams.push(writeStream)
+      temp.files.push(temp_dest)
+
+      writeStream.on('close', () => {
+        if (upload_tracker.status !== 'abort') {
+          debug('Saved file', [`${textinfo.file_id}`, {color: 'cyan'}], req)
+
+          ++upload_tracker.written
+          textinfo.filesize = writeStream.bytesWritten
+          upload_tracker.file_info.push(textinfo)
+
+          if (upload_tracker.status === 'parsed' && upload_tracker.parsed === upload_tracker.written) req.emit('process')
+        }
+      })
+
+      writeStream.write(value, 'utf-8')
+      writeStream.end()
     }
   })
 
