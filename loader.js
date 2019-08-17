@@ -4,7 +4,6 @@ const { readdir, unlink } = require('fs')
 const { join, extname } = require('path')
 const database = require('better-sqlite3-helper')
 require = require('esm')(module)
-const { error, debug } = require('./utils/logger')
 
 const __argv = require('minimist')(process.argv.slice(2))
 let argv = {}
@@ -75,6 +74,7 @@ mkdirp.sync(join(__dirname, 'storage', 'database'))
 mkdirp.sync(join(__dirname, 'storage', 'image'))
 mkdirp.sync(join(__dirname, 'storage', 'audio'))
 mkdirp.sync(join(__dirname, 'storage', 'video'))
+mkdirp.sync(join(__dirname, 'storage', 'text'))
 mkdirp.sync(join(__dirname, 'storage', 'thumbnail'))
 
 readdir(join(__dirname, 'storage', 'temp'), (err, files) => {
@@ -99,6 +99,8 @@ database({
     migrationsPath: join(__dirname, 'storage', 'database', 'migrations')
   }
 })
+
+const { error, debug } = require('./utils/logger')
 
 setInterval(() => {
   try {

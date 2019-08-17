@@ -1,4 +1,4 @@
-import { createWriteStream, unlink, rename, writeFile } from 'fs'
+import { createWriteStream, unlink, rename, writeFile, symlink } from 'fs'
 import { join, basename, extname } from 'path'
 import createError from 'http-errors'
 import { createID } from '../utils/helpers'
@@ -209,6 +209,51 @@ function upload (req, res, next) {
 
         return res.status(422).json({ message: 'Invaild URL' })
       }
+    } else if (key === 'text') {
+      ++upload_tracker.parsed
+
+      try {
+        var textdata = JSON.parse(value)
+      } catch (err) {
+        upload_tracker.status = 'abort'
+
+        debug('Upload aborted', ['invalid content', {color: 'red'}], req)
+
+        req.unpipe(req.busboy)
+        req.resume()
+
+        return res.status(422).json({ message: 'Invaild File Type' })
+      }
+
+      let textinfo = {
+        file_id: createID(),
+        original_filename: textdata.filename || 'unknown.txt',
+        mimetype: `text/${textdata.mimetype.split('/').pop()}` || 'text/plain',
+        filesize: 0
+      }
+
+      debug('Parsing text', [`${textdata.text.slice(0, 20).trim()} ...`, {color:'cyan'}], req)
+
+      let temp_dest = join(storage, 'temp', textinfo.file_id)
+      let writeStream = createWriteStream(temp_dest)
+
+      temp.streams.push(writeStream)
+      temp.files.push(temp_dest)
+
+      writeStream.on('close', () => {
+        if (upload_tracker.status !== 'abort') {
+          debug('Saved file', [`${textinfo.file_id}`, {color: 'cyan'}], req)
+
+          ++upload_tracker.written
+          textinfo.filesize = writeStream.bytesWritten
+          upload_tracker.file_info.push(textinfo)
+
+          if (upload_tracker.status === 'parsed' && upload_tracker.parsed === upload_tracker.written) req.emit('process')
+        }
+      })
+
+      writeStream.write(textdata.text, 'utf-8')
+      writeStream.end()
     }
   })
 
@@ -515,6 +560,10 @@ async function createThumbnail (fileinfo, req) {
   } catch (err) {
     error(err.message)
     debug('Failed to create thumbnail for', [`${fileinfo.id}`, {color: 'red'}], '(', [`${err.message}`, {color: 'red'}],')', req)
+  } finally {
+    symlink(join(__dirname, '..', 'public', 'img', 'thumbnails', `${fileinfo.type}.png`), join(storage, 'thumbnail', `${fileinfo.id}.webp`), err => {
+      if (!err) debug('Using default', [`${fileinfo.type}`, {color: 'cyan'}] ,'thumbnail for', [`${fileinfo.id}`, {color: 'cyan'}], req)
+    })
   }
 }
 

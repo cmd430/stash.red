@@ -13,6 +13,7 @@ export default Router()
   .use(express.static(join(__dirname,'..', 'storage', 'image')))
   .use(express.static(join(__dirname,'..', 'storage', 'audio')))
   .use(express.static(join(__dirname,'..', 'storage', 'video')))
+  .use(express.static(join(__dirname,'..', 'storage', 'text')))
 
   // GET Method Routes
   .get('/', (req, res, next) => res.redirect(`${req.protocol}://${req.hostname.replace('direct.', '')}`))

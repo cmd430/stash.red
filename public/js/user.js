@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (thumb.nextElementSibling.classList.contains('image')) return thumb.src = `/img/thumbnails/image.png`
       if (thumb.nextElementSibling.classList.contains('audio')) return thumb.src = `/img/thumbnails/audio.png`
       if (thumb.nextElementSibling.classList.contains('video')) return thumb.src = `/img/thumbnails/video.png`
+      if (thumb.nextElementSibling.classList.contains('text')) return thumb.src = `/img/thumbnails/text.png`
     })
   })
 })
