@@ -11,6 +11,7 @@ CREATE TABLE files (
   "id" INTEGER,
   "uploaded_by" TEXT NOT NULL,
   "uploaded_at" NUMERIC NOT NULL,
+  "uploaded_until" NUMERIC,
   "file_id" TEXT NOT NULL UNIQUE,
   "original_filename" TEXT NOT NULL,
   "mimetype" TEXT NOT NULL,
@@ -24,9 +25,10 @@ CREATE TABLE files (
 CREATE TABLE albums (
   "id" INTEGER,
   "album_id" TEXT NOT NULL UNIQUE,
-  "title"	TEXT,
+  "title" TEXT,
   "uploaded_by" TEXT NOT NULL,
   "uploaded_at" NUMERIC NOT NULL,
+  "uploaded_until" NUMERIC,
   "public" INTEGER NOT NULL DEFAULT 1,
   PRIMARY KEY("id"),
   FOREIGN KEY("uploaded_by") REFERENCES users("username") ON UPDATE CASCADE

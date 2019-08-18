@@ -321,3 +321,17 @@
     }
  }
 }
+
+.text {
+  font-family: consolas, 'Courier New', Courier, monospace;
+  font-size: 14px;
+  border: 1px solid;
+  max-width: 100%;
+  max-height: 600px;
+  padding: 10px;
+  overflow: auto;
+  white-space: normal;
+  code {
+    white-space: pre;
+  }
+}

@@ -28,7 +28,7 @@ export default Router()
     req.sortOrder = (sort !== 'DESC' && sort !== 'ASC')
       ? 'DESC'
       : sort
-    req.filter = (filter !== 'image' && filter !== 'audio' && filter !== 'video')
+    req.filter = (filter !== 'image' && filter !== 'audio' && filter !== 'video' && filter !== 'text')
     ? ''
     : filter
     next()
@@ -65,7 +65,7 @@ export default Router()
       })
 
       return req.viewJson
-        ? res.json(res.locals)
+        ? res.json(res.locals.uploads)
         : res.render('user')
     }
     next()

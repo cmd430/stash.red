@@ -111,6 +111,11 @@ header {
 .wrapper {
   position: relative;
   margin: 0 auto 10px;
+  &.fullwidth {
+    width: 100%;
+    min-height: 50px;
+    overflow: hidden;
+  }
   &:hover {
     .actions {
       opacity: 1;
@@ -125,17 +130,21 @@ header {
     opacity: 0;
     visibility: collapse;
     transition: opacity 250ms linear, visibility 250ms linear;
-    .action__delete {
-      display: inline-block;
+    .action__delete,
+    .action__raw {
+      float: right;
+      margin: 2px;
       text-align: center;
-      line-height: 2;
+      padding: 7px 0 0 0;
       font-size: 16px;
       width: 37px;
       height: 37px;
-      padding: 0px;
       border: 1px;
       border-style: solid;
       cursor: pointer;
+    }
+    .action__raw {
+      padding: 9px 0 0 0;
     }
   }
 }

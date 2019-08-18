@@ -1,5 +1,6 @@
 import { hash as bcrypt_hash, compare } from 'bcrypt'
-import { randomBytes } from 'crypto'
+import nanoid from 'nanoid'
+//import { randomBytes } from 'crypto'
 
 function mergeDeep (...objects) {
   const isObject = obj => obj && typeof obj === 'object'
@@ -24,14 +25,15 @@ function mergeDeep (...objects) {
 function hash (password) {
   return bcrypt_hash(password, config.auth.rounds)
 }
-function clearDeadCookies () {
+function clearDeadCookies (cookieName) {
   return (req, res, next) => {
-    if (req.cookies['connect.sid'] && !req.session.user) res.clearCookie('connect.sid')
+    if (req.cookies[cookieName] && !req.session.user) res.clearCookie(cookieName)
     next()
   }
 }
 function createID () {
-  return randomBytes(6).toString('hex')
+  return nanoid(8)
+  //return randomBytes(6).toString('hex')
 }
 
 export { mergeDeep as merge, hash, compare as validate, createID, clearDeadCookies }

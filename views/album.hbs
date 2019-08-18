@@ -31,6 +31,9 @@
         {{#if_contains mimetype 'audio' this}}
           {{> audio this}}
         {{/if_contains}}
+        {{#if_contains mimetype 'text' this}}
+          {{> audio this}}
+        {{/if_contains}}
       {{/each}}
     </div>
     {{> modals}}

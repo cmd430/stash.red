@@ -39,10 +39,16 @@ header {
 
 .wrapper {
   .actions {
-    .action__delete {
-      color: $color-action-delete;
+    .action__delete,
+    .action__raw {
       background-color: $color-actionbackground;
       border-color: $color-actionborder;
+    }
+    .action__delete {
+      color: $color-action-delete;
+    }
+    .action__raw {
+      color: $color-contenttext-hover;
     }
   }
 }
@@ -361,6 +367,11 @@ header {
       }
     }
   }
+}
+.text {
+  color: $color-contenttext-hover;
+  background: $color-pagebackground !important;
+  border-color: $color-contentborder !important;
 }
 
 // Admin
