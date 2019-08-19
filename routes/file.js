@@ -56,7 +56,26 @@ export default Router()
   })
 
   // PATCH Method Routes
-  .patch('/:file_id/update', (req, res, next) => res.sendStatus(200))
+  .patch('/:file_id/update', (req, res, next) => {
+    let user = req.isAuthenticated()
+
+    if (!user) return next(createError(401))
+    if (!req.body.public) return next(createError(400))
+
+    try {
+      database().update('files', {
+        public: +req.body.public
+      }, {
+        file_id: req.params.file_id,
+        uploaded_by: user.username
+      })
+    } catch (err) {
+      error(err.message)
+      return res.sendStatus(405)
+    }
+
+    res.sendStatus(204)
+  })
 
   // DELETE Method Routes
   .delete('/:file_id/delete', (req, res, next) => {
