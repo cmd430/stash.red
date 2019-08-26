@@ -48,7 +48,7 @@ export default Router()
 
     try {
       let info = database().queryFirstRow(`SELECT mimetype, original_filename FROM files WHERE file_id=?`, file_id)
-      res.download(join(__dirname, '..', 'storage', info.mimetype.split('/').reverse().pop(), `${file_id}${extname(info.original_filename)}`))
+      res.download(join(__dirname, '..', 'storage', info.mimetype.split('/').shift(), `${file_id}${extname(info.original_filename)}`))
     } catch (err) {
       error(err.message)
       return next(createError(404))
@@ -92,7 +92,7 @@ export default Router()
           if (err.code !== 'ENOENT') return res.sendStatus(405)
         }
       })
-      unlink(join(__dirname, '..', 'storage', info.mimetype.split('/').reverse().pop(), `${file_id}${extname(info.original_filename)}`), err => {
+      unlink(join(__dirname, '..', 'storage', info.mimetype.split('/').shift(), `${file_id}${extname(info.original_filename)}`), err => {
         if (err) {
           error(err.message)
           if (err.code !== 'ENOENT') return res.sendStatus(405)

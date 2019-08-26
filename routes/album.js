@@ -62,7 +62,7 @@ export default Router()
       database().query('SELECT file_id, mimetype, original_filename FROM files WHERE in_album=?', album_id).forEach(file => {
         let filename = `${file.file_id}${extname(file.original_filename)}`
         files.push({
-          path: join(__dirname, '..', 'storage', file.mimetype.split('/').reverse().pop(), filename),
+          path: join(__dirname, '..', 'storage', file.mimetype.split('/').shift(), filename),
           name: filename
         })
       })
@@ -122,7 +122,7 @@ export default Router()
             if (err.code !== 'ENOENT') return res.sendStatus(405)
           }
         })
-        unlink(join(__dirname, '..', 'storage', file.mimetype.split('/').reverse().pop(), `${file.file_id}${extname(file.original_filename)}`), err => {
+        unlink(join(__dirname, '..', 'storage', file.mimetype.split('/').shift(), `${file.file_id}${extname(file.original_filename)}`), err => {
           if (err) {
             error(err.message)
             if (err.code !== 'ENOENT') return res.sendStatus(405)

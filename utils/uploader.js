@@ -85,7 +85,7 @@ function upload (req, res, next) {
 
             let contentLength = response.headers['content-length'] || 0
             let contentType = response.headers['content-type']
-            let type = contentType.split('/').reverse().pop()
+            let type = contentType.split('/').shift()
 
             if (['image','audio','video','application','binary'].includes(type)) {
               if (contentLength <= config.upload.limits.fileSize && contentLength > 0) {
