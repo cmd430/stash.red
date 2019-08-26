@@ -112,7 +112,7 @@ setInterval(() => {
             if (err.code !== 'ENOENT') throw err
           }
         })
-        unlink(join(__dirname, 'storage', file.mimetype.split('/').reverse().pop(), `${file.file_id}${extname(file.original_filename)}`), err => {
+        unlink(join(__dirname, 'storage', file.mimetype.split('/').shift(), `${file.file_id}${extname(file.original_filename)}`), err => {
           if (err) {
             error(err.message)
             if (err.code !== 'ENOENT') throw err
@@ -139,7 +139,7 @@ setInterval(() => {
               if (err.code !== 'ENOENT') throw err
             }
           })
-          unlink(join(__dirname, 'storage', file.mimetype.split('/').reverse().pop(), `${file.file_id}${extname(file.original_filename)}`), err => {
+          unlink(join(__dirname, 'storage', file.mimetype.split('/').shift(), `${file.file_id}${extname(file.original_filename)}`), err => {
             if (err) {
               error(err.message)
               if (err.code !== 'ENOENT') throw err
