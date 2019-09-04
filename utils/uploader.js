@@ -546,22 +546,21 @@ async function createThumbnail (fileinfo, req) {
       case 'text':
         temp_thumbnail = await new Promise((resolve, reject) => {
           let input = fileinfo.path.replace(/\\/g, '/').replace(':', '\\:')
-          let font = join(__dirname, '..', 'public', 'font', 'thumbnail.ttf').replace(/\\/g, '/').replace(':', '\\:')
+          let font = join(__dirname, '..', 'public', 'font', 'thumbnial.ttf').replace(/\\/g, '/').replace(':', '\\:')
+          let image = []
 
-          simpleThumbnail('', null, null, {
+          simpleThumbnail(null, null, null, {
             args: [
               '-f lavfi',
               `-i color=c=white:s=640x480:d=5.396`,
-              `-filter_complex "drawtext=textfile='${input}':x=0:y=0:fontfile='${font}':fontsize=13:fontcolor=000000"`
+              `-filter_complex "drawtext=textfile='${input}':x=0:y=0:fontfile='${font}':fontsize=13:fontcolor=000000"`,
+              `-f singlejpeg pipe:1`
             ],
             path: ffmpeg.path
           })
-          .then(stream => {
-            let image = []
-            stream.on('data', chunk => image.push(chunk))
-            stream.on('end', () => resolve(Buffer.concat(image)))
-            stream.on('error', reject)
-          })
+          .on('data', chunk => image.push(chunk))
+          .on('end', () => resolve(Buffer.concat(image)))
+          .on('error', reject)
         })
     }
 
