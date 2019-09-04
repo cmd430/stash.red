@@ -558,7 +558,7 @@ function loadAudioMeta () {
     let audio__info__title = info.querySelector('.title')
     let audio__info__artist = info.querySelector('.artist')
 
-    let defaultName = audio.firstElementChild.dataset.original_filename.split('.').reverse().pop()
+    let defaultName = audio.firstElementChild.dataset.original_filename.split('.').shift()
 
     jsmediatags.read(audio.firstElementChild.src, {
       onSuccess: data => {
