@@ -53,7 +53,7 @@
     "serve-favicon": "^2.5.0",
     "sharp": "^0.23.0",
     "simple-thumbnail": "^1.6.1",
-    "stream-signature": "^1.0.2"
+    "stream-signature": "^1.0.3"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"
