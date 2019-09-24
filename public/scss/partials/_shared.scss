@@ -158,8 +158,10 @@ header {
   opacity: 0;
   visibility: collapse;
   transition: opacity 250ms linear, visibility 250ms linear;
+  z-index: 100;
   &.delete,
   &.update,
+  &.params,
   &.dropzone {
     opacity: 1;
     visibility: visible;
@@ -175,19 +177,25 @@ header {
       visibility: visible;
     }
   }
+  &.params {
+    #params_modal {
+      visibility: visible;
+    }
+  }
   &.dropzone {
     #dropzone {
       visibility: visible;
     }
   }
   #delete_modal,
-  #update_modal {
+  #update_modal,
+  #params_modal {
     position: relative;
     width: 250px;
     height: 100px;
     left: 50%;
     top: 25%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     border: 1px;
     border-style: solid;
     visibility: collapse;
@@ -220,6 +228,9 @@ header {
         }
       }
     }
+  }
+  #params_modal {
+    height: 150px;
   }
   #dropzone {
     visibility: collapse;

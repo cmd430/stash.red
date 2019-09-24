@@ -56,7 +56,8 @@ header {
 .blackout {
   background-color: $color-blackout;
   #delete_modal,
-  #update_modal {
+  #update_modal,
+  #params_modal {
     background-color: $color-modal;
     border-color: $color-modal-border;
     h2 {
@@ -72,7 +73,8 @@ header {
           background-color: $color-modal-delete;
           border-color: $color-modal-delete;
         }
-        &.update {
+        &.update,
+        &.params {
           color: $color-modal;
           background-color: $color-modal-update;
           border-color: $color-modal-update;
@@ -87,7 +89,8 @@ header {
             color: $color-modal-delete;
             background-color: $color-transparent;
           }
-          &.update {
+          &.update,
+          &.params {
             color: $color-modal-update;
             background-color: $color-transparent;
           }
@@ -263,6 +266,13 @@ header {
       a {
         color: $color-contenttext;
       }
+    }
+    .tab_button {
+      background: $color-transparent;
+      &:hover {
+        color: $color-contenttext-hover;
+      }
+      color: $color-contenttext;
     }
   }
 }

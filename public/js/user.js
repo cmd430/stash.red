@@ -16,4 +16,23 @@ document.addEventListener('DOMContentLoaded', () => {
       if (thumb.nextElementSibling.classList.contains('text')) return thumb.src = `/img/thumbnails/text.png`
     })
   })
+
+  setTimeout(initializeActions(), 100)
 })
+
+function initializeActions() {
+  document.querySelector('.tab_button.params').addEventListener('click', () => {
+    document.querySelector('.blackout').classList.add('params')
+  })
+  let paramsEvent = new Event('params')
+  let cancelParamsEvent = new Event('cancel_params')
+  document.querySelector('#params_modal .params').addEventListener('click', () => {
+    document.querySelector('.blackout').classList.remove('params')
+    document.dispatchEvent(paramsEvent)
+  })
+  document.querySelector('#params_modal .cancel').addEventListener('click', () => {
+    document.querySelector('.blackout').classList.remove('params')
+    document.dispatchEvent(cancelParamsEvent)
+  })
+  //WIP
+}
