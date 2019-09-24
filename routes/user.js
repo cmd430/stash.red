@@ -31,6 +31,11 @@ export default Router()
     req.filter = (filter !== 'image' && filter !== 'audio' && filter !== 'video' && filter !== 'text')
     ? ''
     : filter
+    req.urlParams = ''
+    if (req.filter !== '') req.urlParams += `&filter=${req.filter}`
+    if (req.sortOrder !== 'DESC') req.urlParams += `&sort=${req.sortOrder}`
+    if (req.viewLimit !== config.pagination.limit.default) req.urlParams += `&limit=${req.viewLimit}`
+
     next()
   })
 
@@ -51,6 +56,7 @@ export default Router()
         : database().query(`SELECT COUNT(id) FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0 AND mimetype LIKE "${req.filter}%"`, username)
 
       res.locals.pagination = {
+        params: req.urlParams,
         page: req.viewPage,
         pageCount:  Math.ceil(Object.values(totalFiles[0])[0] / req.viewLimit)
       }
@@ -86,6 +92,7 @@ export default Router()
         : database().query(`SELECT COUNT(id) FROM albums WHERE uploaded_by=? AND NOT public=0`, username)
 
       res.locals.pagination = {
+        params: req.urlParams,
         page: req.viewPage,
         pageCount: Math.ceil(Object.values(totalAlbums[0])[0] / req.viewLimit)
       }
