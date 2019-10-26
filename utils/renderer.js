@@ -22,6 +22,18 @@ function renderer (app) {
   hbs.registerHelper('split', (data, split, index) => data.split(split)[index])
   hbs.registerHelper('ext', data => extname(data).substr(1))
   hbs.registerHelper('json', data => JSON.stringify(data, null, 2))
+  hbs.registerHelper('opengraph', data => {
+    let meta = []
+
+    meta.push(`<meta name="theme-color" content="${data.theme}" />`)
+    meta.push(`<meta property="og:site_name" content="${data.site}" />`)
+    if (data.title !== undefined) meta.push(`<meta property="og:title" content="${data.title}" />`)
+    if (data.image !== undefined) meta.push(`<meta property="og:image" content="${data.image}" />`)
+    if (data.video !== undefined) meta.push(`<meta property="og:video" content="${data.video}" />`)
+    if (data.audio !== undefined) meta.push(`<meta property="og:audio" content="${data.audio}" />`)
+
+    return meta.join('\n')
+  })
   return hbs
 }
 

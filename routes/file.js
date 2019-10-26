@@ -34,6 +34,14 @@ export default Router()
         return file
       })[0]
 
+      let type = file.mimetype.split('/').shift()
+      Object.assign(res.locals.og, {
+        title: `File - ${file_id}`,
+        image: type === 'image' ? `${res.locals.direct}/${file_id}.${extname(file.original_filename).substr(1)}` : undefined,
+        video: type === 'video' ? `${res.locals.direct}/${file_id}.${extname(file.original_filename).substr(1)}` : undefined,
+        audio: type === 'audio' ? `${res.locals.direct}/${file_id}.${extname(file.original_filename).substr(1)}` : undefined
+      })
+
       return req.viewJson
         ? res.json(res.locals.file)
         : res.render('file')

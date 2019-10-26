@@ -83,6 +83,10 @@ app.use((req, res, next) => {
   res.locals.signedin = req.session.user
   res.locals.path = `${req.baseUrl}${req.path}${req.path.endsWith('/') ? '' : '/'}`
   res.locals.direct = `${req.protocol}://direct.${req.hostname}`
+  res.locals.og = {
+    site: res.locals.title,
+    theme: '#db0303'
+  }
   next()
 })
 app.use(zip())

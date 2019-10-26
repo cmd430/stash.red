@@ -70,6 +70,10 @@ export default Router()
         return file
       })
 
+      Object.assign(res.locals.og, {
+        title: `User - ${username}`
+      })
+
       return req.viewJson
         ? res.json(res.locals.uploads)
         : res.render('user')

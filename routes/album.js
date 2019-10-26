@@ -42,6 +42,10 @@ export default Router()
         })
       }
 
+      Object.assign(res.locals.og, {
+        title: `Album - ${album_title !== 'Album' ? album_title : album_id}`
+      })
+
       return req.viewJson
         ? res.json(res.locals.album)
         : res.render('album')
