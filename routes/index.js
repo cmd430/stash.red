@@ -42,6 +42,7 @@ export default Router()
   })
   .get('/captcha', captcha.generate())
   .get('/debug', (req, res, next) => {
+    if (config.server.env.includes('prod')) return next(createError(403))
     res.render('debug', {})
   })
 
