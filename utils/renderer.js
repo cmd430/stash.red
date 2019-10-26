@@ -26,6 +26,7 @@ function renderer (app) {
     let meta = []
 
     meta.push(`<meta name="theme-color" content="${data.theme}" />`)
+    meta.push('<meta property="twitter:card" content="summary" />')
     meta.push(`<meta property="og:site_name" content="${data.site}" />`)
     if (data.title !== undefined) meta.push(`<meta property="og:title" content="${data.title}" />`)
     if (data.image !== undefined) meta.push(`<meta property="og:image" content="${data.image}" />`)
