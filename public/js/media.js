@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeTextAreas()
     initializeActions()
   })
-} , false)
+}, false)
 
 function loadPollyfills (cb) {
   let fullscreenAPI = document.createElement('script')
