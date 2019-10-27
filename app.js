@@ -85,7 +85,8 @@ app.use((req, res, next) => {
   res.locals.direct = `${req.protocol}://direct.${req.hostname}`
   res.locals.og = {
     site: res.locals.title,
-    theme: '#db0303'
+    theme: config.server.env.includes('prod') ? '#db0303' : '#3889ea',
+    url: `${req.protocol}://${req.hostname}${req.originalUrl}`
   }
   next()
 })

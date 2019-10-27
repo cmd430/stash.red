@@ -35,11 +35,22 @@ export default Router()
       })[0]
 
       let type = file.mimetype.split('/').shift()
+
+      let desc = ''
+      if (type === 'image') desc = `An ${type.charAt(0).toUpperCase()}${type.substr(1)}`
+      if (type === 'audio') desc = `${type.charAt(0).toUpperCase()}${type.substr(1)}`
+      if (type === 'video') desc = `A ${type.charAt(0).toUpperCase()}${type.substr(1)}`
+      if (type === 'text') desc = `A ${type.charAt(0).toUpperCase()}${type.substr(1)} File`
+      desc = `${desc} Hosted at ${res.locals.title}`
+
       Object.assign(res.locals.og, {
-        title: `File - ${file_id}`,
+        title: `${file_id}`,
+        description: `${desc}`,
         image: type === 'image' ? `${res.locals.direct}/${file_id}.${extname(file.original_filename).substr(1)}` : undefined,
         video: type === 'video' ? `${res.locals.direct}/${file_id}.${extname(file.original_filename).substr(1)}` : undefined,
-        audio: type === 'audio' ? `${res.locals.direct}/${file_id}.${extname(file.original_filename).substr(1)}` : undefined
+        audio: type === 'audio' ? `${res.locals.direct}/${file_id}.${extname(file.original_filename).substr(1)}` : undefined,
+        text: type === 'text' ? `${res.locals.direct}/${file_id}.${extname(file.original_filename).substr(1)}` : undefined,
+        file: true
       })
 
       return req.viewJson

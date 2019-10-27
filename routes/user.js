@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
+import md5 from 'md5'
 
 /*
  *  User Files       /u/<:username>
@@ -55,6 +56,8 @@ export default Router()
         ? database().query(`SELECT COUNT(id) FROM files WHERE uploaded_by=? AND in_album IS NULL AND mimetype LIKE "${req.filter}%"`, username)
         : database().query(`SELECT COUNT(id) FROM files WHERE uploaded_by=? AND in_album IS NULL AND NOT public=0 AND mimetype LIKE "${req.filter}%"`, username)
 
+      let email = database().queryFirstCell(`SELECT email FROM users WHERE username=?`, username)
+
       res.locals.pagination = {
         params: req.urlParams,
         page: req.viewPage,
@@ -71,7 +74,10 @@ export default Router()
       })
 
       Object.assign(res.locals.og, {
-        title: `User - ${username}`
+        title: `${username}`,
+        description: `A User Profile for ${res.locals.title}`,
+        avatar: `https://www.gravatar.com/avatar/${md5(email.toLowerCase())}`,
+        user: true
       })
 
       return req.viewJson
