@@ -121,7 +121,15 @@ export default Router()
     let album_id = req.params.album_id
 
     try {
-      database().query('SELECT file_id, mimetype, original_filename FROM files WHERE in_album=? AND uploaded_by=?', album_id, user.username).forEach(file => {
+      let album = database().query('SELECT file_id, mimetype, original_filename FROM files WHERE in_album=? AND uploaded_by=?', album_id, user.username)
+      let uploader = user.username
+      if (database().queryFirstCell(`SELECT admin FROM users WHERE username=?`, user.username)) {
+        // admin user
+        album = database().query('SELECT file_id, mimetype, original_filename, uploaded_by FROM files WHERE in_album=?', album_id)
+        uploader = album[0].uploaded_by
+      }
+
+      album.forEach(file => {
         unlink(join(__dirname, '..', 'storage', 'thumbnail', `${file.file_id}.webp`), err => {
           if (err) {
             error(err.message)
@@ -135,7 +143,7 @@ export default Router()
           }
         })
       })
-      database().run('DELETE FROM albums WHERE album_id=? AND uploaded_by=?', album_id, user.username)
+      database().run('DELETE FROM albums WHERE album_id=? AND uploaded_by=?', album_id, uploader)
     } catch (err) {
       error(err.message)
       return res.sendStatus(405)

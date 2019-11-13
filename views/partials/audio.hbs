@@ -40,11 +40,11 @@
       </li>
     </ul>
   </div>
-  {{#if_eq @signedin.username this.uploaded_by this}}
+  {{#if_eq_or @signedin.username this.uploaded_by @signedin.admin this}}
     <div class="actions">
-      <a class="action__delete" title="Delete this Audio File" data-id="/f/{{file_id}}" data-username="{{@signedin.username}}">
+      <a class="action__delete" title="Delete this Audio File" data-id="/f/{{file_id}}" data-username="{{this.uploaded_by}}">
         <i class="icon-trash"></i>
       </a>
     </div>
-  {{/if_eq}}
+  {{/if_eq_or}}
 </span>

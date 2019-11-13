@@ -13,6 +13,12 @@ function renderer (app) {
     if (a === b) return opts.fn(context)
     return opts.inverse(context)
   })
+  hbs.registerHelper('if_eq_or', (a, b, c, context, opts) => {
+    if (context instanceof Function) opts = context
+    if (!context instanceof Object) context = this
+    if (a === b || c === true) return opts.fn(context)
+    return opts.inverse(context)
+  })
   hbs.registerHelper('if_contains', (a, b, context, opts) => {
     if (context instanceof Function) opts = context
     if (!context instanceof Object) context = this
