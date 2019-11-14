@@ -70,63 +70,64 @@ $ sudo apt-get install certbot python-certbot-nginx
 
 ##### If using PM2
 - Start with PM2 and run continuously
-```bash
-$ pm2 start ecosystem.config.js
-```
+  ```bash
+  $ pm2 start ecosystem.config.js
+  ```
 
 ##### If *not* using PM2 (**NOT** reccomended)
 - Start the server
-```bash
-$ node server
-#or 
-$ npm run server
-```
+  ```bash
+  $ node server
+  #or 
+  $ npm run server
+  ```
 
 #### Configure Reverse Proxy (Nginx)
-```bash
-$ sudo nano /etc/nginx/sites-available/yourdomainname.tld
-```
-add the following config (change where necessary) and save
-```nginx
-server {
-  server_name yourdomainname.tld;
-  listen 80;
-  location / {
-    proxy_pass http://localhost:3000;
-    proxy_http_version 1.1;
-    proxy_set_header X-Forwarded-Proto https;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection 'upgrade';
-    proxy_set_header Host $host;
-    proxy_cache_bypass $http_upgrade;
-    proxy_request_buffering off;
-  }
-  client_max_body_size 0;
-}
-server {
-  server_name direct.yourdomainname.tld;
-  listen 80;
-  location / {
-    proxy_pass http://localhost:3000;
-    proxy_http_version 1.1;
-    proxy_set_header X-Forwarded-Proto https;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection 'upgrade';
-    proxy_set_header Host $host;
-    proxy_cache_bypass $http_upgrade;
-  }  
-}
-```
-Create a symbolic link in `../sites-enabled/` and reload nginx
-```bash
-$ sudo ln -s /etc/nginx/sites-available/yourdomainname.tld /etc/nginx/sites-enabled/yourdomainname.tld
-$ sudo nginx -s reload
-```
+- Create site config
+  ```bash
+  $ sudo nano /etc/nginx/sites-available/yourdomainname.tld
+  ```
+  - add the following config (change where necessary) and save
+    ```nginx
+    server {
+      server_name yourdomainname.tld;
+      listen 80;
+      location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_request_buffering off;
+      }
+      client_max_body_size 0;
+    }
+    server {
+      server_name direct.yourdomainname.tld;
+      listen 80;
+      location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+      }  
+    }
+    ```
+- Create a symbolic link in `../sites-enabled/` and reload nginx
+  ```bash
+  $ sudo ln -s /etc/nginx/sites-available/yourdomainname.tld /etc/nginx/sites-enabled/yourdomainname.tld
+  $ sudo nginx -s reload
+  ```
 ##### If using Certbot (**Highly** reccomended)
 - Create and Apply SSL certificate
-```bash
-$ sudo certbot --nginx
-```
+  ```bash
+  $ sudo certbot --nginx
+  ```
 
 #### Testing
 If everything is working correctly you should beable to open `http(s)://yourdomainname.tld` in your browser
