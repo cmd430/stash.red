@@ -5,11 +5,11 @@
     </code>
   </pre>
   <div class="actions">
-    {{#if_eq @signedin.username this.uploaded_by this}}
-      <a class="action__delete" title="Delete this Text" data-id="/f/{{file_id}}" data-username="{{@signedin.username}}">
+    {{#if_eq_or @signedin.username this.uploaded_by @signedin.admin this}}
+      <a class="action__delete" title="Delete this Text" data-id="/f/{{file_id}}" data-username="{{this.uploaded_by}}">
         <i class="icon-trash"></i>
       </a>
-    {{/if_eq}}
+    {{/if_eq_or}}
     <a class="action__raw" title="View Raw" href="{{@direct}}/{{file_id}}.{{ext original_filename}}">
       <i class="icon-link-ext"></i>
     </a>

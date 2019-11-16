@@ -42,6 +42,7 @@ export default Router()
   })
   .get('/captcha', captcha.generate())
   .get('/debug', (req, res, next) => {
+    if (config.server.env.includes('prod')) return next(createError(403))
     res.render('debug', {})
   })
 
@@ -57,10 +58,11 @@ export default Router()
     ) return next(createError(400, 'Captcha Failed'))
 
     try {
-      let user = database().queryFirstRow(`SELECT id, username, password FROM users WHERE username=?`, req.body.username)
+      let user = database().queryFirstRow(`SELECT id, username, password, admin FROM users WHERE username=?`, req.body.username)
       if (await validate(req.body.password, user.password)) req.session.user = {
         id: user.id,
-        username: user.username
+        username: user.username,
+        admin: !!+user.admin
       }
     } catch (err) {
       error(err.message)

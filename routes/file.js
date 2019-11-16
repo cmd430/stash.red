@@ -34,6 +34,25 @@ export default Router()
         return file
       })[0]
 
+      let type = file.mimetype.split('/').shift()
+
+      let desc = ''
+      if (type === 'image') desc = `An ${type.charAt(0).toUpperCase()}${type.substr(1)}`
+      if (type === 'audio') desc = `${type.charAt(0).toUpperCase()}${type.substr(1)}`
+      if (type === 'video') desc = `A ${type.charAt(0).toUpperCase()}${type.substr(1)}`
+      if (type === 'text') desc = `A ${type.charAt(0).toUpperCase()}${type.substr(1)} File`
+      desc = `${desc} Hosted at ${res.locals.title}`
+
+      Object.assign(res.locals.og, {
+        title: `${file_id}`,
+        description: `${desc}`,
+        image: type === 'image' ? `${res.locals.direct}/${file_id}.${extname(file.original_filename).substr(1)}` : undefined,
+        video: type === 'video' ? `${res.locals.direct}/${file_id}.${extname(file.original_filename).substr(1)}` : undefined,
+        audio: type === 'audio' ? `${res.locals.direct}/${file_id}.${extname(file.original_filename).substr(1)}` : undefined,
+        text: type === 'text' ? `${res.locals.direct}/${file_id}.${extname(file.original_filename).substr(1)}` : undefined,
+        file: true
+      })
+
       return req.viewJson
         ? res.json(res.locals.file)
         : res.render('file')
@@ -80,11 +99,18 @@ export default Router()
   // DELETE Method Routes
   .delete('/:file_id/delete', (req, res, next) => {
     let user = req.isAuthenticated()
+
     if (!user) return res.sendStatus(401)
     let file_id = req.params.file_id
 
     try {
       let info = database().queryFirstRow('SELECT mimetype, original_filename, in_album FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
+      let uploader = user.username
+      if (database().queryFirstCell(`SELECT admin FROM users WHERE username=?`, user.username)) {
+        // admin user
+        info = database().queryFirstRow('SELECT mimetype, original_filename, in_album, uploaded_by FROM files WHERE file_id=?', file_id)
+        uploader = info.uploaded_by
+      }
 
       unlink(join(__dirname, '..', 'storage', 'thumbnail', `${file_id}.webp`), err => {
         if (err) {
@@ -99,11 +125,11 @@ export default Router()
         }
       })
 
-      let fileCount= database().query('SELECT COUNT(id) FROM files WHERE in_album=? AND uploaded_by=?', info.in_album, user.username)
+      let fileCount= database().query('SELECT COUNT(id) FROM files WHERE in_album=? AND uploaded_by=?', info.in_album, uploader)
 
       Object.values(fileCount[0])[0] === 1
-        ? database().run('DELETE FROM albums WHERE album_id=? AND uploaded_by=?', info.in_album, user.username)
-        : database().run('DELETE FROM files WHERE file_id=? AND uploaded_by=?', file_id, user.username)
+        ? database().run('DELETE FROM albums WHERE album_id=? AND uploaded_by=?', info.in_album, uploader)
+        : database().run('DELETE FROM files WHERE file_id=? AND uploaded_by=?', file_id, uploader)
 
     } catch (err) {
       error(err.message)

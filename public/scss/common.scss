@@ -38,6 +38,16 @@
         display: inline-block;
       }
     }
+    .tab_button {
+      position: absolute;
+      right: 0;
+      width: 37px;
+      height: 37px;
+      border: 0;
+      vertical-align: middle;
+      display: inline-block;
+      cursor: pointer;
+    }
   }
 }
 
