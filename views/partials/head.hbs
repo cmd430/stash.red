@@ -2,7 +2,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,viewport-fit=cover'" />
 {{{opengraph @og}}}
-<link rel="icon" type="image/png" href="/img/favicon.png" />
+{{#if_contains @env 'dev' this}}
+  <link rel="icon" type="image/png" href="/img/favicon_dev.png" />
+{{else}}
+  <link rel="icon" type="image/png" href="/img/favicon.png" />
+{{/if_contains}}
 <link rel="stylesheet" href="/scss/common.scss" />
 <script src="/js/common.js"></script>
 <title>{{@title}}</title>

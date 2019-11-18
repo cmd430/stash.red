@@ -55,7 +55,7 @@ app.use(session({
     WAL: true
   })
 }))
-app.use(favicon(join(www, 'favicon.ico')))
+app.use(favicon(join(www, config.server.env.includes('prod') ? 'favicon.ico' : 'favicon_dev.ico')))
 app.use(compression())
 app.use(requestId())
 app.use(expressRequestLogging())
