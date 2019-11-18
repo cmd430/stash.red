@@ -33,7 +33,7 @@ export default Router()
 
       res.locals.album = {
         album_id: album_data.album_id,
-        album_title: album_data.title || 'Album',
+        album_title: album_data.title || 'Untitled Album',
         uploaded_by: album_data.uploaded_by,
         uploaded_until: album_data.uploaded_until || 'infinity',
         files: files.map(file => {
@@ -94,7 +94,7 @@ export default Router()
     let update = {}
     if (req.body.title) {
       let title = req.body.title.trim()
-      if (!title.replace(/\s/g, '').length) title = 'Album'
+      if (!title.replace(/\s/g, '').length) title = 'Untitled Album'
       update.title = title
     }
     if (req.body.public) {

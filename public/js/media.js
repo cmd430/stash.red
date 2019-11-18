@@ -501,7 +501,7 @@ function initializeActions() {
         if (input.value !== input.dataset.title) {
           document.querySelector('.blackout').classList.add('update')
           updateItem({
-            title: input.value || 'Album'
+            title: input.value || 'Untitled Album'
           })
         }
       })
