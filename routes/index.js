@@ -8,7 +8,7 @@ import expressCaptcha from 'express-svg-captcha'
 
 const captcha = new expressCaptcha(config.auth.captcha)
 
-/*
+/**
  *  Home             /
  *  Upload           /upload
  *  Login            /login

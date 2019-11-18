@@ -3,7 +3,7 @@ import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
 import md5 from 'md5'
 
-/*
+/**
  *  User Files       /u/<:username>
  *  User Albums      /u/<:username>/albums
  *  User Settings    /u/<:username>/settings

@@ -6,7 +6,7 @@ import { error } from '../utils/logger'
 import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
 
-/*
+/**
  *  Album            /a/<id>
  *  Add File         /a/<id>/upload
  *  Album Settings   /a/<id>/settings
