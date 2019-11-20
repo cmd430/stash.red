@@ -3,7 +3,7 @@ import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
 import md5 from 'md5'
 
-/*
+/**
  *  User Files       /u/<:username>
  *  User Albums      /u/<:username>/albums
  *  User Settings    /u/<:username>/settings
@@ -92,9 +92,9 @@ export default Router()
 
     if (database().queryFirstCell(`SELECT username FROM users WHERE username=?`, username)) {
       let albums = showPrivate
-        ? database().query(`SELECT id, album_id, public, (SELECT COUNT(id) FROM files WHERE in_album = albums.album_id) AS total_files
+        ? database().query(`SELECT id, album_id, title, public, (SELECT COUNT(id) FROM files WHERE in_album = albums.album_id) AS total_files
                             FROM albums WHERE uploaded_by=? ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
-        : database().query(`SELECT id, album_id, public, (SELECT COUNT(id) FROM files WHERE in_album = albums.album_id) AS total_files
+        : database().query(`SELECT id, album_id, title, public, (SELECT COUNT(id) FROM files WHERE in_album = albums.album_id) AS total_files
                             FROM albums WHERE uploaded_by=? AND NOT public=0 ORDER BY id ${req.sortOrder} LIMIT ? OFFSET ?`, username, req.viewLimit, req.viewOffset)
 
       let totalAlbums = showPrivate
@@ -112,6 +112,8 @@ export default Router()
       }
       res.locals.uploads = albums.map(album => {
         album.public = !!album.public
+        album.album_title = album.title || "Untitled Album"
+        delete album.title
         delete album.id
         return album
       })

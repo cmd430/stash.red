@@ -5,7 +5,7 @@ import createError from 'http-errors'
 import database from 'better-sqlite3-helper'
 import { error } from '../utils/logger'
 
-/*
+/**
  *  File             /f/<id>
  *  File Settings    /f/<id>/settings
  *  Update File      /f/<id>/update
