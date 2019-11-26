@@ -24,12 +24,12 @@
     "bcrypt": "^3.0.7",
     "better-sqlite3": "^5.4.3",
     "better-sqlite3-helper": "^2.1.1",
-    "chalk": "^2.4.2",
+    "chalk": "^3.0.0",
     "compression": "^1.7.4",
     "connect-busboy": "0.0.2",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
-    "debug": "^2.6.9",
+    "debug": "^4.1.1",
     "esm": "^3.2.25",
     "express": "^4.16.1",
     "express-compile-sass": "git+https://git@github.com/cmd430/express-compile-sass.git",
@@ -57,6 +57,6 @@
     "stream-signature": "^1.0.3"
   },
   "devDependencies": {
-    "nodemon": "^1.19.4"
+    "nodemon": "^2.0.1"
   }
 }
