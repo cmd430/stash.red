@@ -23,7 +23,7 @@
 ---
 
 # Prerequisites
-- Debain/Ubuntu Linux (*or any other POSIX compliant system however these are untested*)
+- Debian/Ubuntu Linux (*or any other POSIX compliant system however these are untested*)
 - A Domain name (recommended registrar: [Namecheap](https://www.namecheap.com/))
 - A Reverse Proxy capable Webserver (reccomended: [Nginx](https://www.nginx.com/))
 - Node `version >= 10 < 12` (recommended: use [Node Version Manager](https://github.com/nvm-sh/nvm#installation-and-update))
@@ -46,7 +46,7 @@ $ sudo apt-get install certbot python-certbot-nginx
 ---
 
 # Installation
-> *It is Reccomended to begin in your Home directory (`cd ~`)*
+> *It is Recommended to begin in your Home directory (`cd ~`)*
 
 #### Clone
 - Clone this repository using 
@@ -55,7 +55,7 @@ $ sudo apt-get install certbot python-certbot-nginx
   ```
 
 #### Setup
-- Change into the newly created directory and install dependancies
+- Change into the newly created directory and install dependencies
   ```bash
   $ cd yourdomainname.tld
   $ npm i --only=prod
@@ -130,7 +130,7 @@ $ sudo apt-get install certbot python-certbot-nginx
   ```
 
 #### Testing
-If everything is working correctly you should beable to open `http(s)://yourdomainname.tld` in your browser
+If everything is working correctly you should be able to open `http(s)://yourdomainname.tld` in your browser
 
 ---
 
