@@ -3,7 +3,7 @@
   "description": "stash.red is a Small footprint file host (specificly for image/video and audio files)",
   "version": "2.0.0",
   "author": "Bradley 'cmd430' Treweek",
-  "license": "GPL-3.0-or-later",
+  "license": "MIT",
   "private": true,
   "main": "loader.js",
   "scripts": {
