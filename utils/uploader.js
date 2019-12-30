@@ -142,7 +142,7 @@ function upload (req, res, next) {
 
                     return res.status(422).json({ message: 'Invaild File Type' })
                   } else {
-                    if (extname(urlinfo.original_filename) === '') urlinfo.original_filename = `${urlinfo.original_filename}.${sig.extensions[0]}`
+                    if (extname(urlinfo.original_filename) === '') urlinfo.original_filename = `${urlinfo.original_filename.replace(/\/$/, '')}.${sig.extensions[0]}`
                   }
                 })
 
