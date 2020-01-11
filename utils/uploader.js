@@ -472,6 +472,12 @@ function upload (req, res, next) {
             ext: null
           })
 
+          if (upload_tracker.options.keepFor !== null) {
+            debug('Upload will be kept for', [`${upload_tracker.options.keepFor}`, {color: 'cyan'}], 'minutes', req)
+          } else {
+            debug('Upload will be kept', [`permanently`, {color: 'cyan'}], req)
+          }
+
           return res.status(201).json({
             message: 'Upload Complete',
             id: file.hasOwnProperty('in_album')
