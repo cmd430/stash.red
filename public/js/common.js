@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         public: isHome ? !setting__private.checked : true,
         title: null, //can upload with a title set for albums by passing in a string here
         formAlbum: isHome ? !setting__split.checked : true,
-        keepFor: Math.ceil(Number(setting__keepFor.value)) || null
+        keepFor: (setting__keepFor ? (Math.ceil(Number(setting__keepFor.value)) || null) : null)
       }))
       prepare('Uploading: 0%')
       upload(formData)
