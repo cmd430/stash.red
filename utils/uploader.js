@@ -142,7 +142,7 @@ function upload (req, res, next) {
 
                     return res.status(422).json({ message: 'Invaild File Type' })
                   } else {
-                    if (extname(urlinfo.original_filename) === '') urlinfo.original_filename = `${urlinfo.original_filename}.${sig.extensions[0]}`
+                    if (extname(urlinfo.original_filename) === '') urlinfo.original_filename = `${urlinfo.original_filename.replace(/\/$/, '')}.${sig.extensions[0]}`
                   }
                 })
 
@@ -471,6 +471,12 @@ function upload (req, res, next) {
             type: 'user',
             ext: null
           })
+
+          if (upload_tracker.options.keepFor !== null) {
+            debug('Upload will be kept for', [`${upload_tracker.options.keepFor}`, {color: 'cyan'}], 'minutes', req)
+          } else {
+            debug('Upload will be kept', [`permanently`, {color: 'cyan'}], req)
+          }
 
           return res.status(201).json({
             message: 'Upload Complete',
