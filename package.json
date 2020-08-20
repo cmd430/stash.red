@@ -21,7 +21,7 @@
     "ext": "js,json,json5,hbs"
   },
   "dependencies": {
-    "bcrypt": "^3.0.7",
+    "bcrypt": "^5.0.0",
     "better-sqlite3": "^5.4.3",
     "better-sqlite3-helper": "^2.1.1",
     "chalk": "^3.0.0",
