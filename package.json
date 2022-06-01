@@ -52,7 +52,7 @@
     "nanoid": "^2.1.7",
     "node-sass": "^4.13.0",
     "serve-favicon": "^2.5.0",
-    "sharp": "^0.23.3",
+    "sharp": "^0.30.5",
     "simple-thumbnail": "^1.6.1",
     "stream-signature": "^1.0.3"
   },
