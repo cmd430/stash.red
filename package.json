@@ -31,7 +31,7 @@
     "cors": "^2.8.5",
     "debug": "^4.1.1",
     "esm": "^3.2.25",
-    "express": "^4.16.1",
+    "express": "^4.17.3",
     "express-compile-sass": "git+https://git@github.com/cmd430/express-compile-sass.git",
     "express-easy-zip": "^1.1.4",
     "express-request-id": "^1.4.1",
