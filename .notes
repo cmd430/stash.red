@@ -1,0 +1,5 @@
+https://fastify.dev/docs
+https://github.com/WiseLibs/better-sqlite3/blob/HEAD/docs/api.md
+
+curl -X PUT -F file='@testUploads/girl.jpg' https://dev.cmd430.xyz/upload
+curl -X PUT -F file1='@testUploads/girl.jpg' -F file2='@testUploads/rover.jpeg' https://dev.cmd430.xyz/upload
