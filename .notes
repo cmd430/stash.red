@@ -1,7 +1,13 @@
 https://fastify.dev/docs
 https://github.com/WiseLibs/better-sqlite3/blob/HEAD/docs/api.md
 
-https://www.npmjs.com/package/thumbnailator
+
+
+
+https://stackoverflow.com/questions/40143958/javascript-generate-video-thumbnail-from-video-url
+https://medium.com/time-machine/how-to-get-video-thumbnails-with-javascript-video-and-image-thumbnail-for-html-file-upload-cc304ff7f7fb
+https://stackoverflow.com/questions/62050534/how-to-read-video-frames-directly-into-memory-with-nodejs
+https://www.npmjs.com/package/ffmpeg-stream
 
 curl -X POST -F file='@testUploads/girl.jpg' https://dev.cmd430.xyz/upload
 curl -X POST -F file1='@testUploads/girl.jpg' -F file2='@testUploads/rover.jpeg' https://dev.cmd430.xyz/upload
