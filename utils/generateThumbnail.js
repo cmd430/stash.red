@@ -1,6 +1,10 @@
 import sharp from 'sharp'
 
-export default async function generateThumbnail (fileBuffer) {
+// TODO: Video Thumbnail Generation
+
+export default async function generateThumbnail (mimetype, fileBuffer) {
+  if (mimetype.includes('image') === false) return null
+
   return sharp(fileBuffer)
   .resize({
     width: 250,

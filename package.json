@@ -14,7 +14,6 @@
     "@fastify/static": "^6.11.2",
     "@punkish/fastify-better-sqlite3": "github:cmd430/fastify-better-sqlite3",
     "better-sqlite3": "^9.0.0",
-    "canvas": "^2.11.2",
     "fastify": "^4.24.2",
     "sharp": "^0.32.6"
   },

@@ -107,7 +107,7 @@ try {
       filePart.mimetype = mimetypeFilter(filePart.mimetype)
 
       const fileBlob = await filePart.toBuffer()
-      const thumbnailBlob = filePart.mimetype.includes('image') ? await generateThumbnail(fileBlob) : null // <- TODO: Video Thumbnail Generation
+      const thumbnailBlob = await generateThumbnail(filePart.mimetype, fileBlob)
 
       // Store blob in DB
       app.betterSqlite3
