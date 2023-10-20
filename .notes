@@ -1,5 +1,7 @@
 https://fastify.dev/docs
 https://github.com/WiseLibs/better-sqlite3/blob/HEAD/docs/api.md
+https://www.npmjs.com/package/@fastify/view
+https://handlebarsjs.com/guide/
 
 
 curl -X POST -F file='@testUploads/girl.jpg' https://dev.cmd430.xyz/upload
@@ -11,6 +13,16 @@ curl -X POST -F ttl=300 -F file1='@testUploads/girl.jpg' -F file2='@testUploads/
 
 
 https://dev.cmd430.xyz/
-https://dev.cmd430.xyz/1
-https://dev.cmd430.xyz/1/thumbnail
-https://dev.cmd430.xyz/1/info
+https://dev.cmd430.xyz/:id
+https://dev.cmd430.xyz/:id/thumbnail
+https://dev.cmd430.xyz/:id/info
+
+
+im thinking
+
+`/f/:id` for public files
+`/a/:id` for public albums
+
+`/:username/f/:id` for private files
+`/:username/a/:id` for private albums
+

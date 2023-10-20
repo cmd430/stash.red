@@ -12,10 +12,14 @@
   "dependencies": {
     "@fastify/multipart": "^8.0.0",
     "@fastify/static": "^6.11.2",
+    "@fastify/view": "^8.2.0",
     "@punkish/fastify-better-sqlite3": "github:cmd430/fastify-better-sqlite3",
     "better-sqlite3": "^9.0.0",
+    "cmd430-utils": "github:cmd430/cmd430-utils",
     "fastify": "^4.24.2",
     "ffmpeg-static": "^5.2.0",
+    "handlebars": "^4.7.8",
+    "nanoid": "^5.0.2",
     "sharp": "^0.32.6"
   },
   "devDependencies": {

@@ -1,23 +1,29 @@
-import { resolve } from 'node:path'
-import Database from 'better-sqlite3'
-import Fastify from 'fastify'
-import serveStatic from '@fastify/static'
-import multipart from '@fastify/multipart'
-import betterSqlite3 from '@punkish/fastify-better-sqlite3'
-import generateThumbnail from './utils/generateThumbnail.js'
-import mimetypeFilter from './utils/mimetypeFilter.js'
-import temporaryUploadsGC from './utils/temporaryUploadsGC.js'
-
 /*
  * import { createWriteStream } from 'node:fs'
  * import { pipeline } from 'node:stream/promises'
  */
+import { resolve } from 'node:path'
+import { Log } from 'cmd430-utils'
+import { nanoid } from 'nanoid'
+import Fastify from 'fastify'
+import serveStatic from '@fastify/static'
+import multipart from '@fastify/multipart'
+import view from '@fastify/view'
+import betterSqlite3 from '@punkish/fastify-better-sqlite3'
+import handlebars from 'handlebars'
+import generateThumbnail from './utils/generateThumbnail.js'
+import mimetypeFilter from './utils/mimetypeFilter.js'
+import databaseConnection from './utils/databaseConnection.js'
+import { logger } from './utils/logger.js'
+
+// eslint-disable-next-line no-unused-vars
+const { log, debug, info, warn, error } = new Log('Main')
 
 try {
-
   const app = Fastify({
-    logger: true,
-    trustProxy: true
+    logger: logger,
+    trustProxy: true,
+    genReqId: () => nanoid(5)
   })
 
   app.register(serveStatic, {
@@ -29,39 +35,31 @@ try {
       files: 100                    // Max number of file uploads in one go
     }
   })
-  app.register(betterSqlite3, (function () {
-    const db = new Database('./database/stash.db', {
-      readonly: false,
-      fileMustExist: false,
-      timeout: 5000,
-      verbose: null
-    })
-
-    db.pragma('journal_mode = WAL')
-
-    // TODO: Code to setup DB if not already setup from SQL file
-    db.exec(`CREATE TABLE IF NOT EXISTS "test" (
-      "id" INTEGER NOT NULL UNIQUE,
-      "name" TEXT NOT NULL,
-      "file" BLOB NOT NULL,
-      "type" TEXT NOT NULL,
-      "thumbnail" BLOB,
-      "uploaded_at" TEXT NOT NULL,
-      "uploaded_by" TEXT NOT NULL DEFAULT "SYSTEM",
-      "ttl" INTEGER,
-      PRIMARY KEY("id" AUTOINCREMENT)
-    );`)
-
-
-    // TTL cleanup
-    temporaryUploadsGC(db)
-
-    return db
-  }()))
+  app.register(betterSqlite3, databaseConnection())
+  app.register(view, {
+    engine: {
+      handlebars: handlebars
+    },
+    root: resolve('./views'),
+    viewExt: 'hbs',
+    propertyName: 'render', // The template can now be rendered via `reply.render()` and `fastify.render()`
+    defaultContext: {
+      dev: process.env.NODE_ENV === 'development'
+    },
+    partials: {},
+    options: {
+      useDataVariables: true
+    }
+  })
 
   // Home page
   app.get('/', async (req, reply) => {
-    return reply.sendFile('index.html')
+    return reply.render('index')
+  })
+
+  // Favicon
+  app.get('/favicon.ico', async (req, reply) => {
+    return reply.sendFile('favicon.ico')
   })
 
   // Get uploaded file by ID
@@ -108,31 +106,37 @@ try {
   // Upload a file
   app.post('/upload', async req => {
     const files = req.files()
+    const uploadIDs = []
 
     for await (const file of files) {
-
-      console.debug({
-        requestID: req.id,
-        type: file.type,
-        filename: file.filename,
-        mimetype: file.mimetype,
-        fields: file.fields
-      })
-
+      /*
+       *debug({
+       *  requestID: req.id,
+       *  type: file.type,
+       *  filename: file.filename,
+       *  mimetype: file.mimetype,
+       *  fields: file.fields
+       *})
+       */
+      const uploadID = nanoid(12)
       const fileBlob = await file.toBuffer()
       const thumbnailBlob = await generateThumbnail(file.mimetype, fileBlob)
       const ttl = parseInt(file.fields?.ttl?.value ?? 0) > 0 ? parseInt(file.fields.ttl.value) : null
 
       // Store blob in DB
       app.betterSqlite3
-      .prepare('INSERT INTO test (name, file, type, thumbnail, uploaded_at, ttl) VALUES (?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?)')
-      .run(file.filename, fileBlob, file.mimetype, thumbnailBlob, ttl)
+      .prepare('INSERT INTO test (id, name, file, type, thumbnail, uploaded_at, ttl) VALUES (?, ?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?)')
+      .run(uploadID, file.filename, fileBlob, file.mimetype, thumbnailBlob, ttl)
+
+      // Make sure we can access the file ids after the upload
+      uploadIDs.push(uploadID)
 
       // Store as File: await pipeline(file.file, createWriteStream(`./uploads/${file.filename}`))
     }
 
     return {
-      message : 'files uploaded'
+      message : `${uploadIDs.length} file(s) uploaded`,
+      ids: uploadIDs
     }
   })
 
@@ -143,7 +147,7 @@ try {
 
 } catch (err) {
 
-  console.error(err)
+  error(err)
   process.exit(1)
 
 }
