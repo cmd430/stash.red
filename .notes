@@ -3,6 +3,7 @@
   -> https://github.com/WiseLibs/better-sqlite3/blob/HEAD/docs/api.md
   -> https://www.npmjs.com/package/@fastify/view
   -> https://handlebarsjs.com/guide/
+  -> https://fastify.dev/ecosystem/
 
 -= cURL commands to manually upload file =-
 [bash]
