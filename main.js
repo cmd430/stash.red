@@ -53,11 +53,12 @@ try {
     return db
   }()))
 
-
+  // Home page
   app.get('/', async (req, reply) => {
     return reply.sendFile('index.html')
   })
 
+  // Get uploaded file by ID
   app.get('/:id', (req, reply) => {
     const { id } = req.params
 
@@ -69,6 +70,7 @@ try {
     reply.send(file)
   })
 
+  // Get uploaded file thumbnail
   app.get('/:id/thumbnail', (req, reply) => {
     const { id } = req.params
 
@@ -80,6 +82,7 @@ try {
     reply.send(thumbnail)
   })
 
+  // Get info for uploaded file
   app.get('/:id/info', async (req, reply) => {
     const { id } = req.params
 
@@ -95,6 +98,7 @@ try {
     }
   })
 
+  // Upload a file
   app.post('/upload', async req => {
     const files = req.files()
 
