@@ -1,7 +1,3 @@
-/*
- * import { createWriteStream } from 'node:fs'
- * import { pipeline } from 'node:stream/promises'
- */
 import { resolve } from 'node:path'
 import { Log } from 'cmd430-utils'
 import { nanoid } from 'nanoid'
@@ -125,8 +121,6 @@ try {
 
       // Make sure we can access the file ids after the upload
       uploadIDs.push(uploadID)
-
-      // Store as File: await pipeline(file.file, createWriteStream(`./uploads/${file.filename}`))
     }
 
     return {
