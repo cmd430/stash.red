@@ -100,15 +100,6 @@ try {
     const uploadIDs = []
 
     for await (const file of files) {
-      /*
-       *debug({
-       *  requestID: req.id,
-       *  type: file.type,
-       *  filename: file.filename,
-       *  mimetype: file.mimetype,
-       *  fields: file.fields
-       *})
-       */
       const uploadID = nanoid(12)
       const fileBlob = await file.toBuffer()
       const thumbnailBlob = await generateThumbnail(file.mimetype, fileBlob)
