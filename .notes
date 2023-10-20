@@ -1,28 +1,47 @@
-https://fastify.dev/docs
-https://github.com/WiseLibs/better-sqlite3/blob/HEAD/docs/api.md
-https://www.npmjs.com/package/@fastify/view
-https://handlebarsjs.com/guide/
+-= References =-
+  -> https://fastify.dev/docs
+  -> https://github.com/WiseLibs/better-sqlite3/blob/HEAD/docs/api.md
+  -> https://www.npmjs.com/package/@fastify/view
+  -> https://handlebarsjs.com/guide/
+
+-= cURL commands to manually upload file =-
+[bash]
+  curl -X POST -F file='@testUploads/girl.jpg' https://dev.cmd430.xyz/upload
+  curl -X POST -F file1='@testUploads/girl.jpg' -F file2='@testUploads/rover.jpeg' https://dev.cmd430.xyz/upload
 
 
-curl -X POST -F file='@testUploads/girl.jpg' https://dev.cmd430.xyz/upload
-curl -X POST -F file1='@testUploads/girl.jpg' -F file2='@testUploads/rover.jpeg' https://dev.cmd430.xyz/upload
+  curl -X POST -F ttl=300 -F file='@testUploads/girl.jpg' https://dev.cmd430.xyz/upload
+  curl -X POST -F ttl=300 -F file1='@testUploads/girl.jpg' -F file2='@testUploads/rover.jpeg' https://dev.cmd430.xyz/upload
+[/bash]
+
+-= URL references =-
+  -> https://dev.cmd430.xyz/
+  -> https://dev.cmd430.xyz/f/:id
+  -> https://dev.cmd430.xyz/f/:id/thumbnail
+  -> https://dev.cmd430.xyz/f/:id/info
+
+  -> https://dev.cmd430.xyz/f/mz9RjzSr0y2k
 
 
-curl -X POST -F ttl=300 -F file='@testUploads/girl.jpg' https://dev.cmd430.xyz/upload
-curl -X POST -F ttl=300 -F file1='@testUploads/girl.jpg' -F file2='@testUploads/rover.jpeg' https://dev.cmd430.xyz/upload
 
-
-https://dev.cmd430.xyz/
-https://dev.cmd430.xyz/f/:id
-https://dev.cmd430.xyz/f/:id/thumbnail
-https://dev.cmd430.xyz/f/:id/info
-
-
-im thinking
-
+URL Scheme Plan:
 `/f/:id` for public files
 `/a/:id` for public albums
 
 `/:username/f/:id` for private files
 `/:username/a/:id` for private albums
 
+
+TODO:
+  -> Add support for `x-www-form-urlencoded` forms
+    -> https://www.npmjs.com/package/@fastify/formbody
+  -> Add cookie support
+    -> https://www.npmjs.com/package/@fastify/cookie
+  -> Add session support
+    -> https://www.npmjs.com/package/@fastify/session
+    -> https://github.com/fastify/example/blob/master/fastify-session-authentication/authentication.js
+    -> Rewrite this https://github.com/attestate/better-sqlite3-session-store/blob/master/src/index.js
+
+  -> Look into account stuff
+    -> https://nodejs.org/api/crypto.html#cryptoscryptpassword-salt-keylen-options-callback
+    -> https://stackoverflow.com/a/67038052/4958977
