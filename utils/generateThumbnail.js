@@ -1,7 +1,11 @@
 import { spawn } from 'node:child_process'
 import { Readable } from 'node:stream'
 import ffmpegBin from 'ffmpeg-static'
+import { Log } from 'cmd430-utils'
 import sharp from 'sharp'
+
+// eslint-disable-next-line no-unused-vars
+const { log, debug, info, warn, error } = new Log('Thumbnail Generator')
 
 async function ffmpeg (inputBuffer, type) {
   const args = {
@@ -49,7 +53,7 @@ async function ffmpeg (inputBuffer, type) {
          */
         if (err.code === 'EOF') return
 
-        console.error('[FFMPEG stdin Error]', err.message)
+        error('[FFMPEG stdin Error]', err.message)
         ffmpegProc.kill()
       })
       Readable.from(inputBuffer).pipe(ffmpegProc.stdin)
@@ -69,7 +73,7 @@ async function ffmpeg (inputBuffer, type) {
 
       ffmpegProc.on('close', () => resolve(outBuffer))
       ffmpegProc.on('error', err => {
-        console.error('[FFMPEG Error]', err.message)
+        error('[FFMPEG Error]', err.message)
         resolve(outBuffer)
         ffmpegProc.kill()
       })
