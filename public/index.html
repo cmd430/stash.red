@@ -6,8 +6,17 @@
 
   <body>
     <form action="/upload" method="post" enctype="multipart/form-data">
-      <input type="file" id="myFile" name="file" multiple />
-      <input type="submit" value="Upload" />
+      <label for="ttl">
+        TTL:
+        <input type="number" id="ttl" name="ttl" value="300" />
+        (Time in Seconds, 0 = Forever)
+      </label>
+      <label for="files">
+        Files:
+        <input type="file" id="files" name="file" multiple />
+      </label>
+      <hr />
+      <input type="submit" value="Upload">
     </form>
   </body>
 </html>

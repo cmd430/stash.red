@@ -6,6 +6,7 @@ import multipart from '@fastify/multipart'
 import betterSqlite3 from '@punkish/fastify-better-sqlite3'
 import generateThumbnail from './utils/generateThumbnail.js'
 import mimetypeFilter from './utils/mimetypeFilter.js'
+import temporaryUploadsGC from './utils/temporaryUploadsGC.js'
 
 /*
  * import { createWriteStream } from 'node:fs'
@@ -47,8 +48,13 @@ try {
       "thumbnail" BLOB,
       "uploaded_at" TEXT NOT NULL,
       "uploaded_by" TEXT NOT NULL DEFAULT "SYSTEM",
+      "ttl" INTEGER,
       PRIMARY KEY("id" AUTOINCREMENT)
     );`)
+
+
+    // TTL cleanup
+    temporaryUploadsGC(db)
 
     return db
   }()))
@@ -86,15 +92,16 @@ try {
   app.get('/:id/info', async (req, reply) => {
     const { id } = req.params
 
-    const { name, type, uploaded_at, uploaded_by } = app.betterSqlite3
-    .prepare('SELECT name, type, uploaded_at, uploaded_by FROM test WHERE id = ?')
+    const { name, type, uploaded_at, uploaded_by, ttl } = app.betterSqlite3
+    .prepare('SELECT name, type, uploaded_at, uploaded_by, ttl FROM test WHERE id = ?')
     .get(id)
 
     return {
       name,
       type,
       uploaded_at,
-      uploaded_by
+      uploaded_by,
+      ttl
     }
   })
 
@@ -105,18 +112,21 @@ try {
     for await (const file of files) {
 
       console.debug({
+        requestID: req.id,
         type: file.type,
         filename: file.filename,
-        mimetype: file.mimetype
+        mimetype: file.mimetype,
+        fields: file.fields
       })
 
       const fileBlob = await file.toBuffer()
       const thumbnailBlob = await generateThumbnail(file.mimetype, fileBlob)
+      const ttl = parseInt(file.fields?.ttl?.value ?? 0) > 0 ? parseInt(file.fields.ttl.value) : null
 
       // Store blob in DB
       app.betterSqlite3
-      .prepare('INSERT INTO test (name, file, type, thumbnail, uploaded_at) VALUES (?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'))')
-      .run(file.filename, fileBlob, file.mimetype, thumbnailBlob)
+      .prepare('INSERT INTO test (name, file, type, thumbnail, uploaded_at, ttl) VALUES (?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?)')
+      .run(file.filename, fileBlob, file.mimetype, thumbnailBlob, ttl)
 
       // Store as File: await pipeline(file.file, createWriteStream(`./uploads/${file.filename}`))
     }
