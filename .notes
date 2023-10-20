@@ -40,8 +40,12 @@ TODO:
   -> Add session support
     -> https://www.npmjs.com/package/@fastify/session
     -> https://github.com/fastify/example/blob/master/fastify-session-authentication/authentication.js
-    -> Rewrite this https://github.com/attestate/better-sqlite3-session-store/blob/master/src/index.js
+    -> Rewrite one of these
+      -> https://github.com/attestate/better-sqlite3-session-store/blob/master/src/index.js
+      -> https://github.com/oof2win2/fastify-session-sqlite-store/blob/master/src/index.ts
+      -> ! Probably this one ! https://github.com/mrdcvlsc/fastify-session-better-sqlite3-store/blob/main/index.js
 
   -> Look into account stuff
     -> https://nodejs.org/api/crypto.html#cryptoscryptpassword-salt-keylen-options-callback
     -> https://stackoverflow.com/a/67038052/4958977
+    -> https://github.com/fastify/fastify-auth
