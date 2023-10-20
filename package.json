@@ -15,6 +15,7 @@
     "@punkish/fastify-better-sqlite3": "github:cmd430/fastify-better-sqlite3",
     "better-sqlite3": "^9.0.0",
     "fastify": "^4.24.2",
+    "ffmpeg-static": "^5.2.0",
     "sharp": "^0.32.6"
   },
   "devDependencies": {
