@@ -14,14 +14,14 @@ import handlebars from 'handlebars'
 import generateThumbnail from './utils/generateThumbnail.js'
 import mimetypeFilter from './utils/mimetypeFilter.js'
 import databaseConnection from './utils/databaseConnection.js'
-import { logger } from './utils/logger.js'
+import fastifyLogger from './utils/fastifyLogger.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Main')
 
 try {
   const app = Fastify({
-    logger: logger,
+    logger: fastifyLogger,
     trustProxy: true,
     genReqId: () => nanoid(5)
   })
@@ -57,13 +57,8 @@ try {
     return reply.render('index')
   })
 
-  // Favicon
-  app.get('/favicon.ico', async (req, reply) => {
-    return reply.sendFile('favicon.ico')
-  })
-
   // Get uploaded file by ID
-  app.get('/:id', (req, reply) => {
+  app.get('/f/:id', (req, reply) => {
     const { id } = req.params
 
     const { file, type } = app.betterSqlite3
@@ -75,7 +70,7 @@ try {
   })
 
   // Get uploaded file thumbnail
-  app.get('/:id/thumbnail', (req, reply) => {
+  app.get('/f/:id/thumbnail', (req, reply) => {
     const { id } = req.params
 
     const { thumbnail } = app.betterSqlite3
@@ -87,7 +82,7 @@ try {
   })
 
   // Get info for uploaded file
-  app.get('/:id/info', async (req, reply) => {
+  app.get('/f/:id/info', async (req, reply) => {
     const { id } = req.params
 
     const { name, type, uploaded_at, uploaded_by, ttl } = app.betterSqlite3

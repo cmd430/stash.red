@@ -13,9 +13,9 @@ curl -X POST -F ttl=300 -F file1='@testUploads/girl.jpg' -F file2='@testUploads/
 
 
 https://dev.cmd430.xyz/
-https://dev.cmd430.xyz/:id
-https://dev.cmd430.xyz/:id/thumbnail
-https://dev.cmd430.xyz/:id/info
+https://dev.cmd430.xyz/f/:id
+https://dev.cmd430.xyz/f/:id/thumbnail
+https://dev.cmd430.xyz/f/:id/info
 
 
 im thinking
