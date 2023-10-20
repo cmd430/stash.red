@@ -1,9 +1,9 @@
 import { Writable } from 'node:stream'
 import { Log, bold, red, yellow, cyan, green, grey } from 'cmd430-utils'
 
-const fastifyLogger = new Log('Fastify')
+const fastifyLog = new Log('Fastify')
 
-export const logger = {
+export default {
   level: 'debug',
   serializers: {
     res (res) {
@@ -61,7 +61,7 @@ export const logger = {
         message = `${logData.reqId} - ${logData.err?.stack}`
       }
 
-      fastifyLogger[logLevels[logData.level]](message)
+      fastifyLog[logLevels[logData.level]](message)
       cb()
     }
   })
