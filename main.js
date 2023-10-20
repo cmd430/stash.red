@@ -25,7 +25,7 @@ try {
   app.register(multipart, {
     limits: {
       fileSize: 499 * 1000 * 1000,  // Max file size in bytes
-      files: 100                    // Max number of file fields
+      files: 100                    // Max number of file uploads in one go
     }
   })
   app.register(betterSqlite3, (function () {
@@ -96,23 +96,25 @@ try {
   })
 
   app.post('/upload', async req => {
-    for await (const filePart of req.files()) {
+    const files = req.files()
+
+    for await (const file of files) {
 
       console.debug({
-        type: filePart.type,
-        filename: filePart.filename,
-        mimetype: filePart.mimetype
+        type: file.type,
+        filename: file.filename,
+        mimetype: file.mimetype
       })
 
-      const fileBlob = await filePart.toBuffer()
-      const thumbnailBlob = await generateThumbnail(filePart.mimetype, fileBlob)
+      const fileBlob = await file.toBuffer()
+      const thumbnailBlob = await generateThumbnail(file.mimetype, fileBlob)
 
       // Store blob in DB
       app.betterSqlite3
       .prepare('INSERT INTO test (name, file, type, thumbnail, uploaded_at) VALUES (?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'))')
-      .run(filePart.filename, fileBlob, filePart.mimetype, thumbnailBlob)
+      .run(file.filename, fileBlob, file.mimetype, thumbnailBlob)
 
-      // Store as File: await pipeline(filePart.file, createWriteStream(`./uploads/${filePart.filename}`))
+      // Store as File: await pipeline(file.file, createWriteStream(`./uploads/${file.filename}`))
     }
 
     return {

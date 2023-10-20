@@ -34,11 +34,14 @@ async function ffmpeg (inputBuffer, type) {
   }
 
   let imageBuffer = null
+
   try {
+
     const image = new Promise((resolve, reject) => {
       let outBuffer = null
       const ffmpegProc = spawn(ffmpegBin, args[type])
 
+      // Get Buffer as Input Stream
       ffmpegProc.stdin.on('error', err => {
         /*
          * we get an EOF error without this error handler but everything is fine,
@@ -93,6 +96,7 @@ export default async function generateThumbnail (mimetype, fileBuffer) {
   }
   if (imageBuffer instanceof Buffer === false) return null
 
+  // Resize and crop Thumbnails
   return sharp(imageBuffer)
   .resize({
     width: 250,
