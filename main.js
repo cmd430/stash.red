@@ -65,7 +65,7 @@ try {
     .prepare('SELECT file, type FROM test WHERE id = ?')
     .get(id)
 
-    reply.type(type)
+    reply.type(mimetypeFilter(type))
     reply.send(file)
   })
 
@@ -103,8 +103,6 @@ try {
         filename: filePart.filename,
         mimetype: filePart.mimetype
       })
-
-      filePart.mimetype = mimetypeFilter(filePart.mimetype)
 
       const fileBlob = await filePart.toBuffer()
       const thumbnailBlob = await generateThumbnail(filePart.mimetype, fileBlob)
