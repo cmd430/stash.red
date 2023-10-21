@@ -4,6 +4,7 @@
   -> https://www.npmjs.com/package/@fastify/view
   -> https://handlebarsjs.com/guide/
   -> https://fastify.dev/ecosystem/
+  -> https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-nodejs?tabs=managed-identity%2Croles-azure-portal%2Csign-in-azure-cli
 
 -= cURL commands to manually upload file =-
 [bash]
