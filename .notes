@@ -24,17 +24,22 @@
 
   -> https://dev.cmd430.xyz/f/mz9RjzSr0y2k
 
+  ## Current IDs in DB
+    - mz9RjzSr0y2k
+    - 27STmZsfyg4B
+    - O1vKvkGhtnKY
+    - 75ZfcbigTQZ3
 
 
-URL Scheme Plan:
-`/f/:id` for public files
-`/a/:id` for public albums
+  ## URL Scheme Plan:
+    - `/f/:id` for public files
+    - `/a/:id` for public albums
 
-`/:username/f/:id` for private files
-`/:username/a/:id` for private albums
+    - `/:username/f/:id` for private files
+    - `/:username/a/:id` for private albums
 
 
-TODO:
+-= TODO =-
   -> Add support for `x-www-form-urlencoded` forms
     -> https://www.npmjs.com/package/@fastify/formbody
   -> Add cookie support
