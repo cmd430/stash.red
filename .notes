@@ -32,11 +32,9 @@
 
 
   ## URL Scheme Plan:
-    - `/f/:id` for public files
-    - `/a/:id` for public albums
+    - `/f/:id` for files
+    - `/a/:id` for albums
 
-    - `/:username/f/:id` for private files
-    - `/:username/a/:id` for private albums
 
 
 -= TODO =-
