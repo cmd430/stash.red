@@ -58,8 +58,8 @@ try {
     const { id } = req.params
 
     const { file, type } = app.betterSqlite3
-    .prepare('SELECT file, type FROM test WHERE id = ?')
-    .get(id)
+      .prepare('SELECT file, type FROM test WHERE id = ?')
+      .get(id)
 
     reply.type(mimetypeFilter(type))
     reply.send(file)
@@ -70,8 +70,8 @@ try {
     const { id } = req.params
 
     const { thumbnail } = app.betterSqlite3
-    .prepare('SELECT thumbnail FROM test WHERE id = ?')
-    .get(id)
+      .prepare('SELECT thumbnail FROM test WHERE id = ?')
+      .get(id)
 
     reply.type('image/webp')
     reply.send(thumbnail)
@@ -82,8 +82,8 @@ try {
     const { id } = req.params
 
     const { name, type, uploaded_at, uploaded_by, ttl } = app.betterSqlite3
-    .prepare('SELECT name, type, uploaded_at, uploaded_by, ttl FROM test WHERE id = ?')
-    .get(id)
+      .prepare('SELECT name, type, uploaded_at, uploaded_by, ttl FROM test WHERE id = ?')
+      .get(id)
 
     return {
       name,
@@ -106,9 +106,10 @@ try {
       const ttl = parseInt(file.fields?.ttl?.value ?? 0) > 0 ? parseInt(file.fields.ttl.value) : null
 
       // Store blob in DB
+      // TODO: Store blob in Azure blob storage?
       app.betterSqlite3
-      .prepare('INSERT INTO test (id, name, file, type, thumbnail, uploaded_at, ttl) VALUES (?, ?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?)')
-      .run(uploadID, file.filename, fileBlob, file.mimetype, thumbnailBlob, ttl)
+        .prepare('INSERT INTO test (id, name, file, type, thumbnail, uploaded_at, ttl) VALUES (?, ?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?)')
+        .run(uploadID, file.filename, fileBlob, file.mimetype, thumbnailBlob, ttl)
 
       // Make sure we can access the file ids after the upload
       uploadIDs.push(uploadID)

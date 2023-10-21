@@ -56,6 +56,7 @@ async function ffmpeg (inputBuffer, type) {
         error('[FFMPEG stdin Error]', err.message)
         ffmpegProc.kill()
       })
+
       Readable.from(inputBuffer).pipe(ffmpegProc.stdin)
 
       // Get output as Buffer
@@ -102,21 +103,21 @@ export default async function generateThumbnail (mimetype, fileBuffer) {
 
   // Resize and crop Thumbnails
   return sharp(imageBuffer)
-  .resize({
-    width: 250,
-    height: 250,
-    fit: 'cover',
-    position: 'entropy',
-    background: {
-      r: 0,
-      g: 0,
-      b: 0,
-      alpha: 0
-    },
-    kernel: 'lanczos3',
-    withoutEnlargement: true,
-    fastShrinkOnLoad: true
-  })
-  .webp({ quality: 50 })
-  .toBuffer()
+    .resize({
+      width: 250,
+      height: 250,
+      fit: 'cover',
+      position: 'entropy',
+      background: {
+        r: 0,
+        g: 0,
+        b: 0,
+        alpha: 0
+      },
+      kernel: 'lanczos3',
+      withoutEnlargement: true,
+      fastShrinkOnLoad: true
+    })
+    .webp({ quality: 50 })
+    .toBuffer()
 }
