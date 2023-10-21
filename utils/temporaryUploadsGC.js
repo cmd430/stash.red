@@ -5,19 +5,25 @@ const { log, debug, info, warn, error } = new Log('Temporary Uploads')
 const gcInterval = 1000 * 60 * 5 // 5mins
 
 function performGC (db) {
-  const removedIDs = []
-  const temporal = db.prepare('SELECT _id, uploaded_at, ttl FROM test WHERE ttl NOT NULL')
-  .all()
+  const expiredIDs = []
+  const temporal = db
+    .prepare('SELECT _id, uploaded_at, ttl FROM test WHERE ttl NOT NULL')
+    .all()
 
   for (const { _id, uploaded_at, ttl } of temporal) {
     if (Date.now() - new Date(new Date(uploaded_at).getTime() + (1000 * ttl)) >= 0) {
-      db.prepare('DELETE FROM test WHERE id = ?')
-      .run(_id)
-      removedIDs.push(_id)
+      expiredIDs.push(_id)
     }
   }
 
-  if (removedIDs.length > 0) debug('Removed', removedIDs.length, 'temporary uploads')
+  const statement = db.prepare('DELETE FROM test WHERE _id = ?')
+  const transaction = db.transaction(id => {
+    return id.map(x => statement.run(x))
+  })
+  const removed = transaction(expiredIDs)
+    .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
+
+  if (removed > 0) debug('Removed', removed, 'temporary uploads')
 }
 
 export default function temporaryUploadsGC (dbConnection) {
