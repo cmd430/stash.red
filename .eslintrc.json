@@ -122,7 +122,7 @@
       2,
       {
         "SwitchCase": 1,
-        "MemberExpression": 0
+        "MemberExpression": 1
       }
     ],
     "init-declarations": "off",
@@ -161,11 +161,15 @@
     "max-statements": "off",
     "max-statements-per-line": "error",
     "multiline-comment-style": [
-      "error",
+      "off",
       "starred-block"
     ],
     "new-parens": "error",
-    "newline-per-chained-call": "off",
+    "newline-per-chained-call":[
+      "error", {
+        "ignoreChainWithDepth": 2
+      }
+    ],
     "no-alert": "error",
     "no-array-constructor": "error",
     "no-await-in-loop": "off",
