@@ -1,6 +1,6 @@
 import { resolve } from 'node:path'
 import { Log } from 'cmd430-utils'
-import { nanoid } from 'nanoid'
+import { customAlphabet } from 'nanoid'
 import Fastify from 'fastify'
 import serveStatic from '@fastify/static'
 import multipart from '@fastify/multipart'
@@ -14,6 +14,7 @@ import fastifyLogger from './utils/fastifyLogger.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Main')
+const nanoid = customAlphabet('123456789ABCDEFGHJKLMNPQRSTUVWXYZ_abcdefghijkmnpqrstuvwxyz-', 9)
 
 try {
   const app = Fastify({
@@ -100,7 +101,7 @@ try {
     const uploadIDs = []
 
     for await (const file of files) {
-      const uploadID = nanoid(12)
+      const uploadID = nanoid(8)
       const fileBlob = await file.toBuffer()
       const thumbnailBlob = await generateThumbnail(file.mimetype, fileBlob)
       const ttl = parseInt(file.fields?.ttl?.value ?? 0) > 0 ? parseInt(file.fields.ttl.value) : null
