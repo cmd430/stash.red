@@ -4,16 +4,15 @@
   "description": "Stash Revival",
   "main": "main.js",
   "type": "module",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Bradley 'cmd430' Treweek",
   "license": "ISC",
   "dependencies": {
     "@azure/identity": "^3.3.2",
     "@azure/storage-blob": "^12.16.0",
+    "@fastify/cookie": "^9.1.0",
     "@fastify/formbody": "^7.4.0",
     "@fastify/multipart": "^8.0.0",
+    "@fastify/session": "^10.5.0",
     "@fastify/static": "^6.11.2",
     "@fastify/view": "^8.2.0",
     "@punkish/fastify-better-sqlite3": "github:cmd430/fastify-better-sqlite3",
@@ -21,6 +20,7 @@
     "better-sqlite3": "^9.0.0",
     "cmd430-utils": "github:cmd430/cmd430-utils",
     "fastify": "^4.24.2",
+    "fastify-session-better-sqlite3-store": "^2.0.0",
     "ffmpeg-static": "^5.2.0",
     "handlebars": "^4.7.8",
     "nanoid": "^5.0.2",

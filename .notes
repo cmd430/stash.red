@@ -38,17 +38,6 @@
 
 
 -= TODO =-
-  -> Add support for `x-www-form-urlencoded` forms
-    -> https://www.npmjs.com/package/@fastify/formbody
-  -> Add cookie support
-    -> https://www.npmjs.com/package/@fastify/cookie
-  -> Add session support
-    -> https://www.npmjs.com/package/@fastify/session
-    -> https://github.com/fastify/example/blob/master/fastify-session-authentication/authentication.js
-    -> Rewrite one of these
-      -> https://github.com/attestate/better-sqlite3-session-store/blob/master/src/index.js
-      -> https://github.com/oof2win2/fastify-session-sqlite-store/blob/master/src/index.ts
-      -> ! Probably this one ! https://github.com/mrdcvlsc/fastify-session-better-sqlite3-store/blob/main/index.js
 
   -> Look into account stuff
     -> https://nodejs.org/api/crypto.html#cryptoscryptpassword-salt-keylen-options-callback

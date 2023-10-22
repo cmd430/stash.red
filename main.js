@@ -5,6 +5,9 @@ import Fastify from 'fastify'
 import serveStatic from '@fastify/static'
 import multipart from '@fastify/multipart'
 import formbody from '@fastify/formbody'
+import cookie from '@fastify/cookie'
+import session from '@fastify/session'
+import SqliteStore from 'fastify-session-better-sqlite3-store'
 import view from '@fastify/view'
 import betterSqlite3 from '@punkish/fastify-better-sqlite3'
 import handlebars from 'handlebars'
@@ -22,24 +25,36 @@ const { log, debug, info, warn, error } = new Log('Main')
 const nanoid = customAlphabet('123456789ABCDEFGHJKLMNPQRSTUVWXYZ_abcdefghijkmnpqrstuvwxyz-', 9)
 
 try {
-  const app = Fastify({
+  const fastify = Fastify({
     logger: fastifyLogger,
     trustProxy: true,
     genReqId: () => nanoid(5)
   })
 
-  app.register(serveStatic, {
+  fastify.register(cookie)
+  fastify.register(session, {
+    store: new SqliteStore(databaseConnection),
+    secret: config.session.secret,
+    cookieName: config.session.cookieName,
+    cookie: {
+      maxAge: config.session.maxAge,
+      secure: true,
+      httpOnly: true,
+      sameSite: 'strict'
+    }
+  })
+  fastify.register(serveStatic, {
     root: resolve('./public')
   })
-  app.register(multipart, {
+  fastify.register(multipart, {
     limits: {
       fileSize: 499 * 1000 * 1000,  // Max file size in bytes
       files: 100                    // Max number of file uploads in one go
     }
   })
-  app.register(formbody)
-  app.register(betterSqlite3, databaseConnection)
-  app.register(view, {
+  fastify.register(formbody)
+  fastify.register(betterSqlite3, databaseConnection)
+  fastify.register(view, {
     engine: {
       handlebars: handlebars
     },
@@ -56,15 +71,15 @@ try {
   })
 
   // Home page
-  app.get('/', async (req, reply) => {
+  fastify.get('/', async (req, reply) => {
     return reply.render('index')
   })
 
   // Get uploaded file by ID
-  app.get('/f/:id', async (req, reply) => {
+  fastify.get('/f/:id', async (req, reply) => {
     const { id } = req.params
 
-    const { file, type, uploaded_by } = app.betterSqlite3
+    const { file, type, uploaded_by } = fastify.betterSqlite3
       .prepare('SELECT file, type, uploaded_by FROM files WHERE id = ?')
       .get(id)
 
@@ -73,9 +88,9 @@ try {
   })
 
   // Get uploaded file thumbnail
-  app.get('/f/:id/thumbnail', async (req, reply) => {
+  fastify.get('/f/:id/thumbnail', async (req, reply) => {
     const { id } = req.params
-    const { file, uploaded_by } = app.betterSqlite3
+    const { file, uploaded_by } = fastify.betterSqlite3
       .prepare('SELECT file, uploaded_by FROM files WHERE id = ?')
       .get(id)
 
@@ -84,19 +99,19 @@ try {
   })
 
   // Get info for uploaded file
-  app.get('/f/:id/info', async (req, reply) => {
+  fastify.get('/f/:id/info', async (req, reply) => {
     const { id } = req.params
 
-    return app.betterSqlite3
+    return fastify.betterSqlite3
       .prepare('SELECT * FROM files WHERE id = ?')
       .get(id)
   })
 
   // TEMP: test file delete
-  app.get('/f/:id/delete', async (req, reply) => {
+  fastify.get('/f/:id/delete', async (req, reply) => {
     const { id } = req.params
 
-    const { file, uploaded_by } = app.betterSqlite3
+    const { file, uploaded_by } = fastify.betterSqlite3
       .prepare('SELECT file, uploaded_by FROM files WHERE id = ?')
       .get(id)
 
@@ -109,7 +124,7 @@ try {
 
 
   // Signup
-  app.post('/signup', async req => {
+  fastify.post('/signup', async req => {
     // TODO: make safe and not shit
     const { username, email, password, confirm } = req.body
     const userameValid = Boolean((/^[a-zA-Z0-9]{3,63}$/).test(username))
@@ -119,7 +134,7 @@ try {
     if (password !== confirm || !username || !email || !userameValid) return new Error('Oh no you fucked up!')
 
     try {
-      app.betterSqlite3
+      fastify.betterSqlite3
         .prepare('INSERT INTO users (username, email, password) VALUES (?, ?, ?)')
         .run(username, email, await hash(password, config.bcrypt.rounds))
 
@@ -135,7 +150,7 @@ try {
   })
 
   // Upload a file
-  app.post('/upload', async req => {
+  fastify.post('/upload', async req => {
     const files = req.files()
     const uploadIDs = []
 
@@ -151,7 +166,7 @@ try {
       // TODO: get username from session
       const username = 'testAccount'
 
-      app.betterSqlite3
+      fastify.betterSqlite3
         .prepare('INSERT INTO files (id, name, file, type, uploaded_at, uploaded_by, ttl) VALUES (?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?, ?)')
         .run(uploadID, file.filename, fileBlobName, file.mimetype, username, ttl)
 
@@ -170,7 +185,7 @@ try {
   // Temp Upload cleanup
   temporaryUploadsGC(databaseConnection)
 
-  await app.listen({
+  await fastify.listen({
     port: 8080,
     host: '::'
   })
