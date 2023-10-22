@@ -1,5 +1,4 @@
-import { resolve, extname } from 'node:path'
-import { randomUUID } from 'node:crypto'
+import { resolve } from 'node:path'
 import { Log } from 'cmd430-utils'
 import { customAlphabet } from 'nanoid'
 import Fastify from 'fastify'
@@ -11,7 +10,7 @@ import betterSqlite3 from '@punkish/fastify-better-sqlite3'
 import handlebars from 'handlebars'
 import { hash, compare } from 'bcrypt'
 import { config } from './utils/config.js'
-import { blobServiceClient } from './utils/azureBlob.js'
+import { createAzureContainer, createAzureBlob, setAzureBlob, getAzureBlobBuffer } from './utils/azureBlob.js'
 import generateThumbnail from './utils/generateThumbnail.js'
 import mimetypeFilter from './utils/mimetypeFilter.js'
 import databaseConnection from './utils/databaseConnection.js'
@@ -61,24 +60,24 @@ try {
   })
 
   // Get uploaded file by ID
-  app.get('/f/:id', (req, reply) => {
+  app.get('/f/:id', async (req, reply) => {
     const { id } = req.params
 
-    const { file, type } = app.betterSqlite3
-      .prepare('SELECT file, type FROM files WHERE id = ?')
+    const { file, type, uploaded_by } = app.betterSqlite3
+      .prepare('SELECT file, type, uploaded_by FROM files WHERE id = ?')
       .get(id)
 
     reply.type(mimetypeFilter(type))
-    reply.send(file)
+    reply.send(await getAzureBlobBuffer(uploaded_by, file))
   })
 
   // Get uploaded file thumbnail
   app.get('/f/:id/thumbnail', (req, reply) => {
     const { id } = req.params
-
-    const { thumbnail } = app.betterSqlite3
-      .prepare('SELECT thumbnail FROM files WHERE id = ?')
+    const { file, uploaded_by } = app.betterSqlite3
+      .prepare('SELECT file, uploaded_by FROM files WHERE id = ?')
       .get(id)
+    const thumbnail = `thumbnail/thumbnail_${file}`
 
     reply.type('image/webp')
     reply.send(thumbnail)
@@ -109,7 +108,6 @@ try {
 
     debug({ username, email, password, confirm, userameValid })
 
-
     if (password !== confirm || !username || !email || !userameValid) return new Error('Oh no you fucked up!')
 
     try {
@@ -117,10 +115,7 @@ try {
         .prepare('INSERT INTO users (username, email, password) VALUES (?, ?, ?)')
         .run(username, email, await hash(password, config.bcrypt.rounds))
 
-      const azureContainerClient = blobServiceClient.getContainerClient(username.toLowerCase())
-      const azureCreateContainerResponse = await azureContainerClient.create()
-
-      debug(`Container was created successfully.\n\trequestId:${azureCreateContainerResponse.requestId}\n\tURL: ${azureContainerClient.url}`)
+      await createAzureContainer(username)
 
       return {
         message: 'Account created successfully'
@@ -140,31 +135,20 @@ try {
     for await (const file of files) {
 
       // TODO: get username from session
-      const azureContainerClient = blobServiceClient.getContainerClient('testAccount'.toLowerCase())
-      const fileBlobName = `${randomUUID()}${extname(file.filename)}`
-      const thumbnailBlobName = `thumbnail/thumbnail_${randomUUID()}${extname(file.filename)}`
-      const azureFileBlockBlobClient = azureContainerClient.getBlockBlobClient(fileBlobName)
-      const azureThumbnailBlockBlobClient = azureContainerClient.getBlockBlobClient(thumbnailBlobName)
-
-      debug(`\nUploading file to Azure storage as blob\n\tname: ${fileBlobName}:\n\tURL: ${azureContainerClient.url}`)
-      debug(`\nUploading thumbnail to Azure storage as blob\n\tname: ${thumbnailBlobName}:\n\tURL: ${azureContainerClient.url}`)
+      const { fileBlobName, azureBlobClients } = createAzureBlob('testAccount', file.filename)
 
       const uploadID = nanoid(8)
       const fileBlob = await file.toBuffer()
       const thumbnailBlob = await generateThumbnail(file.mimetype, fileBlob)
       const ttl = parseInt(file.fields?.ttl?.value ?? 0) > 0 ? parseInt(file.fields.ttl.value) : null
+      // TODO: get username from session
+      const username = 'testAccount'
 
-      // Store blob in DB
-      // TODO: Store blob in Azure blob storage?
       app.betterSqlite3
-        .prepare('INSERT INTO files (id, name, file, type, thumbnail, uploaded_at, ttl) VALUES (?, ?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?)')
-        .run(uploadID, file.filename, fileBlobName, file.mimetype, thumbnailBlobName, ttl)
+        .prepare('INSERT INTO files (id, name, file, type, uploaded_at, uploaded_by, ttl) VALUES (?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?, ?)')
+        .run(uploadID, file.filename, fileBlobName, file.mimetype, username, ttl)
 
-      const azureFileUploadBlobResponse = await azureFileBlockBlobClient.upload(fileBlob, fileBlob.length)
-      const azureThumbnailUploadBlobResponse = await azureThumbnailBlockBlobClient.upload(thumbnailBlob, thumbnailBlob.length)
-
-      debug(`File Blob was uploaded successfully. requestId: ${azureFileUploadBlobResponse.requestId}`)
-      debug(`Thumbnail Blob was uploaded successfully. requestId: ${azureThumbnailUploadBlobResponse.requestId}`)
+      await setAzureBlob(fileBlob, thumbnailBlob, azureBlobClients)
 
       // Make sure we can access the file ids after the upload
       uploadIDs.push(uploadID)
