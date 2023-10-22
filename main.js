@@ -38,7 +38,7 @@ try {
     }
   })
   app.register(formbody)
-  app.register(betterSqlite3, databaseConnection())
+  app.register(betterSqlite3, await databaseConnection())
   app.register(view, {
     engine: {
       handlebars: handlebars

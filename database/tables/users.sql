@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS "users" (
+  "_id" INTEGER NOT NULL UNIQUE,
+  "username" TEXT NOT NULL,
+  "email" TEXT NOT NULL UNIQUE,
+  "password" TEXT NOT NULL,
+  UNIQUE (username COLLATE NOCASE),
+  PRIMARY KEY("id" AUTOINCREMENT)
+);
