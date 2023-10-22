@@ -11,6 +11,7 @@ import handlebars from 'handlebars'
 import { hash, compare } from 'bcrypt'
 import { config } from './utils/config.js'
 import { createAzureContainer, createAzureBlob, setAzureBlob, getAzureBlobBuffer, deleteAzureBlob, deriveThumbnailBlob } from './utils/azureBlob.js'
+import temporaryUploadsGC from './utils/temporaryUploadsGC.js'
 import generateThumbnail from './utils/generateThumbnail.js'
 import mimetypeFilter from './utils/mimetypeFilter.js'
 import databaseConnection from './utils/databaseConnection.js'
@@ -165,6 +166,9 @@ try {
       ids: uploadIDs
     }
   })
+
+  // Temp Upload cleanup
+  temporaryUploadsGC(databaseConnection)
 
   await app.listen({
     port: 8080,

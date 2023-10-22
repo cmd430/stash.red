@@ -41,8 +41,8 @@ export function createAzureBlob (username, filename) {
   const azureFileBlockBlobClient = azureContainerClient.getBlockBlobClient(fileBlobName)
   const azureThumbnailBlockBlobClient = azureContainerClient.getBlockBlobClient(thumbnailBlobName)
 
-  debug(`\nUploading file to Azure storage as blob\n\tname: ${fileBlobName}:\n\tURL: ${azureContainerClient.url}`)
-  debug(`\nUploading thumbnail to Azure storage as blob\n\tname: ${thumbnailBlobName}:\n\tURL: ${azureContainerClient.url}`)
+  debug(`Uploading file to Azure storage as blob\n\tname: ${fileBlobName}:\n\tURL: ${azureContainerClient.url}`)
+  debug(`Uploading thumbnail to Azure storage as blob\n\tname: ${thumbnailBlobName}:\n\tURL: ${azureContainerClient.url}`)
 
   return {
     fileBlobName,
@@ -58,8 +58,8 @@ export async function setAzureBlob (fileBuffer, thumbnailBuffer, azureBlobClient
   const azureFileUploadBlobResponse = await azureFileBlockBlobClient.upload(fileBuffer, fileBuffer.length)
   const azureThumbnailUploadBlobResponse = await azureThumbnailBlockBlobClient.upload(thumbnailBuffer, thumbnailBuffer.length)
 
-  debug(`File Blob was uploaded successfully. requestId: ${azureFileUploadBlobResponse.requestId}`)
-  debug(`Thumbnail Blob was uploaded successfully. requestId: ${azureThumbnailUploadBlobResponse.requestId}`)
+  debug(`File Blob was uploaded successfully.\n\trequestId: ${azureFileUploadBlobResponse.requestId}`)
+  debug(`Thumbnail Blob was uploaded successfully.\n\trequestId: ${azureThumbnailUploadBlobResponse.requestId}`)
 }
 
 export async function getAzureBlobBuffer (username, blobID) {
@@ -74,5 +74,9 @@ export async function deleteAzureBlob (username, blobID) {
   const azureContainerClient = azureBlobServiceClient.getContainerClient(username.toLowerCase())
   const azureFileBlockBlobClient = azureContainerClient.getBlockBlobClient(blobID)
 
-  await azureFileBlockBlobClient.deleteIfExists()
+  const azureFileDeleteBlobResponse = await azureFileBlockBlobClient.deleteIfExists()
+
+  debug(`File Blob was ${azureFileDeleteBlobResponse.succeeded ? 'deleted successfully.' : 'unabled to be deleted.'}\n\trequestId: ${azureFileDeleteBlobResponse.requestId}`)
+
+  return azureFileDeleteBlobResponse.succeeded
 }

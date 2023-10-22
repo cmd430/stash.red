@@ -1,7 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import Database from 'better-sqlite3'
-import temporaryUploadsGC from './temporaryUploadsGC.js'
+
 
 const db = new Database('./database/stash.db', {
   readonly: false,
@@ -17,8 +17,5 @@ const tables = await readdir(resolve('./database/tables'))
 for await (const table of tables) db.exec(await readFile(resolve(`./database/tables/${table}`), {
   encoding: 'utf8'
 }))
-
-// TTL cleanup
-temporaryUploadsGC(db)
 
 export default db
