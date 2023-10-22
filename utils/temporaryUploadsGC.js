@@ -7,7 +7,7 @@ const gcInterval = 1000 * 60 * 5 // 5mins
 function performGC (db) {
   const expiredIDs = []
   const temporal = db
-    .prepare('SELECT _id, uploaded_at, ttl FROM test WHERE ttl NOT NULL')
+    .prepare('SELECT _id, uploaded_at, ttl FROM files WHERE ttl NOT NULL')
     .all()
 
   for (const { _id, uploaded_at, ttl } of temporal) {
@@ -16,7 +16,7 @@ function performGC (db) {
     }
   }
 
-  const statement = db.prepare('DELETE FROM test WHERE _id = ?')
+  const statement = db.prepare('DELETE FROM files WHERE _id = ?')
   const transaction = db.transaction(id => {
     return id.map(x => statement.run(x))
   })
