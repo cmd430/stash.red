@@ -4,6 +4,8 @@ import { Log } from 'cmd430-utils'
 const { log, debug, info, warn, error } = new Log('Temporary Uploads')
 const gcInterval = 1000 * 60 * 5 // 5mins
 
+
+// TODO: make this delete from Azure
 function performGC (db) {
   const expiredIDs = []
   const temporal = db
