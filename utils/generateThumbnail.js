@@ -9,32 +9,8 @@ const { log, debug, info, warn, error } = new Log('Thumbnail Generator')
 
 async function ffmpeg (inputBuffer, type) {
   const args = {
-    'video': [
-      '-r',
-      '1',
-      '-i',
-      'pipe:0',
-      '-vframes',
-      '1',
-      '-f',
-      'image2',
-      '-q:v',
-      '1',
-      '-c:v',
-      'mjpeg',
-      'pipe:1'
-    ],
-    'audio': [
-      '-i',
-      'pipe:0',
-      '-f',
-      'image2',
-      '-q:v',
-      '1',
-      '-c:v',
-      'mjpeg',
-      'pipe:1'
-    ]
+    'video': [ '-r', '1', '-i', 'pipe:0', '-vframes', '1', '-f', 'image2', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
+    'audio': [ '-i', 'pipe:0', '-f', 'image2', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ]
   }
 
   let imageBuffer = null
