@@ -4,8 +4,7 @@ import { config } from './config.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Azure')
+const { storageConnectionString } = config.azure
 
-const azureConnectionString = config.azureConnection
-
-export const blobServiceClient = BlobServiceClient.fromConnectionString(azureConnectionString)
+export const blobServiceClient = BlobServiceClient.fromConnectionString(storageConnectionString)
 
