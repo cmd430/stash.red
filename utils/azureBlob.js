@@ -21,6 +21,10 @@ function streamToBuffer (readableStream) {
   })
 }
 
+export function deriveThumbnailBlob (fileBlobName) {
+  return `thumbnail/thumbnail_${basename(fileBlobName, extname(fileBlobName))}.webp`
+}
+
 const azureBlobServiceClient = BlobServiceClient.fromConnectionString(storageConnectionString)
 
 export async function createAzureContainer (username) {
@@ -33,7 +37,7 @@ export async function createAzureContainer (username) {
 export function createAzureBlob (username, filename) {
   const azureContainerClient = azureBlobServiceClient.getContainerClient(username.toLowerCase())
   const fileBlobName = `${randomUUID()}${extname(filename)}`
-  const thumbnailBlobName = `thumbnail/thumbnail_${basename(fileBlobName, extname(fileBlobName))}.webp`
+  const thumbnailBlobName = deriveThumbnailBlob(fileBlobName)
   const azureFileBlockBlobClient = azureContainerClient.getBlockBlobClient(fileBlobName)
   const azureThumbnailBlockBlobClient = azureContainerClient.getBlockBlobClient(thumbnailBlobName)
 
@@ -49,10 +53,10 @@ export function createAzureBlob (username, filename) {
   }
 }
 
-export async function setAzureBlob (fileBlob, thumbnailBlob, azureBlobClients) {
+export async function setAzureBlob (fileBuffer, thumbnailBuffer, azureBlobClients) {
   const { azureFileBlockBlobClient, azureThumbnailBlockBlobClient } = azureBlobClients
-  const azureFileUploadBlobResponse = await azureFileBlockBlobClient.upload(fileBlob, fileBlob.length)
-  const azureThumbnailUploadBlobResponse = await azureThumbnailBlockBlobClient.upload(thumbnailBlob, thumbnailBlob.length)
+  const azureFileUploadBlobResponse = await azureFileBlockBlobClient.upload(fileBuffer, fileBuffer.length)
+  const azureThumbnailUploadBlobResponse = await azureThumbnailBlockBlobClient.upload(thumbnailBuffer, thumbnailBuffer.length)
 
   debug(`File Blob was uploaded successfully. requestId: ${azureFileUploadBlobResponse.requestId}`)
   debug(`Thumbnail Blob was uploaded successfully. requestId: ${azureThumbnailUploadBlobResponse.requestId}`)
@@ -66,4 +70,9 @@ export async function getAzureBlobBuffer (username, blobID) {
   return streamToBuffer(azureDownloadBlockBlobResponse.readableStreamBody)
 }
 
+export async function deleteAzureBlob (username, blobID) {
+  const azureContainerClient = azureBlobServiceClient.getContainerClient(username.toLowerCase())
+  const azureFileBlockBlobClient = azureContainerClient.getBlockBlobClient(blobID)
 
+  await azureFileBlockBlobClient.deleteIfExists()
+}

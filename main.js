@@ -10,7 +10,7 @@ import betterSqlite3 from '@punkish/fastify-better-sqlite3'
 import handlebars from 'handlebars'
 import { hash, compare } from 'bcrypt'
 import { config } from './utils/config.js'
-import { createAzureContainer, createAzureBlob, setAzureBlob, getAzureBlobBuffer } from './utils/azureBlob.js'
+import { createAzureContainer, createAzureBlob, setAzureBlob, getAzureBlobBuffer, deleteAzureBlob, deriveThumbnailBlob } from './utils/azureBlob.js'
 import generateThumbnail from './utils/generateThumbnail.js'
 import mimetypeFilter from './utils/mimetypeFilter.js'
 import databaseConnection from './utils/databaseConnection.js'
@@ -72,33 +72,40 @@ try {
   })
 
   // Get uploaded file thumbnail
-  app.get('/f/:id/thumbnail', (req, reply) => {
+  app.get('/f/:id/thumbnail', async (req, reply) => {
     const { id } = req.params
     const { file, uploaded_by } = app.betterSqlite3
       .prepare('SELECT file, uploaded_by FROM files WHERE id = ?')
       .get(id)
-    const thumbnail = `thumbnail/thumbnail_${file}`
 
     reply.type('image/webp')
-    reply.send(thumbnail)
+    reply.send(await getAzureBlobBuffer(uploaded_by, deriveThumbnailBlob(file)))
   })
 
   // Get info for uploaded file
   app.get('/f/:id/info', async (req, reply) => {
     const { id } = req.params
 
-    const { name, type, uploaded_at, uploaded_by, ttl } = app.betterSqlite3
-      .prepare('SELECT name, type, uploaded_at, uploaded_by, ttl FROM files WHERE id = ?')
+    return app.betterSqlite3
+      .prepare('SELECT * FROM files WHERE id = ?')
+      .get(id)
+  })
+
+  // TEMP: test file delete
+  app.get('/f/:id/delete', async (req, reply) => {
+    const { id } = req.params
+
+    const { file, uploaded_by } = app.betterSqlite3
+      .prepare('SELECT file, uploaded_by FROM files WHERE id = ?')
       .get(id)
 
+    await deleteAzureBlob(uploaded_by, file)
+
     return {
-      name,
-      type,
-      uploaded_at,
-      uploaded_by,
-      ttl
+      message: 'blob deleted'
     }
   })
+
 
   // Signup
   app.post('/signup', async req => {
@@ -120,7 +127,6 @@ try {
       return {
         message: 'Account created successfully'
       }
-
     } catch (err) {
       error(err)
     }
@@ -138,8 +144,8 @@ try {
       const { fileBlobName, azureBlobClients } = createAzureBlob('testAccount', file.filename)
 
       const uploadID = nanoid(8)
-      const fileBlob = await file.toBuffer()
-      const thumbnailBlob = await generateThumbnail(file.mimetype, fileBlob)
+      const fileBuffer = await file.toBuffer()
+      const thumbnailBuffer = await generateThumbnail(file.mimetype, fileBuffer)
       const ttl = parseInt(file.fields?.ttl?.value ?? 0) > 0 ? parseInt(file.fields.ttl.value) : null
       // TODO: get username from session
       const username = 'testAccount'
@@ -148,7 +154,7 @@ try {
         .prepare('INSERT INTO files (id, name, file, type, uploaded_at, uploaded_by, ttl) VALUES (?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?, ?)')
         .run(uploadID, file.filename, fileBlobName, file.mimetype, username, ttl)
 
-      await setAzureBlob(fileBlob, thumbnailBlob, azureBlobClients)
+      await setAzureBlob(fileBuffer, thumbnailBuffer, azureBlobClients)
 
       // Make sure we can access the file ids after the upload
       uploadIDs.push(uploadID)
