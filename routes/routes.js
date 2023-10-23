@@ -15,11 +15,18 @@ export default async function routes (fastify, opts, done) {
 
   // Error handling
   fastify.setErrorHandler((err, req, reply) => {
-    if (!err.status) return reply.send(err)
+    if (!err.status) return (
+      reply
+        .code(500)
+        .send(err)
+    )
 
     // TODO: remove stack trace if prod mode
     err.code = err.status
-    reply.view('error', err)
+
+    reply
+      .code(err.code)
+      .view('error', err)
   })
 
   // Move on to other handlers
