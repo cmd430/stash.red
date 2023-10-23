@@ -25,8 +25,6 @@ export default {
   },
   stream: new Writable({
     write (chunk, enc, cb) {
-      //console.debug(chunk.toString())
-
       const logData = JSON.parse(chunk)
       const logLevels = {
         60: 'error',
