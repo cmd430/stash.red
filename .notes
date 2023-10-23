@@ -24,6 +24,11 @@
 
   -> https://dev.cmd430.xyz/f/mz9RjzSr0y2k
 
+
+  ! nginx rewrite for old urls !
+  -> rewrite ^ $scheme://stash.red/f$request_uri permanent;
+
+
   ## Current IDs in DB
     - mz9RjzSr0y2k
     - 27STmZsfyg4B
