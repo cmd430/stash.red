@@ -7,6 +7,11 @@ export default function (fastify, opts, done) {
 
   // Home page
   fastify.get('/', async (req, reply) => {
+
+    // TEMP
+    debug('authenticated: ', req.session.get('authenticated'))
+    debug(req.session.get('user'))
+
     return reply.view('index')
   })
 
