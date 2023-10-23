@@ -43,8 +43,10 @@ try {
       secure: true,
       httpOnly: true,
       sameSite: 'strict'
-    }
+    },
+    rolling: true
   })
+
   fastify.register(serveStatic, {
     root: resolve('./public')
   })
