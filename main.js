@@ -49,8 +49,8 @@ try {
   })
   fastify.register(multipart, {
     limits: {
-      fileSize: 499 * 1000 * 1000,  // Max file size in bytes
-      files: 100                    // Max number of file uploads in one go
+      fileSize: evaluate(config.uploads.limits.fileSize), // Max file size in bytes
+      files: config.uploads.limits.files                  // Max number of file uploads in one go
     }
   })
   fastify.register(formbody)
@@ -74,8 +74,8 @@ try {
   fastify.register(temporaryUploadsGC)
 
   await fastify.listen({
-    port: 8080,
-    host: '::'
+    port: config.fastify.port,
+    host: config.fastify.bind
   })
 
 } catch (err) {

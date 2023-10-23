@@ -32,11 +32,11 @@ async function performGC (db) {
 }
 
 export default function (fastify, opts, done) {
-  const { temporaryUploads } = fastify.config
+  const { uploads: { temporary: { gcInterval } } } = fastify.config
 
   performGC(fastify.betterSqlite3)
 
-  setInterval(() => performGC(fastify.betterSqlite3), evaluate(temporaryUploads.gcInterval))
+  setInterval(() => performGC(fastify.betterSqlite3), evaluate(gcInterval))
 
   done()
 }
