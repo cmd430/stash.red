@@ -1,5 +1,5 @@
 import { Log } from 'cmd430-utils'
-import { deleteAzureBlob } from './azureBlob.js'
+import { deleteAzureBlob } from '../utils/azureBlob.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Temporary Uploads')
@@ -31,7 +31,10 @@ async function performGC (db) {
   if (removed > 0) debug('Removed', removed, 'temporary uploads','\n\t')
 }
 
-export default function temporaryUploadsGC (dbConnection) {
-  performGC(dbConnection)
-  setInterval(() => performGC(dbConnection), gcInterval)
+export default function (fastify, opts, done) {
+  performGC(fastify.betterSqlite3)
+
+  setInterval(() => performGC(fastify.betterSqlite3), gcInterval)
+
+  done()
 }
