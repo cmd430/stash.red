@@ -29,11 +29,11 @@ export default function (fastify, opts, done) {
 
       await createAzureContainer(username)
 
-      req.session.authenticated = true
-      req.session.user = {
+      req.session.set('authenticated', true)
+      req.session.set('user', {
         id: _id,
         username: username
-      }
+      })
 
       reply.redirect('/')
     } catch (err) {
@@ -65,11 +65,11 @@ export default function (fastify, opts, done) {
         return createError(401, 'Invalid username or password')
       }
 
-      req.session.authenticated = true
-      req.session.user = {
+      req.session.set('authenticated', true)
+      req.session.set('user', {
         id: _id,
         username: username
-      }
+      })
 
       reply.redirect('/')
     } catch (err) {
