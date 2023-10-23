@@ -9,8 +9,8 @@ export default function (fastify, opts, done) {
   fastify.get('/', async (req, reply) => {
 
     // TEMP
-    debug('authenticated: ', req.session.get('authenticated'))
-    debug(req.session.get('user'))
+    debug('authenticated: ', req.session.get('authenticated') ?? false)
+    debug(req.session.get('user') ?? {})
 
     return reply.view('index')
   })
