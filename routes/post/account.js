@@ -17,10 +17,7 @@ export default function (fastify, opts, done) {
     const { username, email, password, confirm } = req.body
     const userameValid = Boolean((/^[a-zA-Z0-9]{3,63}$/).test(username))
 
-    if (password !== confirm || !username || !email || !userameValid) {
-      reply.code(400)
-      return createError(400, password !== confirm ? 'Passwords do not match' : 'All Fields Required')
-    }
+    if (password !== confirm || !username || !email || !userameValid) return createError(400, password !== confirm ? 'Passwords do not match' : 'All Fields Required')
 
     try {
       const { _id } = fastify.betterSqlite3
@@ -39,7 +36,6 @@ export default function (fastify, opts, done) {
     } catch (err) {
       error(err)
 
-      reply.code(500)
       return createError(500, 'Internal Server Error')
     }
   })
@@ -48,10 +44,7 @@ export default function (fastify, opts, done) {
   fastify.post('/login', async (req, reply) => {
     const { username, password } = req.body
 
-    if (!username || !password) {
-      reply.code(400)
-      return createError(400, 'All Fields Required')
-    }
+    if (!username || !password) return createError(400, 'All Fields Required')
 
     try {
       const { _id, password: passwordHash } = fastify.betterSqlite3
@@ -60,10 +53,7 @@ export default function (fastify, opts, done) {
 
       const hasValidCredentials = await compare(password, passwordHash)
 
-      if (hasValidCredentials === false) {
-        reply.code(401)
-        return createError(401, 'Invalid username or password')
-      }
+      if (hasValidCredentials === false) return createError(401, 'Invalid username or password')
 
       req.session.set('authenticated', true)
       req.session.set('user', {
@@ -75,8 +65,7 @@ export default function (fastify, opts, done) {
     } catch (err) {
       error(err)
 
-      reply.code(500)
-      return createError(500, 'Internal Server Error')
+      return createError(500)
     }
   })
 
