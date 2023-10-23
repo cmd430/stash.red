@@ -1,9 +1,9 @@
 import { Log } from 'cmd430-utils'
+import { evaluate } from 'mathjs'
 import { deleteAzureBlob } from '../utils/azureBlob.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Temporary Uploads')
-const gcInterval = 1000 * 60 * 5 // 5mins
 
 async function performGC (db) {
   const expired = []
@@ -32,9 +32,11 @@ async function performGC (db) {
 }
 
 export default function (fastify, opts, done) {
+  const { temporaryUploads } = fastify.config
+
   performGC(fastify.betterSqlite3)
 
-  setInterval(() => performGC(fastify.betterSqlite3), gcInterval)
+  setInterval(() => performGC(fastify.betterSqlite3), evaluate(temporaryUploads.gcInterval))
 
   done()
 }
