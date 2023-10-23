@@ -2,7 +2,6 @@ import { readFile, readdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import Database from 'better-sqlite3'
 
-
 const db = new Database('./database/stash.db', {
   readonly: false,
   fileMustExist: false,
