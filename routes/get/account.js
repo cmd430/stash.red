@@ -8,27 +8,27 @@ export default function (fastify, opts, done) {
 
   // Signup page
   fastify.get('/signup', async (req, reply) => {
-    return reply.view('signup')
+    reply.view('signup')
   })
 
   // Login page
   fastify.get('/login', async (req, reply) => {
-    return reply.view('login')
+    if (req.session.get('authenticated')) return reply.redirect('/')
+
+    reply.view('login')
   })
 
   // Logout
-  fastify.get('/logout', (req, reply) => {
-    if (req.session.authenticated) {
-      req.session.destroy(err => {
-        if (err) {
-          reply.code(500)
-          return createError(500, 'Internal Server Error')
-        } else {
-          reply.redirect('/')
-        }
-      })
-    } else {
+  fastify.get('/logout', async (req, reply) => {
+    if (!req.session.get('authenticated')) return reply.redirect('/')
+
+    try {
+      await req.session.destroy()
       reply.redirect('/')
+    } catch (err) {
+      error(err)
+
+      return createError(500)
     }
   })
 
