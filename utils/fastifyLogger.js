@@ -44,6 +44,7 @@ export default {
       }
       const contentLength = cl => {
         if (cl === '?') return '?? Bytes'
+        if (cl === '0') return '0 Bytes'
 
         const i = Math.floor(Math.log(cl) / Math.log(1024))
         return `${parseFloat((cl / (1024 ** i)).toFixed((i === 0 ? 0 : 2)))} ${[ 'Bytes', 'KB', 'MB', 'GB' ][i]}`
@@ -52,7 +53,7 @@ export default {
       let message = logData.msg
 
       if (logData.res && !logData.req) {
-        message = `${logData.reqId} - ${bold(status(logData.res.statusCode ?? '?'))} - ${contentLength(logData.res?.contentLength ?? '?')} - ${logData.responseTime?.toFixed(4) ?? 0 ?? '?'}ms`
+        message = `${logData.reqId} - ${bold(status(logData.res.statusCode ?? '?'))} - ${contentLength(logData.res.contentLength ?? '?')} - ${logData.responseTime?.toFixed(4) ?? 0 ?? '?'}ms`
       }
       if (logData.req && !logData.res) {
         message = `${logData.reqId} - ${bold(grey(logData.req.method))} - ${logData.req.url}${logData.req.path ?? ''}${logData.req.parameters ?? ''}`
