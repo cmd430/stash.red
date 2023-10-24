@@ -8,14 +8,14 @@ export default function (fastify, opts, done) {
 
   // Signup page
   fastify.get('/signup', async (req, reply) => {
-    reply.view('signup')
+    return reply.view('signup')
   })
 
   // Login page
   fastify.get('/login', async (req, reply) => {
     if (req.session.get('authenticated')) return reply.redirect('/')
 
-    reply.view('login')
+    return reply.view('login')
   })
 
   // Logout
@@ -24,7 +24,8 @@ export default function (fastify, opts, done) {
 
     try {
       await req.session.destroy()
-      reply.redirect('/')
+
+      return reply.redirect('/')
     } catch (err) {
       error(err)
 

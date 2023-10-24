@@ -32,7 +32,7 @@ export default function (fastify, opts, done) {
         username: username
       })
 
-      reply.redirect('/')
+      return reply.redirect('/')
     } catch (err) {
       error(err)
 
@@ -61,7 +61,7 @@ export default function (fastify, opts, done) {
         username: username
       })
 
-      reply.redirect('/')
+      return reply.redirect('/')
     } catch (err) {
       error(err)
 

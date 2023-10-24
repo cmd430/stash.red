@@ -47,7 +47,7 @@ export default function (fastify, opts, done) {
 
     if (fileIDs.length === 1) return reply.redirect(`/f/${fileIDs[0]}`)
 
-    reply.redirect(`/a/${albumID}`)
+    return reply.redirect(`/a/${albumID}`)
   })
 
   done()

@@ -37,8 +37,9 @@ export default function (fastify, opts, done) {
       .prepare('SELECT file, type, uploaded_by, isPrivate FROM files WHERE id = ?')
       .get(id)
 
-    reply.type(mimetypeFilter(type))
-    reply.send(await getAzureBlobBuffer(uploaded_by, file))
+    return reply
+      .type(mimetypeFilter(type))
+      .send(await getAzureBlobBuffer(uploaded_by, file))
   })
 
   // Get uploaded file thumbnail
@@ -48,8 +49,9 @@ export default function (fastify, opts, done) {
       .prepare('SELECT file, uploaded_by, isPrivate FROM files WHERE id = ?')
       .get(id)
 
-    reply.type('image/webp')
-    reply.send(await getAzureBlobBuffer(uploaded_by, deriveThumbnailBlob(file)))
+    return reply
+      .type('image/webp')
+      .send(await getAzureBlobBuffer(uploaded_by, deriveThumbnailBlob(file)))
   })
 
   // Get info for uploaded file
