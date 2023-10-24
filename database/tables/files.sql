@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS "files" (
   "uploaded_by" TEXT NOT NULL DEFAULT "SYSTEM",
   "ttl" INTEGER,
   "isPrivate" INTEGER NOT NULL DEFAULT 0,
+  "inAlbum" TEXT,
   PRIMARY KEY("_id" AUTOINCREMENT)
 );
