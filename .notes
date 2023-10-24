@@ -48,3 +48,12 @@
     -> https://nodejs.org/api/crypto.html#cryptoscryptpassword-salt-keylen-options-callback
     -> https://stackoverflow.com/a/67038052/4958977
     -> https://github.com/fastify/fastify-auth
+
+
+fastify.addHook('preHandler', (res, reply, done) => {
+  reply.locals = {
+    env: 'dev'
+  }
+
+  done()
+})
