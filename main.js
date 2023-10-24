@@ -17,8 +17,8 @@ import temporaryUploadsGC from './plugins/temporaryUploadsGC.js'
 import databaseConnection from './database/databaseConnection.js'
 import fastifyLogger from './helpers/fastifyLogger.js'
 import fastifyLoadPartials from './helpers/fastifyLoadPartials.js'
+import fastifiyDefaultLocals from './hooks/fastifiyDefaultLocals.js'
 import loadRoutes from './plugins/loadRoutes.js'
-
 import './helpers/handlebarsHelpers.js'
 
 // eslint-disable-next-line no-unused-vars
@@ -67,8 +67,7 @@ try {
     root: resolve('./views'),
     viewExt: 'hbs',
     defaultContext: {
-      env: isDevEnv() ? 'dev' : 'prod',
-      title: 'stash.red'
+      env: isDevEnv() ? 'dev' : 'prod'
     },
     options: {
       partials: await fastifyLoadPartials(),
@@ -82,12 +81,8 @@ try {
   // Setup Temp file removing task
   fastify.register(temporaryUploadsGC)
 
-  // Add session data to locals
-  fastify.addHook('preHandler', (req, reply, done) => {
-    reply.locals = req.session
-
-    done()
-  })
+  // Hooks
+  fastify.addHook(...fastifiyDefaultLocals())
 
   await fastify.listen({
     port: config.fastify.port,
