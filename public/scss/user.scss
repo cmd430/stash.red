@@ -1,0 +1,168 @@
+@import 'partials/shared';
+
+#container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-content: baseline;
+  padding-bottom: 55px;
+  .preview {
+    position: relative;
+    margin: 10px;
+    overflow: hidden;
+    height: 150px;
+    width: 150px;
+    border: 1px solid;
+    .thumbnail {
+      position: absolute;
+      margin: 50%;
+      max-width: 100%;
+      max-height: 100%;
+      transform: translate(-50%, -50%);
+    }
+    .icon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 0 !important;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      &.image {
+        background: no-repeat right top/40px url('/img/types/image.png');
+      }
+      &.audio {
+        background: no-repeat right top/40px url('/img/types/audio.png');
+      }
+      &.video {
+        background: no-repeat right top/40px url('/img/types/video.png');
+      }
+      &.txt {
+        background: no-repeat right top/40px url('/img/types/text.png');
+      }
+      &.album {
+        background: no-repeat right top/40px url('/img/types/album.png');
+      }
+    }
+    &.private {
+      .icon {
+        &.image {
+          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/image.png');
+        }
+        &.audio {
+          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/audio.png');
+        }
+        &.video {
+          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/video.png');
+        }
+        &.txt {
+          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/text.png');
+        }
+        &.album {
+          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/album.png');
+        }
+      }
+    }
+    .album_title {
+      position: absolute;
+      bottom: -27px;
+      padding: 3px;
+      color: rgb(250, 250, 250);
+      font-weight: 500;
+      background: rgba(36, 41, 46, 0.8);
+      text-align: center;
+      width: 100%;
+      height: 27px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      transition: bottom linear 100ms;
+    }
+    .album_items {
+      position: absolute;
+      right: 0;
+      width: 24px;
+      color: rgb(80, 81, 82);
+      text-decoration: none;
+      text-align: center;
+      z-index: 9;
+      font-weight: 600;
+    }
+    &:hover {
+      .album_title {
+        bottom: 0;
+      }
+    }
+  }
+  .spacer {
+    width: 150px;
+    height: 0;
+    margin: 0 10px;
+  }
+  .pagination {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+    text-align: center;
+    padding: 15px 0 0 0;
+    cursor: default;
+    li {
+      list-style: none;
+      display: inline-block;
+      padding: 4px;
+      a {
+        font-size: 18px;
+        padding: 0 3px;
+        position: relative;
+        i::before {
+          margin: 0;
+          display: inline;
+        }
+      }
+      &:not(.disabled) {
+        a {
+          text-decoration: none;
+        }
+        &.active {
+          a {
+            border-bottom: 1px dotted;
+            font-weight: 600;
+            cursor: default;
+          }
+        }
+        &:hover,
+        &:active {
+          a {
+            transition: color 200ms linear;
+          }
+        }
+        &:not(:first-child):not(:nth-child(2)):not(:nth-last-child(2)):not(:last-child) {
+          &:hover,
+          &:active {
+            a {
+              border-bottom: 1px dotted;
+              &::after {
+                content: attr(data-text);
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                text-align: center;
+                font-weight: 600;
+              }
+            }
+          }
+        }
+      }
+      &.disabled {
+        opacity: 0;
+        a {
+          cursor: default;
+        }
+      }
+    }
+  }
+}
+
+@import 'partials/theme';

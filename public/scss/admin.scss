@@ -1,0 +1,18 @@
+.log_container {
+  width: 100%;
+  height: calc(100vh - 155px);
+  border: 1px solid;
+  overflow: hidden scroll;
+  .log {
+    font-family: Consalas, monospace;
+    font-size: 12px;
+    white-space: normal;
+    padding: 5px 5px;
+    span {
+      display: block;
+      padding: 1px 0;
+    }
+  }
+}
+
+@import 'partials/theme';

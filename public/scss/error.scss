@@ -1,0 +1,13 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  h1, h2 {
+    color: rgb(32, 32, 32);
+  }
+  pre {
+    background: rgb(240, 240, 240);
+    color: rgb(32, 32, 32);
+    white-space: pre;
+  }
+}
+
+@import 'partials/theme';

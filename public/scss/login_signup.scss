@@ -1,0 +1,51 @@
+@import 'partials/shared';
+
+#content {
+  width: auto;
+  max-width: 750px;
+  min-width: 280px;
+  margin: calc(50vh - 85px) 0 0 50vw;
+  transform: translate(-50%, -33%);
+  #accountzone {
+    position: relative;
+    margin: 0 auto;
+    width: 280px;
+    border: 1px dashed;
+    text-align: center;
+    form {
+      height: 100%;
+      padding: 10px;
+      img {
+        padding: 10px 0 0 0;
+      }
+      input[type=text],
+      input[type=email],
+      input[type=password] {
+        padding: 4px;
+        margin: 4px 0;
+        width: 100%;
+        font-size: 16px;
+        font-weight: 500;
+        text-align: center;
+        border: 1px solid;
+        transition: color 200ms;
+        outline: none;
+        &::placeholder {
+          font-weight: 100;
+        }
+      }
+      input[type=submit] {
+        margin: 10px;
+        padding: 10px;
+        width: 50%;
+        border: 0;
+        font-size: 16px;
+        font-weight: 700;
+        transition: color 200ms;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+@import 'partials/theme';
