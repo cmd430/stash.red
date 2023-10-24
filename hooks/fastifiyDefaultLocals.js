@@ -16,7 +16,7 @@ export default function fastifiyDefaultLocals () {
           site: req.hostname,
           title: null,
           description: null,
-          theme: isDevEnv() ? siteTheme.dev : siteTheme.prod, // TODO: load from config
+          theme: isDevEnv() ? siteTheme.dev : siteTheme.prod,
           url: `${req.protocol}://${req.hostname}${req.url}`,
           // The feilds set by the thing are viewing
           image: null,
