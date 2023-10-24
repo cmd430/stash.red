@@ -1,6 +1,6 @@
 import { customAlphabet } from 'nanoid'
 import { Log } from 'cmd430-utils'
-import { createAzureBlob, setAzureBlob } from '../../utils/azureBlob.js'
+import { createAzureBlob, setAzureBlob } from '../../utils/azureBlobStorage.js'
 import generateThumbnail from '../../utils/generateThumbnail.js'
 
 // eslint-disable-next-line no-unused-vars

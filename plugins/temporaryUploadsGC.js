@@ -1,6 +1,6 @@
 import { Log } from 'cmd430-utils'
 import { evaluate } from 'mathjs'
-import { deleteAzureBlob } from '../utils/azureBlob.js'
+import { deleteAzureBlob } from '../utils/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Temporary Uploads')
