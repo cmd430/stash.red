@@ -1,0 +1,50 @@
+<span class="wrapper">
+  <div class="audio__player">
+    <audio crossorigin="anonymous">
+      <source src="{{@direct}}/{{file_id}}.{{ext original_filename}}" data-original_filename="{{original_filename}}" />
+    </audio>
+    <ul>
+      <li class="audio__artwork">
+        <img src="/f/{{file_id}}/thumbnail" />
+        <canvas class="visualizer invisible"></canvas>
+      </li>
+      <li class="audio__info">
+        <div class="audio__controls">
+          <span class="playback__bar">
+            <span class="playback__buffer"></span>
+            <span class="playback__progress"></span>
+          </span>
+          <span class="playback__clock">
+            <span class="playback__time">-:--</span> / <span class="playback__length">-:--</span>
+          </span>
+          <button class="playback__playPause paused" title="Play">
+            <i class="icon-play"></i>
+          </button>
+          <span class="playback__volume">
+            <button class="volume__muteUnmute unmuted" title="Mute">
+              <i class="icon-volume-up"></i>
+            </button>
+            <input class="volume__control" type="range" min="0" max="1" step="0.01" value="1" />
+          </span>
+          <span class="playback__extra">
+            <a class="control__breakout" title="View on seperate page" href="{{@direct}}/{{file_id}}.{{ext original_filename}}">
+              <i class="icon-link-ext"></i>
+            </a>
+            <a class="control__download" title="Download this File" href="./download">
+              <i class="icon-download"></i>
+            </a>
+          </span>
+        </div>
+        <h1 class="title" title="Loading...">Loading...</h1>
+        <h2 class="artist" title="Loading...">Loading...</h2>
+      </li>
+    </ul>
+  </div>
+  {{#if_eq_or @signedin.username this.uploaded_by @signedin.admin this}}
+    <div class="actions">
+      <a class="action__delete" title="Delete this Audio File" data-id="/f/{{file_id}}" data-username="{{this.uploaded_by}}">
+        <i class="icon-trash"></i>
+      </a>
+    </div>
+  {{/if_eq_or}}
+</span>

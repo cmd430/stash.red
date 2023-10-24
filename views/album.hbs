@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {{> head}}
+    <script src="/js/media.js"></script>
+  </head>
+  <body class="light">
+    <header>
+      {{> logo}}
+      <h1 {{#if_eq signedin.username album.uploaded_by this}}class="editable"{{/if_eq}}>
+        {{#if_eq_or @signedin.username album.uploaded_by @signedin.admin this}}
+          <a class="album__delete" title="Delete this Album" data-id="/a/{{album.album_id}}" data-username="{{album.uploaded_by}}">
+            <i class="icon-trash"></i>
+          </a>
+          <input type="text" class="album__title_input" placeholder="Untitled Album" value="{{album.album_title}}" data-title="{{album.album_title}}" maxlength="100" />
+        {{/if_eq_or}}
+        <a class="album__download" title="Download this Album" href="./download">
+          <i class="icon-download"></i>
+        </a>
+        {{album.album_title}}
+      </h1>
+    </header>
+    <div id="container">
+      {{#each album.files}}
+        {{#if_contains mimetype 'image' this}}
+          {{> image this}}
+        {{/if_contains}}
+        {{#if_contains mimetype 'video' this}}
+          {{> video this}}
+        {{/if_contains}}
+        {{#if_contains mimetype 'audio' this}}
+          {{> audio this}}
+        {{/if_contains}}
+        {{#if_contains mimetype 'text' this}}
+          {{> audio this}}
+        {{/if_contains}}
+      {{/each}}
+    </div>
+    {{> modals}}
+  </body>
+</html>

@@ -8,14 +8,16 @@
     <div id="content">
       {{> logo}}
       <div id="accountzone">
-        <form method="POST" action="/login">
+        <form method="POST" action="/signup">
           <input name="username" type="text" placeholder="Username" />
+          <input name="email" type="email" placeholder="Email" />
           <input name="password" type="password" placeholder="Password" />
+          <input name="passwordConfirm" type="password" placeholder="Confirm Password" />
           {{#if captcha}}
             <img src="/captcha"/>
             <input type="text" name="captcha" placeholder="Captcha" />
           {{/if}}
-          <input name="submit" type="submit" value="login" />
+          <input name="submit" type="submit" value="sign up" />
         </form>
       </div>
     </div>

@@ -1,0 +1,35 @@
+<ul class="pagination">
+  {{#paginate pagination type="first"}}
+    <li {{#if disabled}}class="disabled"{{/if}}>
+      <a {{#unless disabled}}href="?p={{n}}{{@pagination.params}}"{{/unless}}>
+        <i class="icon-angle-double-left"></i>
+      </a>
+    </li>
+  {{/paginate}}
+  {{#paginate pagination type="previous"}}
+    <li {{#if disabled}}class="disabled"{{/if}}>
+      <a {{#unless disabled}}href="?p={{n}}{{@pagination.params}}"{{/unless}}>
+        <i class="icon-angle-left"></i>
+      </a>
+    </li>
+  {{/paginate}}
+  {{#paginate pagination type="middle" limit="7"}}
+    <li {{#if active}}class="active"{{/if}}>
+      <a {{#unless active}}href="?p={{n}}{{@pagination.params}}"{{/unless}} data-text="{{n}}">{{n}}</a>
+    </li>
+  {{/paginate}}
+  {{#paginate pagination type="next"}}
+    <li {{#if disabled}}class="disabled"{{/if}}>
+      <a {{#unless disabled}}href="?p={{n}}{{@pagination.params}}"{{/unless}}>
+        <i class="icon-angle-right"></i>
+      </a>
+    </li>
+  {{/paginate}}
+  {{#paginate pagination type="last"}}
+    <li {{#if disabled}}class="disabled"{{/if}}>
+      <a {{#unless disabled}}href="?p={{n}}{{@pagination.params}}"{{/unless}}>
+        <i class="icon-angle-double-right"></i>
+      </a>
+    </li>
+  {{/paginate}}
+</ul>

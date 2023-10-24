@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {{> head}}
+    <link rel="stylesheet" href="/scss/admin.scss" />
+    <script src="/js/admin.js"></script>
+  </head>
+  <body class="light">
+    <header>
+      {{> logo}}
+      <h1></h1>
+    </header>
+    <div id="container">
+      <ul class="tab_container">
+        <li class="tab active">
+          <a>Live Log</a>
+        </li>
+      </ul>
+      <div class="log_container">
+        <pre class="log"></pre>
+      </div>
+    </div>
+    {{> modals}}
+  </body>
+</html>

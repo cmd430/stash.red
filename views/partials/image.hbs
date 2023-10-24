@@ -1,0 +1,12 @@
+<span class="wrapper">
+  <a class="image" href="{{@direct}}/{{file_id}}.{{ext original_filename}}">
+    <img src="{{@direct}}/{{file_id}}.{{ext original_filename}}" />
+  </a>
+  {{#if_eq_or @signedin.username this.uploaded_by @signedin.admin this}}
+    <div class="actions">
+      <a class="action__delete" title="Delete this Image" data-id="/f/{{file_id}}" data-username="{{this.uploaded_by}}">
+        <i class="icon-trash"></i>
+      </a>
+    </div>
+  {{/if_eq_or}}
+</span>

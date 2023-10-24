@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {{> head}}
+    <link rel="stylesheet" href="/scss/user.scss" />
+    <script src="/js/user.js"></script>
+  </head>
+  <body class="light">
+    <header>
+      {{> logo}}
+      <h1>{{view.username}}</h1>
+    </header>
+    <div id="container">
+      <ul class="tab_container">
+        {{#if_eq view.type 'files' this}}
+          <li class="tab active">
+            <a>Files</a>
+          </li>
+          <li class="tab">
+            <a href="albums/">Albums</a>
+          </li>
+          <li class="tab">
+            <a href="pinned/">Pinned</a>
+          </li>
+          <!-- WIP
+          <button class="tab_button params">
+            <i class="icon-cog"></i>
+          </button>
+          -->
+        {{else}}
+          {{#if_eq view.type 'albums' this}}
+            <li class="tab">
+              <a href="..">Files</a>
+            </li>
+            <li class="tab active">
+              <a>Albums</a>
+            </li>
+            <li class="tab">
+              <a href="pinned/">Pinned</a>
+            </li>
+          {{else}}
+            <li class="tab">
+              <a href="..">Files</a>
+            </li>
+            <li class="tab active">
+              <a href="albums/">Albums</a>
+            </li>
+            <li class="tab active">
+              <a>Pinned</a>
+            </li>
+          {{/if_eq}}
+        {{/if_eq}}
+      </ul>
+      {{#each uploads}}
+        {{> preview this}}
+      {{/each}}
+      {{> paginator}}
+    </div>
+    {{> modals}}
+  </body>
+</html>
