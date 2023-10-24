@@ -11,7 +11,7 @@ export default {
         statusCode: res.statusCode,
         contentLength: res[
           Object.getOwnPropertySymbols(res).find(s => s.description === 'fastify.reply.headers')
-        ]['content-length']
+        ]?.['content-length']
       }
     },
     req (req) {
