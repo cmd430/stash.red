@@ -1,4 +1,4 @@
-import databaseConnection from './databaseConnection.js'
+import databaseConnection from '../database/databaseConnection.js'
 
 export const config = databaseConnection.prepare('SELECT * FROM config')
   .all()
