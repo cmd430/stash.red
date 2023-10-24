@@ -83,8 +83,8 @@ try {
   fastify.register(temporaryUploadsGC)
 
   // Add session data to locals
-  fastify.addHook('preHandler', (res, reply, done) => {
-    reply.locals = res.session
+  fastify.addHook('preHandler', (req, reply, done) => {
+    reply.locals = req.session
 
     done()
   })
