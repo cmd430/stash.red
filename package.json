@@ -29,6 +29,10 @@
     "sharp": "^0.32.6"
   },
   "devDependencies": {
-    "eslint": "^8.51.0"
+    "eslint": "^8.51.0",
+    "sass": "^1.69.4"
+  },
+  "scripts": {
+    "Compile SCSS": "npx sass public/css/scss:public/css"
   }
 }
