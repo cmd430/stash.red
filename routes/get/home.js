@@ -12,7 +12,7 @@ export default function (fastify, opts, done) {
     debug('authenticated: ', req.session.get('authenticated') ?? false)
     debug(req.session.get('user') ?? {})
 
-    return reply.view('index')
+    return reply.view('home')
   })
 
   done()
