@@ -1,18 +1,18 @@
-<div class="preview{{#unless public}} private{{/unless}}">
-  {{#if mimetype}}
-    <a href="/f/{{file_id}}">
-      <img class="thumbnail" src="/f/{{file_id}}/thumbnail">
-      {{#if_contains mimetype 'image' this}}<span class="icon image"></span>{{/if_contains}}
-      {{#if_contains mimetype 'audio' this}}<span class="icon audio"></span>{{/if_contains}}
-      {{#if_contains mimetype 'video' this}}<span class="icon video"></span>{{/if_contains}}
-      {{#if_contains mimetype 'text' this}}<span class="icon txt"></span>{{/if_contains}}
+<div class="preview{{#if isPrivate}} private{{/if}}">
+  {{#if type}}
+    <a href="/f/{{id}}">
+      <img class="thumbnail" src="/f/{{id}}/thumbnail">
+      {{#if_contains type 'image' this}}<span class="icon image"></span>{{/if_contains}}
+      {{#if_contains type 'audio' this}}<span class="icon audio"></span>{{/if_contains}}
+      {{#if_contains type 'video' this}}<span class="icon video"></span>{{/if_contains}}
+      {{#if_contains type 'text' this}}<span class="icon txt"></span>{{/if_contains}}
     </a>
   {{else}}
-    <a href="/a/{{album_id}}">
-      <img class="thumbnail" src="/a/{{album_id}}/thumbnail">
+    <a href="/a/{{id}}">
+      <img class="thumbnail" src="/a/{{id}}/thumbnail">
       <span class="icon album"></span>
-      <span class="album_title">{{album_title}}</span>
-      <span class="album_items">{{total_files}}</span>
+      <span class="album_title">{{title}}</span>
+      <span class="album_items">{{total}}</span>
     </a>
   {{/if}}
 </div>
