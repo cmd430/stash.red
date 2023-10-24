@@ -29,6 +29,7 @@ try {
   const fastify = Fastify({
     logger: fastifyLogger,
     trustProxy: true,
+    ignoreTrailingSlash: true,
     genReqId: () => nanoid(4)
   })
 
