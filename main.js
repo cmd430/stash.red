@@ -1,5 +1,5 @@
 import { resolve } from 'node:path'
-import { Log } from 'cmd430-utils'
+import { Log, isDevEnv } from 'cmd430-utils'
 import { customAlphabet } from 'nanoid'
 import Fastify from 'fastify'
 import serveStatic from '@fastify/static'
@@ -12,11 +12,14 @@ import SqliteStore from 'fastify-session-better-sqlite3-store'
 import view from '@fastify/view'
 import betterSqlite3 from '@punkish/fastify-better-sqlite3'
 import handlebars from 'handlebars'
-import { config } from './utils/config.js'
+import { config } from './config/config.js'
 import temporaryUploadsGC from './plugins/temporaryUploadsGC.js'
-import databaseConnection from './utils/databaseConnection.js'
-import fastifyLogger from './utils/fastifyLogger.js'
-import routes from './routes/routes.js'
+import databaseConnection from './database/databaseConnection.js'
+import fastifyLogger from './helpers/fastifyLogger.js'
+import fastifyLoadPartials from './helpers/fastifyLoadPartials.js'
+import loadRoutes from './plugins/loadRoutes.js'
+
+import './helpers/handlebarsHelpers.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Main')
@@ -46,7 +49,6 @@ try {
     },
     rolling: true
   })
-
   fastify.register(serveStatic, {
     root: resolve('./public')
   })
@@ -64,17 +66,28 @@ try {
     },
     root: resolve('./views'),
     viewExt: 'hbs',
-    partials: {},
+    defaultContext: {
+      env: isDevEnv() ? 'dev' : 'prod',
+      title: 'stash.red'
+    },
     options: {
+      partials: await fastifyLoadPartials(),
       useDataVariables: true
     }
   })
 
   // Register routes
-  fastify.register(await routes)
+  fastify.register(await loadRoutes)
 
   // Setup Temp file removing task
   fastify.register(temporaryUploadsGC)
+
+  // Add session data to locals
+  fastify.addHook('preHandler', (res, reply, done) => {
+    reply.locals = res.session
+
+    done()
+  })
 
   await fastify.listen({
     port: config.fastify.port,
