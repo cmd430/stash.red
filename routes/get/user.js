@@ -10,7 +10,6 @@ const { pagination } = config.render
 // NOTE: url params = ?p=<Number>&sort=<ASC|DESC>&filter=<image|text|audio|video>&limit=<Number(Max=70)>
 
 function preHandler (req, reply, done) {
-
   const {
     sort = 'DESC',
     filter = '',
@@ -54,9 +53,10 @@ export default function (fastify, opts, done) {
       .prepare('SELECT email FROM accounts WHERE username = ?')
       .get(username)
 
-    // If the user not exist then we get no email, return a 404
-    if (!user?.email) return createError(404)
+    // If the user not exist return a 404
+    if (!user) return createError(404)
 
+    const { email } = user
     // Get Files
     const getFilesIncludePrivate = fastify.betterSqlite3
       .prepare(`SELECT id, file, type, isPrivate FROM files WHERE uploaded_by = ? AND inAlbum IS NULL AND type LIKE '${filter}%' ORDER BY _id ${order} LIMIT ? OFFSET ?`)
@@ -88,7 +88,7 @@ export default function (fastify, opts, done) {
         title: username,
         description: `A User Profile for ${reply.locals.title}`,
         avatar: `https://www.gravatar.com/avatar/${createHash('md5')
-          .update(user.email.toLowerCase())
+          .update(email.toLowerCase())
           .digest('hex')}`,
         isUser: true
       }
@@ -106,8 +106,9 @@ export default function (fastify, opts, done) {
       .get(username)
 
     // If the user not exist then we get no email, return a 404
-    if (!user?.email) return createError(404)
+    if (!user) return createError(404)
 
+    const { email } = user
     // Get Albums
     const getAlbumsIncludePrivate = fastify.betterSqlite3
       .prepare(`SELECT id, title, isPrivate, (SELECT COUNT(id) FROM files WHERE inAlbum = albums.id) AS total FROM albums WHERE uploaded_by = ? ORDER BY _id ${order} LIMIT ? OFFSET ?`)
@@ -139,7 +140,7 @@ export default function (fastify, opts, done) {
         title: username,
         description: `A User Profile for ${reply.locals.title}`,
         avatar: `https://www.gravatar.com/avatar/${createHash('md5')
-          .update(user.email.toLowerCase())
+          .update(email.toLowerCase())
           .digest('hex')}`,
         isUser: true
       }
