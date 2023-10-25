@@ -55,8 +55,8 @@ export default function (fastify, opts, done) {
         .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
 
       fastify.betterSqlite3
-        .prepare('INSERT INTO albums (id, title, files, order, uploaded_at, uploaded_by, ttl, isPrivate) VALUES (?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?, ?, ?)')
-        .run(albumID, albumID, fileIDs, fileIDs, username, ttl, isPrivate)
+        .prepare('INSERT INTO albums (id, title, `order`, uploaded_at, uploaded_by, ttl, isPrivate) VALUES (?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?, ?, ?)')
+        .run(albumID, albumID, JSON.stringify(fileIDs), username, ttl, isPrivate)
 
       debug('Added', updated, 'files to album')
 

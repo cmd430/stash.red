@@ -2,7 +2,6 @@ CREATE TABLE IF NOT EXISTS "albums" (
   "_id" INTEGER NOT NULL UNIQUE,
   "id" TEXT NOT NULL UNIQUE,
   "title" TEXT NOT NULL,
-  "files" TEXT NOT NULL,
   "order" TEXT NOT NULL DEFAULT "[]",
   "uploaded_at" TEXT NOT NULL,
   "uploaded_by" TEXT NOT NULL DEFAULT "SYSTEM",
