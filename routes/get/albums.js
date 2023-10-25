@@ -13,15 +13,15 @@ export default function (fastify, opts, done) {
   fastify.get('/a/:id', async (req, reply) => {
     const { id } = req.params
 
-    const { title, files, order, isPrivate } = fastify.betterSqlite3
-      .prepare('SELECT title, files, order, isPrivate FROM albums WHERE id = ?')
+    const { title, order, isPrivate } = fastify.betterSqlite3
+      .prepare('SELECT title, `order`, isPrivate FROM albums WHERE id = ?')
       .get(id)
 
     return {
       message: 'WIP',
       album: id,
       data: {
-        title, files, order, isPrivate
+        title, order, isPrivate
       }
     }
   })
