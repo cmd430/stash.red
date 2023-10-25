@@ -40,14 +40,14 @@ handlebars.registerHelper('opengraph', (data, dataExtended) => {
   meta.push(`<meta property="og:url" content="${ogData.url}" />`)
   if (ogData.title) meta.push(`<meta property="og:title" content="${ogData.title}" />`)
   if (ogData.description) meta.push(`<meta property="og:description" content="${ogData.description}" />`)
-  if (ogData.image) meta.push(`<meta property="og:image" content="${ogData.image}" />`)
-  if (ogData.isAlbum === true || ogData.video || ogData.audio || ogData.text) meta.push(`<meta property="og:image" content="${ogData.url}/thumbnail" />`)
-  if (ogData.isUser === true) meta.push(`<meta property="og:image" content="${ogData.avatar}" />`)
+  if (ogData.isImage) meta.push(`<meta property="og:image" content="${ogData.path}" />`)
+  if (ogData.isAlbum || ogData.isVideo || ogData.isAudio || ogData.isText) meta.push(`<meta property="og:image" content="${ogData.url}/thumbnail" />`)
+  if (ogData.isUser) meta.push(`<meta property="og:image" content="${ogData.avatar}" />`)
 
   // Twitter Card
   if (ogData.description) meta.push(`<meta property="twitter:description" content="${ogData.description}" />`)
-  if (ogData.isAlbum === true && ogData.isUser !== true && ogData.image) meta.push('<meta name="twitter:card" content="summary_large_image" />')
-  if (ogData.isAlbum === true || ogData.isUser === true || ogData.video || ogData.audio || ogData.text) meta.push('<meta property="twitter:card" content="summary" />')
+  if (!ogData.isAlbum && !ogData.isUser && ogData.isImage) meta.push('<meta name="twitter:card" content="summary_large_image" />')
+  if (ogData.isAlbum || ogData.isUser || ogData.isVideo || ogData.isAudio || ogData.isText) meta.push('<meta property="twitter:card" content="summary" />')
 
   return meta.join('\n')
 })
