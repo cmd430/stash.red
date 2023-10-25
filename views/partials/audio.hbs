@@ -1,11 +1,11 @@
 <span class="wrapper">
   <div class="audio__player">
     <audio crossorigin="anonymous">
-      <source src="{{@direct}}/{{file_id}}.{{ext original_filename}}" data-original_filename="{{original_filename}}" />
+      <source src="{{path}}" data-original_filename="{{name}}" />
     </audio>
     <ul>
       <li class="audio__artwork">
-        <img src="/f/{{file_id}}/thumbnail" />
+        <img src="/f/{{id}}/thumbnail" />
         <canvas class="visualizer invisible"></canvas>
       </li>
       <li class="audio__info">
@@ -27,10 +27,10 @@
             <input class="volume__control" type="range" min="0" max="1" step="0.01" value="1" />
           </span>
           <span class="playback__extra">
-            <a class="control__breakout" title="View on seperate page" href="{{@direct}}/{{file_id}}.{{ext original_filename}}">
+            <a class="control__breakout" title="View on seperate page" href="{{path}}">
               <i class="icon-link-ext"></i>
             </a>
-            <a class="control__download" title="Download this File" href="./download">
+            <a class="control__download" title="Download this File" href="/download">
               <i class="icon-download"></i>
             </a>
           </span>
@@ -40,6 +40,7 @@
       </li>
     </ul>
   </div>
+  {{!--
   {{#if_eq_or @signedin.username this.uploaded_by @signedin.admin this}}
     <div class="actions">
       <a class="action__delete" title="Delete this Audio File" data-id="/f/{{file_id}}" data-username="{{this.uploaded_by}}">
@@ -47,4 +48,5 @@
       </a>
     </div>
   {{/if_eq_or}}
+  --}}
 </span>

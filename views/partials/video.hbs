@@ -1,7 +1,7 @@
 <span class="wrapper">
   <div class="video__player">
     <video>
-      <source src="{{@direct}}/{{file_id}}.{{ext original_filename}}" />
+      <source src="{{path}}" />
     </video>
     <div class="video__controls">
       <button class="playback__playPause paused" title="Play">
@@ -21,10 +21,10 @@
         <input class="volume__control" type="range" min="0" max="1" step="0.01" value="1" />
       </span>
       <span class="playback__extra">
-        <a class="control__breakout" title="View on seperate page" href="{{@direct}}/{{file_id}}.{{ext original_filename}}">
+        <a class="control__breakout" title="View on seperate page" href="{{path}}">
           <i class="icon-link-ext"></i>
         </a>
-        <a class="control__download" title="Download this File" href="./download">
+        <a class="control__download" title="Download this File" href="/download">
           <i class="icon-download"></i>
         </a>
         <button class="control__fullscreen" title="Fullscreen">
@@ -33,6 +33,7 @@
       </span>
     </div>
   </div>
+  {{!--
   {{#if_eq_or @signedin.username this.uploaded_by @signedin.admin this}}
     <div class="actions">
       <a class="action__delete" title="Delete this Video" data-id="/f/{{file_id}}" data-username="{{this.uploaded_by}}">
@@ -40,4 +41,5 @@
       </a>
     </div>
   {{/if_eq_or}}
+  --}}
 </span>
