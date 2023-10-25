@@ -25,7 +25,11 @@ export default function (fastify, opts, done) {
       .prepare('SELECT file, uploaded_by FROM files WHERE id = ?')
       .get(id)
 
-    await deleteAzureBlobWithThumbnail(uploaded_by, file)
+    if (await deleteAzureBlobWithThumbnail(uploaded_by, file)) {
+      fastify.betterSqlite3
+        .prepare('DELETE FROM files WHERE id = ?')
+        .get(id)
+    }
 
     return {
       message: 'blob deleted'
