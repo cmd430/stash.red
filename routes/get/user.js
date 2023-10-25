@@ -84,7 +84,7 @@ export default function (fastify, opts, done) {
         type: 'files'
       },
       uploads: files,
-      openGraphExtended: {
+      openGraph: {
         title: username,
         description: `A User Profile for ${reply.locals.title}`,
         avatar: `https://www.gravatar.com/avatar/${createHash('md5')
@@ -136,7 +136,7 @@ export default function (fastify, opts, done) {
         type: 'albums'
       },
       uploads: albums,
-      openGraphExtended: {
+      openGraph: {
         title: username,
         description: `A User Profile for ${reply.locals.title}`,
         avatar: `https://www.gravatar.com/avatar/${createHash('md5')
