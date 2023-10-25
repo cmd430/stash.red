@@ -18,12 +18,13 @@ export default function fastifiyDefaultLocals () {
           description: null,
           theme: isDevEnv() ? siteTheme.dev : siteTheme.prod,
           url: `${req.protocol}://${req.hostname}${req.url}`,
-          // The feilds set by the thing are viewing
-          image: null,
-          video: null,
-          audio: null,
-          text: null,
-          isFile: null,
+          // the direct path of the thing
+          path: null,
+          // The feilds set by the type of thing are viewing
+          isImage: null,
+          isVideo: null,
+          isAudio: null,
+          isText: null,
           isAlbum: null,
           isUser: null,
           // The User Avatar
