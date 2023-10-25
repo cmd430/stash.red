@@ -18,6 +18,7 @@ export default function fastifiyDefaultLocals () {
           description: null,
           theme: isDevEnv() ? siteTheme.dev : siteTheme.prod,
           url: `${req.protocol}://${req.hostname}${req.url}`,
+          mimetype: null,
           // the direct path of the thing
           path: null,
           // The feilds set by the type of thing are viewing

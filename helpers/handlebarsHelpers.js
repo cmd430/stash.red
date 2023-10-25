@@ -41,6 +41,14 @@ handlebars.registerHelper('opengraph', (data, dataExtended) => {
   if (ogData.title) meta.push(`<meta property="og:title" content="${ogData.title}" />`)
   if (ogData.description) meta.push(`<meta property="og:description" content="${ogData.description}" />`)
   if (ogData.isImage) meta.push(`<meta property="og:image" content="${ogData.path}" />`)
+  if (ogData.isAudio) {
+    meta.push(`<meta property="og:audio" content="${ogData.path}" />`)
+    meta.push(`<meta property="og:audio:type" content="${ogData.mimetype}" />`)
+  }
+  if (ogData.isVideo) {
+    meta.push(`<meta property="og:video" content="${ogData.path}" />`)
+    meta.push(`<meta property="og:video:type" content="${ogData.mimetype}" />`)
+  }
   if (ogData.isAlbum || ogData.isVideo || ogData.isAudio || ogData.isText) meta.push(`<meta property="og:image" content="${ogData.url}/thumbnail" />`)
   if (ogData.isUser) meta.push(`<meta property="og:image" content="${ogData.avatar}" />`)
 
