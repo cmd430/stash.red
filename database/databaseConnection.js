@@ -12,8 +12,20 @@ const db = new Database('./database/stash.db', {
 db.pragma('journal_mode = WAL')
 
 const tables = await readdir(resolve('./database/tables'))
+const indices = await readdir(resolve('./database/indices'))
+const triggers = await readdir(resolve('./database/triggers'))
+const views = await readdir(resolve('./database/views'))
 
-for await (const table of tables) db.exec(await readFile(resolve(`./database/tables/${table}`), {
+for (const table of tables) db.exec(await readFile(resolve(`./database/tables/${table}`), {
+  encoding: 'utf8'
+}))
+for (const index of indices) db.exec(await readFile(resolve(`./database/indices/${index}`), {
+  encoding: 'utf8'
+}))
+for (const trigger of triggers) db.exec(await readFile(resolve(`./database/triggers/${trigger}`), {
+  encoding: 'utf8'
+}))
+for (const view of views) db.exec(await readFile(resolve(`./database/views/${view}`), {
   encoding: 'utf8'
 }))
 
