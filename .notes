@@ -26,7 +26,15 @@
 
 
   ! nginx rewrite for old urls !
-  -> rewrite ^ $scheme://stash.red/f$request_uri permanent;
+  server {
+    server_name direct.stash.red;
+
+    location / {
+      rewrite ^ $scheme://stash.red/f$request_uri permanent;
+    }
+
+    listen 80;
+  }
 
 
   ## Current IDs in DB
