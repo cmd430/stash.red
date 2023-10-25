@@ -16,6 +16,9 @@ export default function (fastify, opts, done) {
     const files = req.files()
     const fileIDs = []
 
+    let ttl = null
+    let isPrivate = null
+
     const username = req.session.get('user').username
 
     for await (const file of files) {
@@ -24,9 +27,9 @@ export default function (fastify, opts, done) {
 
       const fileBuffer = await file.toBuffer()
       const thumbnailBuffer = await generateThumbnail(file.mimetype, fileBuffer)
-      const ttl = parseInt(file.fields?.ttl?.value ?? 0) > 0 ? parseInt(file.fields.ttl.value) : null
+      if (ttl === null) ttl = parseInt(file.fields?.ttl?.value ?? 0) > 0 ? parseInt(file.fields.ttl.value) : null
       // TODO: get isPrivate from upload payload
-      const isPrivate = Number(false)
+      if (isPrivate === null) isPrivate = Number(false)
 
       fastify.betterSqlite3
         .prepare('INSERT INTO files (id, name, file, type, uploaded_at, uploaded_by, ttl, isPrivate) VALUES (?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?, ?, ?)')
@@ -50,6 +53,10 @@ export default function (fastify, opts, done) {
       const transaction = fastify.betterSqlite3.transaction((fIDs, aID) => fIDs.map(fID => statement.run(aID, fID)))
       const updated = transaction(fileIDs, albumID)
         .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
+
+      fastify.betterSqlite3
+        .prepare('INSERT INTO albums (id, title, files, order, uploaded_at, uploaded_by, ttl, isPrivate) VALUES (?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?, ?, ?)')
+        .run(albumID, albumID, fileIDs, fileIDs, username, ttl, isPrivate)
 
       debug('Added', updated, 'files to album')
 
