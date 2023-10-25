@@ -2,7 +2,7 @@ import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
 import mimetypeFilter from '../../utils/mimetypeFilter.js'
-import { getAzureBlobBuffer, deriveThumbnailBlob, deleteAzureBlob } from '../../utils/azureBlobStorage.js'
+import { getAzureBlobBuffer, deriveThumbnailBlob, deleteAzureBlobWithThumbnail } from '../../utils/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Files (GET)')
@@ -25,7 +25,7 @@ export default function (fastify, opts, done) {
       .prepare('SELECT file, uploaded_by FROM files WHERE id = ?')
       .get(id)
 
-    await deleteAzureBlob(uploaded_by, file)
+    await deleteAzureBlobWithThumbnail(uploaded_by, file)
 
     return {
       message: 'blob deleted'

@@ -73,10 +73,27 @@ export async function getAzureBlobBuffer (username, blobID) {
 export async function deleteAzureBlob (username, blobID) {
   const azureContainerClient = azureBlobServiceClient.getContainerClient(username.toLowerCase())
   const azureFileBlockBlobClient = azureContainerClient.getBlockBlobClient(blobID)
-
   const azureFileDeleteBlobResponse = await azureFileBlockBlobClient.deleteIfExists()
 
   debug(`File Blob was ${azureFileDeleteBlobResponse.succeeded ? 'deleted successfully.' : 'unabled to be deleted.'}\n\trequestId: ${azureFileDeleteBlobResponse.requestId}`)
 
   return azureFileDeleteBlobResponse.succeeded
+}
+
+export async function deleteAzureBlobWithThumbnail (username, blobID) {
+  const azureContainerClient = azureBlobServiceClient.getContainerClient(username.toLowerCase())
+  const azureFileBlockBlobClient = azureContainerClient.getBlockBlobClient(blobID)
+  const azureFileDeleteBlobResponse = await azureFileBlockBlobClient.deleteIfExists()
+  const azureThumbnailBlockBlobClient = azureContainerClient.getBlockBlobClient(deriveThumbnailBlob(blobID))
+  const azureThumbnailDeleteBlobResponse = await azureThumbnailBlockBlobClient.deleteIfExists()
+
+  debug(`File Blob was ${azureFileDeleteBlobResponse.succeeded ? 'deleted successfully.' : 'unabled to be deleted.'}\n\trequestId: ${azureFileDeleteBlobResponse.requestId}`)
+  debug(`Files Thumbnail Blob was ${azureThumbnailDeleteBlobResponse.succeeded ? 'deleted successfully.' : 'unabled to be deleted.'}\n\trequestId: ${azureFileDeleteBlobResponse.requestId}`)
+
+  const results = [
+    azureFileDeleteBlobResponse.succeeded,
+    azureFileDeleteBlobResponse.succeeded
+  ]
+
+  return results.every(result => result === true)
 }

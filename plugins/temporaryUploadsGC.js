@@ -1,6 +1,6 @@
 import { Log } from 'cmd430-utils'
 import { evaluate } from 'mathjs'
-import { deleteAzureBlob } from '../utils/azureBlobStorage.js'
+import { deleteAzureBlobWithThumbnail } from '../utils/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Temporary Uploads')
@@ -18,7 +18,7 @@ async function performGC (db) {
   }
 
   for (const { id, file, uploaded_by } of expired) {
-    const removedBlob = await deleteAzureBlob(uploaded_by, file)
+    const removedBlob = await deleteAzureBlobWithThumbnail(uploaded_by, file)
 
     if (!removedBlob) delete expired[expired.findIndex(obj => obj.id === id)]
   }
