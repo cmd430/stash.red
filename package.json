@@ -27,7 +27,8 @@
     "http-errors": "^2.0.0",
     "mathjs": "^11.11.2",
     "nanoid": "^5.0.2",
-    "sharp": "^0.32.6"
+    "sharp": "^0.32.6",
+    "wasmagic": "^0.0.32"
   },
   "devDependencies": {
     "eslint": "^8.51.0",

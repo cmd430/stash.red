@@ -42,6 +42,8 @@
 
 
 
+
+
 -= TODO =-
 
   -> Look into account stuff
@@ -49,11 +51,5 @@
     -> https://stackoverflow.com/a/67038052/4958977
     -> https://github.com/fastify/fastify-auth
 
-
-fastify.addHook('preHandler', (res, reply, done) => {
-  reply.locals = {
-    env: 'dev'
-  }
-
-  done()
-})
+  Impliment mimetype checking of uploads with https://www.npmjs.com/package/wasmagic
+  Make sure when we remove files with an expired ttl we also remove albums with expired ttl's
