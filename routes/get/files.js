@@ -2,7 +2,7 @@ import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
 import mimetypeFilter from '../../utils/mimetypeFilter.js'
-import { getAzureBlobBuffer, deriveThumbnailBlob, deleteAzureBlobWithThumbnail } from '../../utils/azureBlobStorage.js'
+import { getAzureBlobBuffer, deleteAzureBlobWithThumbnail } from '../../utils/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Files (GET)')
@@ -20,7 +20,6 @@ export default function (fastify, opts, done) {
   // TEMP: test file delete
   fastify.get('/f/:id/delete', { preHandler }, async (req, reply) => {
     const { id } = req.params
-
     const { file, uploaded_by } = fastify.betterSqlite3
       .prepare('SELECT file, uploaded_by FROM files WHERE id = ?')
       .get(id)
@@ -42,7 +41,7 @@ export default function (fastify, opts, done) {
   fastify.get('/f/:id', { preHandler }, async (req, reply) => {
     const { id } = req.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT file, name, type, uploaded_by, isPrivate FROM files WHERE id = ?')
+      .prepare('SELECT file, type FROM file WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
@@ -79,7 +78,7 @@ export default function (fastify, opts, done) {
   fastify.get('/f/:id.:ext', { preHandler }, async (req, reply) => {
     const { id } = req.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT file, type, uploaded_by FROM files WHERE id = ?')
+      .prepare('SELECT file, type, uploaded_by FROM file WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
@@ -95,16 +94,16 @@ export default function (fastify, opts, done) {
   fastify.get('/f/:id/thumbnail', { preHandler }, async (req, reply) => {
     const { id } = req.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT file, uploaded_by FROM files WHERE id = ?')
+      .prepare('SELECT thumbnail, uploaded_by FROM file WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
 
-    const { file, uploaded_by } = dbResult
+    const { thumbnail, uploaded_by } = dbResult
 
     return reply
       .type('image/webp')
-      .send(await getAzureBlobBuffer(uploaded_by, deriveThumbnailBlob(file)))
+      .send(await getAzureBlobBuffer(uploaded_by, thumbnail))
   })
 
   done()

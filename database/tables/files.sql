@@ -9,5 +9,6 @@ CREATE TABLE IF NOT EXISTS "files" (
   "ttl" INTEGER,
   "isPrivate" INTEGER NOT NULL DEFAULT 0,
   "inAlbum" TEXT,
+  "albumOrder" INTEGER,
   PRIMARY KEY("_id" AUTOINCREMENT)
 );
