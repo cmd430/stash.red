@@ -13,14 +13,16 @@ export default function (fastify, opts, done) {
   fastify.get('/a/:id', async (req, reply) => {
     const { id } = req.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT uploaded_at, uploaded_by, title, files, total, isPrivate FROM album WHERE id = ?')
+      .prepare('SELECT uploaded_at, uploaded_by, title, files, entries, isPrivate FROM album WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
 
-    const { uploaded_at, uploaded_by, title, files, total, isPrivate } = dbResult
+    const { uploaded_at, uploaded_by, title, files, entries, isPrivate } = dbResult
 
-    debug({ uploaded_at, uploaded_by, title, files, total, isPrivate })
+    debug({ uploaded_at, uploaded_by, title, files, entries, isPrivate })
+
+    //TODO get the actual files from DB in the sorted order of the album
 
     return {
       message: 'WIP',
