@@ -111,9 +111,9 @@ export default function (fastify, opts, done) {
     const { email } = user
     // Get Albums
     const getAlbumsIncludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, title, isPrivate, (SELECT COUNT(id) FROM files WHERE inAlbum = albums.id) AS total FROM albums WHERE uploaded_by = ? ORDER BY _id ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT id, title, isPrivate, (SELECT COUNT(id) FROM files WHERE inAlbum = albums.id) AS total FROM albums WHERE uploaded_by = ? ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
     const getAlbumsExcludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, title, isPrivate, (SELECT COUNT(id) FROM files WHERE inAlbum = albums.id) AS total FROM albums WHERE uploaded_by = ? AND NOT isPrivate = 1  ORDER BY _id ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT id, title, isPrivate, (SELECT COUNT(id) FROM files WHERE inAlbum = albums.id) AS total FROM albums WHERE uploaded_by = ? AND NOT isPrivate = 1  ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
     // Get Totals
     const getTotalAlbumsIncludePrivate = fastify.betterSqlite3
       .prepare('SELECT COUNT(id) as total FROM albums WHERE uploaded_by = ?')
