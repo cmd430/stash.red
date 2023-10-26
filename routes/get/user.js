@@ -59,18 +59,13 @@ export default function (fastify, opts, done) {
     const { email } = user
     // Get Files
     const getFilesIncludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, file, type, isPrivate FROM files WHERE uploaded_by = ? AND inAlbum IS NULL AND type LIKE '${filter}%' ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT id, type, isPrivate, total FROM userFiles WHERE uploaded_by = ? AND type LIKE '${filter}%' ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
     const getFilesExcludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, file, type, isPrivate FROM files WHERE uploaded_by = ? AND inAlbum IS NULL AND NOT isPrivate = 1 AND type LIKE '${filter}%' ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
-    // Get Totals
-    const getTotalFilesIncludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT COUNT(id) as total FROM files WHERE uploaded_by = ? AND inAlbum IS NULL AND type LIKE '${filter}%'`)
-    const getTotalFilesExcludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT COUNT(id) as total FROM files WHERE uploaded_by = ? AND inAlbum IS NULL AND NOT isPrivate = 1 AND type LIKE '${filter}%'`)
+      .prepare(`SELECT id, type, isPrivate, total FROM userFiles WHERE uploaded_by = ? AND NOT isPrivate = 1 AND type LIKE '${filter}%' ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
 
     // Run SQL
     const files = (showPrivate ? getFilesIncludePrivate : getFilesExcludePrivate).all(username, limit, offset)
-    const { total } = (showPrivate ? getTotalFilesIncludePrivate : getTotalFilesExcludePrivate).get(username)
+    const { total } = files[0] ?? 0
 
     // Return Page
     return reply.view('user', {
@@ -111,18 +106,13 @@ export default function (fastify, opts, done) {
     const { email } = user
     // Get Albums
     const getAlbumsIncludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, title, isPrivate, (SELECT COUNT(id) FROM files WHERE inAlbum = albums.id) AS total FROM albums WHERE uploaded_by = ? ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT id, title, isPrivate, entries, total FROM userAlbums WHERE uploaded_by = ? ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
     const getAlbumsExcludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, title, isPrivate, (SELECT COUNT(id) FROM files WHERE inAlbum = albums.id) AS total FROM albums WHERE uploaded_by = ? AND NOT isPrivate = 1  ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
-    // Get Totals
-    const getTotalAlbumsIncludePrivate = fastify.betterSqlite3
-      .prepare('SELECT COUNT(id) as total FROM albums WHERE uploaded_by = ?')
-    const getTotalAlbumsExcludePrivate = fastify.betterSqlite3
-      .prepare('SELECT COUNT(id) as total FROM albums WHERE uploaded_by = ? AND NOT isPrivate = 1')
+      .prepare(`SELECT id, title, isPrivate, entries, total FROM userAlbums WHERE uploaded_by = ? AND NOT isPrivate = 1  ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
 
     // Run SQL
     const albums = (showPrivate ? getAlbumsIncludePrivate : getAlbumsExcludePrivate).all(username, limit, offset)
-    const { total } = (showPrivate ? getTotalAlbumsIncludePrivate : getTotalAlbumsExcludePrivate).get(username)
+    const { total } = albums[0] ?? 0
 
     // Return Page
     return reply.view('user', {
