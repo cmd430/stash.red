@@ -20,7 +20,7 @@ async function ffmpeg (inputBuffer, type) {
   const args = {
     'video': [ '-r', '1', '-i', 'pipe:0', '-vframes', '1', '-f', 'image2', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
     'audio': [ '-i', 'pipe:0', '-f', 'image2', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
-    'text': [ '-f lavfi', '-i color=c=white:s=640x480:d=5.396', `-filter_complex "drawtext=textfile='${inputBuffer.toString()}':x=0:y=0:fontfile='${thumbnailFontPath}':fontsize=13:fontcolor=000000"`, '-f singlejpeg pipe:1' ]
+    'text': [ '-f lavfi', '-i color=c=white:s=640x480:d=5.396', `-filter_complex "drawtext=text='${inputBuffer.toString()}':x=0:y=0:fontfile='${thumbnailFontPath}':fontsize=13:fontcolor=000000"`, '-f singlejpeg pipe:1' ]
   }
 
   let imageBuffer = null
