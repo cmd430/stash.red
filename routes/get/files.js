@@ -60,16 +60,20 @@ export default function (fastify, opts, done) {
 
       return `${t.charAt(0).toUpperCase()}${t.slice(1)}`
     }
-    const directPath = `${(reply.locals.base.endsWith('/') ? reply.locals.base.slice(0, -1) : reply.locals.base)}${extname(file)}`
+    const directPath = `/f/${id}${extname(file)}`
 
     return reply.view('file', {
-      file: { id, ...dbResult, path: directPath },
+      file: {
+        id: id,
+        path: directPath,
+        ...dbResult
+      },
       openGraph: {
         title: id,
         description: `${description(type)} Hosted at ${reply.locals.title}`,
-        [`is${isType(type)}`]: true,
         path: `${req.protocol}://${req.hostname}${directPath}`,
-        mimetype: type
+        mimetype: type,
+        [`is${isType(type)}`]: true
       }
     })
   })
