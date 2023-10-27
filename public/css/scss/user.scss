@@ -30,37 +30,37 @@
       width: 100%;
       height: 100%;
       &.image {
-        background: no-repeat right top/40px url('/img/types/image.png');
+        background: no-repeat right top/40px url('/img/types/image.webp');
       }
       &.audio {
-        background: no-repeat right top/40px url('/img/types/audio.png');
+        background: no-repeat right top/40px url('/img/types/audio.webp');
       }
       &.video {
-        background: no-repeat right top/40px url('/img/types/video.png');
+        background: no-repeat right top/40px url('/img/types/video.webp');
       }
       &.txt {
-        background: no-repeat right top/40px url('/img/types/text.png');
+        background: no-repeat right top/40px url('/img/types/text.webp');
       }
       &.album {
-        background: no-repeat right top/40px url('/img/types/album.png');
+        background: no-repeat right top/40px url('/img/types/album.webp');
       }
     }
     &.private {
       .icon {
         &.image {
-          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/image.png');
+          background: no-repeat left bottom/40px url('/img/types/private.webp'), no-repeat right top/40px url('/img/types/image.webp');
         }
         &.audio {
-          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/audio.png');
+          background: no-repeat left bottom/40px url('/img/types/private.webp'), no-repeat right top/40px url('/img/types/audio.webp');
         }
         &.video {
-          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/video.png');
+          background: no-repeat left bottom/40px url('/img/types/private.webp'), no-repeat right top/40px url('/img/types/video.webp');
         }
         &.txt {
-          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/text.png');
+          background: no-repeat left bottom/40px url('/img/types/private.webp'), no-repeat right top/40px url('/img/types/text.webp');
         }
         &.album {
-          background: no-repeat left bottom/40px url('/img/types/private.png'), no-repeat right top/40px url('/img/types/album.png');
+          background: no-repeat left bottom/40px url('/img/types/private.webp'), no-repeat right top/40px url('/img/types/album.webp');
         }
       }
     }
