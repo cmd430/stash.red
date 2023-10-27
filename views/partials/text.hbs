@@ -1,8 +1,6 @@
 <span class="wrapper fullwidth">
-  <pre class="text">
-    <code>
-      {{path}}
-    </code>
+  <pre class="text" data-text-id="{{id}}">
+    <code></code>
   </pre>
   <div class="actions">
     {{!--
@@ -17,3 +15,9 @@
     </a>
   </div>
 </span>
+<script>
+  fetch('{{path}}')
+    .then(r => r.text())
+    .then(text => document.querySelector('.text[data-text-id={{id}}] > code').textContent = text)
+    .catch(err => console.error(err))
+</script>
