@@ -262,34 +262,34 @@ header:hover h1 .album__delete {
   height: 100%;
 }
 #container .preview .icon.image {
-  background: no-repeat right top/40px url("/img/types/image.png");
+  background: no-repeat right top/40px url("/img/types/image.webp");
 }
 #container .preview .icon.audio {
-  background: no-repeat right top/40px url("/img/types/audio.png");
+  background: no-repeat right top/40px url("/img/types/audio.webp");
 }
 #container .preview .icon.video {
-  background: no-repeat right top/40px url("/img/types/video.png");
+  background: no-repeat right top/40px url("/img/types/video.webp");
 }
 #container .preview .icon.txt {
-  background: no-repeat right top/40px url("/img/types/text.png");
+  background: no-repeat right top/40px url("/img/types/text.webp");
 }
 #container .preview .icon.album {
-  background: no-repeat right top/40px url("/img/types/album.png");
+  background: no-repeat right top/40px url("/img/types/album.webp");
 }
 #container .preview.private .icon.image {
-  background: no-repeat left bottom/40px url("/img/types/private.png"), no-repeat right top/40px url("/img/types/image.png");
+  background: no-repeat left bottom/40px url("/img/types/private.webp"), no-repeat right top/40px url("/img/types/image.webp");
 }
 #container .preview.private .icon.audio {
-  background: no-repeat left bottom/40px url("/img/types/private.png"), no-repeat right top/40px url("/img/types/audio.png");
+  background: no-repeat left bottom/40px url("/img/types/private.webp"), no-repeat right top/40px url("/img/types/audio.webp");
 }
 #container .preview.private .icon.video {
-  background: no-repeat left bottom/40px url("/img/types/private.png"), no-repeat right top/40px url("/img/types/video.png");
+  background: no-repeat left bottom/40px url("/img/types/private.webp"), no-repeat right top/40px url("/img/types/video.webp");
 }
 #container .preview.private .icon.txt {
-  background: no-repeat left bottom/40px url("/img/types/private.png"), no-repeat right top/40px url("/img/types/text.png");
+  background: no-repeat left bottom/40px url("/img/types/private.webp"), no-repeat right top/40px url("/img/types/text.webp");
 }
 #container .preview.private .icon.album {
-  background: no-repeat left bottom/40px url("/img/types/private.png"), no-repeat right top/40px url("/img/types/album.png");
+  background: no-repeat left bottom/40px url("/img/types/private.webp"), no-repeat right top/40px url("/img/types/album.webp");
 }
 #container .preview .album_title {
   position: absolute;
