@@ -1,29 +1,21 @@
+-= TODO =-
+
+  Impliment mimetype checking of uploads with https://www.npmjs.com/package/wasmagic
+  Impliment album downloading with https://www.npmjs.com/package/archiver
+    -> example https://medium.com/@abhinavk9757/how-to-zip-multiple-streaming-files-in-nodejs-679a6e9d625f
+  Check Signups, Logins working
+  Add capture to signup (maybe login?)
+  Routes to Delete files/albums if you own them
+  Front end JS so the site works
+
+
 -= References =-
   -> https://fastify.dev/docs
   -> https://github.com/WiseLibs/better-sqlite3/blob/HEAD/docs/api.md
-  -> https://www.npmjs.com/package/@fastify/view
   -> https://handlebarsjs.com/guide/
-  -> https://fastify.dev/ecosystem/
   -> https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-nodejs?tabs=managed-identity%2Croles-azure-portal%2Csign-in-azure-cli
 
--= cURL commands to manually upload file =-
-[bash]
-  curl -X POST -F file='@testUploads/girl.jpg' https://dev.cmd430.xyz/upload
-  curl -X POST -F file1='@testUploads/girl.jpg' -F file2='@testUploads/rover.jpeg' https://dev.cmd430.xyz/upload
-
-
-  curl -X POST -F ttl=300 -F file='@testUploads/girl.jpg' https://dev.cmd430.xyz/upload
-  curl -X POST -F ttl=300 -F file1='@testUploads/girl.jpg' -F file2='@testUploads/rover.jpeg' https://dev.cmd430.xyz/upload
-[/bash]
-
 -= URL references =-
-  -> https://dev.cmd430.xyz/
-  -> https://dev.cmd430.xyz/f/:id
-  -> https://dev.cmd430.xyz/f/:id/thumbnail
-  -> https://dev.cmd430.xyz/f/:id/info
-
-  -> https://dev.cmd430.xyz/f/mz9RjzSr0y2k
-
 
   ! nginx rewrite for old urls !
   server {
@@ -36,28 +28,9 @@
     listen 80;
   }
 
-
-  ## Current IDs in DB
-    - mz9RjzSr0y2k
-    - 27STmZsfyg4B
-    - O1vKvkGhtnKY
-    - 75ZfcbigTQZ3
-
-
   ## URL Scheme Plan:
     - `/f/:id` for files
+    - `/f/:id.:ext` file direct files
     - `/a/:id` for albums
+    - `/u/:username` for users
 
-
-
-
-
--= TODO =-
-
-  -> Look into account stuff
-    -> https://nodejs.org/api/crypto.html#cryptoscryptpassword-salt-keylen-options-callback
-    -> https://stackoverflow.com/a/67038052/4958977
-    -> https://github.com/fastify/fastify-auth
-
-  Impliment mimetype checking of uploads with https://www.npmjs.com/package/wasmagic
-  Make sure when we remove files with an expired ttl we also remove albums with expired ttl's
