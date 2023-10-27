@@ -22,6 +22,8 @@ export default function (fastify, opts, done) {
     const username = req.session.get('user').username
 
     for await (const file of files) {
+      if (file.file.bytesRead === 0) return createError(400) // no files uploaded
+
       // TODO: check file mimetype with wasmagic
       const { fileBlobName, azureBlobClients } = createAzureBlob(username, file.filename)
       const fileID = nanoid(8)
