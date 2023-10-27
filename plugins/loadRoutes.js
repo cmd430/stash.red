@@ -21,7 +21,6 @@ export default async function loadRoutes (fastify, opts, done) {
     )
 
     // TODO: remove stack trace if prod mode
-    err.code = err.status
 
     reply
       .code(err.code)
