@@ -1,34 +1,46 @@
 import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
+import { extname } from 'node:path'
 import { getAzureBlobBuffer } from '../../utils/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Albums (GET)')
 
-// TODO: Album pages
+// TODO: Downloads
 
 export default function (fastify, opts, done) {
 
   // Get album by ID
   fastify.get('/a/:id', async (req, reply) => {
     const { id } = req.params
-    const dbResult = fastify.betterSqlite3
-      .prepare('SELECT uploaded_at, uploaded_by, title, files, entries, isPrivate FROM album WHERE id = ?')
+    const album = fastify.betterSqlite3
+      .prepare('SELECT title FROM album WHERE id = ?')
       .get(id)
 
-    if (!dbResult) return createError(404)
+    if (!album) return createError(404)
 
-    const { uploaded_at, uploaded_by, title, files, entries, isPrivate } = dbResult
+    const albumFiles = fastify.betterSqlite3
+      .prepare('SELECT id, file, type FROM albumFiles WHERE album = ?')
+      .all(id)
 
-    debug({ uploaded_at, uploaded_by, title, files, entries, isPrivate })
+    const { title } = album
+    const files = albumFiles.map(file => ({
+      path: `/f/${file.id}${extname(file.file)}`,
+      ...file
+    }))
 
-    //TODO get the actual files from DB in the sorted order of the album
-
-    return {
-      message: 'WIP',
-      album: id,
-      data: dbResult
-    }
+    return reply.view('album', {
+      album: {
+        id: id,
+        title: title,
+        files: files
+      },
+      openGraph: {
+        title: title,
+        description: `An Album Hosted at ${reply.locals.title}`,
+        isAlbum: true
+      }
+    })
   })
 
   // Get album thumbnail
