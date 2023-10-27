@@ -18,6 +18,6 @@
 <script>
   fetch('{{path}}')
     .then(r => r.text())
-    .then(text => document.querySelector('.text[data-text-id={{id}}] > code').textContent = text)
+    .then(text => document.querySelector('.text[data-text-id="{{id}}"] > code').textContent = text)
     .catch(err => console.error(err))
 </script>
