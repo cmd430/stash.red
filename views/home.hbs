@@ -6,6 +6,23 @@
     <script src="/js/home.js"></script>
   </head>
   <body class="light">
+    {{! TEMP }}
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <label for="ttl">
+        TTL:
+        <input type="number" id="ttl" name="ttl" value="0" />
+        (Time in Seconds, 0 = Forever)
+      </label>
+      <br />
+      <label for="files">
+        Files:
+        <input type="file" id="files" name="file" multiple />
+      </label>
+      <hr />
+      <input type="submit" value="Upload">
+    </form>
+    {{! END TEMP }}
+    {{!--
     <div id="content">
       {{> logo}}
       {{> dropzone}}
@@ -79,5 +96,6 @@
         </svg>
       </a>
     </div>
+    --}}
   </body>
 </html>
