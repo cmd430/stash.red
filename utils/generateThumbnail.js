@@ -18,9 +18,9 @@ const defaultThumbnailPaths = {
 
 async function ffmpeg (inputBuffer, type) {
   const args = {
-    'video': [ '-r', '1', '-i', 'pipe:0', '-vframes', '1', '-f', 'image2', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
+    'video': [ '-r', '1', '-i', 'pipe:0', '-f', 'image2', '-vframes', '1', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
     'audio': [ '-i', 'pipe:0', '-f', 'image2', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
-    'text': [ '-f lavfi', '-i color=c=white:s=640x480:d=5.396', `-filter_complex "drawtext=text='${inputBuffer.toString()}':x=0:y=0:fontfile='${thumbnailFontPath}':fontsize=13:fontcolor=000000"`, '-f singlejpeg pipe:1' ]
+    'text': [ '-f', 'lavfi', '-i', 'color=c=white:s=250x250:d=5.396', '-filter_complex', `drawtext=text='${inputBuffer.toString()}':x=5:y=5:fontsize=16:fontcolor=000000:fontfile='${thumbnailFontPath}'`, '-vframes', '1', '-f', 'image2','-c:v', 'mjpeg', 'pipe:1' ]
   }
 
   let imageBuffer = null
@@ -89,7 +89,7 @@ export default async function generateThumbnail (mimetype, fileBuffer) {
     imageBuffer = await ffmpeg(fileBuffer, type)
   }
 
-  if (imageBuffer instanceof Buffer === false) return getDefaultThumbnail(type)
+  if (imageBuffer instanceof Buffer === false || imageBuffer.byteLength === 0) return getDefaultThumbnail(type)
 
   // Resize and crop Thumbnails
   return sharp(imageBuffer)
