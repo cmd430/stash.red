@@ -11,14 +11,8 @@ export default function (fastify, opts, done) {
 
   // TODO: Downloads
 
-  function preHandler (req, reply, done) {
-    // Anything that needs doing on all routes can go here
-
-    done()
-  }
-
   // TEMP: test file delete
-  fastify.get('/f/:id/delete', { preHandler }, async (req, reply) => {
+  fastify.get('/f/:id/delete', async (req, reply) => {
     const { id } = req.params
     const { file, uploaded_by } = fastify.betterSqlite3
       .prepare('SELECT file, uploaded_by FROM files WHERE id = ?')
@@ -38,7 +32,7 @@ export default function (fastify, opts, done) {
 
 
   // Get uploaded file page by ID
-  fastify.get('/f/:id', { preHandler }, async (req, reply) => {
+  fastify.get('/f/:id', async (req, reply) => {
     const { id } = req.params
     const dbResult = fastify.betterSqlite3
       .prepare('SELECT file, type FROM file WHERE id = ?')
@@ -79,7 +73,7 @@ export default function (fastify, opts, done) {
   })
 
   // Get uploaded file by ID
-  fastify.get('/f/:id.:ext', { preHandler }, async (req, reply) => {
+  fastify.get('/f/:id.:ext', async (req, reply) => {
     const { id } = req.params
     const dbResult = fastify.betterSqlite3
       .prepare('SELECT file, type, uploaded_by FROM file WHERE id = ?')
@@ -95,7 +89,7 @@ export default function (fastify, opts, done) {
   })
 
   // Get uploaded file thumbnail
-  fastify.get('/f/:id/thumbnail', { preHandler }, async (req, reply) => {
+  fastify.get('/f/:id/thumbnail', async (req, reply) => {
     const { id } = req.params
     const dbResult = fastify.betterSqlite3
       .prepare('SELECT thumbnail, uploaded_by FROM file WHERE id = ?')
