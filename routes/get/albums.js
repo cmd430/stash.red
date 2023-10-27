@@ -10,8 +10,14 @@ const { log, debug, info, warn, error } = new Log('Albums (GET)')
 
 export default function (fastify, opts, done) {
 
+  function preHandler (req, reply, done) {
+    // Anything that needs doing on all routes can go here
+
+    done()
+  }
+
   // Get album by ID
-  fastify.get('/a/:id', async (req, reply) => {
+  fastify.get('/a/:id', { preHandler }, async (req, reply) => {
     const { id } = req.params
     const album = fastify.betterSqlite3
       .prepare('SELECT title FROM album WHERE id = ?')
@@ -44,7 +50,7 @@ export default function (fastify, opts, done) {
   })
 
   // Get album thumbnail
-  fastify.get('/a/:id/thumbnail', async (req, reply) => {
+  fastify.get('/a/:id/thumbnail', { preHandler }, async (req, reply) => {
     const { id } = req.params
     const dbResult = fastify.betterSqlite3
       .prepare('SELECT thumbnail, uploaded_by FROM album WHERE id = ?')
