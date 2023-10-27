@@ -23,7 +23,7 @@ function preHandler (req, reply, done) {
   const viewOffset = viewLimit * (viewPage - 1)
   const viewOrder = (sort !== 'DESC' && sort !== 'ASC') ? 'DESC' : sort
   const viewFilter = (filter !== 'image' && filter !== 'audio' && filter !== 'video' && filter !== 'text') ? '' : filter
-  const viewParams = [ `p=${p}` ]
+  const viewParams = []
 
   if (viewFilter !== '') viewParams.push(`filter=${viewFilter}`)
   if (viewOrder !== '') viewParams.push(`sort=${viewOrder}`)
@@ -70,7 +70,7 @@ export default function (fastify, opts, done) {
     // Return Page
     return reply.view('user', {
       pagination: {
-        params: params.join('&'),
+        params: params.length > 0 ? `&${params.join('&')}` : '',
         page: page,
         pageCount:  Math.max(1, Math.ceil(total / limit))
       },
