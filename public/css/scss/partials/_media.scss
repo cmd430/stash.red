@@ -9,6 +9,9 @@
   img {
     max-width: 100%;
     max-height: calc(100vh - 120px);
+    // min-width: 342px;
+      // this would be nice but it breaks small images
+    // min-height: 622px;
     border: 1px solid;
   }
 }
