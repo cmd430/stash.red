@@ -35,7 +35,7 @@ export default function (fastify, opts, done) {
   fastify.get('/f/:id', async (req, reply) => {
     const { id } = req.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT file, type FROM file WHERE id = ?')
+      .prepare('SELECT file, type, uploaded_by FROM file WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(404)

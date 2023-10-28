@@ -14,7 +14,7 @@ export default function (fastify, opts, done) {
   fastify.get('/a/:id', async (req, reply) => {
     const { id } = req.params
     const album = fastify.betterSqlite3
-      .prepare('SELECT title FROM album WHERE id = ?')
+      .prepare('SELECT title, uploaded_by FROM album WHERE id = ?')
       .get(id)
 
     if (!album) return createError(404)
@@ -23,7 +23,7 @@ export default function (fastify, opts, done) {
       .prepare('SELECT id, file, type FROM albumFiles WHERE album = ?')
       .all(id)
 
-    const { title } = album
+    const { title, uploaded_by } = album
     const files = albumFiles.map(file => ({
       path: `/f/${file.id}${extname(file.file)}`,
       ...file
@@ -33,7 +33,8 @@ export default function (fastify, opts, done) {
       album: {
         id: id,
         title: title,
-        files: files
+        files: files,
+        uploaded_by: uploaded_by
       },
       openGraph: {
         title: title,
