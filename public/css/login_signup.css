@@ -51,6 +51,7 @@ header {
   grid-template-columns: 220px auto;
   max-width: 960px;
   margin: 0 auto;
+  padding: 0 8px;
 }
 header #logo {
   text-align: left;
