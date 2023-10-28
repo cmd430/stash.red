@@ -14,17 +14,28 @@ export default async function loadRoutes (fastify, opts, done) {
 
   // Error handling
   fastify.setErrorHandler((err, req, reply) => {
-    if (!err.status) return (
-      reply
-        .code(500)
-        .send(err)
-    )
+    if (!err.status) {
+      err.status = 500
+      err.message = 'Internal Server Error'
+      error(err)
+    }
 
-    // TODO: remove stack trace if prod mode
+    const errorDescriptions = {
+      '400': 'The request cannot be fulfilled',
+      '401': 'You do not have permission to view this',
+      '403': 'You are forbidden to view this',
+      '404': 'The requested page could not be found',
+      '500': 'Something has gone wrong processing the request'
+    }
 
     reply
-      .code(err.code)
-      .view('error', err)
+      .code(err.status)
+      .view('error', {
+        status: err.status,
+        message: err.message,
+        description: err.description ?? errorDescriptions[err.status] ?? 'An unknown error has occurred',
+        stack: err.stack
+      })
   })
 
   // Move on to other handlers
