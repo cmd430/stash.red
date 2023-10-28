@@ -13,7 +13,7 @@
       <h1>{{status}}</h1>
       <h2>{{message}}</h2>
       <p>{{description}}</p>
-      {{#if_eq_or @env 'dev' @user.isAdmin this}} {{! Only show if in dev mode }}
+      {{#if_eq_or @env 'dev' @session.isAdmin this}}
         <pre>{{#if stack}}{{stack}}{{/if}}</pre>
       {{/if_eq_or}}
       <a id="goHome" href="/">Return to Homepage</a>
