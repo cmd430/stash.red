@@ -24,6 +24,11 @@ handlebars.registerHelper('if_contains', (a, b, context, opts) => {
   if (a.includes(b)) return opts.fn(context)
   return opts.inverse(context)
 })
+handlebars.registerHelper('repeat', (n, context) => {
+  let accum = ''
+  for (let i = 0; i < n; ++i) accum += context.fn(i)
+  return accum
+})
 handlebars.registerHelper('split', (data, split, index) => data.split(split)[index])
 handlebars.registerHelper('ext', data => extname(data).slice(1))
 handlebars.registerHelper('json', data => JSON.stringify(data, null, 2))
