@@ -4,9 +4,19 @@
     {{> head}}
     <link rel="stylesheet" href="/css/error.css">
   </head>
-  <body>
-    <h1>{{message}}</h1>
-    <h2>{{status}}</h2>
-    <pre>{{#if stack}}{{stack}}{{/if}}</pre>
+  <body class="light">
+    <header>
+      {{> logo}}
+      <h1></h1>
+    </header>
+    <div id="container">
+      <h1>{{status}}</h1>
+      <h2>{{message}}</h2>
+      <p>{{description}}</p>
+      {{#if_eq_or @env 'dev' @user.isAdmin this}} {{! Only show if in dev mode }}
+        <pre>{{#if stack}}{{stack}}{{/if}}</pre>
+      {{/if_eq_or}}
+      <a id="goHome" href="/">Return to Homepage</a>
+    </div>
   </body>
 </html>
