@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS "accounts" (
   "username" TEXT NOT NULL,
   "email" TEXT NOT NULL UNIQUE,
   "password" TEXT NOT NULL,
+  "isAdmin" INTEGER DEFAULT 0,
   UNIQUE (username COLLATE NOCASE),
   PRIMARY KEY("id" AUTOINCREMENT)
 );

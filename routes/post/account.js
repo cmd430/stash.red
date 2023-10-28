@@ -29,7 +29,8 @@ export default function (fastify, opts, done) {
       req.session.set('authenticated', true)
       req.session.set('user', {
         id: _id,
-        username: username
+        username: username,
+        isAdmin: false
       })
 
       return reply.redirect('/')
@@ -47,8 +48,8 @@ export default function (fastify, opts, done) {
     if (!username || !password) return createError(400, 'All Fields Required')
 
     try {
-      const { _id, password: passwordHash } = fastify.betterSqlite3
-        .prepare('SELECT _id, password FROM accounts WHERE username = ?')
+      const { _id, password: passwordHash, isAdmin } = fastify.betterSqlite3
+        .prepare('SELECT _id, password, isAdmin FROM accounts WHERE username = ?')
         .get(username)
 
       const hasValidCredentials = await compare(password, passwordHash)
@@ -58,7 +59,8 @@ export default function (fastify, opts, done) {
       req.session.set('authenticated', true)
       req.session.set('user', {
         id: _id,
-        username: username
+        username: username,
+        isAdmin: Boolean(isAdmin)
       })
 
       return reply.redirect('/')
