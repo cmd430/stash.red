@@ -7,16 +7,13 @@
   <body class="light">
     <header>
       {{> logo}}
-      <h1> <!-- Temp until fixed below -->
-      {{!--
-      <h1 {{#if_eq signedin.username album.uploaded_by this}}class="editable"{{/if_eq}}></h1>
-        {{#if_eq_or @signedin.username album.uploaded_by @signedin.admin this}}
+      <h1 {{#if_eq @session.username album.uploaded_by this}}class="editable"{{/if_eq}}>
+        {{#if_eq @session.username album.uploaded_by this}}
           <a class="album__delete" title="Delete this Album" data-id="/a/{{album.id}}" data-username="{{album.uploaded_by}}">
             <i class="icon-trash"></i>
           </a>
           <input type="text" class="album__title_input" placeholder="Untitled Album" value="{{album.title}}" data-title="{{album.title}}" maxlength="100" />
-        {{/if_eq_or}}
-        --}}
+        {{/if_eq}}
         <a class="album__download" title="Download this Album" href="./download">
           <i class="icon-download"></i>
         </a>

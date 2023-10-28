@@ -2,13 +2,11 @@
   <a class="image" href="{{path}}">
     <img src="{{path}}" />
   </a>
-  {{!--
-  {{#if_eq_or @signedin.username this.uploaded_by @signedin.admin this}}
+  {{#if_eq @session.username uploaded_by this}}
     <div class="actions">
-      <a class="action__delete" title="Delete this Image" data-id="/f/{{file_id}}" data-username="{{this.uploaded_by}}">
+      <a class="action__delete" title="Delete this Image" data-id="/f/{{id}}" data-username="{{uploaded_by}}">
         <i class="icon-trash"></i>
       </a>
     </div>
-  {{/if_eq_or}}
-  --}}
+  {{/if_eq}}
 </span>

@@ -3,13 +3,11 @@
     <code></code>
   </pre>
   <div class="actions">
-    {{!--
-    {{#if_eq_or @signedin.username this.uploaded_by @signedin.admin this}}
-      <a class="action__delete" title="Delete this Text" data-id="/f/{{file_id}}" data-username="{{this.uploaded_by}}">
+    {{#if_eq @session.username uploaded_by this}}
+      <a class="action__delete" title="Delete this Text" data-id="/f/{{id}}" data-username="{{uploaded_by}}">
         <i class="icon-trash"></i>
       </a>
-    {{/if_eq_or}}
-    --}}
+    {{/if_eq}}
     <a class="action__raw" title="View Raw" href="{{path}}">
       <i class="icon-link-ext"></i>
     </a>

@@ -30,7 +30,7 @@
             <a class="control__breakout" title="View on seperate page" href="{{path}}">
               <i class="icon-link-ext"></i>
             </a>
-            <a class="control__download" title="Download this File" href="/download">
+            <a class="control__download" title="Download this File" href="./download">
               <i class="icon-download"></i>
             </a>
           </span>
@@ -40,13 +40,11 @@
       </li>
     </ul>
   </div>
-  {{!--
-  {{#if_eq_or @signedin.username this.uploaded_by @signedin.admin this}}
+  {{#if_eq @session.username uploaded_by this}}
     <div class="actions">
-      <a class="action__delete" title="Delete this Audio File" data-id="/f/{{file_id}}" data-username="{{this.uploaded_by}}">
+      <a class="action__delete" title="Delete this Audio File" data-id="/f/{{id}}" data-username="{{uploaded_by}}">
         <i class="icon-trash"></i>
       </a>
     </div>
-  {{/if_eq_or}}
-  --}}
+  {{/if_eq}}
 </span>
