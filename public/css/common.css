@@ -4,9 +4,15 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: "Open Sans";
+  src: url("/font/OpenSans-VariableFont_wdth,wght.ttf") format("truetype supports variations"), url("/font/OpenSans-VariableFont_wdth,wght.ttf") format("truetype-variations");
+  font-weight: 100 1000;
+}
 body {
   overflow: hidden overlay;
-  font-family: "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", "Helvetica Neue", Tahoma, Verdana, Helvetica, Arial, sans-serif;
+  /* font-family: 'Segoe UI', 'Open Sans', 'Helvetica Neue', Tahoma, Verdana, Helvetica, Arial,  sans-serif; */
 }
 
 .hidden {
@@ -29,7 +35,7 @@ body {
   text-transform: uppercase;
   font-variant: small-caps;
   text-decoration: none;
-  line-height: 75px;
+  line-height: 85px;
   justify-self: start;
   user-select: none;
   outline: none;
@@ -45,7 +51,6 @@ header {
   grid-template-columns: 220px auto;
   max-width: 960px;
   margin: 0 auto;
-  padding: 0 8px;
 }
 header #logo {
   text-align: left;
@@ -107,6 +112,9 @@ header:hover h1 .album__delete {
 
 .wrapper {
   position: relative;
+  margin: 0 auto;
+}
+.wrapper:not(:last-child) {
   margin: 0 auto 10px;
 }
 .wrapper.fullwidth {
@@ -378,9 +386,15 @@ header:hover h1 .album__delete {
   content: "\f1f8";
 }
 
+.image {
+  height: fit-content;
+  width: fit-content;
+  display: block;
+  line-height: 0;
+}
 .image img {
   max-width: 100%;
-  max-height: 550px;
+  max-height: calc(100vh - 120px);
   border: 1px solid;
 }
 
