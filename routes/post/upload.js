@@ -19,7 +19,7 @@ export default function (fastify, opts, done) {
     let ttl = null
     let isPrivate = null
 
-    const username = req.session.get('user').username
+    const { username } = req.session.get('session')
 
     for await (const file of files) {
       if (file.file.bytesRead === 0) return createError(400) // no files uploaded

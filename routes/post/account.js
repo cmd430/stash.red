@@ -27,7 +27,7 @@ export default function (fastify, opts, done) {
       await createAzureContainer(username)
 
       req.session.set('authenticated', true)
-      req.session.set('user', {
+      req.session.set('session', {
         id: _id,
         username: username,
         isAdmin: false
@@ -57,7 +57,7 @@ export default function (fastify, opts, done) {
       if (hasValidCredentials === false) return createError(401, 'Invalid username or password')
 
       req.session.set('authenticated', true)
-      req.session.set('user', {
+      req.session.set('session', {
         id: _id,
         username: username,
         isAdmin: Boolean(isAdmin)

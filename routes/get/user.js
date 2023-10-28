@@ -47,7 +47,7 @@ export default function (fastify, opts, done) {
   fastify.get('/u/:username', { preHandler }, async (req, reply) => {
     const { page, limit, offset, order, filter, params } = req.view
     const { username } = req.params
-    const showPrivate = req.session.get('authenticated') && req.session.get('user').username === username
+    const showPrivate = req.session.get('authenticated') && req.session.get('session').username === username
 
     const user = fastify.betterSqlite3
       .prepare('SELECT email FROM accounts WHERE username = ?')
@@ -94,7 +94,7 @@ export default function (fastify, opts, done) {
   fastify.get('/u/:username/albums', { preHandler }, async (req, reply) => {
     const { page, limit, offset, order, params } = req.view
     const { username } = req.params
-    const showPrivate = req.session.get('authenticated') && req.session.get('user').username === username
+    const showPrivate = req.session.get('authenticated') && req.session.get('session').username === username
 
     const user = fastify.betterSqlite3
       .prepare('SELECT email FROM accounts WHERE username = ?')
