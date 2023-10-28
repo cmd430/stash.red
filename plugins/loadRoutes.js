@@ -22,8 +22,8 @@ export default async function loadRoutes (fastify, opts, done) {
 
     const errorDescriptions = {
       '400': 'The request cannot be fulfilled',
-      '401': 'You do not have permission to view this',
-      '403': 'You are forbidden to view this',
+      '401': 'You do not have permission for this',
+      '403': 'You are forbidden to from this',
       '404': 'The requested page could not be found',
       '500': 'Something has gone wrong processing the request'
     }
