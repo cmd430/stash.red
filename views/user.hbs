@@ -40,6 +40,9 @@
       {{#each uploads}}
         {{> preview this}}
       {{/each}}
+      {{#repeat 5}}
+        <div class="spacer"></div>
+      {{/repeat}}
       {{> paginator}}
     </div>
     {{> modals}}
