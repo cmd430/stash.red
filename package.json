@@ -35,6 +35,6 @@
     "sass": "^1.69.5"
   },
   "scripts": {
-    "Compile SCSS": "npx sass public/css/scss:public/css"
+    "Compile SCSS": "npx sass public/scss:public/css"
   }
 }
