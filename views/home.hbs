@@ -6,7 +6,7 @@
     <script src="/js/home.js"></script>
   </head>
   <body class="light">
-    {{! TEMP }}
+    {{#if false}}
     <form action="/upload" method="post" enctype="multipart/form-data">
       <label for="ttl">
         TTL:
@@ -21,8 +21,7 @@
       <hr />
       <input type="submit" value="Upload">
     </form>
-    {{! END TEMP }}
-    {{!--
+    {{else}}
     <div id="content">
       {{> logo}}
       {{> dropzone}}
@@ -96,6 +95,6 @@
         </svg>
       </a>
     </div>
-    --}}
+    {{/if}}
   </body>
 </html>
