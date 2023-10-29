@@ -24,9 +24,11 @@
   [ ] upload is private
   [ ] upload dont form album
   [ ] sign up capture (maybe login capture?)
-  [ ] Front end JS to make it all work
-
-
+  [-] Front end JS and CSS to make it all work
+    -> Im going to use modules for JS for reused stuff and have .js files for each component
+    -> Likewise im going to have individual css for each component (compiled from scss)
+      -> using css will eliminate the need to do @imports and allow me to have sizes, colors etc imported at compile time
+    -> For example on how to load the styles/javascript take a look at dropzone.hbs
 
 -= References =-
   -> https://fastify.dev/docs
