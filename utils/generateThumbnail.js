@@ -17,11 +17,21 @@ const defaultThumbnailPaths = {
   'text': resolve('./public/img/thumbnails/text.webp')
 }
 
+function ffmpegEscapeString (str) {
+  // escape ffmpeg special chars
+  str = str.replace(/\\/g, '\\\\\\\\')
+  str = str.replace(/'/g, '\'\'')
+  str = str.replace(/%/g, '\\\\\\%')
+  str = str.replace(/:/g, '\\\\\\:')
+
+  return str
+}
+
 async function ffmpeg (inputBuffer, type) {
   const args = {
     'video': [ '-r', '1', '-i', 'pipe:0', '-f', 'image2', '-vframes', '1', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
     'audio': [ '-i', 'pipe:0', '-f', 'image2', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
-    'text': [ '-f', 'lavfi', '-i', 'color=c=white:s=250x250:d=5.396', '-filter_complex', `drawtext=text='${inputBuffer.toString()}':x=5:y=5:fontsize=16:fontcolor=000000:fontfile='${thumbnailFontPath}'`, '-vframes', '1', '-f', 'image2','-c:v', 'mjpeg', 'pipe:1' ]
+    'text': [ '-f', 'lavfi', '-i', 'color=c=white:s=250x250:d=5.396', '-filter_complex', `drawtext=text='${ffmpegEscapeString(inputBuffer.toString())}':x=5:y=5:fontsize=16:fontcolor=000000:fontfile='${thumbnailFontPath}'`, '-vframes', '1', '-f', 'image2','-c:v', 'mjpeg', 'pipe:1' ]
   }
 
   let imageBuffer = null
@@ -44,7 +54,7 @@ async function ffmpeg (inputBuffer, type) {
         ffmpegProc.kill()
       })
 
-      Readable.from(inputBuffer).pipe(ffmpegProc.stdin)
+      if (type !== 'text') Readable.from(inputBuffer).pipe(ffmpegProc.stdin)
 
       // Get output as Buffer
       const buffers = []
@@ -92,23 +102,27 @@ export default async function generateThumbnail (mimetype, fileBuffer) {
 
   if (imageBuffer instanceof Buffer === false || imageBuffer.byteLength === 0) return getDefaultThumbnail(type)
 
-  // Resize and crop Thumbnails
-  return sharp(imageBuffer)
-    .resize({
-      width: 250,
-      height: 250,
-      fit: 'cover',
-      position: 'entropy',
-      background: {
-        r: 0,
-        g: 0,
-        b: 0,
-        alpha: 0
-      },
-      kernel: 'lanczos3',
-      withoutEnlargement: true,
-      fastShrinkOnLoad: true
-    })
-    .webp({ quality: 50 })
-    .toBuffer()
+  try {
+    // Resize and crop Thumbnails
+    return sharp(imageBuffer)
+      .resize({
+        width: 250,
+        height: 250,
+        fit: 'cover',
+        position: 'entropy',
+        background: {
+          r: 0,
+          g: 0,
+          b: 0,
+          alpha: 0
+        },
+        kernel: 'lanczos3',
+        withoutEnlargement: true,
+        fastShrinkOnLoad: true
+      })
+      .webp({ quality: 50 })
+      .toBuffer()
+  } catch (err) {
+    return getDefaultThumbnail(type)
+  }
 }
