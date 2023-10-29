@@ -120,7 +120,9 @@ export default async function generateThumbnail (mimetype, fileBuffer) {
         withoutEnlargement: true,
         fastShrinkOnLoad: true
       })
-      .webp({ quality: 50 })
+      .webp({
+        quality: 80
+      })
       .toBuffer()
   } catch (err) {
     return getDefaultThumbnail(type)
