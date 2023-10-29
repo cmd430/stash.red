@@ -67,7 +67,11 @@ export default function (fastify, opts, done) {
     // Run SQL
     const files = (showPrivate ? getFilesIncludePrivate : getFilesExcludePrivate)
       .all(username, limit, offset)
-      .map(f => f.type === mimetypeFilter(f.type))
+      .map(file => ({
+        ...file,
+        type: mimetypeFilter(file.type)
+      }))
+
     const { total } = files[0] ?? 0
 
     // Return Page
