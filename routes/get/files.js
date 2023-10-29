@@ -1,7 +1,7 @@
 import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
-import mimetypeFilter from '../../utils/mimetypeFilter.js'
+import { mimetypeFilter } from '../../utils/mimetype.js'
 import { getAzureBlobBuffer, deleteAzureBlobWithThumbnail } from '../../utils/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
