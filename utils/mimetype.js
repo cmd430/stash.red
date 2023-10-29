@@ -5,8 +5,19 @@ import { Log } from 'cmd430-utils'
 const { log, debug, info, warn, error } = new Log('Mimetype')
 const magic = await WASMagic.create()
 
+export function mimetypeFilter (mimetype) {
+  // Fix some mimetypes
+  const mimetypeMap = {
+    'video/x-matroska': 'video/webm',
+    'application/javascript': 'text/javascript'
+  }
+
+  return mimetypeMap[mimetype] ?? mimetype
+}
+
+
 export function isValidMimetype (mimetype) {
-  const type = mimetype.split('/')[0]
+  const type = mimetypeFilter(mimetype).split('/')[0]
   const allowedTypes = [
     'image',
     'video',
@@ -24,16 +35,7 @@ export function getMimetype (fileBuffer) {
 
     return magic.getMime(firstKB)
   } catch (err) {
-    error(err)
+    error(err.stack)
     return 'invalid/mimetype'
   }
-}
-
-export function mimetypeFilter (mimetype) {
-  // Fix some mimetypes downloading, might be a better way to handle
-  const mimetypeMap = {
-    'video/x-matroska': 'video/webm'
-  }
-
-  return mimetypeMap[mimetype] ?? mimetype
 }
