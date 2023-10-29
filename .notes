@@ -30,6 +30,10 @@
       -> using css will eliminate the need to do @imports and allow me to have sizes, colors etc imported at compile time
     -> For example on how to load the styles/javascript take a look at dropzone.hbs
 
+  I think i might make the audio/video players use the default browser controls, and then for the audioplayer have the info above it,
+  this solves issue with mobile support and also save a lot of JS work, i personally think the browser default controls are pretty decent
+  (this wasnt the case when i originally made stash)
+
 -= References =-
   -> https://fastify.dev/docs
   -> https://github.com/WiseLibs/better-sqlite3/blob/HEAD/docs/api.md
