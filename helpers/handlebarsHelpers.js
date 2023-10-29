@@ -17,6 +17,13 @@ handlebars.registerHelper('if_eq_or', (a, b, c, context, opts) => {
   if (a === b || c === true) return opts.fn(context)
   return opts.inverse(context)
 })
+handlebars.registerHelper('if_either_eq', (a, b, c, context, opts) => {
+  if (context instanceof Function) opts = context
+  // eslint-disable-next-line consistent-this, no-invalid-this
+  if (!(context instanceof Object)) context = this
+  if (a === c || b === c) return opts.fn(context)
+  return opts.inverse(context)
+})
 handlebars.registerHelper('if_contains', (a, b, context, opts) => {
   if (context instanceof Function) opts = context
   // eslint-disable-next-line consistent-this, no-invalid-this

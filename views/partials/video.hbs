@@ -33,11 +33,11 @@
       </span>
     </div>
   </div>
-  {{#if_eq @session.username uploaded_by this}}
+  {{#if_either_eq uploaded_by @root.album.uploaded_by @session.username this}}
     <div class="actions">
       <a class="action__delete" title="Delete this Video" data-id="/f/{{id}}" data-username="{{uploaded_by}}">
         <i class="icon-trash"></i>
       </a>
     </div>
-  {{/if_eq}}
+  {{/if_either_eq}}
 </span>
