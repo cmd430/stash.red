@@ -1,0 +1,20 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "eslint",
+      "runOptions": {
+        "runOn": "folderOpen",
+        "reevaluateOnRerun": true,
+        "instanceLimit": 1
+      },
+      "presentation": {
+        "reveal": "never"
+      },
+      "problemMatcher": [
+        "$eslint-stylish"
+      ],
+      "label": "eslint: lint whole folder"
+    }
+  ]
+}
