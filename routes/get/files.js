@@ -40,7 +40,8 @@ export default function (fastify, opts, done) {
 
     if (!dbResult) return createError(404)
 
-    const { file, type } = dbResult
+    const { file, type: unsafeType } = dbResult
+    const type = mimetypeFilter(unsafeType)
     const description = t => {
       t = t.split('/')[0]
 
@@ -60,7 +61,8 @@ export default function (fastify, opts, done) {
       file: {
         id: id,
         path: directPath,
-        ...dbResult
+        ...dbResult,
+        type: type
       },
       openGraph: {
         title: id,

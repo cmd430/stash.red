@@ -2,6 +2,7 @@ import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
 import { getAzureBlobBuffer } from '../../utils/azureBlobStorage.js'
+import { mimetypeFilter } from '../../utils/mimetype.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Albums (GET)')
@@ -24,10 +25,12 @@ export default function (fastify, opts, done) {
       .all(id)
 
     const { title, uploaded_by } = album
-    const files = albumFiles.map(file => ({
-      path: `/f/${file.id}${extname(file.file)}`,
-      ...file
-    }))
+    const files = albumFiles
+      .map(file => ({
+        path: `/f/${file.id}${extname(file.file)}`,
+        ...file,
+        type: mimetypeFilter(file.type)
+      }))
 
     return reply.view('album', {
       album: {

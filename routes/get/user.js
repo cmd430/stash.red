@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import { Log } from 'cmd430-utils'
 import createError from 'http-errors'
 import { config } from '../../config/config.js'
+import { mimetypeFilter } from '../../utils/mimetype.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Home')
@@ -64,7 +65,9 @@ export default function (fastify, opts, done) {
       .prepare(`SELECT id, type, isPrivate, total FROM userFiles WHERE uploaded_by = ? AND NOT isPrivate = 1 AND type LIKE '${filter}%' ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
 
     // Run SQL
-    const files = (showPrivate ? getFilesIncludePrivate : getFilesExcludePrivate).all(username, limit, offset)
+    const files = (showPrivate ? getFilesIncludePrivate : getFilesExcludePrivate)
+      .all(username, limit, offset)
+      .map(f => f.type === mimetypeFilter(f.type))
     const { total } = files[0] ?? 0
 
     // Return Page
