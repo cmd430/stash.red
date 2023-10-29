@@ -28,5 +28,7 @@
       <button class="cancel">Cancel</button>
     </span>
   </div>
-  {{> dropzone}}
+  {{#if album}}
+    {{> dropzone}}
+  {{/if}}
 </span>
