@@ -17,7 +17,7 @@ export default async function loadRoutes (fastify, opts, done) {
     if (!err.status) {
       err.status = 500
       err.message = 'Internal Server Error'
-      error(err)
+      error(err.stack)
     }
 
     const errorDescriptions = {

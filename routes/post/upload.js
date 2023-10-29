@@ -87,7 +87,7 @@ export default function (fastify, opts, done) {
 
       return reply.redirect(`/f/${fileIDs[0]}`)
     } catch (err) {
-      error(err)
+      error(err.stack)
       return createError(500)
     }
   })
