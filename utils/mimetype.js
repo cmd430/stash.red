@@ -5,27 +5,27 @@ import { Log } from 'cmd430-utils'
 const { log, debug, info, warn, error } = new Log('Mimetype')
 const magic = await WASMagic.create()
 
-export function isValidMimetype (mimeFromBrowser, fileBuffer) {
+export function isValidMimetype (mimetype) {
+  const type = mimetype.split('/')[0]
+  const allowedTypes = [
+    'image',
+    'video',
+    'audio',
+    'text'
+  ]
+
+  return allowedTypes.includes(type)
+}
+
+export function getMimetype (fileBuffer) {
   try {
-    const typeFromBrowser = mimeFromBrowser.split('/')[0]
-    const allowedTypes = [
-      'image',
-      'video',
-      'audio',
-      'text'
-    ]
+    // Only looking at the first KB
+    const firstKB = fileBuffer.subarray(0, 1024)
 
-    if (allowedTypes.includes(typeFromBrowser) === false) return false
-
-    const firstKB = fileBuffer.subarray(0, 1024) // We can speed up processing by only looking at the first KB
-    const mimeFromMagic = magic.getMime(firstKB)
-    const typeFromMagic = mimeFromMagic.split('/')[0]
-
-    return allowedTypes.includes(typeFromMagic)
+    return magic.getMime(firstKB)
   } catch (err) {
     error(err)
-
-    return false
+    return 'invalid/mimetype'
   }
 }
 
