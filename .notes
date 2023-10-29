@@ -1,5 +1,4 @@
 -= TODO =-
-
   Impliment album downloading with https://www.npmjs.com/package/archiver
     -> example https://medium.com/@abhinavk9757/how-to-zip-multiple-streaming-files-in-nodejs-679a6e9d625f
     -> example (s3 but same idea) https://github.com/andychukse/s3downloadzip/blob/master/index.js
@@ -13,6 +12,21 @@
   Make homepage tell you you need to login before you can upload
   Go over all the styles to make them less shit
   Readme
+
+-= Things needed for Feature parity with stash =-
+  [ ] Album downloading
+  [ ] File downloading
+  [ ] Album file uploading
+  [ ] Album title renaming
+  [ ] File deleting
+  [ ] Album deleting
+  [ ] upload TTL
+  [ ] upload is private
+  [ ] upload dont form album
+  [ ] sign up capture (maybe login capture?)
+  [ ] Front end JS to make it all work
+
+
 
 -= References =-
   -> https://fastify.dev/docs
