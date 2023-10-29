@@ -5,6 +5,7 @@ import { Readable } from 'node:stream'
 import ffmpegBin from 'ffmpeg-static'
 import { Log } from 'cmd430-utils'
 import sharp from 'sharp'
+import { mimetypeFilter } from './mimetype.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Thumbnail Generator')
@@ -78,7 +79,7 @@ async function getDefaultThumbnail (type) {
 }
 
 export default async function generateThumbnail (mimetype, fileBuffer) {
-  const type = mimetype.split('/')[0]
+  const type = mimetypeFilter(mimetype).split('/')[0]
 
   let imageBuffer
 
