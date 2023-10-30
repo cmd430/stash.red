@@ -1,10 +1,10 @@
 <div id="dropzone">
-  <span id="dropstate">Click here or Dropfiles</span> {{! TODO: Check if we are in an album and if so remove the "Click here" text }}
+  <span id="label">Click here or Dropfiles</span> {{! TODO: Check if we are in an album and if so remove the "Click here" text }}
   <span id="progress" class="hidden invisible">
     <span id="fill"></span>
     <span id="text">Uploading: 0%</span>
   </span>
   <input id="files" class="hidden" name="files" type="file" accept="image/*,.webp,video/*,.mkv,audio/*,text/plain" multiple />
 </div>
-<script type="module" src="/js/dropzone.js" defer></script>
-<link href="/css/dropzone.css" rel="stylesheet" />
+<script type="module" src="/js/dropzone/dropzone.js" defer></script>
+<link href="/css/dropzone/dropzone.css" rel="stylesheet" />
