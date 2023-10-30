@@ -1,6 +1,7 @@
+import { extname } from 'node:path'
 import { customAlphabet } from 'nanoid'
 import { Log } from 'cmd430-utils'
-import createError from 'http-errors'
+// import createError from 'http-errors'
 import { createAzureBlob, setAzureBlob } from '../../utils/azureBlobStorage.js'
 import generateThumbnail from '../../utils/generateThumbnail.js'
 import { getMimetype, isValidMimetype } from '../../utils/mimetype.js'
@@ -14,13 +15,21 @@ export default function (fastify, opts, done) {
   // Upload a file
   fastify.post('/upload', async (req, reply) => {
     try {
-      if (!req.session.get('authenticated')) return createError(401)
+      if (!req.session.get('authenticated')) {
+        return {
+          status: 401,
+          message: 'You must be logged in to upload files'
+        }
+        //return createError(401)
+      }
 
       const files = req.files()
       const fileIDs = []
+      const fileExts = []
 
-      let ttl = null
+      let timeToLive = null
       let isPrivate = null
+      let dontFormAlbum = null
 
       const { username } = req.session.get('session')
 
@@ -43,29 +52,41 @@ export default function (fastify, opts, done) {
         const { fileBlobName, azureBlobClients } = createAzureBlob(username, file.filename)
         const fileID = nanoid(8)
 
-        if (ttl === null) ttl = parseInt(file.fields?.ttl?.value ?? 0) > 0 ? parseInt(file.fields.ttl.value) : null
-        if (isPrivate === null) isPrivate = Number(false) // TODO: get isPrivate from upload payload
-
+        if (timeToLive === null) timeToLive = Number(file.fields.timeToLive.value) || null
+        if (isPrivate === null) isPrivate = Number(file.fields.isPrivate.value) ?? 0
+        if (dontFormAlbum === null) dontFormAlbum = Number(file.fields.dontFormAlbum.value) ?? 0
 
         fastify.betterSqlite3
           .prepare('INSERT INTO files (id, name, file, type, uploaded_at, uploaded_by, ttl, isPrivate) VALUES (?, ?, ?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?, ?, ?)')
-          .run(fileID, file.filename, fileBlobName, mimetype, username, ttl, isPrivate)
+          .run(fileID, file.filename, fileBlobName, mimetype, username, timeToLive, isPrivate)
 
         await setAzureBlob(fileBuffer, thumbnailBuffer, azureBlobClients)
 
         // Make sure we can access the file ids after the upload
         fileIDs.push(fileID)
+        fileExts.push(extname(file.filename))
       }
 
       if (fileIDs.length === 0) { // no files uploaded
         debug('No files found in payload')
-        return createError(400)
+
+        return {
+          status: 400,
+          message: 'No files found in payload'
+        }
+        //return createError(400)
       }
 
       debug({ fileIDs })
 
+      // If muliple files but `dontFormAlbum` is true then we dont form the album and send the user to their user page
+      if (dontFormAlbum && fileIDs.length > 1) return {
+        status: 201,
+        path: `/u/${username}`
+      }
+      // if (dontFormAlbum) return reply.redirect(`/u/${username}`)
+
       // Generate Album if muliple files
-      // TODO: allow skipping this step if the upload flag is set to not generate albums
       if (fileIDs.length > 1) {
         const albumID = nanoid(8)
 
@@ -78,17 +99,32 @@ export default function (fastify, opts, done) {
 
         fastify.betterSqlite3
           .prepare('INSERT INTO albums (id, title, uploaded_at, uploaded_by, ttl, isPrivate) VALUES (?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?, ?, ?)')
-          .run(albumID, albumID, username, ttl, isPrivate)
+          .run(albumID, albumID, username, timeToLive, isPrivate)
 
         debug('Added', updated, 'files to album')
 
-        return reply.redirect(`/a/${albumID}`)
+        return {
+          status: 201,
+          path: `/a/${albumID}`
+        }
+        // return reply.redirect(`/a/${albumID}`)
       }
 
-      return reply.redirect(`/f/${fileIDs[0]}`)
+      // Single File
+      return {
+        status: 201,
+        path: `/f/${fileIDs[0]}`,
+        direct: `/f/${fileIDs[0]}${fileExts[0]}`
+      }
+      //return reply.redirect(`/f/${fileIDs[0]}`)
     } catch (err) {
       error(err.stack)
-      return createError(500)
+
+      return {
+        status: 500,
+        message: 'Something went wrong'
+      }
+      //return createError(500)
     }
   })
 
