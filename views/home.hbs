@@ -6,22 +6,6 @@
     <script src="/js/home.js"></script>
   </head>
   <body class="light">
-    {{#if false}}
-    <form action="/upload" method="post" enctype="multipart/form-data">
-      <label for="ttl">
-        TTL:
-        <input type="number" id="ttl" name="ttl" value="0" />
-        (Time in Seconds, 0 = Forever)
-      </label>
-      <br />
-      <label for="files">
-        Files:
-        <input type="file" id="files" name="file" multiple />
-      </label>
-      <hr />
-      <input type="submit" value="Upload">
-    </form>
-    {{else}}
     <div id="content">
       {{> logo}}
       {{> dropzone}}
@@ -47,7 +31,7 @@
         <div class="setting">
           <span>Copy Link to Clipboard</span>
           <label class="switch">
-            <input id="cltcb" type="checkbox" />
+            <input id="copyLinkToClipboard" type="checkbox" />
             <div class="slider">
             </div>
           </label>
@@ -55,7 +39,7 @@
         <div class="setting">
           <span>Copy Direct Links</span>
           <label class="switch">
-            <input id="dlfi" type="checkbox" />
+            <input id="copyDirectFileLinks" type="checkbox" />
             <div class="slider">
             </div>
           </label>
@@ -63,7 +47,7 @@
         <div class="setting">
           <span>Private Upload</span>
           <label class="switch">
-            <input id="pu" type="checkbox" />
+            <input id="isPrivate" type="checkbox" />
             <div class="slider">
             </div>
           </label>
@@ -71,19 +55,19 @@
         <div class="setting">
           <span>Don't form Album</span>
           <label class="switch">
-            <input id="su" type="checkbox" />
+            <input id="dontFormAlbum" type="checkbox" />
             <div class="slider">
             </div>
           </label>
         </div>
         <div class="setting">
           <span>Keep for</span>
-          <select id="tu">
-            <option value="" selected>Permanently</option>
-            <option value="10">10 Minutes</option>
-            <option value="60">1 Hour</option>
-            <option value="1440">1 Day</option>
-            <option value="10080">1 Week</option>
+          <select id="timeToLive">
+            <option value="0" selected>Permanently</option>
+            <option value="600000">10 Minutes</option>
+            <option value="3600000">1 Hour</option>
+            <option value="86400000">1 Day</option>
+            <option value="604800000">1 Week</option>
           </select>
         </div>
       </div>
@@ -95,6 +79,5 @@
         </svg>
       </a>
     </div>
-    {{/if}}
   </body>
 </html>
