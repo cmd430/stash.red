@@ -112,7 +112,7 @@ header h1 .album__title_input {
   background-color: rgb(255, 255, 255);
   border-color: rgb(218, 223, 227);
 }
-#dropzone #dropstate,
+#dropzone #label,
 #dropzone #text {
   color: rgb(157, 162, 165);
 }
@@ -122,10 +122,10 @@ header h1 .album__title_input {
 #dropzone #progress #fill {
   background-color: rgb(56, 136, 234);
 }
-#dropzone #progress.proc #fill {
+#dropzone #progress.processing #fill {
   background-color: rgb(136, 234, 56);
 }
-#dropzone #progress.warn #fill {
+#dropzone #progress.warning #fill {
   background-color: rgb(234, 234, 56);
 }
 #dropzone #progress.error #fill {

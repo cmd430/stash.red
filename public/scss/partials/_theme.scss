@@ -103,7 +103,7 @@ header {
 #dropzone {
   background-color: $color-white;
   border-color: $color-contentborder;
-  #dropstate,
+  #label,
   #text {
     color: $color-progresstext;
   }
@@ -112,14 +112,14 @@ header {
     #fill {
       background-color: $color-progressfill;
     }
-    &.proc {
+    &.processing {
       #fill {
-        background-color: $color-progressfillprocess;
+        background-color: $color-progressfillprocessing;
       }
     }
-    &.warn {
+    &.warning {
       #fill {
-        background-color: $color-progressfillwarn;
+        background-color: $color-progressfillwarning;
       }
     }
     &.error {
