@@ -68,11 +68,11 @@ export default function (fastify, opts, done) {
       }
 
       if (fileIDs.length === 0) { // no files uploaded
-        debug('No files found in payload')
+        debug('No valid files found in payload')
 
         return {
           status: 400,
-          message: 'No files found in payload'
+          message: 'No valid files found in payload'
         }
         //return createError(400)
       }
