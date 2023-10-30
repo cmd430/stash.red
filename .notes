@@ -20,9 +20,13 @@
   [ ] Album title renaming
   [ ] File deleting
   [ ] Album deleting
-  [ ] upload TTL
-  [ ] upload is private
-  [ ] upload dont form album
+  [√] upload TTL
+  [√] upload is private
+  [√] upload dont form album
+  [√] upload text or file from paste
+  [√] upload file(s) on drop
+  [√] upload file(s) from picker
+  [ ] upload, paste URL and fetch content
   [ ] sign up capture (maybe login capture?)
   [-] Front end JS and CSS to make it all work
     -> Im going to use modules for JS for reused stuff and have .js files for each component
@@ -33,6 +37,10 @@
   I think i might make the audio/video players use the default browser controls, and then for the audioplayer have the info above it,
   this solves issue with mobile support and also save a lot of JS work, i personally think the browser default controls are pretty decent
   (this wasnt the case when i originally made stash)
+
+-= Things I want to add =-
+  [ ] Dark mode
+
 
 -= References =-
   -> https://fastify.dev/docs
