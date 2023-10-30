@@ -1,13 +1,12 @@
 import { setProgress, setProgressText, setProgressError, prepareProgress } from './progress.js'
 
+// Dropzone
 const dropzone = document.querySelector('#dropzone')
 const dropzoneLabel = dropzone.querySelector('#label')
 const fileInput = dropzone.querySelector('input[type="file"]')
-
 // Home page buttons
 const buttons = document.querySelector('#buttons')
 const settingsButton = buttons?.querySelector('#settingsBtn')
-
 // Home page settings container
 const settings = document.querySelector('#settings')
 // Home page upload settings
