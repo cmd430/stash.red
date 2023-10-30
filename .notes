@@ -59,3 +59,13 @@
     - `/a/:id` for albums
     - `/u/:username` for users
 
+-= Dark Theme Notes =-
+[css]
+body {
+  background-color: rgb(20, 20, 20);
+}
+#dropzone {
+  background-color: rgb(30, 30, 30);
+  border-color: rgb(60, 60, 60);
+}
+[/css]
