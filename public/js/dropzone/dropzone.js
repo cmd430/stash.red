@@ -19,8 +19,6 @@ const settingCopyDirectFileLinks = settings?.querySelector('#copyDirectFileLinks
 
 
 async function uploadComplete (response) {
-  console.debug(response)
-
   const { status } = response
 
   if (status === 200 || status === 201) { // Success
@@ -62,11 +60,9 @@ async function uploadFiles (files) {
       // TODO: allow sending the server a URL and then the server will attempt to fetch the resource
     } else {
       // Text Upload
-      files = [
-        new File([ files ], 'clipboard.txt', {
-          type: 'text/plain'
-        })
-      ]
+      files = new File([ files ], 'clipboard.txt', {
+        type: 'text/plain'
+      })
     }
   }
 
@@ -78,7 +74,7 @@ async function uploadFiles (files) {
   }
 
   // Files
-  for (const file of Array.from(files)) formData.append('files[]', file)
+  for (const file of Array.from([ ...(files[Symbol.iterator] ? files : [ files ]) ])) formData.append('files[]', file)
 
   setProgressText('Uploading: 0%')
 
