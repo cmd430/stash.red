@@ -25,10 +25,14 @@ async function uploadComplete (response) {
   const { status } = response
 
   if (status === 200 || status === 201) { // Success
-    if (!response.direct) location.assign(response.path)
+    if (!settingCopyLinkToClipboard) return location.assign(response.path)
 
     try {
-      await navigator.clipboard.writeText(`${origin}${response.direct}`)
+      if (settingCopyDirectFileLinks && response.direct) {
+        await navigator.clipboard.writeText(`${origin}${response.direct}`)
+      } else {
+        await navigator.clipboard.writeText(`${origin}${response.path}`)
+      }
     } finally {
       location.assign(response.path)
     }
