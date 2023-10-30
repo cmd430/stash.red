@@ -1,22 +1,17 @@
--= TODO =-
-  Impliment album downloading with https://www.npmjs.com/package/archiver
-    -> example https://medium.com/@abhinavk9757/how-to-zip-multiple-streaming-files-in-nodejs-679a6e9d625f
-    -> example (s3 but same idea) https://github.com/andychukse/s3downloadzip/blob/master/index.js
-  File downloading for Video and Audio
-  Upload files while viewing an owned album to add files to album
-  Album title renaming
-  Check Signups, Logins working
-  Add capture to signup (maybe login?)
-  Routes to Delete files/albums if you own them
-  Front end JS so the site works
-  Make homepage tell you you need to login before you can upload
-  Go over all the styles to make them less shit
-  Readme
+#KEY
+  [ ] TODO
+  [!] IN PROGRESS
+  [√] COMPLETE
+  [x] CANT/WONT DO
+
 
 -= Things needed for Feature parity with stash =-
   [ ] Album downloading
+      -> https://www.npmjs.com/package/archiver
+        -> example https://medium.com/@abhinavk9757/how-to-zip-multiple-streaming-files-in-nodejs-679a6e9d625f
+        -> example (s3 but same idea) https://github.com/andychukse/s3downloadzip/blob/master/index.js
   [ ] File downloading
-  [ ] Album file uploading
+  [ ] Album file uploading / add files to existing album
   [ ] Album title renaming
   [ ] File deleting
   [ ] Album deleting
@@ -28,27 +23,42 @@
   [√] upload file(s) from picker
   [ ] upload, paste URL and fetch content
   [ ] sign up capture (maybe login capture?)
-  [-] Front end JS and CSS to make it all work
-    -> Im going to use modules for JS for reused stuff and have .js files for each component
-    -> Likewise im going to have individual css for each component (compiled from scss)
-      -> using css will eliminate the need to do @imports and allow me to have sizes, colors etc imported at compile time
-    -> For example on how to load the styles/javascript take a look at dropzone.hbs
 
-  I think i might make the audio/video players use the default browser controls, and then for the audioplayer have the info above it,
-  this solves issue with mobile support and also save a lot of JS work, i personally think the browser default controls are pretty decent
-  (this wasnt the case when i originally made stash)
+-= Things I want to do =-
+  [ ] refactor upload.js to be a bit nicer,
+      [ ] use `req.parts()` to read feilds and files seperatly
+      [ ] make it so we can handle in album uploads without big hacks
+  [ ] Go over all the styles to make them less shit
+      [ ] Seperate styles into each component
+      [ ] refactor theme to use em units rather than px
+      [ ] all colors in themes (allow for light/dark)
+      [ ] have all shared items sizes referenced for easy styling (header height etc)
+  [!] scrap and redo client js
+      [!] redo uploading js for dropzone
+      [ ]
+  [ ] restyle video and audio players so i can use the default player controls
+  [ ] Make homepage tell you you need to login before you can upload
 
--= Things I want to add =-
+-= New things I want to add =-
   [ ] Dark mode
+      ->  [css]
+            body {
+              background-color: rgb(20, 20, 20);
+            }
+            #dropzone {
+              background-color: rgb(30, 30, 30);
+              border-color: rgb(60, 60, 60);
+            }
+          [/css]
 
-
--= References =-
-  -> https://fastify.dev/docs
-  -> https://github.com/WiseLibs/better-sqlite3/blob/HEAD/docs/api.md
-  -> https://handlebarsjs.com/guide/
-  -> https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-nodejs?tabs=managed-identity%2Croles-azure-portal%2Csign-in-azure-cli
 
 -= URL references =-
+  - `/f/:id` for files
+  - `/f/:id/thumbnail` for files thumbnails
+  - `/f/:id.:ext` file direct files
+  - `/a/:id` for albums
+  - `/a/:id/thumbnail` for albums thumbnails
+  - `/u/:username` for users
 
   ! nginx rewrite for old urls !
   server {
@@ -60,20 +70,3 @@
 
     listen 80;
   }
-
-  ## URL Scheme Plan:
-    - `/f/:id` for files
-    - `/f/:id.:ext` file direct files
-    - `/a/:id` for albums
-    - `/u/:username` for users
-
--= Dark Theme Notes =-
-[css]
-body {
-  background-color: rgb(20, 20, 20);
-}
-#dropzone {
-  background-color: rgb(30, 30, 30);
-  border-color: rgb(60, 60, 60);
-}
-[/css]
