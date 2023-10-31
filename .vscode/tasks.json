@@ -9,12 +9,53 @@
         "instanceLimit": 1
       },
       "presentation": {
-        "reveal": "never"
+        "reveal": "never",
+        "group": "Task",
+        "close": true
       },
       "problemMatcher": [
         "$eslint-stylish"
       ],
-      "label": "eslint: lint whole folder"
+      "options": {
+        "statusbar": {
+          "label": "$(debug) eslint: lint project"
+        }
+      },
+      "label": "eslint: lint project"
+    },
+    {
+      "type": "npm",
+      "presentation": {
+        "reveal": "never",
+        "group": "Task",
+        "close": true,
+      },
+      "options": {
+        "statusbar": {
+          "label": "$(console) sass: compile"
+        }
+      },
+      "script": "sass: compile",
+      "label": "sass: compile",
+    },
+    {
+      "type": "npm",
+      "runOptions": {
+        "runOn": "folderOpen",
+        "reevaluateOnRerun": true,
+        "instanceLimit": 1
+      },
+      "presentation": {
+        "reveal": "never",
+        "group": "Task",
+      },
+      "options": {
+        "statusbar": {
+          "hide": true
+        }
+      },
+      "script": "sass: watch",
+      "label": "sass: watch"
     }
   ]
 }
