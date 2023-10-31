@@ -1,0 +1,17 @@
+:root:is([data-theme="dark"]),
+:root:not([data-theme="light"]) {
+  --color-theme:                    #{$black};
+
+  //Page
+  --color-page-background:        #{$dark-page-background};
+
+  //Content
+  --color-content-background:     #{$dark-content-background};
+  --color-content-border:         #{$dark-content-border};
+  --color-content-text:           #{$dark-content-text};
+  --color-content-text-hover:     #{$dark-content-text-hover};
+
+  //Footer
+  --color-footer-text:            #{$dark-footer-text};
+  --color-footer-text-hover:      #{$dark-footer-text-hover};
+}
