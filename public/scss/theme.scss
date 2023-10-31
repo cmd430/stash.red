@@ -19,43 +19,15 @@
 }
 
 // Lightmode
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="dark"]) {
-    --color-theme:                    #{$white};
-
-    //Page
-    --color-page-background:          #{$light-page-background};
-
-    //Content
-    --color-content-background:       #{$light-content-background};
-    --color-content-border:           #{$light-content-border};
-    --color-content-text:             #{$light-content-text};
-    --color-content-text-hover:       #{$light-content-text-hover};
-
-    //Footer
-    --color-footer-text:              #{$light-footer-text};
-    --color-footer-text-hover:        #{$light-footer-text-hover};
-  }
+@import 'shared/lightTheme';
+@media (prefers-color-scheme: light) {
+  @import 'shared/lightTheme';
 }
 
 // Darkmode
+@import 'shared/darkTheme';
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --color-theme:                    #{$black};
-
-    //Page
-    --color-page-background:        #{$dark-page-background};
-
-    //Content
-    --color-content-background:     #{$dark-content-background};
-    --color-content-border:         #{$dark-content-border};
-    --color-content-text:           #{$dark-content-text};
-    --color-content-text-hover:     #{$dark-content-text-hover};
-
-    //Footer
-    --color-footer-text:            #{$dark-footer-text};
-    --color-footer-text-hover:      #{$dark-footer-text-hover};
-  }
+  @import 'shared/darkTheme';
 }
 
 @font-face {
