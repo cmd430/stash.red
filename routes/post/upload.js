@@ -1,7 +1,6 @@
 import { extname } from 'node:path'
 import { customAlphabet } from 'nanoid'
 import { Log } from 'cmd430-utils'
-// import createError from 'http-errors'
 import { createAzureBlob, setAzureBlob } from '../../utils/azureBlobStorage.js'
 import generateThumbnail from '../../utils/generateThumbnail.js'
 import { getMimetype, isValidMimetype } from '../../utils/mimetype.js'
@@ -15,12 +14,9 @@ export default function (fastify, opts, done) {
   // Upload a file
   fastify.post('/upload', async (req, reply) => {
     try {
-      if (!req.session.get('authenticated')) {
-        return {
-          status: 401,
-          message: 'You must be logged in to upload files'
-        }
-        //return createError(401)
+      if (!req.session.get('authenticated')) return {
+        status: 401,
+        message: 'You must be logged in to upload files'
       }
 
       const files = req.files()
@@ -74,7 +70,6 @@ export default function (fastify, opts, done) {
           status: 400,
           message: 'No valid files found in payload'
         }
-        //return createError(400)
       }
 
       debug({ fileIDs })
@@ -84,7 +79,6 @@ export default function (fastify, opts, done) {
         status: 201,
         path: `/u/${username}`
       }
-      // if (dontFormAlbum) return reply.redirect(`/u/${username}`)
 
       // Generate Album if muliple files
       if (fileIDs.length > 1) {
@@ -107,7 +101,6 @@ export default function (fastify, opts, done) {
           status: 201,
           path: `/a/${albumID}`
         }
-        // return reply.redirect(`/a/${albumID}`)
       }
 
       // Single File
@@ -116,7 +109,6 @@ export default function (fastify, opts, done) {
         path: `/f/${fileIDs[0]}`,
         direct: `/f/${fileIDs[0]}${fileExts[0]}`
       }
-      //return reply.redirect(`/f/${fileIDs[0]}`)
     } catch (err) {
       error(err.stack)
 
@@ -124,7 +116,6 @@ export default function (fastify, opts, done) {
         status: 500,
         message: 'Something went wrong'
       }
-      //return createError(500)
     }
   })
 
