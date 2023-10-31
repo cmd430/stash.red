@@ -16,6 +16,7 @@
 :root:is([data-theme=light]),
 :root:not([data-theme=dark]) {
   --color-theme: rgb(255, 255, 255);
+  --color-theme-inverted: rgb(0, 0, 0);
   --color-page-background: rgb(250, 250, 250);
   --color-content-background: rgb(232, 235, 237);
   --color-content-border: rgb(218, 223, 227);
@@ -29,6 +30,7 @@
   :root:is([data-theme=light]),
   :root:not([data-theme=dark]) {
     --color-theme: rgb(255, 255, 255);
+    --color-theme-inverted: rgb(0, 0, 0);
     --color-page-background: rgb(250, 250, 250);
     --color-content-background: rgb(232, 235, 237);
     --color-content-border: rgb(218, 223, 227);
@@ -41,6 +43,7 @@
 :root:is([data-theme=dark]),
 :root:not([data-theme=light]) {
   --color-theme: rgb(0, 0, 0);
+  --color-theme-inverted: rgb(255, 255, 255);
   --color-page-background: rgb(10, 10, 10);
   --color-content-background: rgb(30, 30, 30);
   --color-content-border: rgb(60, 60, 60);
@@ -54,6 +57,7 @@
   :root:is([data-theme=dark]),
   :root:not([data-theme=light]) {
     --color-theme: rgb(0, 0, 0);
+    --color-theme-inverted: rgb(255, 255, 255);
     --color-page-background: rgb(10, 10, 10);
     --color-content-background: rgb(30, 30, 30);
     --color-content-border: rgb(60, 60, 60);

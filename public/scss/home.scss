@@ -87,7 +87,7 @@
         right: 0;
         bottom: 0;
         transition: 400ms;
-        background-color: var(--color-header-text);
+        background-color: var(--color-content-background);
 
         &::before {
           position: absolute;
@@ -107,12 +107,13 @@
       height: 20px;
       position: absolute;
       right: 0;
-      padding-right: 10px;
+      padding-right: 14px;
       border: 0;
       font-weight: 600;
       text-align: right;
       appearance: none;
-      background: url('/img/element/select_arrow.webp') no-repeat right 6px/10px transparent;
+      color: var(--color-theme-inverted);
+      background: url('/img/element/select_arrow.webp') no-repeat right 6px/10px var(--color-page-background);
     }
   }
 }
@@ -134,14 +135,5 @@
 
   a:hover > svg {
     fill: var(--color-footer-text-hover);
-  }
-}
-
-// fix select color for dark theme
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    #content #settings .setting select {
-      filter: #{"invert()"} //hack for scss invert() conflict
-    }
   }
 }

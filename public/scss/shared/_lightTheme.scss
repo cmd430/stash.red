@@ -1,6 +1,7 @@
 :root:is([data-theme="light"]),
 :root:not([data-theme="dark"]) {
   --color-theme:                    #{$white};
+  --color-theme-inverted:           #{$black};
 
   //Page
   --color-page-background:          #{$light-page-background};
