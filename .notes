@@ -28,10 +28,10 @@
   [ ] refactor upload.js to be a bit nicer,
       [ ] use `req.parts()` to read feilds and files seperatly
       [ ] make it so we can handle in album uploads without big hacks
-  [ ] Go over all the styles to make them less shit
-      [ ] Seperate styles into each component
+  [!] Go over all the styles to make them less shit
+      [!] Seperate styles into each component
       [ ] refactor theme to use em units rather than px
-      [ ] all colors in themes (allow for light/dark)
+      [!] all colors in themes (allow for light/dark)
       [ ] have all shared items sizes referenced for easy styling (header height etc)
   [!] scrap and redo client js
       [!] redo uploading js for dropzone
@@ -45,16 +45,7 @@
       -> for logs can probably use websocket
 
 -= New things I want to add =-
-  [ ] Dark mode
-      ->  [css]
-            body {
-              background-color: rgb(20, 20, 20);
-            }
-            #dropzone {
-              background-color: rgb(30, 30, 30);
-              border-color: rgb(60, 60, 60);
-            }
-          [/css]
+  [!] Dark mode
 
 
 -= URL references =-
