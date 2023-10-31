@@ -17,7 +17,6 @@ const settingDontFormAlbum = settings?.querySelector('#dontFormAlbum')
 const settingCopyLinkToClipboard = settings?.querySelector('#copyLinkToClipboard')
 const settingCopyDirectFileLinks = settings?.querySelector('#copyDirectFileLinks')
 
-
 async function uploadComplete (response) {
   const { status } = response
 
