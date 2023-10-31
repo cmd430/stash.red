@@ -1,0 +1,14 @@
+body {
+  overflow: hidden overlay;
+  background-color: var(--color-page-background);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.invisible {
+  opacity: 0;
+}
+
+/*# sourceMappingURL=common.css.map */

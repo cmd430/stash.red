@@ -1,0 +1,64 @@
+@import 'shared/colors';
+
+// Shared colors
+:root {
+  --color-white:                    #{$white};
+  --color-black:                    #{$black};
+  --color-transparent:              #{$transparent};
+
+  --color-logo:                     #{$logo};
+  --color-logo-dev:                 #{$logo-dev};
+  --color-header-text:              #{$header-text};
+
+  --color-progress-border:          #{$color-progress-border};
+  --color-progress-fill:            #{$color-progress-fill};
+  --color-progress-fill-processing: #{$color-progress-fill-processing};
+  --color-progress-fill-warning:    #{$color-progress-fill-warning};
+  --color-progress-fill-error:      #{$color-progress-fill-error};
+  --color-progress-text:            #{$color-progress-text};
+}
+
+// Lightmode
+:root {
+  //Page
+  --color-page-background:          #{$light-page-background};
+
+  //Content
+  --color-content-background:       #{$light-content-background};
+  --color-content-border:           #{$light-content-border};
+  --color-content-text:             #{$light-content-text};
+  --color-content-text-hover:       #{$light-content-text-hover};
+
+  //Footer
+  --color-footer-text:              #{$light-footer-text};
+  --color-footer-text-hover:        #{$light-footer-text-hover};
+}
+
+// Darkmode
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    //Page
+    --color-page-background:        #{$dark-page-background};
+
+    //Content
+    --color-content-background:     #{$dark-content-background};
+    --color-content-border:         #{$dark-content-border};
+    --color-content-text:           #{$dark-content-text};
+    --color-content-text-hover:     #{$dark-content-text-hover};
+
+    //Footer
+    --color-footer-text:            #{$dark-footer-text};
+    --color-footer-text-hover:      #{$dark-footer-text-hover};
+  }
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/font/OpenSans-VariableFont_wdth,wght.ttf') format('truetype supports variations'),
+       url('/font/OpenSans-VariableFont_wdth,wght.ttf') format('truetype-variations');
+  font-weight: 100 1000;
+}
+
+body {
+  font-family: 'Open Sans', 'Helvetica Neue', Tahoma, Verdana, Helvetica, Arial,  sans-serif;
+}
