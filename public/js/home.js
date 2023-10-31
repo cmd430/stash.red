@@ -27,3 +27,12 @@ if (settingsButton) {
   settingCopyLinkToClipboard.addEventListener('change', () => localStorage.setItem('AutoCopyLink', settingCopyLinkToClipboard.checked))
   settingCopyDirectFileLinks.addEventListener('change', () => localStorage.setItem('CopyDirectLink', settingCopyDirectFileLinks.checked))
 }
+
+// TEMP
+window.toggleTheme = function toggleTheme () {
+  const preferredScheme = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'
+  const page = document.querySelector('html')
+  const current = page.getAttribute('data-theme')
+
+  page.setAttribute('data-theme', (current ?? preferredScheme) === 'light' ? 'dark' : 'light')
+}
