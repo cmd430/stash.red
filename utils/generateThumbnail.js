@@ -17,6 +17,9 @@ const defaultThumbnailPaths = {
   'text': resolve('./public/img/thumbnails/text.webp')
 }
 
+// Disable cache to reduce memory usage
+sharp.cache(false)
+
 function ffmpegEscapeString (str) {
   // escape ffmpeg special chars
   str = str.replace(/\\/g, '\\\\\\\\')
