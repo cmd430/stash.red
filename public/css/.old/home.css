@@ -1,0 +1,437 @@
+#content {
+  width: auto;
+  max-width: 750px;
+  min-width: 280px;
+  margin: calc(50vh - 85px) 0 0 50vw;
+  transform: translate(-50%, -50%);
+}
+#content #buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0 0 0;
+  transition: opacity 200ms;
+}
+#content #buttons .button {
+  padding: 0 10px;
+  cursor: pointer;
+}
+#content #buttons .button, #content #buttons .button a {
+  font-weight: 600;
+  transition: color 200ms;
+  text-decoration: none;
+}
+#content #buttons .button:not(:last-child), #content #buttons .button a:not(:last-child) {
+  border-right: 1px dotted;
+}
+#content #settings {
+  padding: 10px 0 0 0;
+  position: absolute;
+  left: 50%;
+  width: 250px;
+  transform: translateX(-50%);
+  transition: opacity 200ms;
+}
+#content #settings .setting {
+  width: 100%;
+  height: 20px;
+  margin: 6px;
+  line-height: 1.8;
+}
+#content #settings .setting span {
+  position: relative;
+  display: inline-block;
+  top: -6px;
+  width: 172px;
+  padding: 0 10px 0 0;
+  font-weight: 400;
+  cursor: default;
+}
+#content #settings .setting .switch {
+  position: absolute;
+  right: 0;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+#content #settings .setting .switch input {
+  display: none;
+}
+#content #settings .setting .switch input:checked + .slider::before {
+  transform: translateX(20px);
+}
+#content #settings .setting .switch .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: 400ms;
+}
+#content #settings .setting .switch .slider::before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  transition: 400ms;
+}
+#content #settings .setting select {
+  display: inline-block;
+  height: 20px;
+  position: absolute;
+  right: 0;
+  padding-right: 10px;
+  border: 0;
+  font-weight: 600;
+  text-align: right;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url("/img/element/select_arrow.webp") no-repeat right 6px/10px transparent;
+}
+
+#footer {
+  position: absolute;
+  bottom: 15px;
+  height: 24px;
+  width: 100vw;
+  text-align: center;
+}
+#footer a > svg {
+  width: 24px;
+  height: 24px;
+  transition: fill 200ms;
+}
+
+.adminBtn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  height: 24px;
+}
+
+body {
+  background-color: rgb(250, 250, 250);
+}
+
+#logo a {
+  color: rgb(219, 3, 3);
+}
+#logo.dev a {
+  color: rgb(56, 137, 234);
+}
+
+header h1, header h1 .album__download {
+  color: rgb(119, 119, 119);
+}
+header h1 .album__delete {
+  color: rgb(234, 56, 56);
+}
+header h1 .album__title_input {
+  border-color: rgb(218, 223, 227);
+}
+
+#container {
+  background: rgb(232, 235, 237);
+  border-color: rgb(218, 223, 227);
+}
+
+.wrapper .actions .action__delete,
+.wrapper .actions .action__raw {
+  background-color: rgb(218, 223, 227);
+  border-color: rgb(36, 41, 46);
+}
+.wrapper .actions .action__delete {
+  color: rgb(234, 56, 56);
+}
+.wrapper .actions .action__raw {
+  color: rgb(36, 41, 46);
+}
+
+.blackout {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+.blackout #delete_modal,
+.blackout #update_modal,
+.blackout #params_modal {
+  background-color: rgb(232, 235, 237);
+  border-color: rgb(208, 213, 217);
+}
+.blackout #delete_modal h2,
+.blackout #update_modal h2,
+.blackout #params_modal h2 {
+  color: rgb(119, 119, 119);
+}
+.blackout #delete_modal hr,
+.blackout #update_modal hr,
+.blackout #params_modal hr {
+  background-color: rgb(208, 213, 217);
+}
+.blackout #delete_modal span button.delete,
+.blackout #update_modal span button.delete,
+.blackout #params_modal span button.delete {
+  color: rgb(232, 235, 237);
+  background-color: rgb(234, 56, 56);
+  border-color: rgb(234, 56, 56);
+}
+.blackout #delete_modal span button.update, .blackout #delete_modal span button.params,
+.blackout #update_modal span button.update,
+.blackout #update_modal span button.params,
+.blackout #params_modal span button.update,
+.blackout #params_modal span button.params {
+  color: rgb(232, 235, 237);
+  background-color: rgb(56, 136, 234);
+  border-color: rgb(56, 136, 234);
+}
+.blackout #delete_modal span button.cancel,
+.blackout #update_modal span button.cancel,
+.blackout #params_modal span button.cancel {
+  color: rgb(119, 119, 119);
+  border-color: rgb(208, 213, 217);
+  background-color: rgb(250, 250, 250);
+}
+.blackout #delete_modal span button:hover.delete,
+.blackout #update_modal span button:hover.delete,
+.blackout #params_modal span button:hover.delete {
+  color: rgb(234, 56, 56);
+  background-color: rgba(0, 0, 0, 0);
+}
+.blackout #delete_modal span button:hover.update, .blackout #delete_modal span button:hover.params,
+.blackout #update_modal span button:hover.update,
+.blackout #update_modal span button:hover.params,
+.blackout #params_modal span button:hover.update,
+.blackout #params_modal span button:hover.params {
+  color: rgb(56, 136, 234);
+  background-color: rgba(0, 0, 0, 0);
+}
+
+#dropzone {
+  background-color: rgb(255, 255, 255);
+  border-color: rgb(218, 223, 227);
+}
+#dropzone #label,
+#dropzone #text {
+  color: rgb(157, 162, 165);
+}
+#dropzone #progress {
+  border-color: rgb(218, 223, 227);
+}
+#dropzone #progress #fill {
+  background-color: rgb(56, 136, 234);
+}
+#dropzone #progress.processing #fill {
+  background-color: rgb(136, 234, 56);
+}
+#dropzone #progress.warning #fill {
+  background-color: rgb(234, 234, 56);
+}
+#dropzone #progress.error #fill {
+  background-color: rgb(234, 56, 56);
+}
+
+#content #buttons .button, #content #buttons .button a {
+  color: rgb(198, 203, 207);
+}
+#content #buttons .button:hover, #content #buttons .button.active, #content #buttons .button a:hover, #content #buttons .button a.active {
+  color: rgb(36, 41, 46);
+}
+#content #buttons .button:not(:last-child), #content #buttons .button a:not(:last-child) {
+  border-color: rgb(218, 223, 227);
+}
+#content #settings .setting span {
+  color: rgb(36, 41, 46);
+}
+#content #settings .setting .switch input:checked + .slider {
+  background-color: rgb(56, 136, 234);
+}
+#content #settings .setting .switch .slider {
+  background-color: rgb(119, 119, 119);
+}
+#content #settings .setting .switch .slider::before {
+  background-color: rgb(255, 255, 255);
+}
+
+#footer a > svg {
+  fill: rgb(218, 223, 227);
+}
+#footer a:hover > svg {
+  fill: rgb(36, 41, 46);
+}
+
+.adminBtn {
+  color: rgb(218, 223, 227);
+}
+.adminBtn:hover {
+  color: rgb(36, 41, 46);
+}
+
+#content #accountzone {
+  background-color: rgb(255, 255, 255);
+  border-color: rgb(218, 223, 227);
+}
+#content #accountzone form input[type=text],
+#content #accountzone form input[type=email],
+#content #accountzone form input[type=password],
+#content #accountzone form input[type=submit] {
+  color: rgb(198, 203, 207);
+}
+#content #accountzone form input[type=text]:hover, #content #accountzone form input[type=text]:focus,
+#content #accountzone form input[type=email]:hover,
+#content #accountzone form input[type=email]:focus,
+#content #accountzone form input[type=password]:hover,
+#content #accountzone form input[type=password]:focus,
+#content #accountzone form input[type=submit]:hover,
+#content #accountzone form input[type=submit]:focus {
+  color: rgb(36, 41, 46);
+}
+#content #accountzone form input[type=text],
+#content #accountzone form input[type=password] {
+  border-color: rgb(218, 223, 227);
+}
+#content #accountzone form input[type=submit] {
+  background: rgba(0, 0, 0, 0);
+}
+
+#container .preview {
+  background: url("/img/element/transparent.webp");
+  border-color: rgb(218, 223, 227);
+}
+#container .pagination li:not(.disabled) a {
+  color: rgb(198, 203, 207);
+}
+#container .pagination li:not(.disabled).active a {
+  border-color: rgb(36, 41, 46);
+  color: rgb(36, 41, 46);
+}
+#container .pagination li:not(.disabled):hover a, #container .pagination li:not(.disabled):active a {
+  border-color: rgb(36, 41, 46);
+  color: rgb(36, 41, 46);
+}
+#container .pagination li:not(.disabled):hover a::after, #container .pagination li:not(.disabled):active a::after {
+  color: rgb(36, 41, 46);
+}
+#container .pagination li.disabled a {
+  color: rgb(198, 203, 207);
+}
+#container .tab_container {
+  border-bottom-color: rgb(218, 223, 227);
+}
+#container .tab_container .tab {
+  border-right-color: rgb(218, 223, 227);
+}
+#container .tab_container .tab.active a, #container .tab_container .tab:hover a {
+  color: rgb(36, 41, 46);
+}
+#container .tab_container .tab a {
+  color: rgb(198, 203, 207);
+}
+#container .tab_container .tab_button {
+  background: rgba(0, 0, 0, 0);
+  color: rgb(198, 203, 207);
+}
+#container .tab_container .tab_button:hover {
+  color: rgb(36, 41, 46);
+}
+
+.image img {
+  background: url("/img/element/transparent.webp");
+  border-color: rgb(218, 223, 227);
+}
+
+.video__player {
+  border-color: rgb(218, 223, 227);
+}
+.video__player video {
+  background: rgb(0, 0, 0);
+}
+.video__player .video__controls {
+  background-color: rgb(255, 255, 255);
+  color: rgb(36, 41, 46);
+}
+.video__player .video__controls .playback__bar {
+  background-color: rgb(36, 41, 46);
+}
+.video__player .video__controls .playback__bar .playback__buffer {
+  background-color: rgb(76, 80, 83);
+}
+.video__player .video__controls .playback__bar .playback__progress {
+  background-color: rgb(56, 136, 234);
+}
+.video__player .video__controls .playback__bar .playback__progress::after {
+  background: rgb(36, 41, 46);
+}
+.video__player .video__controls .playback__extra .control__breakout,
+.video__player .video__controls .playback__extra .control__download {
+  color: rgb(36, 41, 46);
+}
+.video__player .video__controls .playback__playPause i,
+.video__player .video__controls .playback__volume > .volume__muteUnmute i,
+.video__player .video__controls .playback__extra > .control__fullscreen i,
+.video__player .video__controls .playback__extra > .control__download i {
+  color: rgb(36, 41, 46);
+}
+.video__player .video__controls .playback__volume .volume__control {
+  -webkit-tap-highlight-color: rgb(36, 41, 46);
+  background-image: linear-gradient(to right, rgb(56, 136, 234) 0%, rgb(56, 136, 234) 100%, rgb(0, 0, 0) 100%, rgb(0, 0, 0) 100%);
+}
+.video__player .video__controls .playback__volume .volume__control::-webkit-slider-thumb {
+  background-color: rgb(36, 41, 46);
+}
+
+.audio__player {
+  background-color: rgb(255, 255, 255);
+  border-color: rgb(218, 223, 227);
+}
+.audio__player .audio__info .artist,
+.audio__player .audio__info .title {
+  color: rgb(36, 41, 46);
+}
+.audio__player .audio__info .audio__controls .playback__bar {
+  background-color: rgb(36, 41, 46);
+}
+.audio__player .audio__info .audio__controls .playback__bar .playback__buffer {
+  background-color: rgb(76, 80, 83);
+}
+.audio__player .audio__info .audio__controls .playback__bar .playback__progress {
+  background-color: rgb(56, 136, 234);
+}
+.audio__player .audio__info .audio__controls .playback__bar .playback__progress::after {
+  background: rgb(36, 41, 46);
+}
+.audio__player .audio__info .audio__controls .playback__clock {
+  color: rgb(36, 41, 46);
+}
+.audio__player .audio__info .audio__controls .playback__volume .volume__control {
+  -webkit-tap-highlight-color: rgb(36, 41, 46);
+  background-image: linear-gradient(to right, rgb(56, 136, 234) 0%, rgb(56, 136, 234) 100%, rgb(0, 0, 0) 100%, rgb(0, 0, 0) 100%);
+}
+.audio__player .audio__info .audio__controls .playback__volume .volume__control::-webkit-slider-thumb {
+  background-color: rgb(36, 41, 46);
+}
+.audio__player .audio__info .audio__controls .playback__extra .control__breakout {
+  color: rgb(36, 41, 46);
+}
+.audio__player .audio__info .audio__controls .playback__playPause i,
+.audio__player .audio__info .audio__controls .playback__volume > .volume__muteUnmute i,
+.audio__player .audio__info .audio__controls .playback__extra > .control__fullscreen i,
+.audio__player .audio__info .audio__controls .playback__extra > .control__download i {
+  color: rgb(36, 41, 46);
+}
+
+.text {
+  color: rgb(36, 41, 46);
+  background: rgb(250, 250, 250) !important;
+  border-color: rgb(218, 223, 227) !important;
+}
+
+.log_container {
+  background-color: rgb(0, 0, 0);
+}
+.log_container .log {
+  color: rgb(255, 255, 255);
+}
+
+/*# sourceMappingURL=home.css.map */
