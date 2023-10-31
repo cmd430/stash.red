@@ -38,6 +38,11 @@
       [ ]
   [ ] restyle video and audio players so i can use the default player controls
   [ ] Make homepage tell you you need to login before you can upload
+  [ ] Create abstract layer for handling the file buffers so you can choose where to store them
+      for example you could send them the AWS S3, Azure Blob Storage, Store them locally or Create
+      some other file store
+  [ ] Admin page to control settings / see logs
+      -> for logs can probably use websocket
 
 -= New things I want to add =-
   [ ] Dark mode
