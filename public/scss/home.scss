@@ -4,124 +4,115 @@
   min-width: 280px;
   margin: calc(50vh - 85px) 0 0 50vw;
   transform: translate(-50%, -50%);
+}
 
-  #buttons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 10px 0 0 0;
-    transition: opacity 200ms;
+#buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0 0 0;
+  transition: opacity 200ms;
 
-    .button {
-      padding: 0 10px;
-      cursor: pointer;
+  .button {
+    padding: 0 10px;
+    cursor: pointer;
 
-      &, a {
-        font-weight: 600;
-        transition: color 200ms;
-        text-decoration: none;
-        color: var(--color-content-text);
+    &, a {
+      font-weight: 600;
+      transition: color 200ms;
+      text-decoration: none;
+      color: var(--color-content-text);
 
-        &:hover,
-        &.active {
-           color: var(--color-content-text-hover);
-        }
-      }
-
-      &:not(:last-child) {
-        border-right: 1px dotted var(--color-content-border);
+      &:hover,
+      &.active {
+         color: var(--color-content-text-hover);
       }
     }
-  }
 
-  #settings {
-    padding: 10px 0 0 0;
-    position: absolute;
-    left: 50%;
-    width: 250px;
-    transform: translateX(-50%);
-    transition: opacity 200ms;
-
-    .setting {
-      width: 100%;
-      height: 20px;
-      margin: 6px;
-      line-height: 1.8;
-
-      span {
-        position: relative;
-        display: inline-block;
-        top: -6px;
-        width: 172px;
-        padding: 0 10px 0 0;
-        font-weight: 400;
-        cursor: default;
-        color: color-mix(in srgb, var(--color-content-text-hover) 80%, var(--color-theme));
-      }
-
-      .switch {
-        position: absolute;
-        right: 0;
-        display: inline-block;
-        width: 40px;
-        height: 20px;
-
-        input {
-          display:none;
-
-          &:checked + .slider {
-            background-color: var(--color-progress-fill);
-
-            &::before {
-              transform: translateX(20px);
-            }
-          }
-        }
-
-        .slider {
-          position: absolute;
-          cursor: pointer;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          transition: 400ms;
-          background-color: var(--color-header-text);
-
-          &::before {
-            position: absolute;
-            content: '';
-            height: 16px;
-            width: 16px;
-            left: 2px;
-            bottom: 2px;
-            transition: 400ms;
-            background-color: var(--color-white);
-          }
-        }
-      }
-
-      select {
-        display: inline-block;
-        height: 20px;
-        position: absolute;
-        right: 0;
-        padding-right: 10px;
-        border: 0;
-        font-weight: 600;
-        text-align: right;
-        appearance: none;
-        background: url('/img/element/select_arrow.webp') no-repeat right 6px/10px transparent;
-      }
+    &:not(:last-child) {
+      border-right: 1px dotted var(--color-content-border);
     }
   }
 }
 
-// fix select color for dark theme
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    #content #settings .setting select {
-      filter: #{"invert()"} //hack for scss invert() conflict
+#settings {
+  padding: 10px 0 0 0;
+  position: absolute;
+  left: 50%;
+  width: 250px;
+  transform: translateX(-50%);
+  transition: opacity 200ms;
+
+  .setting {
+    width: 100%;
+    height: 20px;
+    margin: 6px;
+    line-height: 1.8;
+
+    span {
+      position: relative;
+      display: inline-block;
+      top: -6px;
+      width: 172px;
+      padding: 0 10px 0 0;
+      font-weight: 400;
+      cursor: default;
+      color: color-mix(in srgb, var(--color-content-text-hover) 80%, var(--color-theme));
+    }
+
+    .switch {
+      position: absolute;
+      right: 0;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+
+      input {
+        display:none;
+
+        &:checked + .slider {
+          background-color: var(--color-progress-fill);
+
+          &::before {
+            transform: translateX(20px);
+          }
+        }
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transition: 400ms;
+        background-color: var(--color-header-text);
+
+        &::before {
+          position: absolute;
+          content: '';
+          height: 16px;
+          width: 16px;
+          left: 2px;
+          bottom: 2px;
+          transition: 400ms;
+          background-color: var(--color-white);
+        }
+      }
+    }
+
+    select {
+      display: inline-block;
+      height: 20px;
+      position: absolute;
+      right: 0;
+      padding-right: 10px;
+      border: 0;
+      font-weight: 600;
+      text-align: right;
+      appearance: none;
+      background: url('/img/element/select_arrow.webp') no-repeat right 6px/10px transparent;
     }
   }
 }
@@ -129,6 +120,7 @@
 #footer {
   position: absolute;
   bottom: 15px;
+  left: 0;
   height: 24px;
   width: 100vw;
   text-align: center;
@@ -142,5 +134,14 @@
 
   a:hover > svg {
     fill: var(--color-footer-text-hover);
+  }
+}
+
+// fix select color for dark theme
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    #content #settings .setting select {
+      filter: #{"invert()"} //hack for scss invert() conflict
+    }
   }
 }

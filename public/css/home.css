@@ -5,30 +5,32 @@
   margin: calc(50vh - 85px) 0 0 50vw;
   transform: translate(-50%, -50%);
 }
-#content #buttons {
+
+#buttons {
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 10px 0 0 0;
   transition: opacity 200ms;
 }
-#content #buttons .button {
+#buttons .button {
   padding: 0 10px;
   cursor: pointer;
 }
-#content #buttons .button, #content #buttons .button a {
+#buttons .button, #buttons .button a {
   font-weight: 600;
   transition: color 200ms;
   text-decoration: none;
   color: var(--color-content-text);
 }
-#content #buttons .button:hover, #content #buttons .button.active, #content #buttons .button a:hover, #content #buttons .button a.active {
+#buttons .button:hover, #buttons .button.active, #buttons .button a:hover, #buttons .button a.active {
   color: var(--color-content-text-hover);
 }
-#content #buttons .button:not(:last-child) {
+#buttons .button:not(:last-child) {
   border-right: 1px dotted var(--color-content-border);
 }
-#content #settings {
+
+#settings {
   padding: 10px 0 0 0;
   position: absolute;
   left: 50%;
@@ -36,13 +38,13 @@
   transform: translateX(-50%);
   transition: opacity 200ms;
 }
-#content #settings .setting {
+#settings .setting {
   width: 100%;
   height: 20px;
   margin: 6px;
   line-height: 1.8;
 }
-#content #settings .setting span {
+#settings .setting span {
   position: relative;
   display: inline-block;
   top: -6px;
@@ -52,23 +54,23 @@
   cursor: default;
   color: color-mix(in srgb, var(--color-content-text-hover) 80%, var(--color-theme));
 }
-#content #settings .setting .switch {
+#settings .setting .switch {
   position: absolute;
   right: 0;
   display: inline-block;
   width: 40px;
   height: 20px;
 }
-#content #settings .setting .switch input {
+#settings .setting .switch input {
   display: none;
 }
-#content #settings .setting .switch input:checked + .slider {
+#settings .setting .switch input:checked + .slider {
   background-color: var(--color-progress-fill);
 }
-#content #settings .setting .switch input:checked + .slider::before {
+#settings .setting .switch input:checked + .slider::before {
   transform: translateX(20px);
 }
-#content #settings .setting .switch .slider {
+#settings .setting .switch .slider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -78,7 +80,7 @@
   transition: 400ms;
   background-color: var(--color-header-text);
 }
-#content #settings .setting .switch .slider::before {
+#settings .setting .switch .slider::before {
   position: absolute;
   content: "";
   height: 16px;
@@ -88,7 +90,7 @@
   transition: 400ms;
   background-color: var(--color-white);
 }
-#content #settings .setting select {
+#settings .setting select {
   display: inline-block;
   height: 20px;
   position: absolute;
@@ -101,14 +103,10 @@
   background: url("/img/element/select_arrow.webp") no-repeat right 6px/10px transparent;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme=light]) #content #settings .setting select {
-    filter: invert();
-  }
-}
 #footer {
   position: absolute;
   bottom: 15px;
+  left: 0;
   height: 24px;
   width: 100vw;
   text-align: center;
@@ -121,6 +119,12 @@
 }
 #footer a:hover > svg {
   fill: var(--color-footer-text-hover);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) #content #settings .setting select {
+    filter: invert();
+  }
 }
 
 /*# sourceMappingURL=home.css.map */
