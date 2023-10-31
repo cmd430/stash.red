@@ -13,7 +13,7 @@
   border: 1px dashed;
   text-align: center;
   cursor: pointer;
-  background-color: var(--color-content-background);
+  background-color: color-mix(in srgb, var(--color-page-background) 40%, var(--color-theme));
   border-color: var(--color-content-border);
 }
 #dropzone #label {

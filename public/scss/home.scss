@@ -56,7 +56,7 @@
         padding: 0 10px 0 0;
         font-weight: 400;
         cursor: default;
-        color: var(--color-content-text-hover);
+        color: color-mix(in srgb, var(--color-content-text-hover) 80%, var(--color-theme));
       }
 
       .switch {
