@@ -27,8 +27,8 @@ function preHandler (req, reply, done) {
   const viewParams = []
 
   if (viewFilter !== '') viewParams.push(`filter=${viewFilter}`)
-  if (viewOrder !== '') viewParams.push(`sort=${viewOrder}`)
-  if (viewLimit !== '') viewParams.push(`limit=${viewLimit}`)
+  if (viewOrder !== 'DESC') viewParams.push(`sort=${viewOrder}`)
+  if (viewLimit !== pagination.limit.default) viewParams.push(`limit=${viewLimit}`)
 
   req.view = {
     page: viewPage,
