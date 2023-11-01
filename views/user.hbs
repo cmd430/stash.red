@@ -10,41 +10,28 @@
       {{> logo}}
       <h1>{{view.username}}</h1>
     </header>
-    <div id="container">
-      <ul class="tab_container">
-        {{#if_eq view.type 'files' this}}
-          <li class="tab active">
-            <a>Files</a>
-          </li>
-          <li class="tab">
-            <a href="albums/">Albums</a>
-          </li>
-        {{else}}
-          {{#if_eq view.type 'albums' this}}
-            <li class="tab">
-              <a href="..">Files</a>
-            </li>
-            <li class="tab active">
-              <a>Albums</a>
-            </li>
-          {{else}}
-            <li class="tab">
-              <a href="..">Files</a>
-            </li>
-            <li class="tab active">
-              <a href="albums/">Albums</a>
-            </li>
-          {{/if_eq}}
-        {{/if_eq}}
-      </ul>
-      {{#each uploads}}
-        {{> preview this}}
-      {{/each}}
-      {{#repeat 5}}
-        <div class="spacer"></div>
-      {{/repeat}}
-      {{> paginator}}
-    </div>
-    {{> modals}}
+    <nav>
+      {{#if_eq view.type 'albums' this}}
+        <a href="..">Files</a>
+        <a class="active">Albums</a>
+      {{else}}
+        <a class="active">Files</a>
+        <a href="albums/">Albums</a>
+      {{/if_eq}}
+    </nav>
+    <main>
+      <section>
+        {{#each uploads}}
+          {{> preview this}}
+        {{/each}}
+        {{#repeat 5}}
+          <div class="spacer"></div>
+        {{/repeat}}
+      </section>
+      <nav>
+        {{> paginator}}
+      </nav>
+    </main>
+    {{!-- {{> modals}} --}}
   </body>
 </html>
