@@ -1,0 +1,58 @@
+.pagination {
+  padding: 0;
+  margin: 0;
+  cursor: default;
+}
+.pagination li {
+  list-style: none;
+  display: inline-block;
+  padding: 0.25rem;
+}
+.pagination li a {
+  font-size: 1.13rem;
+  padding: 0 0.2rem;
+  position: relative;
+}
+.pagination li a i::before {
+  margin: 0;
+  display: inline;
+}
+.pagination li:not(.disabled) a {
+  text-decoration: none;
+  color: var(--color-content-text);
+}
+.pagination li:not(.disabled).active a {
+  border-bottom: 1px dotted var(--color-content-text-hover);
+  font-weight: 600;
+  cursor: default;
+  color: var(--color-content-text-hover);
+}
+.pagination li:not(.disabled):hover a, .pagination li:not(.disabled):active a {
+  transition: color 200ms linear;
+  border-bottom: 1px dotted var(--color-content-text-hover);
+  color: var(--color-content-text-hover);
+}
+.pagination li:not(.disabled):hover a::after, .pagination li:not(.disabled):active a::after {
+  color: var(--color-content-text-hover);
+}
+.pagination li:not(.disabled):not(:first-child):not(:nth-child(2)):not(:nth-last-child(2)):not(:last-child):hover a, .pagination li:not(.disabled):not(:first-child):not(:nth-child(2)):not(:nth-last-child(2)):not(:last-child):active a {
+  border-bottom: 1px dotted;
+}
+.pagination li:not(.disabled):not(:first-child):not(:nth-child(2)):not(:nth-last-child(2)):not(:last-child):hover a::after, .pagination li:not(.disabled):not(:first-child):not(:nth-child(2)):not(:nth-last-child(2)):not(:last-child):active a::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  text-align: center;
+  font-weight: 600;
+}
+.pagination li.disabled {
+  opacity: 0;
+}
+.pagination li.disabled a {
+  cursor: default;
+  color: var(--color-content-text);
+}
+
+/*# sourceMappingURL=paginator.css.map */

@@ -1,9 +1,9 @@
 #themeToggle {
   padding: 0.4rem;
   display: inline-block;
-  position: absolute;
-  top: 5px;
-  right: 5px;
+  position: fixed;
+  top: 0.4rem;
+  right: 0.4rem;
   opacity: 0.4;
   transition: opacity 200ms linear;
 }

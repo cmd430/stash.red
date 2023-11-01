@@ -1,65 +1,111 @@
-#content {
-  width: auto;
-  max-width: 750px;
-  min-width: 280px;
-  margin: calc(50vh - 85px) 0 0 50vw;
-  transform: translate(-50%, -50%);
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  margin: 0;
+}
+
+header {
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: end;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  padding: 1rem;
+}
+main section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #buttons {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 10px 0 0 0;
-  transition: opacity 200ms;
+  margin: 1rem 0 0 0;
+  transition: opacity 200ms linear;
 }
 #buttons .button {
-  padding: 0 10px;
+  padding: 0 1rem;
   cursor: pointer;
 }
 #buttons .button, #buttons .button a {
   font-weight: 600;
-  transition: color 200ms;
+  transition: color 200ms linear;
   text-decoration: none;
   color: var(--color-content-text);
 }
 #buttons .button:hover, #buttons .button.active, #buttons .button a:hover, #buttons .button a.active {
   color: var(--color-content-text-hover);
 }
+#buttons .button::before, #buttons .button a::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(50%) translateY(-0.35rem) rotate(-45deg);
+  width: 0.25em;
+  height: 0.25em;
+  border-style: solid;
+  border-width: 0.15em 0.15em 0 0;
+  opacity: 0;
+  transition: opacity 200ms linear;
+}
+#buttons .button.active::before, #buttons .button a.active::before {
+  opacity: 1;
+}
 #buttons .button:not(:last-child) {
   border-right: 1px dotted var(--color-content-border);
 }
 
 #settings {
-  padding: 10px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   position: absolute;
-  left: 50%;
-  width: 250px;
-  transform: translateX(-50%);
+  width: 100%;
+  max-width: 48rem;
+  min-width: 18rem;
+  height: 25dvh;
+  max-height: 15rem;
+  min-height: 10rem;
   transition: opacity 200ms;
 }
+#settings::before {
+  position: absolute;
+  content: "";
+  height: 8rem;
+  width: 16rem;
+  background-color: color-mix(in srgb, var(--color-page-background) 40%, var(--color-theme));
+}
 #settings .setting {
-  width: 100%;
-  height: 20px;
-  margin: 6px;
-  line-height: 1.8;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 16rem;
+  margin: 0.15rem 0;
 }
 #settings .setting span {
   position: relative;
   display: inline-block;
-  top: -6px;
-  width: 172px;
-  padding: 0 10px 0 0;
+  flex-grow: 1;
+  padding: 0 1rem 0 0;
   font-weight: 400;
   cursor: default;
   color: color-mix(in srgb, var(--color-content-text-hover) 80%, var(--color-theme));
 }
 #settings .setting .switch {
-  position: absolute;
-  right: 0;
+  position: relative;
   display: inline-block;
-  width: 40px;
-  height: 20px;
+  width: 2.5rem;
+  height: 1.25rem;
 }
 #settings .setting .switch input {
   display: none;
@@ -68,7 +114,7 @@
   background-color: var(--color-progress-fill);
 }
 #settings .setting .switch input:checked + .slider::before {
-  transform: translateX(20px);
+  transform: translateX(1.25rem);
 }
 #settings .setting .switch .slider {
   position: absolute;
@@ -83,42 +129,37 @@
 #settings .setting .switch .slider::before {
   position: absolute;
   content: "";
-  height: 16px;
-  width: 16px;
-  left: 2px;
-  bottom: 2px;
+  height: 1rem;
+  width: 1rem;
+  margin: 0.125rem;
   transition: 400ms;
   background-color: var(--color-white);
 }
 #settings .setting select {
-  display: inline-block;
-  height: 20px;
-  position: absolute;
-  right: 0;
-  padding-right: 14px;
+  height: 1.25rem;
   border: 0;
   font-weight: 600;
-  text-align: right;
-  appearance: none;
   color: var(--color-theme-inverted);
-  background: url("/img/element/select_arrow.webp") no-repeat right 6px/10px var(--color-page-background);
+  background-color: color-mix(in srgb, var(--color-page-background) 40%, var(--color-theme));
+  z-index: 1;
 }
 
-#footer {
-  position: absolute;
-  bottom: 15px;
-  left: 0;
-  height: 24px;
-  width: 100vw;
-  text-align: center;
+footer {
+  display: flex;
+  flex-grow: 1;
+  align-items: end;
+  justify-content: center;
 }
-#footer a > svg {
+footer a {
+  padding: 1rem;
+}
+footer a > svg {
   width: 24px;
   height: 24px;
   transition: fill 200ms;
   fill: var(--color-footer-text);
 }
-#footer a:hover > svg {
+footer a:hover > svg {
   fill: var(--color-footer-text-hover);
 }
 
