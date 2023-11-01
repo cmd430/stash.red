@@ -1,4 +1,4 @@
-@import 'shared/colors';
+@import 'colors';
 
 // Shared colors
 :root {
@@ -19,15 +19,15 @@
 }
 
 // Lightmode
-@import 'shared/lightTheme';
+@import 'lightTheme';
 @media (prefers-color-scheme: light) {
-  @import 'shared/lightTheme';
+  @import 'lightTheme';
 }
 
 // Darkmode
-@import 'shared/darkTheme';
+@import 'darkTheme';
 @media (prefers-color-scheme: dark) {
-  @import 'shared/darkTheme';
+  @import 'darkTheme';
 }
 
 @font-face {
