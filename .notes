@@ -30,7 +30,7 @@
       [ ] make it so we can handle in album uploads without big hacks
   [!] Go over all the styles to make them less shit
       [!] Seperate styles into each component
-      [ ] refactor theme to use em units rather than px
+      [!] refactor theme to use em units rather than px
       [!] all colors in themes (allow for light/dark)
       [ ] have all shared items sizes referenced for easy styling (header height etc)
   [!] scrap and redo client js
