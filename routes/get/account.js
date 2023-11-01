@@ -8,6 +8,8 @@ export default function (fastify, opts, done) {
 
   // Signup page
   fastify.get('/signup', async (req, reply) => {
+    if (req.session.get('authenticated')) return reply.redirect('/')
+
     return reply.view('signup')
   })
 
