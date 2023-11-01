@@ -1,5 +1,10 @@
 @import 'theme';
 
+* {
+  box-sizing: border-box;
+  transition: 100ms linear;
+}
+
 body {
   overflow: hidden overlay;
   background-color: var(--color-page-background);
