@@ -1,16 +1,13 @@
 #logo {
-  text-align: center;
-
   &.dev a {
     color: var(--color-logo-dev);
   }
   a {
     color: var(--color-logo);
-    font-size: 40px;
+    font-size: 2.5rem;
     text-transform: uppercase;
     font-variant: small-caps;
     text-decoration: none;
-    line-height: 85px;
     justify-self: start;
     user-select: none;
     outline: none;

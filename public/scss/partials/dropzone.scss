@@ -3,33 +3,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
-  width: auto;
-  max-width: 750px;
-  min-width: 280px;
-  height: 25vh;
-  max-height: 240px;
-  min-height: 100px;
-  border: 1px dashed;
+  width: 100%;
+  max-width: 48rem;
+  min-width: 18rem;
+  height: 25dvh;
+  max-height: 15rem;
+  min-height: 10rem;
+  border: 1px dashed var(--color-content-border);
   text-align: center;
   cursor: pointer;
   background-color: color-mix(in srgb, var(--color-page-background) 40%, var(--color-theme));
-  border-color: var(--color-content-border);
 
   #label {
-    font-size: 15px;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--color-progress-text);
   }
 
   #progress {
     position: absolute;
-    margin-top: -12px;
+    transform: translateY(-50%);
     width: 80%;
-    height: 20px;
-    border: 1px solid;
+    height: 1.5rem;
+    border: 1px solid var(--color-progress-border);
     transition: opacity 200ms;
-    border-color: var(--color-progress-border);
 
     #fill {
       display: block;
