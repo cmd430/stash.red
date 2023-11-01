@@ -1,4 +1,4 @@
-:root:is([data-theme="light"]),
+:root[data-theme="light"],
 :root:not([data-theme="dark"]) {
   --color-theme:                    #{$white};
   --color-theme-inverted:           #{$black};
@@ -11,6 +11,8 @@
   --color-content-border:           #{$light-content-border};
   --color-content-text:             #{$light-content-text};
   --color-content-text-hover:       #{$light-content-text-hover};
+
+  --color-transparent-gradiant:   url('/img/element/transparent_light.webp');
 
   //Footer
   --color-footer-text:              #{$light-footer-text};
