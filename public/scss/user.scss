@@ -1,117 +1,12 @@
-body {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-  margin: 0;
-}
+@import 'shared/userAlbumFileBase';
 
-header {
+main nav { // Pagination
   display: flex;
+  flex-direction: row;
   flex-grow: 1;
-  align-items: center;
-  align-self: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 60rem;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-
-  h1 {
-    max-width: 100%;
-    font-weight: 400;
-    font-variant: small-caps;
-    text-transform: lowercase;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    cursor: default;
-    color: var(--color-header-text);
-    padding-left: 1.5rem;
-  }
-}
-
-body > nav { // Tabs
-  display: flex;
-  align-self: center;
-  justify-content: start;
-  width: 100%;
-  max-width: 60rem;
-  position: relative;
-  border-left: 1px solid var(--color-content-border);
-  border-right: 1px solid var(--color-transparent);
-  margin-bottom: -1px;
-
-  &:has(> span) { // add the side border if we add the right buttons
-    border-right: 1px solid var(--color-content-border);
-  }
-
-  a {
-    background: color-mix(in srgb, var(--color-content-background) 95%, var(--color-white));
-    width: 8rem;
-    padding: 0.5rem 0.8rem;
-    margin: 0;
-    font-size: 1rem;
-    color: var(--color-content-text);
-    text-decoration: none;
-    text-align: center;
-    border-top: 1px solid var(--color-content-border);
-    border-right: 1px solid var(--color-content-border);
-    border-bottom: 1px solid var(--color-content-border);
-    border-left: 1px solid var(--color-transparent);
-    z-index: 1;
-    transition: 100ms linear;
-
-    &:hover,
-    &.active {
-      background: var(--color-content-background);
-      color: var(--color-content-text-hover);
-      font-weight: 600;
-    }
-
-    &.active {
-      border-bottom: 1px solid var(--color-transparent);
-    }
-  }
-
-  span {
-    flex-grow: 1;
-
-    & ~ a { // Allow buttons on the right, could be a good style to use for in albums to but the delete/download buttons
-      flex-basis: content;
-      padding: 0.5rem 0.19rem 0.5rem 0.25rem;
-      border-right: 1px solid var(--color-transparent);
-      border-left: 1px solid var(--color-content-border);
-    }
-  }
-}
-
-main { // this can be shared with files/albums view
-  display: flex;
-  flex-direction: column;
-  flex-grow: 500;
-  align-self: center;
-  position: relative;
-  max-width: 60rem;
-  border: 1px solid var(--color-content-border);
-  border-bottom: 0;
-  background: var(--color-content-background);
-
-  section {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: space-evenly;
-    padding: 1rem;
-  }
-
-  nav { // Pagination
-    display: flex;
-    flex-direction: row;
-    flex-grow: 1;
-    justify-content: center;
-    align-items: end;
-    padding: 0 0 1rem 0;
-  }
+  justify-content: center;
+  align-items: end;
+  padding: 0 0 1rem 0;
 }
 
 .preview {
@@ -199,6 +94,7 @@ main { // this can be shared with files/albums view
     text-overflow: ellipsis;
     transition: bottom linear 100ms;
     line-height: 1.8rem;
+    padding: 0 0.3rem;
   }
 
   .album_items {
