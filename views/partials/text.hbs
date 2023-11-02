@@ -1,5 +1,5 @@
-<span class="wrapper fullwidth">
-  <pre class="text" data-text-id="{{id}}">
+<span class="wrapper fullwidth" data-text-id="{{id}}" data-text-path="{{path}}">
+  <pre class="text">
     <code></code>
   </pre>
   <div class="actions">
@@ -13,9 +13,5 @@
     </a>
   </div>
 </span>
-<script>
-  fetch('{{path}}')
-    .then(r => r.text())
-    .then(text => document.querySelector('.text[data-text-id="{{id}}"] > code').textContent = text)
-    .catch(err => console.error(err))
-</script>
+<link rel="stylesheet" href="/css/partials/text.css" />
+<script type="module"  src="/js/partials/text.js" defer></script>
