@@ -28,15 +28,20 @@
   [ ] refactor upload.js to be a bit nicer,
       [ ] use `req.parts()` to read feilds and files seperatly
       [ ] make it so we can handle in album uploads without big hacks
-  [!] Go over all the styles to make them less shit
-      [!] Seperate styles into each component
-      [!] refactor theme to use em units rather than px
-      [!] all colors in themes (allow for light/dark)
-      [ ] have all shared items sizes referenced for easy styling (header height etc)
+  [√] Go over all the styles to make them less shit
+      [√] Seperate styles into each component
+      [√] refactor theme to use em units rather than px
+      [√] all colors in themes (allow for light/dark)
+      [x] have all shared items sizes referenced for easy styling (header height etc)
+          -> just used `display: flex` to make life better
   [!] scrap and redo client js
       [!] redo uploading js for dropzone
-      [ ]
-  [ ] restyle video and audio players so i can use the default player controls
+          -> basically done, need to get url uploads working
+             so waiting until i redo upload handling on the server
+      [√] redo audio player
+      [√] redo video player
+      [√] redo text loader
+  [√] restyle video and audio players so i can use the default player controls
   [ ] Make homepage tell you you need to login before you can upload
   [ ] Create abstract layer for handling the file buffers so you can choose where to store them
       for example you could send them the AWS S3, Azure Blob Storage, Store them locally or Create
@@ -45,7 +50,7 @@
       -> for logs can probably use websocket
 
 -= New things I want to add =-
-  [!] Dark mode
+  [√] Dark mode
 
 
 -= URL references =-
