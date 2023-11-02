@@ -3,14 +3,20 @@
     <code></code>
   </pre>
   <div class="actions">
+    <a class="action__raw" title="View text file directly" href="{{path}}">
+      <i class="icon-link-ext"></i>
+      <span>View Direct</span>
+    </a>
+    <a class="action__save" title="Download this text file" href="download/">
+      <i class="icon-download"></i>
+      <span>Save</span>
+    </a>
     {{#if_either_eq uploaded_by @root.album.uploaded_by @session.username this}}
-      <a class="action__delete" title="Delete this Text" data-id="/f/{{id}}" data-username="{{uploaded_by}}">
+      <a class="action__delete" title="Delete this text file" data-id="/f/{{id}}" data-username="{{uploaded_by}}">
         <i class="icon-trash"></i>
+        <span></span>
       </a>
     {{/if_either_eq}}
-    <a class="action__raw" title="View Raw" href="{{path}}">
-      <i class="icon-link-ext"></i>
-    </a>
   </div>
 </span>
 <link rel="stylesheet" href="/css/partials/text.css" />

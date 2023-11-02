@@ -4,8 +4,13 @@
   </a>
   {{#if_either_eq uploaded_by @root.album.uploaded_by @session.username this}}
     <div class="actions">
-      <a class="action__delete" title="Delete this Image" data-id="/f/{{id}}" data-username="{{uploaded_by}}">
+      <a class="action__save" title="Download this image" href="download/">
+        <i class="icon-download"></i>
+        <span>Save</span>
+      </a>
+      <a class="action__delete" title="Delete this image" data-id="/f/{{id}}" data-username="{{uploaded_by}}">
         <i class="icon-trash"></i>
+        <span></span>
       </a>
     </div>
   {{/if_either_eq}}
