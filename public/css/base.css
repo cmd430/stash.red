@@ -17,12 +17,15 @@
 :root:not([data-theme=dark]) {
   --color-theme: rgb(255, 255, 255);
   --color-theme-inverted: rgb(0, 0, 0);
+  --color-transparent-gradiant: url("/img/element/transparent_light.webp");
   --color-page-background: rgb(250, 250, 250);
   --color-content-background: rgb(232, 235, 237);
   --color-content-border: rgb(218, 223, 227);
   --color-content-text: rgb(198, 203, 207);
   --color-content-text-hover: rgb(36, 41, 46);
-  --color-transparent-gradiant: url("/img/element/transparent_light.webp");
+  --color-action-background: rgb(218, 223, 227);
+  --color-action-border: rgb(36, 41, 46);
+  --color-action-delete: rgb(234, 56, 56);
   --color-footer-text: rgb(218, 223, 227);
   --color-footer-text-hover: rgb(36, 41, 46);
 }
@@ -32,12 +35,15 @@
   :root:not([data-theme=dark]) {
     --color-theme: rgb(255, 255, 255);
     --color-theme-inverted: rgb(0, 0, 0);
+    --color-transparent-gradiant: url("/img/element/transparent_light.webp");
     --color-page-background: rgb(250, 250, 250);
     --color-content-background: rgb(232, 235, 237);
     --color-content-border: rgb(218, 223, 227);
     --color-content-text: rgb(198, 203, 207);
     --color-content-text-hover: rgb(36, 41, 46);
-    --color-transparent-gradiant: url("/img/element/transparent_light.webp");
+    --color-action-background: rgb(218, 223, 227);
+    --color-action-border: rgb(36, 41, 46);
+    --color-action-delete: rgb(234, 56, 56);
     --color-footer-text: rgb(218, 223, 227);
     --color-footer-text-hover: rgb(36, 41, 46);
   }
@@ -46,12 +52,15 @@
 :root:not([data-theme=light]) {
   --color-theme: rgb(0, 0, 0);
   --color-theme-inverted: rgb(255, 255, 255);
+  --color-transparent-gradiant: url("/img/element/transparent_dark.webp");
   --color-page-background: rgb(10, 10, 10);
   --color-content-background: rgb(30, 30, 30);
   --color-content-border: rgb(60, 60, 60);
   --color-content-text: rgb(132, 126, 126);
   --color-content-text-hover: rgb(232, 228, 222);
-  --color-transparent-gradiant: url("/img/element/transparent_dark.webp");
+  --color-action-background: rgb(36, 41, 46);
+  --color-action-border: rgb(218, 223, 227);
+  --color-action-delete: rgb(234, 56, 56);
   --color-footer-text: rgb(36, 41, 46);
   --color-footer-text-hover: rgb(218, 223, 227);
 }
@@ -61,12 +70,15 @@
   :root:not([data-theme=light]) {
     --color-theme: rgb(0, 0, 0);
     --color-theme-inverted: rgb(255, 255, 255);
+    --color-transparent-gradiant: url("/img/element/transparent_dark.webp");
     --color-page-background: rgb(10, 10, 10);
     --color-content-background: rgb(30, 30, 30);
     --color-content-border: rgb(60, 60, 60);
     --color-content-text: rgb(132, 126, 126);
     --color-content-text-hover: rgb(232, 228, 222);
-    --color-transparent-gradiant: url("/img/element/transparent_dark.webp");
+    --color-action-background: rgb(36, 41, 46);
+    --color-action-border: rgb(218, 223, 227);
+    --color-action-delete: rgb(234, 56, 56);
     --color-footer-text: rgb(36, 41, 46);
     --color-footer-text-hover: rgb(218, 223, 227);
   }
