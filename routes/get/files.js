@@ -89,7 +89,6 @@ export default function (fastify, opts, done) {
     const count = Number(countRaw) || undefined
     const total = await getAzureBlobSize(uploaded_by, file)
 
-    debug(req.headers)
     debug('Range:', req.headers.range, {
       offset: offset,
       count: count,
