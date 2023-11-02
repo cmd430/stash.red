@@ -1,0 +1,13 @@
+@import 'shared/userAlbumFileBase';
+
+main section {
+  flex-direction: column;
+}
+
+.wrapper {
+  .image img,
+  .text {
+    max-height: calc(100dvh - 9.8rem);
+  }
+}
+
