@@ -4,7 +4,7 @@
   </a>
   {{#if_either_eq uploaded_by @root.album.uploaded_by @session.username this}}
     <div class="actions">
-      <a class="action__save" title="Download this image" href="download/">
+      <a class="action__save" title="Download this image" href="/f/{{id}}/download">
         <i class="icon-download"></i>
         <span>Save</span>
       </a>
