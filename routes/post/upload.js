@@ -93,7 +93,7 @@ export default function (fastify, opts, done) {
 
         fastify.betterSqlite3
           .prepare('INSERT INTO albums (id, title, uploaded_at, uploaded_by, ttl, isPrivate) VALUES (?, ?, strftime(\'%Y-%m-%dT%H:%M:%fZ\'), ?, ?, ?)')
-          .run(albumID, albumID, username, timeToLive, isPrivate)
+          .run(albumID, 'Untitled Album', username, timeToLive, isPrivate)
 
         debug('Added', updated, 'files to album')
 
