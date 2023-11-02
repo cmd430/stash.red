@@ -2,6 +2,7 @@
 :root:not([data-theme="light"]) {
   --color-theme:                    #{$black};
   --color-theme-inverted:           #{$white};
+  --color-transparent-gradiant:   url('/img/element/transparent_dark.webp');
 
   //Page
   --color-page-background:        #{$dark-page-background};
@@ -12,7 +13,10 @@
   --color-content-text:           #{$dark-content-text};
   --color-content-text-hover:     #{$dark-content-text-hover};
 
-  --color-transparent-gradiant:   url('/img/element/transparent_dark.webp');
+  // Actions
+  --color-action-background:      #{$dark-action-background};
+  --color-action-border:          #{$dark-action-border};
+  --color-action-delete:          #{$action-delete};
 
   //Footer
   --color-footer-text:            #{$dark-footer-text};

@@ -10,12 +10,12 @@
   --color-logo-dev:                 #{$logo-dev};
   --color-header-text:              #{$header-text};
 
-  --color-progress-border:          #{$color-progress-border};
-  --color-progress-fill:            #{$color-progress-fill};
-  --color-progress-fill-processing: #{$color-progress-fill-processing};
-  --color-progress-fill-warning:    #{$color-progress-fill-warning};
-  --color-progress-fill-error:      #{$color-progress-fill-error};
-  --color-progress-text:            #{$color-progress-text};
+  --color-progress-border:          #{$progress-border};
+  --color-progress-fill:            #{$progress-fill};
+  --color-progress-fill-processing: #{$progress-fill-processing};
+  --color-progress-fill-warning:    #{$progress-fill-warning};
+  --color-progress-fill-error:      #{$progress-fill-error};
+  --color-progress-text:            #{$progress-text};
 }
 
 // Lightmode

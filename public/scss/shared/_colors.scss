@@ -13,14 +13,12 @@ $header-text: rgb(119, 119, 119);
 
 // Main Page
 $light-page-background:    rgb(250, 250, 250);
-
 $light-content-background: rgb(232, 235, 237);
 $light-content-border:     rgb(218, 223, 227);
 $light-content-text:       rgb(198, 203, 207);
 $light-content-text-hover: rgb(36, 41, 46);
 
 $dark-page-background:     rgb(10, 10, 10);
-
 $dark-content-background:  rgb(30, 30, 30);
 $dark-content-border:      rgb(60, 60, 60);
 $dark-content-text:        rgb(132, 126, 126);
@@ -35,25 +33,24 @@ $dark-footer-text:        rgb(36, 41, 46);
 $dark-footer-text-hover:  rgb(218, 223, 227);
 
 
-
 // Progress Bar
-$color-progress-border:          rgb(218, 223, 227);
-$color-progress-fill:            rgb(56, 136, 234);
-$color-progress-fill-processing: rgb(136, 234, 56);
-$color-progress-fill-warning:    rgb(234, 234, 56);
-$color-progress-fill-error:      rgb(234, 56, 56);
-$color-progress-text:            rgb(157, 162, 165);
+$progress-border:          rgb(218, 223, 227);
+$progress-fill:            rgb(56, 136, 234);
+$progress-fill-processing: rgb(136, 234, 56);
+$progress-fill-warning:    rgb(234, 234, 56);
+$progress-fill-error:      rgb(234, 56, 56);
+$progress-text:            rgb(157, 162, 165);
 
-
-// Media Controls - WIP
-$color-mediabuffer:            rgb(76, 80, 83);
-$color-media-gradiant:           linear-gradient(to right, rgb(56, 136, 234) 0%, rgb(56, 136, 234) 100%, rgb(0,0,0) 100%, rgb(0,0,0) 100%);
-// ^- need to make JS read the CSS rule to get the starting gradient
 
 // Action Button Colors
-$color-actionbackground:       rgb(218, 223, 227);
-$color-actionborder:           rgb(36, 41, 46);
-$color-action-delete:          rgb(234, 56, 56);
+$light-action-background: rgb(218, 223, 227);
+$light-action-border:     rgb(36, 41, 46);
+
+$dark-action-background:  rgb(36, 41, 46);
+$dark-action-border:      rgb(218, 223, 227);
+
+$action-delete:           rgb(234, 56, 56);
+
 
 // Modal Colors
 $color-blackout:               rgba(0, 0 ,0, 0.8);
