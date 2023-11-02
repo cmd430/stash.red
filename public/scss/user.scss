@@ -1,12 +1,18 @@
 @import 'shared/userAlbumFileBase';
 
-main nav { // Pagination
-  display: flex;
-  flex-direction: row;
-  flex-grow: 1;
-  justify-content: center;
-  align-items: end;
-  padding: 0 0 1rem 0;
+main {
+  section {
+    flex-direction: row;
+  }
+
+  nav { // Pagination
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: end;
+    padding: 0 0 1rem 0;
+  }
 }
 
 .preview {

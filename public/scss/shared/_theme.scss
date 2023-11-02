@@ -16,6 +16,10 @@
   --color-progress-fill-warning:    #{$progress-fill-warning};
   --color-progress-fill-error:      #{$progress-fill-error};
   --color-progress-text:            #{$progress-text};
+
+  --color-action-delete:            #{$action-delete};
+  --color-action-default:           #{$action-default};
+  --color-action-active:            #{$action-active};
 }
 
 // Lightmode

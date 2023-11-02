@@ -6,8 +6,8 @@ $transparent-gradiant: url('/img/element/transparent.webp');
 
 
 // Header
-$logo:       rgb(219, 3, 3);
-$logo-dev:   rgb(56, 137, 234);
+$logo:        rgb(219, 3, 3);
+$logo-dev:    rgb(56, 137, 234);
 $header-text: rgb(119, 119, 119);
 
 
@@ -49,7 +49,9 @@ $light-action-border:     rgb(36, 41, 46);
 $dark-action-background:  rgb(36, 41, 46);
 $dark-action-border:      rgb(218, 223, 227);
 
+$action-default:          rgb(119, 119, 119);
 $action-delete:           rgb(234, 56, 56);
+$action-active:           rgb(56, 137, 234);
 
 
 // Modal Colors
