@@ -1,0 +1,175 @@
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  margin: 0;
+}
+
+header {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  align-self: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 60rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+
+  h1 {
+    max-width: 100%;
+    font-weight: 400;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: default;
+    color: var(--color-header-text);
+    padding-left: 1.5rem;
+  }
+}
+
+body > nav { // Tabs / Buttons
+  display: flex;
+  align-self: center;
+  justify-content: start;
+  width: 100%;
+  max-width: 60rem;
+  position: relative;
+  border-left: 1px solid var(--color-content-border);
+  border-right: 1px solid var(--color-transparent);
+  margin-bottom: -1px;
+
+  &:has(> span) { // add the side border if we add the right buttons
+    border-right: 1px solid var(--color-content-border);
+  }
+
+  a {
+    background: color-mix(in srgb, var(--color-content-background) 95%, var(--color-white));
+    height: 2.5rem;
+    min-width: 8rem;
+    padding: 0.5rem 0.8rem;
+    margin: 0;
+    font-size: 1rem;
+    color: var(--color-content-text);
+    text-decoration: none;
+    text-align: center;
+    border-top: 1px solid var(--color-content-border);
+    border-right: 1px solid var(--color-content-border);
+    border-bottom: 1px solid var(--color-content-border);
+    border-left: 1px solid var(--color-transparent);
+    z-index: 1;
+    transition: 100ms linear;
+    cursor: pointer;
+
+    &:hover,
+    &.active {
+      background: var(--color-content-background);
+      color: var(--color-content-text-hover);
+      font-weight: 600;
+    }
+
+    &.active {
+      border-bottom: 1px solid var(--color-transparent);
+      cursor: default;
+    }
+  }
+
+  span {
+    flex-grow: 1;
+
+    & ~ a { // Allow buttons on the right
+      flex-basis: content;
+      border-right: 1px solid var(--color-transparent);
+      border-left: 1px solid var(--color-content-border);
+      min-width: 2.5rem;
+
+      &:last-of-type {
+        padding: 0.5rem 0.1rem 0.5rem 0.25rem;
+      }
+    }
+  }
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 500;
+  align-self: center;
+  position: relative;
+  width: 100%;
+  max-width: 60rem;
+  border: 1px solid var(--color-content-border);
+  border-bottom: 0;
+  background: var(--color-content-background);
+
+  section {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-evenly;
+    padding: 1rem;
+  }
+}
+
+.wrapper {
+  position: relative;
+  margin: 0 auto;
+
+  &:not(:last-of-type) {
+    margin: 0 auto 1rem;
+  }
+
+  &.fullwidth {
+    width: 100%;
+    min-height: 3rem;
+    overflow: hidden;
+  }
+
+  &:hover {
+    .actions {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 250ms linear, visibility 0ms linear;
+    }
+  }
+
+  .actions {
+    position: absolute;
+    right: 0.125rem;
+    top: 0.125rem;
+    opacity: 0;
+    visibility: collapse;
+    transition: opacity 250ms linear, visibility 250ms linear;
+
+    .action__delete,
+    .action__raw {
+      float: right;
+      margin: 0.125rem;
+      text-align: center;
+      padding: 0.45rem 0 0 0;
+      font-size: 1rem;
+      width: 2.32rem;
+      height: 2.32rem;
+      border: 1px solid var(--color-action-background);
+      background-color: var(--color-content-background);
+      cursor: pointer;
+    }
+
+    .action__delete {
+      color: var(--color-action-delete);
+    }
+
+    .action__raw {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--color-content-text-hover);
+
+      i.icon-link-ext {
+        padding-bottom: 0.2rem;
+      }
+    }
+  }
+}
