@@ -62,10 +62,10 @@ export async function setAzureBlob (fileBuffer, thumbnailBuffer, azureBlobClient
   debug(`Thumbnail Blob was uploaded successfully.\n\trequestId: ${azureThumbnailUploadBlobResponse.requestId}`)
 }
 
-export async function getAzureBlobBuffer (username, blobID) {
+export async function getAzureBlobBuffer (username, blobID, range = { offset: 0, count: undefined }) {
   const azureContainerClient = azureBlobServiceClient.getContainerClient(username.toLowerCase())
   const azureFileBlockBlobClient = azureContainerClient.getBlockBlobClient(blobID)
-  const azureDownloadBlockBlobResponse = await azureFileBlockBlobClient.download()
+  const azureDownloadBlockBlobResponse = await azureFileBlockBlobClient.download(range.offset, range.count)
 
   return streamToBuffer(azureDownloadBlockBlobResponse.readableStreamBody)
 }

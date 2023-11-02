@@ -83,11 +83,20 @@ export default function (fastify, opts, done) {
 
     if (!dbResult) return createError(404)
 
+    const { offset, count } = req.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? { offset: 0, count: '' }
     const { file, type, uploaded_by } = dbResult
+
+    debug('Range:', req.headers.range, {
+      offset: Number(offset) || 0,
+      count:  Number(count) || undefined
+    })
 
     return reply
       .type(mimetypeFilter(type))
-      .send(await getAzureBlobBuffer(uploaded_by, file))
+      .send(await getAzureBlobBuffer(uploaded_by, file, {
+        offset: Number(offset) || 0,
+        count:  Number(count) || undefined
+      }))
   })
 
   // Get uploaded file thumbnail
