@@ -2,7 +2,7 @@ import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
 import { mimetypeFilter } from '../../utils/mimetype.js'
-import { getAzureBlobBuffer, deleteAzureBlobWithThumbnail } from '../../utils/azureBlobStorage.js'
+import { getAzureBlobBuffer, getAzureBlobSize, deleteAzureBlobWithThumbnail } from '../../utils/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Files (GET)')
@@ -83,19 +83,26 @@ export default function (fastify, opts, done) {
 
     if (!dbResult) return createError(404)
 
-    const { offset, count } = req.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? { offset: 0, count: '' }
     const { file, type, uploaded_by } = dbResult
+    const { offset: offsetRaw, count: countRaw } = req.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? { offset: 0, count: '' }
+    const offset = Number(offsetRaw) || 0
+    const count = Number(countRaw) || undefined
+    const total = await getAzureBlobSize(uploaded_by, file)
 
+    debug(req.headers)
     debug('Range:', req.headers.range, {
-      offset: Number(offset) || 0,
-      count:  Number(count) || undefined
+      offset: offset,
+      count: count,
+      total: total
     })
 
     return reply
       .type(mimetypeFilter(type))
+      .header('accept-ranges', 'bytes')
+      .header('content-range', `bytes ${offset}-${count ?? ''}/${total}`)
       .send(await getAzureBlobBuffer(uploaded_by, file, {
-        offset: Number(offset) || 0,
-        count:  Number(count) || undefined
+        offset: offset,
+        count: count
       }))
   })
 

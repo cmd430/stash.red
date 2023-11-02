@@ -70,6 +70,17 @@ export async function getAzureBlobBuffer (username, blobID, range = { offset: 0,
   return streamToBuffer(azureDownloadBlockBlobResponse.readableStreamBody)
 }
 
+export async function getAzureBlobSize (username, blobID) {
+  const azureContainerClient = azureBlobServiceClient.getContainerClient(username.toLowerCase())
+  const azureFileBlockBlobClient = azureContainerClient.getBlockBlobClient(blobID)
+  const azureStatsBlockBlobResponse = await azureFileBlockBlobClient.getProperties()
+  const { contentLength } = azureStatsBlockBlobResponse
+
+  debug('File Blob Size is', contentLength)
+
+  return contentLength
+}
+
 export async function deleteAzureBlob (username, blobID) {
   const azureContainerClient = azureBlobServiceClient.getContainerClient(username.toLowerCase())
   const azureFileBlockBlobClient = azureContainerClient.getBlockBlobClient(blobID)
