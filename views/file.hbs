@@ -2,28 +2,26 @@
 <html>
   <head>
     {{> head}}
-    <script src="/js/media.js"></script>
+    <link rel="stylesheet" href="/css/file.css" />
   </head>
   <body>
     {{> themeToggle}}
-    <header>
-      {{> logo}}
-      <h1></h1>
-    </header>
-    <div id="container">
-      {{#if_contains file.type 'image' file}}
-        {{> image this}}
-      {{/if_contains}}
-      {{#if_contains file.type 'video' file}}
-        {{> video this}}
-      {{/if_contains}}
-      {{#if_contains file.type 'audio' file}}
-        {{> audio this}}
-      {{/if_contains}}
-      {{#if_contains file.type 'text' file}}
-        {{> text this}}
-      {{/if_contains}}
-    </div>
-    {{> modals}}
+    <header>{{> logo}}</header>
+    <main>
+      <section>
+        {{#if_contains file.type 'image' file}}
+          {{> image this}}
+        {{/if_contains}}
+        {{#if_contains file.type 'video' file}}
+          {{> video this}}
+        {{/if_contains}}
+        {{#if_contains file.type 'audio' file}}
+          {{> audio this}}
+        {{/if_contains}}
+        {{#if_contains file.type 'text' file}}
+          {{> text this}}
+        {{/if_contains}}
+      </section>
+    </main>
   </body>
 </html>

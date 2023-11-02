@@ -2,41 +2,56 @@
 <html>
   <head>
     {{> head}}
-    <script src="/js/media.js"></script>
+    <link rel="stylesheet" href="/css/album.css" />
+    <script type="module"  src="/js/album.js" defer></script>
   </head>
   <body>
     {{> themeToggle}}
     <header>
       {{> logo}}
-      <h1 {{#if_eq @session.username album.uploaded_by this}}class="editable"{{/if_eq}}>
-        {{#if_eq @session.username album.uploaded_by this}}
-          <a class="album__delete" title="Delete this Album" data-id="/a/{{album.id}}" data-username="{{album.uploaded_by}}">
-            <i class="icon-trash"></i>
-          </a>
+      {{#if_eq @session.username album.uploaded_by this}}
+        <h1 class="editable">
           <input type="text" class="album__title_input" placeholder="Untitled Album" value="{{album.title}}" data-title="{{album.title}}" maxlength="100" />
-        {{/if_eq}}
-        <a class="album__download" title="Download this Album" href="./download">
-          <i class="icon-download"></i>
-        </a>
-        {{album.title}}
-      </h1>
+          {{album.title}}
+        </h1>
+      {{else}}
+        <h1>{{album.title}}</h1>
+      {{/if_eq}}
     </header>
-    <div id="container">
-      {{#each album.files}}
-        {{#if_contains type 'image' this}}
-          {{> image this}}
-        {{/if_contains}}
-        {{#if_contains type 'video' this}}
-          {{> video this}}
-        {{/if_contains}}
-        {{#if_contains type 'audio' this}}
-          {{> audio this}}
-        {{/if_contains}}
-        {{#if_contains type 'text' this}}
-          {{> text this}}
-        {{/if_contains}}
-      {{/each}}
-    </div>
-    {{> modals}}
+    <nav>
+      <a class="album__download" title="Download this Album" href="download/">
+        <i class="icon-download"></i>
+        Download Album
+      </a>
+      {{#if_eq @session.username album.uploaded_by this}}
+        <span></span>
+        <a class="album__edit" title="Edit this Album" data-id="/a/{{album.id}}" data-username="{{album.uploaded_by}}">
+          <i class="icon-pencil"></i>
+          Edit Album
+        </a>
+        <a class="album__delete" title="Delete this Album" data-id="/a/{{album.id}}" data-username="{{album.uploaded_by}}">
+          <i class="icon-trash"></i>
+        </a>
+      {{/if_eq}}
+    </nav>
+    <main>
+      <section>
+        {{#each album.files}}
+          {{#if_contains type 'image' this}}
+            {{> image this}}
+          {{/if_contains}}
+          {{#if_contains type 'video' this}}
+            {{> video this}}
+          {{/if_contains}}
+          {{#if_contains type 'audio' this}}
+            {{> audio this}}
+          {{/if_contains}}
+          {{#if_contains type 'text' this}}
+            {{> text this}}
+          {{/if_contains}}
+        {{/each}}
+      </section>
+      {{!-- {{> modals}} --}}
+    </main>
   </body>
 </html>
