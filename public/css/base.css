@@ -11,6 +11,9 @@
   --color-progress-fill-warning: rgb(234, 234, 56);
   --color-progress-fill-error: rgb(234, 56, 56);
   --color-progress-text: rgb(157, 162, 165);
+  --color-action-delete: rgb(234, 56, 56);
+  --color-action-default: rgb(119, 119, 119);
+  --color-action-active: rgb(56, 137, 234);
 }
 
 :root[data-theme=light],
@@ -25,7 +28,6 @@
   --color-content-text-hover: rgb(36, 41, 46);
   --color-action-background: rgb(218, 223, 227);
   --color-action-border: rgb(36, 41, 46);
-  --color-action-delete: rgb(234, 56, 56);
   --color-footer-text: rgb(218, 223, 227);
   --color-footer-text-hover: rgb(36, 41, 46);
 }
@@ -43,7 +45,6 @@
     --color-content-text-hover: rgb(36, 41, 46);
     --color-action-background: rgb(218, 223, 227);
     --color-action-border: rgb(36, 41, 46);
-    --color-action-delete: rgb(234, 56, 56);
     --color-footer-text: rgb(218, 223, 227);
     --color-footer-text-hover: rgb(36, 41, 46);
   }
@@ -60,7 +61,6 @@
   --color-content-text-hover: rgb(232, 228, 222);
   --color-action-background: rgb(36, 41, 46);
   --color-action-border: rgb(218, 223, 227);
-  --color-action-delete: rgb(234, 56, 56);
   --color-footer-text: rgb(36, 41, 46);
   --color-footer-text-hover: rgb(218, 223, 227);
 }
@@ -78,7 +78,6 @@
     --color-content-text-hover: rgb(232, 228, 222);
     --color-action-background: rgb(36, 41, 46);
     --color-action-border: rgb(218, 223, 227);
-    --color-action-delete: rgb(234, 56, 56);
     --color-footer-text: rgb(36, 41, 46);
     --color-footer-text-hover: rgb(218, 223, 227);
   }
