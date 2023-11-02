@@ -1,7 +1,6 @@
 const videoPlayers = document.querySelectorAll('video')
 
 for (const videoPlayer of videoPlayers) {
-
   videoPlayer.addEventListener('loadedmetadata', () => videoPlayer.removeAttribute('style'))
   videoPlayer.addEventListener('ended', () => {
     const { width, height } = getComputedStyle(videoPlayer)
