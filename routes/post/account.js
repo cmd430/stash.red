@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto'
 import { hash, compare } from 'bcrypt'
 import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
@@ -9,7 +10,6 @@ const { log, debug, info, warn, error } = new Log('Account (POST)')
 // TODO: make safe and not shit
 
 export default function (fastify, opts, done) {
-
   const { bcrypt } = fastify.config
 
   // Signup
@@ -20,15 +20,17 @@ export default function (fastify, opts, done) {
     if (password !== confirm || !username || !email || !userameValid) return createError(400, password !== confirm ? 'Passwords do not match' : 'All Fields Required')
 
     try {
-      const { _id } = fastify.betterSqlite3
-        .prepare('INSERT INTO accounts (username, email, password) VALUES (?, ?, ?)')
-        .run(username, email, await hash(password, bcrypt.rounds))
+      const id = randomUUID()
+
+      fastify.betterSqlite3
+        .prepare('INSERT INTO accounts (id, username, email, password) VALUES (?, ?, ?)')
+        .run(id, username, email, await hash(password, bcrypt.rounds))
 
       await createAzureContainer(username)
 
       req.session.set('authenticated', true)
       req.session.set('session', {
-        id: _id,
+        id: id,
         username: username,
         isAdmin: false
       })
@@ -48,8 +50,8 @@ export default function (fastify, opts, done) {
     if (!username || !password) return createError(400, 'All Fields Required')
 
     try {
-      const { _id, password: passwordHash, isAdmin } = fastify.betterSqlite3
-        .prepare('SELECT _id, password, isAdmin FROM accounts WHERE username = ?')
+      const { id, password: passwordHash, isAdmin } = fastify.betterSqlite3
+        .prepare('SELECT id, password, isAdmin FROM accounts WHERE username = ?')
         .get(username)
 
       const hasValidCredentials = await compare(password, passwordHash)
@@ -58,7 +60,7 @@ export default function (fastify, opts, done) {
 
       req.session.set('authenticated', true)
       req.session.set('session', {
-        id: _id,
+        id: id,
         username: username,
         isAdmin: Boolean(isAdmin)
       })
