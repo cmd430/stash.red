@@ -14,6 +14,7 @@ import betterSqlite3 from '@punkish/fastify-better-sqlite3'
 import handlebars from 'handlebars'
 import { config } from './config/config.js'
 import temporaryUploadsGC from './plugins/temporaryUploadsGC.js'
+import sessionGC from './plugins/sessionGC.js'
 import databaseConnection from './database/databaseConnection.js'
 import fastifyLogger from './helpers/fastifyLogger.js'
 import fastifyLoadPartials from './helpers/fastifyLoadPartials.js'
@@ -48,6 +49,7 @@ try {
       httpOnly: true,
       sameSite: 'strict'
     },
+    saveUninitialized: false,
     rolling: true
   })
   fastify.register(serveStatic, {
@@ -79,8 +81,9 @@ try {
   // Register routes
   fastify.register(await loadRoutes)
 
-  // Setup Temp file removing task
+  // Setup Temp file removing and session clean up tasks
   fastify.register(temporaryUploadsGC)
+  fastify.register(sessionGC)
 
   // Hooks
   fastify.addHook(...fastifiyDefaultLocals())
