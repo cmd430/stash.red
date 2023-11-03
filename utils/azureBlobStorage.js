@@ -76,8 +76,6 @@ export async function getAzureBlobSize (username, blobID) {
   const azureStatsBlockBlobResponse = await azureFileBlockBlobClient.getProperties()
   const { contentLength } = azureStatsBlockBlobResponse
 
-  debug('File Blob Size is', contentLength)
-
   return contentLength
 }
 
