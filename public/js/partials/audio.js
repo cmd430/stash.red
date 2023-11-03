@@ -38,5 +38,12 @@ for (const audioPlayer of audioPlayers) {
     artistText.textContent = artist
   } catch (err) {
     console.error(err)
+
+    titleText.title = 'Unknown title'
+    albumText.title = 'Unknown album'
+    artistText.title = 'Unknown artist'
+    titleText.textContent = 'Unknown title'
+    albumText.textContent = 'Unknown album'
+    artistText.textContent = 'Unknown artist'
   }
 }
