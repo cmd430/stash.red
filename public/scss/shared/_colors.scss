@@ -1,14 +1,14 @@
 // Common Colors
-$white:              rgb(255, 255, 255);
-$black:              rgb(0, 0, 0);
-$transparent:        rgba(0, 0 ,0, 0);
-$transparent-gradiant: url('/img/element/transparent.webp');
+$white:                    rgb(255, 255, 255);
+$black:                    rgb(0, 0, 0);
+$transparent:              rgba(0, 0 ,0, 0);
+$transparent-gradiant:       url('/img/element/transparent.webp');
 
 
 // Header
-$logo:        rgb(219, 3, 3);
-$logo-dev:    rgb(56, 137, 234);
-$header-text: rgb(119, 119, 119);
+$logo:                     rgb(219, 3, 3);
+$logo-dev:                 rgb(56, 137, 234);
+$header-text:              rgb(119, 119, 119);
 
 
 // Main Page
@@ -26,11 +26,11 @@ $dark-content-text-hover:  rgb(232, 228, 222);
 
 
 // Footer
-$light-footer-text:       rgb(218, 223, 227);
-$light-footer-text-hover: rgb(36, 41, 46);
+$light-footer-text:        rgb(218, 223, 227);
+$light-footer-text-hover:  rgb(36, 41, 46);
 
-$dark-footer-text:        rgb(36, 41, 46);
-$dark-footer-text-hover:  rgb(218, 223, 227);
+$dark-footer-text:         rgb(36, 41, 46);
+$dark-footer-text-hover:   rgb(218, 223, 227);
 
 
 // Progress Bar
@@ -43,15 +43,21 @@ $progress-text:            rgb(157, 162, 165);
 
 
 // Action Button Colors
-$light-action-background: rgb(218, 223, 227);
-$light-action-border:     rgb(36, 41, 46);
+$light-action-background:  rgb(218, 223, 227);
+$light-action-border:      rgb(36, 41, 46);
 
-$dark-action-background:  rgb(36, 41, 46);
-$dark-action-border:      rgb(218, 223, 227);
+$dark-action-background:   rgb(36, 41, 46);
+$dark-action-border:       rgb(218, 223, 227);
 
-$action-default:          rgb(119, 119, 119);
-$action-delete:           rgb(234, 56, 56);
-$action-active:           rgb(56, 137, 234);
+$action-default:           rgb(119, 119, 119);
+$action-delete:            rgb(234, 56, 56);
+$action-active:            rgb(56, 137, 234);
+
+
+// Error Page
+$light-error-text:         rgb(32, 32, 32);
+
+$dark-error-text:          rgb(222, 222, 222);
 
 
 // Modal Colors
