@@ -133,7 +133,7 @@ export default function (fastify, opts, done) {
     const { name, type, uploaded_by, file } = dbResult
 
     return reply
-      .header('Content-disposition', `attachment; filename=${name}`)
+      .header('Content-disposition', `attachment; filename=${name}`) // NOTE: maybe we should use the file ID as the name?
       .type(type)
       .send(await getAzureBlobBuffer(uploaded_by, file))
   })

@@ -296,7 +296,8 @@
           "todo",
           "fixme",
           "xxx",
-          "temp"
+          "temp",
+          "note"
         ],
         "location": "start"
       }
