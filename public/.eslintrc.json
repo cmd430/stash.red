@@ -13,7 +13,8 @@
     "sourceType": "module"
   },
   "ignorePatterns": [
-    "dist/**"
+    "dist/**",
+    "vendor/**"
   ],
   "rules": {
     "accessor-pairs": "error",
