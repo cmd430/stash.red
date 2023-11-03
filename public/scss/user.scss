@@ -126,16 +126,3 @@ main {
   height: 0;
   margin: 0 0.63rem;
 }
-
-
-// Invert Text thumbnails in darkmode
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .thumbnail:has(+ .txt) {
-    filter: #{"invert()"};
-  }
-}
-@media (prefers-color-scheme: light) {
-  :root[data-theme="light"] .thumbnail:has(+ .txt) {
-    filter: #{"invert()"};
-  }
-}

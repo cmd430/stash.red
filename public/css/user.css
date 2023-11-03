@@ -268,15 +268,4 @@ main nav {
   margin: 0 0.63rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme=light]) .thumbnail:has(+ .txt) {
-    filter: invert();
-  }
-}
-@media (prefers-color-scheme: light) {
-  :root[data-theme=light] .thumbnail:has(+ .txt) {
-    filter: invert();
-  }
-}
-
 /*# sourceMappingURL=user.css.map */
