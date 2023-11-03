@@ -28,12 +28,15 @@
   [ ] refactor upload.js to be a bit nicer,
       [ ] use `req.parts()` to read feilds and files seperatly
       [ ] make it so we can handle in album uploads without big hacks
-  [√] Go over all the styles to make them less shit
+  [!] Go over all the styles to make them less shit
       [√] Seperate styles into each component
       [√] refactor theme to use em units rather than px
       [√] all colors in themes (allow for light/dark)
       [x] have all shared items sizes referenced for easy styling (header height etc)
           -> just used `display: flex` to make life better
+      [ ] finish album page styles
+      [√] error page styles
+      [ ] login/sign up page styles
   [!] scrap and redo client js
       [!] redo uploading js for dropzone
           -> basically done, need to get url uploads working
