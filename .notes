@@ -10,7 +10,7 @@
       -> https://www.npmjs.com/package/archiver
         -> example https://medium.com/@abhinavk9757/how-to-zip-multiple-streaming-files-in-nodejs-679a6e9d625f
         -> example (s3 but same idea) https://github.com/andychukse/s3downloadzip/blob/master/index.js
-  [ ] File downloading
+  [√] File downloading
   [ ] Album file uploading / add files to existing album
   [ ] Album title renaming
   [ ] File deleting
@@ -34,7 +34,11 @@
       [√] all colors in themes (allow for light/dark)
       [x] have all shared items sizes referenced for easy styling (header height etc)
           -> just used `display: flex` to make life better
-      [ ] finish album page styles
+      [√] home page styles
+      [√] user page styles
+      [!] album page styles
+      [√] file page styles
+      [√] file styles
       [√] error page styles
       [ ] login/sign up page styles
   [!] scrap and redo client js
@@ -44,13 +48,16 @@
       [√] redo audio player
       [√] redo video player
       [√] redo text loader
+      [ ] album title editing
+      [ ] album order editing
+      [ ] album file adding
   [√] restyle video and audio players so i can use the default player controls
   [ ] Make homepage tell you you need to login before you can upload
   [ ] Create abstract layer for handling the file buffers so you can choose where to store them
       for example you could send them the AWS S3, Azure Blob Storage, Store them locally or Create
       some other file store
   [ ] Admin page to control settings / see logs
-      -> for logs can probably use websocket
+      -> for logs can probably use websocket or maybe server sent events
 
 -= New things I want to add =-
   [√] Dark mode
