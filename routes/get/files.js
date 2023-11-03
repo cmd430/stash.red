@@ -121,5 +121,22 @@ export default function (fastify, opts, done) {
       .send(await getAzureBlobBuffer(uploaded_by, thumbnail))
   })
 
+  // Download file
+  fastify.get('/f/:id/download', async (req, reply) => {
+    const { id } = req.params
+    const dbResult = fastify.betterSqlite3
+      .prepare('SELECT name, type, uploaded_by, file FROM file WHERE id = ?')
+      .get(id)
+
+    if (!dbResult) return createError(404)
+
+    const { name, type, uploaded_by, file } = dbResult
+
+    return reply
+      .header('Content-disposition', `attachment; filename=${name}`)
+      .type(type)
+      .send(await getAzureBlobBuffer(uploaded_by, file))
+  })
+
   done()
 }
