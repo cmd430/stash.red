@@ -21,6 +21,7 @@ handlebars.registerHelper('if_either_eq', (a, b, c, context, opts) => {
   if (context instanceof Function) opts = context
   // eslint-disable-next-line consistent-this, no-invalid-this
   if (!(context instanceof Object)) context = this
+  if (c === undefined || c === null) c = 'CPMZLqNzl11MaPtSh33uML3Jz' // just a random string that should never match
   if (a === c || b === c) return opts.fn(context)
   return opts.inverse(context)
 })
