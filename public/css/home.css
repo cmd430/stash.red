@@ -83,7 +83,7 @@ main section {
   content: "";
   height: 8rem;
   width: 16rem;
-  background-color: color-mix(in srgb, var(--color-page-background) 40%, var(--color-theme));
+  background-color: var(--color-page-background-theme-mix);
 }
 #settings .setting {
   display: flex;
@@ -140,7 +140,7 @@ main section {
   border: 0;
   font-weight: 600;
   color: var(--color-theme-inverted);
-  background-color: color-mix(in srgb, var(--color-page-background) 40%, var(--color-theme));
+  background-color: var(--color-page-background-theme-mix);
   z-index: 1;
 }
 

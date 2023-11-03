@@ -12,7 +12,7 @@
   border: 1px dashed var(--color-content-border);
   text-align: center;
   cursor: pointer;
-  background-color: color-mix(in srgb, var(--color-page-background) 40%, var(--color-theme));
+  background-color: var(--color-page-background-theme-mix);
 }
 #dropzone #label {
   font-size: 0.85rem;
