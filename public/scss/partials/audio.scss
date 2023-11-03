@@ -6,7 +6,7 @@
   justify-content: center;
   max-width: calc(45rem + 2px);
   color: var(--color-content-text-hover);
-  background: color-mix(in srgb, var(--color-page-background) 40%, var(--color-theme));
+  background: var(--color-page-background-theme-mix);
   border: 1px solid var(--color-content-border);
 
   img {
