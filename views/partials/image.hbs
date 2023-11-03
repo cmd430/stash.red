@@ -2,18 +2,18 @@
   <a class="image" href="{{path}}">
     <img src="{{path}}" />
   </a>
-  {{#if_either_eq uploaded_by @root.album.uploaded_by @session.username this}}
     <div class="actions">
       <a class="action__save" title="Download this image" href="/f/{{id}}/download">
         <i class="icon-download"></i>
         <span>Save</span>
       </a>
-      <a class="action__delete" title="Delete this image" data-id="/f/{{id}}" data-username="{{uploaded_by}}">
-        <i class="icon-trash"></i>
-        <span></span>
-      </a>
+      {{#if_either_eq uploaded_by @root.album.uploaded_by @session.username this}}
+        <a class="action__delete" title="Delete this image" data-id="/f/{{id}}" data-username="{{uploaded_by}}">
+          <i class="icon-trash"></i>
+          <span></span>
+        </a>
+      {{/if_either_eq}}
     </div>
-  {{/if_either_eq}}
 </span>
 <link rel="stylesheet" href="/css/partials/image.css" />
 <script type="module"  src="/js/partials/image.js" defer></script>
