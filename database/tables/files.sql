@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS "files" (
   "id" TEXT NOT NULL UNIQUE,
   "name" TEXT NOT NULL,
   "file" TEXT NOT NULL,
+  "size" INTEGER NOT NULL DEFAULT 0,
   "type" TEXT NOT NULL,
   "uploaded_at" DATETIME NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ')),
   "uploaded_by" TEXT NOT NULL DEFAULT "SYSTEM",
