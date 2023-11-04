@@ -46,7 +46,7 @@ export default function (fastify, opts, done) {
       if (t === 'image') return `An ${t.charAt(0).toUpperCase()}${t.slice(1)}`
       if (t === 'audio') return `${t.charAt(0).toUpperCase()}${t.slice(1)}`
       if (t === 'video') return `A ${t.charAt(0).toUpperCase()}${t.slice(1)}`
-      if (t === 'text') return `A ${t.charAt(0).toUpperCase()}${t.slice(1)} File`
+      if (t === 'text') return `A ${t.charAt(0).toUpperCase()}${t.slice(1)} file`
     }
     const isType = t => {
       t = t.split('/')[0]
