@@ -53,8 +53,8 @@ export default function (fastify, opts, done) {
         if (dontFormAlbum === null) dontFormAlbum = Number(file.fields.dontFormAlbum.value) ?? 0
 
         fastify.betterSqlite3
-          .prepare('INSERT INTO files (id, name, file, type, uploaded_by, ttl, isPrivate) VALUES (?, ?, ?, ?, ?, ?, ?)')
-          .run(fileID, file.filename, fileBlobName, mimetype, username, timeToLive, isPrivate)
+          .prepare('INSERT INTO files (id, name, file, size, type, uploaded_by, ttl, isPrivate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+          .run(fileID, file.filename, fileBlobName, fileBuffer.byteLength, mimetype, username, timeToLive, isPrivate)
 
         await setAzureBlob(fileBuffer, thumbnailBuffer, azureBlobClients)
 
