@@ -1,5 +1,6 @@
 import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
+import archiver from 'archiver'
 import { extname } from 'node:path'
 import { getAzureBlobStream } from '../../utils/azureBlobStorage.js'
 import { mimetypeFilter } from '../../utils/mimetype.js'
@@ -59,6 +60,40 @@ export default function (fastify, opts, done) {
     return reply
       .type('image/webp')
       .send(await getAzureBlobStream(uploaded_by, thumbnail))
+  })
+
+  // Download album
+  fastify.get('/a/:id/download', async (req, reply) => {
+    const { id } = req.params
+    const album = fastify.betterSqlite3
+      .prepare('SELECT title, uploaded_by FROM album WHERE id = ?')
+      .get(id)
+
+    if (!album) return createError(404)
+
+    const albumFiles = fastify.betterSqlite3
+      .prepare('SELECT id, file FROM albumFiles WHERE album = ?')
+      .all(id)
+
+    const { title, uploaded_by } = album
+
+    const archive = archiver('zip', {
+      comment: `Album downloaded from ${reply.locals.title}`,
+      store: true
+    })
+
+    for (const { id: fileID, file } of albumFiles) {
+      archive.append(await getAzureBlobStream(uploaded_by, file), {
+        name: `${fileID}${extname(file)}`
+      })
+    }
+
+    archive.finalize()
+
+    return reply
+      .type('application/zip')
+      .header('content-disposition', `attachment; filename=[${id}]${title}.zip`)
+      .send(archive)
   })
 
   done()
