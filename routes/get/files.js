@@ -124,17 +124,17 @@ export default function (fastify, opts, done) {
   fastify.get('/f/:id/download', async (req, reply) => {
     const { id } = req.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT name, type, uploaded_by, file, size FROM file WHERE id = ?')
+      .prepare('SELECT type, uploaded_by, file, size FROM file WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
 
-    const { name, type, uploaded_by, file } = dbResult
+    const { type, uploaded_by, file } = dbResult
+    const filename = `${id}${extname(file)}`
 
-    // NOTE: maybe we should use the file ID as the name?
     return reply
       .type(type)
-      .header('content-disposition', `attachment; filename=${name}`)
+      .header('content-disposition', `attachment; filename=${filename}`)
       .send(await getAzureBlobStream(uploaded_by, file))
   })
 
