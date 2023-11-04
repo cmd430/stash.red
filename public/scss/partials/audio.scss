@@ -37,5 +37,10 @@
   audio {
     flex-grow: 1;
     width: 100%;
+
+    &::-webkit-media-controls-enclosure {
+      border-radius: 0;
+      filter: #{"invert()"};
+    }
   }
 }

@@ -35,5 +35,9 @@
   flex-grow: 1;
   width: 100%;
 }
+.audio audio::-webkit-media-controls-enclosure {
+  border-radius: 0;
+  filter: invert();
+}
 
 /*# sourceMappingURL=audio.css.map */
