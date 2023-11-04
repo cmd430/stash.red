@@ -31,7 +31,7 @@
     "wasmagic": "^0.0.32"
   },
   "devDependencies": {
-    "eslint": "^8.52.0",
+    "eslint": "^8.53.0",
     "sass": "^1.69.5"
   },
   "scripts": {
