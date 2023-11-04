@@ -1,7 +1,7 @@
 import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
-import { getAzureBlobBuffer } from '../../utils/azureBlobStorage.js'
+import { getAzureBlobStream } from '../../utils/azureBlobStorage.js'
 import { mimetypeFilter } from '../../utils/mimetype.js'
 
 // eslint-disable-next-line no-unused-vars
@@ -60,7 +60,7 @@ export default function (fastify, opts, done) {
 
     return reply
       .type('image/webp')
-      .send(await getAzureBlobBuffer(uploaded_by, thumbnail))
+      .send(await getAzureBlobStream(uploaded_by, thumbnail))
   })
 
   done()

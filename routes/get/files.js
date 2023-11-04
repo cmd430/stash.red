@@ -2,7 +2,7 @@ import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
 import { mimetypeFilter } from '../../utils/mimetype.js'
-import { getAzureBlobBuffer, getAzureBlobSize, deleteAzureBlobWithThumbnail } from '../../utils/azureBlobStorage.js'
+import { getAzureBlobStream, getAzureBlobSize, deleteAzureBlobWithThumbnail } from '../../utils/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Files (GET)')
@@ -85,21 +85,24 @@ export default function (fastify, opts, done) {
 
     const { file, type, uploaded_by } = dbResult
     const { offset: offsetRaw, count: countRaw } = req.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? { offset: 0, count: '' }
-    const offset = Number(offsetRaw) || 0
-    const count = Number(countRaw) || undefined
     const total = await getAzureBlobSize(uploaded_by, file)
+    const offset = (Number(offsetRaw) || 0)
+    const count = (Number(countRaw) || (total - offset))
 
     debug('Range:', req.headers.range, {
       offset: offset,
       count: count,
-      total: total
+      total: total,
+      partial: (count !== total)
     })
 
     return reply
+      .status((count !== total) ? 206 : 200)
       .type(mimetypeFilter(type))
       .header('accept-ranges', 'bytes')
-      .header('content-range', `bytes ${offset}-${count ?? ''}/${total}`)
-      .send(await getAzureBlobBuffer(uploaded_by, file, {
+      .header('content-range', `bytes ${offset}-${count}/${total}`)
+      .header('content-length', count)
+      .send(await getAzureBlobStream(uploaded_by, file, {
         offset: offset,
         count: count
       }))
@@ -118,7 +121,7 @@ export default function (fastify, opts, done) {
 
     return reply
       .type('image/webp')
-      .send(await getAzureBlobBuffer(uploaded_by, thumbnail))
+      .send(await getAzureBlobStream(uploaded_by, thumbnail))
   })
 
   // Download file
@@ -135,7 +138,7 @@ export default function (fastify, opts, done) {
     return reply
       .header('Content-disposition', `attachment; filename=${name}`) // NOTE: maybe we should use the file ID as the name?
       .type(type)
-      .send(await getAzureBlobBuffer(uploaded_by, file))
+      .send(await getAzureBlobStream(uploaded_by, file))
   })
 
   done()
