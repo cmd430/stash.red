@@ -9,8 +9,6 @@ const { log, debug, info, warn, error } = new Log('Files (GET)')
 
 export default function (fastify, opts, done) {
 
-  // TODO: Downloads
-
   // TEMP: test file delete
   fastify.get('/f/:id/delete', async (req, reply) => {
     const { id } = req.params
