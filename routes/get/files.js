@@ -2,7 +2,7 @@ import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
 import { mimetypeFilter } from '../../utils/mimetype.js'
-import { getAzureBlobStream, getAzureBlobBuffer, deleteAzureBlobWithThumbnail } from '../../utils/azureBlobStorage.js'
+import { getAzureBlobStream, deleteAzureBlobWithThumbnail } from '../../utils/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Files (GET)')
@@ -98,7 +98,6 @@ export default function (fastify, opts, done) {
       .type(mimetypeFilter(type))
       .header('accept-ranges', 'bytes')
       .header('content-range', `bytes ${offset}-${count}/${size}`)
-      .header('content-length', count)
       .send(await getAzureBlobStream(uploaded_by, file, {
         offset: offset,
         count: count
@@ -118,7 +117,7 @@ export default function (fastify, opts, done) {
 
     return reply
       .type('image/webp')
-      .send(await getAzureBlobBuffer(uploaded_by, thumbnail))
+      .send(await getAzureBlobStream(uploaded_by, thumbnail))
   })
 
   // Download file
@@ -130,13 +129,12 @@ export default function (fastify, opts, done) {
 
     if (!dbResult) return createError(404)
 
-    const { name, type, uploaded_by, file, size } = dbResult
+    const { name, type, uploaded_by, file } = dbResult
 
     // NOTE: maybe we should use the file ID as the name?
     return reply
       .type(type)
       .header('content-disposition', `attachment; filename=${name}`)
-      .header('content-length', size)
       .send(await getAzureBlobStream(uploaded_by, file))
   })
 
