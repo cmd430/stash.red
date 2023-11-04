@@ -7,8 +7,6 @@ import { mimetypeFilter } from '../../utils/mimetype.js'
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Albums (GET)')
 
-// TODO: Downloads
-
 export default function (fastify, opts, done) {
 
   // Get album by ID

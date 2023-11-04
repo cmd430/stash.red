@@ -7,8 +7,6 @@ import { createAzureContainer } from '../../utils/azureBlobStorage.js'
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Account (POST)')
 
-// TODO: make safe and not shit
-
 export default function (fastify, opts, done) {
   const { bcrypt } = fastify.config
 
