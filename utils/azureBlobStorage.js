@@ -71,7 +71,7 @@ export async function getAzureBlobStream (username, blobID, range = { offset: 0,
 }
 
 export async function getAzureBlobBuffer (username, blobID, range = { offset: 0, count: undefined }) {
-  return streamToBuffer(getAzureBlobStream(username, blobID, range))
+  return streamToBuffer(await getAzureBlobStream(username, blobID, range))
 }
 
 export async function getAzureBlobSize (username, blobID) {
