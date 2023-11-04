@@ -2,7 +2,7 @@ import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
 import { mimetypeFilter } from '../../utils/mimetype.js'
-import { getAzureBlobStream, getAzureBlobSize, deleteAzureBlobWithThumbnail } from '../../utils/azureBlobStorage.js'
+import { getAzureBlobStream, getAzureBlobBuffer, deleteAzureBlobWithThumbnail } from '../../utils/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Files (GET)')
@@ -76,29 +76,28 @@ export default function (fastify, opts, done) {
   fastify.get('/f/:id.:ext', async (req, reply) => {
     const { id } = req.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT file, type, uploaded_by FROM file WHERE id = ?')
+      .prepare('SELECT file, type, uploaded_by, size FROM file WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
 
-    const { file, type, uploaded_by } = dbResult
+    const { file, type, uploaded_by, size } = dbResult
     const { offset: offsetRaw, count: countRaw } = req.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? { offset: 0, count: '' }
-    const total = await getAzureBlobSize(uploaded_by, file)
     const offset = (Number(offsetRaw) || 0)
-    const count = (Number(countRaw) || (total - offset))
+    const count = (Number(countRaw) || (size - offset))
 
     debug('Range:', req.headers.range, {
       offset: offset,
       count: count,
-      total: total,
-      partial: (count !== total)
+      size: size,
+      partial: (count !== size)
     })
 
     return reply
-      .status((count !== total) ? 206 : 200)
+      .status((count !== size) ? 206 : 200)
       .type(mimetypeFilter(type))
       .header('accept-ranges', 'bytes')
-      .header('content-range', `bytes ${offset}-${count}/${total}`)
+      .header('content-range', `bytes ${offset}-${count}/${size}`)
       .header('content-length', count)
       .send(await getAzureBlobStream(uploaded_by, file, {
         offset: offset,
@@ -119,23 +118,25 @@ export default function (fastify, opts, done) {
 
     return reply
       .type('image/webp')
-      .send(await getAzureBlobStream(uploaded_by, thumbnail))
+      .send(await getAzureBlobBuffer(uploaded_by, thumbnail))
   })
 
   // Download file
   fastify.get('/f/:id/download', async (req, reply) => {
     const { id } = req.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT name, type, uploaded_by, file FROM file WHERE id = ?')
+      .prepare('SELECT name, type, uploaded_by, file, size FROM file WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
 
-    const { name, type, uploaded_by, file } = dbResult
+    const { name, type, uploaded_by, file, size } = dbResult
 
+    // NOTE: maybe we should use the file ID as the name?
     return reply
-      .header('Content-disposition', `attachment; filename=${name}`) // NOTE: maybe we should use the file ID as the name?
       .type(type)
+      .header('content-disposition', `attachment; filename=${name}`)
+      .header('content-length', size)
       .send(await getAzureBlobStream(uploaded_by, file))
   })
 
