@@ -30,10 +30,22 @@ export function isValidMimetype (mimetype) {
 
 export function getMimetype (fileBuffer) {
   try {
-    // Only looking at the first KB
-    const firstKB = fileBuffer.subarray(0, 1024)
+    // Only looking at the first KB initally then expand if we only found a/o-s
+    let searchBytes = 1024
+    let mimetype = 'invalid/mimetype'
+    let found = false
 
-    return magic.getMime(firstKB)
+    while (found === false && searchBytes <= fileBuffer.byteLength) {
+      mimetype = magic.getMime(fileBuffer.subarray(0, searchBytes))
+
+      if (mimetype !== 'application/octet-stream') {
+        found = true
+      } else {
+        searchBytes += 1024
+      }
+    }
+
+    return mimetype
   } catch (err) {
     error(err.stack)
     return 'invalid/mimetype'
