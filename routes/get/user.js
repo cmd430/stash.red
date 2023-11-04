@@ -8,7 +8,7 @@ import { mimetypeFilter } from '../../utils/mimetype.js'
 const { log, debug, info, warn, error } = new Log('Home')
 const { pagination } = config.render
 
-// NOTE: url params = ?p=<Number>&sort=<ASC|DESC>&filter=<image|text|audio|video>&limit=<Number(Max=70)>
+// INFO: url params = ?p=<Number>&sort=<ASC|DESC>&filter=<image|text|audio|video>&limit=<Number(Max=70)>
 
 function preHandler (req, reply, done) {
   const {
