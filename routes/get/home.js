@@ -7,11 +7,6 @@ export default function (fastify, opts, done) {
 
   // Home page
   fastify.get('/', async (request, reply) => {
-
-    // TEMP
-    debug('authenticated: ', request.session.get('authenticated') ?? false)
-    debug(request.session.get('session') ?? {})
-
     return reply
       .disableCache()
       .view('home')
