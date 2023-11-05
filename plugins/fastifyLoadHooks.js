@@ -1,6 +1,10 @@
 import { readdir } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import { fastifyPlugin } from 'fastify-plugin'
+import { Log } from 'cmd430-utils'
+
+// eslint-disable-next-line no-unused-vars
+const { log, debug, info, warn, error } = new Log('Hooks')
 
 export default fastifyPlugin(async (fastify, opts, done) => {
   // Find and register hooks
