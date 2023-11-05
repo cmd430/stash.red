@@ -1,5 +1,6 @@
 import { Log } from 'cmd430-utils'
 import { evaluate } from 'mathjs'
+import { fastifyPlugin } from 'fastify-plugin'
 import { deleteAzureBlobWithThumbnail } from '../utils/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
@@ -31,12 +32,13 @@ async function performGC (db) {
   if (removed > 0) debug('Removed', removed, 'temporary uploads')
 }
 
-export default function (fastify, opts, done) {
+export default fastifyPlugin((fastify, opts, done) => {
   const { uploads: { temporary: { gcInterval } } } = fastify.config
 
   performGC(fastify.betterSqlite3)
-
   setInterval(() => performGC(fastify.betterSqlite3), evaluate(gcInterval))
-
   done()
-}
+}, {
+  fastify: '4.x',
+  name: 'temporary-uploads-garbarge-collection'
+})

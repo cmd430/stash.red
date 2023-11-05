@@ -1,6 +1,7 @@
 import { readdir } from 'node:fs/promises'
 import { Log } from 'cmd430-utils'
 import createError from 'http-errors'
+import { fastifyPlugin } from 'fastify-plugin'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Routes')
@@ -31,7 +32,7 @@ function handleError (err, request, reply) {
     })
 }
 
-export default async function loadRoutes (fastify, opts, done) {
+export default fastifyPlugin(async (fastify, opts, done) => {
   // Find and register routes
   for (const file of await readdir('./routes', { recursive: true })) {
     if (!file.endsWith('.js')) continue
@@ -45,4 +46,7 @@ export default async function loadRoutes (fastify, opts, done) {
 
   // Move on to other handlers
   done()
-}
+}, {
+  fastify: '4.x',
+  name: 'load-routes'
+})
