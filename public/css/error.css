@@ -61,8 +61,9 @@ main section pre {
   background: var(--color-page-background-theme-mix);
   color: var(--color-error-text);
   white-space: pre;
-  overflow: scroll;
+  overflow: auto;
   padding: 1rem;
+  max-width: 100%;
 }
 main section span {
   display: flex;
