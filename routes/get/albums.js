@@ -31,19 +31,21 @@ export default function (fastify, opts, done) {
         type: mimetypeFilter(file.type)
       }))
 
-    return reply.view('album', {
-      album: {
-        id: id,
-        title: title,
-        files: files,
-        uploaded_by: uploaded_by
-      },
-      openGraph: {
-        title: title,
-        description: `An Album Hosted at ${reply.locals.title}`,
-        isAlbum: true
-      }
-    })
+    return reply
+      .disableCache()
+      .view('album', {
+        album: {
+          id: id,
+          title: title,
+          files: files,
+          uploaded_by: uploaded_by
+        },
+        openGraph: {
+          title: title,
+          description: `An Album Hosted at ${reply.locals.title}`,
+          isAlbum: true
+        }
+      })
   })
 
   // Get album thumbnail

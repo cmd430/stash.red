@@ -2,32 +2,12 @@ import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
 import { mimetypeFilter } from '../../utils/mimetype.js'
-import { getAzureBlobStream, deleteAzureBlobWithThumbnail } from '../../utils/azureBlobStorage.js'
+import { getAzureBlobStream } from '../../utils/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Files (GET)')
 
 export default function (fastify, opts, done) {
-
-  // TEMP: test file delete
-  fastify.get('/f/:id/delete', async (request, reply) => {
-    const { id } = request.params
-    const { file, uploaded_by } = fastify.betterSqlite3
-      .prepare('SELECT file, uploaded_by FROM files WHERE id = ?')
-      .get(id)
-
-    if (await deleteAzureBlobWithThumbnail(uploaded_by, file)) {
-      fastify.betterSqlite3
-        .prepare('DELETE FROM files WHERE id = ?')
-        .run(id)
-    }
-
-    return {
-      message: 'blob deleted'
-    }
-  })
-  // END
-
 
   // Get uploaded file page by ID
   fastify.get('/f/:id', async (request, reply) => {
@@ -55,21 +35,23 @@ export default function (fastify, opts, done) {
     }
     const directPath = `/f/${id}${extname(file)}`
 
-    return reply.view('file', {
-      file: {
-        id: id,
-        path: directPath,
-        ...dbResult,
-        type: type
-      },
-      openGraph: {
-        title: id,
-        description: `${description(type)} Hosted at ${reply.locals.title}`,
-        path: `${request.protocol}://${request.hostname}${directPath}`,
-        mimetype: type,
-        [`is${isType(type)}`]: true
-      }
-    })
+    return reply
+      .disableCache()
+      .view('file', {
+        file: {
+          id: id,
+          path: directPath,
+          ...dbResult,
+          type: type
+        },
+        openGraph: {
+          title: id,
+          description: `${description(type)} Hosted at ${reply.locals.title}`,
+          path: `${request.protocol}://${request.hostname}${directPath}`,
+          mimetype: type,
+          [`is${isType(type)}`]: true
+        }
+      })
   })
 
   // Get uploaded file by ID

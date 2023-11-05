@@ -75,26 +75,28 @@ export default function (fastify, opts, done) {
     const { total } = files[0] ?? 0
 
     // Return Page
-    return reply.view('user', {
-      pagination: {
-        params: params.length > 0 ? `&${params.join('&')}` : '',
-        page: page,
-        pageCount:  Math.max(1, Math.ceil(total / limit))
-      },
-      view: {
-        username: username,
-        type: 'files'
-      },
-      uploads: files,
-      openGraph: {
-        title: username,
-        description: `A User Profile for ${reply.locals.title}`,
-        avatar: `https://www.gravatar.com/avatar/${createHash('md5')
-          .update(email.toLowerCase())
-          .digest('hex')}`,
-        isUser: true
-      }
-    })
+    return reply
+      .disableCache()
+      .view('user', {
+        pagination: {
+          params: params.length > 0 ? `&${params.join('&')}` : '',
+          page: page,
+          pageCount:  Math.max(1, Math.ceil(total / limit))
+        },
+        view: {
+          username: username,
+          type: 'files'
+        },
+        uploads: files,
+        openGraph: {
+          title: username,
+          description: `A User Profile for ${reply.locals.title}`,
+          avatar: `https://www.gravatar.com/avatar/${createHash('md5')
+            .update(email.toLowerCase())
+            .digest('hex')}`,
+          isUser: true
+        }
+      })
   })
 
   // User Albums page
@@ -122,26 +124,28 @@ export default function (fastify, opts, done) {
     const { total } = albums[0] ?? 0
 
     // Return Page
-    return reply.view('user', {
-      pagination: {
-        params: params.join('&'),
-        page: page,
-        pageCount:  Math.max(1, Math.ceil(total / limit))
-      },
-      view: {
-        username: username,
-        type: 'albums'
-      },
-      uploads: albums,
-      openGraph: {
-        title: username,
-        description: `A User Profile for ${reply.locals.title}`,
-        avatar: `https://www.gravatar.com/avatar/${createHash('md5')
-          .update(email.toLowerCase())
-          .digest('hex')}`,
-        isUser: true
-      }
-    })
+    return reply
+      .disableCache()
+      .view('user', {
+        pagination: {
+          params: params.join('&'),
+          page: page,
+          pageCount:  Math.max(1, Math.ceil(total / limit))
+        },
+        view: {
+          username: username,
+          type: 'albums'
+        },
+        uploads: albums,
+        openGraph: {
+          title: username,
+          description: `A User Profile for ${reply.locals.title}`,
+          avatar: `https://www.gravatar.com/avatar/${createHash('md5')
+            .update(email.toLowerCase())
+            .digest('hex')}`,
+          isUser: true
+        }
+      })
   })
 
   done()

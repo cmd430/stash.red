@@ -12,7 +12,9 @@ export default function (fastify, opts, done) {
     debug('authenticated: ', request.session.get('authenticated') ?? false)
     debug(request.session.get('session') ?? {})
 
-    return reply.view('home')
+    return reply
+      .disableCache()
+      .view('home')
   })
 
   done()
