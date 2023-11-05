@@ -15,11 +15,12 @@ import handlebars from 'handlebars'
 import { config } from './config/config.js'
 import temporaryUploadsGC from './plugins/temporaryUploadsGC.js'
 import sessionGC from './plugins/sessionGC.js'
+import fastifyLoadHooks from './plugins/fastifyLoadHooks.js'
 import databaseConnection from './database/databaseConnection.js'
 import fastifyLogger from './helpers/fastifyLogger.js'
 import fastifyLoadPartials from './helpers/fastifyLoadPartials.js'
-import fastifiyDefaultLocals from './hooks/fastifiyDefaultLocals.js'
 import loadRoutes from './plugins/loadRoutes.js'
+import disableCache from './plugins/disableCache.js'
 import './helpers/handlebarsHelpers.js'
 
 // eslint-disable-next-line no-unused-vars
@@ -77,6 +78,10 @@ try {
       useDataVariables: true
     }
   })
+  fastify.register(disableCache)
+
+  // Hooks
+  fastify.register(await fastifyLoadHooks)
 
   // Register routes
   fastify.register(await loadRoutes)
@@ -84,9 +89,6 @@ try {
   // Setup Temp file removing and session clean up tasks
   fastify.register(temporaryUploadsGC)
   fastify.register(sessionGC)
-
-  // Hooks
-  fastify.addHook(...fastifiyDefaultLocals())
 
   await fastify.listen({
     port: config.fastify.port,
