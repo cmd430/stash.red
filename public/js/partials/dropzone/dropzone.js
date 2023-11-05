@@ -121,11 +121,3 @@ dropzone.addEventListener('drop', e => {
 })
 
 fileInput.addEventListener('change', e => uploadFiles(fileInput.files))
-
-// Clear files on page load
-if (fileInput.files.length > 0) fileInput.value = ''
-
-// Prevent issues with persisted page
-window.addEventListener('pageshow', e => {
-  if (e.persisted) location.reload()
-})
