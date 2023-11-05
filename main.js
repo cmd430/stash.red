@@ -16,11 +16,11 @@ import { config } from './config/config.js'
 import temporaryUploadsGC from './plugins/temporaryUploadsGC.js'
 import sessionGC from './plugins/sessionGC.js'
 import fastifyLoadHooks from './plugins/fastifyLoadHooks.js'
+import loadRoutes from './plugins/loadRoutes.js'
+import disableCache from './plugins/disableCache.js'
 import databaseConnection from './database/databaseConnection.js'
 import fastifyLogger from './helpers/fastifyLogger.js'
 import fastifyLoadPartials from './helpers/fastifyLoadPartials.js'
-import loadRoutes from './plugins/loadRoutes.js'
-import disableCache from './plugins/disableCache.js'
 import './helpers/handlebarsHelpers.js'
 
 // eslint-disable-next-line no-unused-vars
