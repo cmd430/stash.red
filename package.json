@@ -21,6 +21,7 @@
     "better-sqlite3": "^9.0.0",
     "cmd430-utils": "github:cmd430/cmd430-utils",
     "fastify": "^4.24.3",
+    "fastify-plugin": "^4.5.1",
     "fastify-session-better-sqlite3-store": "^2.1.1",
     "ffmpeg-static": "^5.2.0",
     "handlebars": "^4.7.8",
