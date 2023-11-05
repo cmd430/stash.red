@@ -70,35 +70,22 @@ export async function getAzureBlobStream (username, blobID, range = { offset: 0,
   return azureDownloadBlockBlobResponse.readableStreamBody
 }
 
+// INFO: This is Unused, should remove?
 export async function getAzureBlobBuffer (username, blobID, range = { offset: 0, count: undefined }) {
   return streamToBuffer(await getAzureBlobStream(username, blobID, range))
 }
 
-export async function getAzureBlobSize (username, blobID) {
-  const azureContainerClient = azureBlobServiceClient.getContainerClient(username.toLowerCase())
-  const azureFileBlockBlobClient = azureContainerClient.getBlockBlobClient(blobID)
-  const azureStatsBlockBlobResponse = await azureFileBlockBlobClient.getProperties()
-  const { contentLength } = azureStatsBlockBlobResponse
-
-  return contentLength
-}
-
-export async function deleteAzureBlob (username, blobID) {
+async function deleteAzureBlob (username, blobID) {
   const azureContainerClient = azureBlobServiceClient.getContainerClient(username.toLowerCase())
   const azureFileBlockBlobClient = azureContainerClient.getBlockBlobClient(blobID)
   const azureFileDeleteBlobResponse = await azureFileBlockBlobClient.deleteIfExists()
 
-  debug(`File Blob was ${azureFileDeleteBlobResponse.succeeded ? 'deleted successfully.' : 'unabled to be deleted.'}\n\trequestId: ${azureFileDeleteBlobResponse.requestId}`)
-
-  return azureFileDeleteBlobResponse.succeeded
+  return azureFileDeleteBlobResponse
 }
 
 export async function deleteAzureBlobWithThumbnail (username, blobID) {
-  const azureContainerClient = azureBlobServiceClient.getContainerClient(username.toLowerCase())
-  const azureFileBlockBlobClient = azureContainerClient.getBlockBlobClient(blobID)
-  const azureFileDeleteBlobResponse = await azureFileBlockBlobClient.deleteIfExists()
-  const azureThumbnailBlockBlobClient = azureContainerClient.getBlockBlobClient(deriveThumbnailBlob(blobID))
-  const azureThumbnailDeleteBlobResponse = await azureThumbnailBlockBlobClient.deleteIfExists()
+  const azureFileDeleteBlobResponse = await deleteAzureBlob(username, blobID)
+  const azureThumbnailDeleteBlobResponse = await deleteAzureBlob(username, deriveThumbnailBlob(blobID))
 
   debug(`File Blob was ${azureFileDeleteBlobResponse.succeeded ? 'deleted successfully.' : 'unabled to be deleted.'}\n\trequestId: ${azureFileDeleteBlobResponse.requestId}`)
   debug(`Files Thumbnail Blob was ${azureThumbnailDeleteBlobResponse.succeeded ? 'deleted successfully.' : 'unabled to be deleted.'}\n\trequestId: ${azureFileDeleteBlobResponse.requestId}`)
