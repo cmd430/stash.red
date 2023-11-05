@@ -44,7 +44,7 @@ export default {
       }
       const contentLength = cl => {
         if (cl === '?') return '?? Bytes' // should only be for streamed responses
-        if (cl === '0' || cl === '') return '0 Bytes'
+        if (cl === '0' || cl === 0 || cl === '') return '0 Bytes'
 
         const i = Math.floor(Math.log(cl) / Math.log(1024))
         return `${parseFloat((cl / (1024 ** i)).toFixed((i === 0 ? 0 : 2)))} ${[ 'Bytes', 'KB', 'MB', 'GB' ][i]}`
