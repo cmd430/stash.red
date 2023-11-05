@@ -5,7 +5,7 @@ import createError from 'http-errors'
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Routes')
 
-function handleError (err, req, reply) {
+function handleError (err, request, reply) {
   if (!err.status && err.statusCode) err.status = err.statusCode
   if (!err.status) {
     err.status = 500
@@ -40,8 +40,8 @@ export default async function loadRoutes (fastify, opts, done) {
   }
 
   // Error handling
-  fastify.setNotFoundHandler((req, reply) => handleError(createError(404), req, reply))
-  fastify.setErrorHandler((err, req, reply) => handleError(err, req, reply))
+  fastify.setNotFoundHandler((request, reply) => handleError(createError(404), request, reply))
+  fastify.setErrorHandler((err, request, reply) => handleError(err, request, reply))
 
   // Move on to other handlers
   done()

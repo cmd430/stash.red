@@ -10,13 +10,13 @@ const { pagination } = config.render
 
 // INFO: url params = ?p=<Number>&sort=<ASC|DESC>&filter=<image|text|audio|video>&limit=<Number(Max=70)>
 
-function preHandler (req, reply, done) {
+function preHandler (request, reply, done) {
   const {
     sort = 'DESC',
     filter = '',
     limit = pagination.limit.default,
     p = 1
-  } = req.query
+  } = request.query
 
   const viewPage = p
   // eslint-disable-next-line no-nested-ternary
@@ -30,7 +30,7 @@ function preHandler (req, reply, done) {
   if (viewOrder !== 'DESC') viewParams.push(`sort=${viewOrder}`)
   if (viewLimit !== pagination.limit.default) viewParams.push(`limit=${viewLimit}`)
 
-  req.view = {
+  request.view = {
     page: viewPage,
     limit: viewLimit,
     offset: viewOffset,
@@ -45,10 +45,10 @@ function preHandler (req, reply, done) {
 export default function (fastify, opts, done) {
 
   // User Files page
-  fastify.get('/u/:username', { preHandler }, async (req, reply) => {
-    const { page, limit, offset, order, filter, params } = req.view
-    const { username } = req.params
-    const showPrivate = req.session.get('authenticated') && req.session.get('session').username === username
+  fastify.get('/u/:username', { preHandler }, async (request, reply) => {
+    const { page, limit, offset, order, filter, params } = request.view
+    const { username } = request.params
+    const showPrivate = request.session.get('authenticated') && request.session.get('session').username === username
 
     const user = fastify.betterSqlite3
       .prepare('SELECT email FROM accounts WHERE username = ?')
@@ -98,10 +98,10 @@ export default function (fastify, opts, done) {
   })
 
   // User Albums page
-  fastify.get('/u/:username/albums', { preHandler }, async (req, reply) => {
-    const { page, limit, offset, order, params } = req.view
-    const { username } = req.params
-    const showPrivate = req.session.get('authenticated') && req.session.get('session').username === username
+  fastify.get('/u/:username/albums', { preHandler }, async (request, reply) => {
+    const { page, limit, offset, order, params } = request.view
+    const { username } = request.params
+    const showPrivate = request.session.get('authenticated') && request.session.get('session').username === username
 
     const user = fastify.betterSqlite3
       .prepare('SELECT email FROM accounts WHERE username = ?')

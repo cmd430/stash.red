@@ -12,14 +12,14 @@ const nanoid = customAlphabet('123456789ABCDEFGHJKLMNPQRSTUVWXYZ_abcdefghijkmnpq
 export default function (fastify, opts, done) {
 
   // Upload a file
-  fastify.post('/upload', async (req, reply) => {
+  fastify.post('/upload', async (request, reply) => {
     try {
-      if (!req.session.get('authenticated')) return {
+      if (!request.session.get('authenticated')) return {
         status: 401,
         message: 'You must be logged in to upload files'
       }
 
-      const files = req.files()
+      const files = request.files()
       const fileIDs = []
       const fileExts = []
 
@@ -27,7 +27,7 @@ export default function (fastify, opts, done) {
       let isPrivate = null
       let dontFormAlbum = null
 
-      const { username } = req.session.get('session')
+      const { username } = request.session.get('session')
 
       for await (const file of files) {
         const fileBuffer = await file.toBuffer()

@@ -11,8 +11,8 @@ const { log, debug, info, warn, error } = new Log('Albums (GET)')
 export default function (fastify, opts, done) {
 
   // Get album by ID
-  fastify.get('/a/:id', async (req, reply) => {
-    const { id } = req.params
+  fastify.get('/a/:id', async (request, reply) => {
+    const { id } = request.params
     const album = fastify.betterSqlite3
       .prepare('SELECT title, uploaded_by FROM album WHERE id = ?')
       .get(id)
@@ -47,8 +47,8 @@ export default function (fastify, opts, done) {
   })
 
   // Get album thumbnail
-  fastify.get('/a/:id/thumbnail', async (req, reply) => {
-    const { id } = req.params
+  fastify.get('/a/:id/thumbnail', async (request, reply) => {
+    const { id } = request.params
     const dbResult = fastify.betterSqlite3
       .prepare('SELECT thumbnail, uploaded_by FROM album WHERE id = ?')
       .get(id)
@@ -63,8 +63,8 @@ export default function (fastify, opts, done) {
   })
 
   // Download album
-  fastify.get('/a/:id/download', async (req, reply) => {
-    const { id } = req.params
+  fastify.get('/a/:id/download', async (request, reply) => {
+    const { id } = request.params
     const album = fastify.betterSqlite3
       .prepare('SELECT title, uploaded_by FROM album WHERE id = ?')
       .get(id)

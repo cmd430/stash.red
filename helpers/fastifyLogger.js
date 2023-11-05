@@ -6,20 +6,20 @@ const fastifyLog = new Log('Fastify')
 export default {
   level: 'debug',
   serializers: {
-    res (res) {
+    res (reply) {
       return {
-        statusCode: res.statusCode,
-        contentLength: res[
-          Object.getOwnPropertySymbols(res).find(s => s.description === 'fastify.reply.headers')
+        statusCode: reply.statusCode,
+        contentLength: reply[
+          Object.getOwnPropertySymbols(reply).find(s => s.description === 'fastify.reply.headers')
         ]?.['content-length']
       }
     },
-    req (req) {
+    req (request) {
       return {
-        method: req.method,
-        url: req.url,
-        path: req.path,
-        parameters: req.parameters
+        method: request.method,
+        url: request.url,
+        path: request.path,
+        parameters: request.parameters
       }
     }
   },
@@ -43,8 +43,8 @@ export default {
         if (s >= 100) return grey(s)
       }
       const contentLength = cl => {
-        if (cl === '?') return '?? Bytes'
-        if (cl === '0') return '0 Bytes'
+        if (cl === '?') return '?? Bytes' // should only be for streamed responses
+        if (cl === '0' || cl === '') return '0 Bytes'
 
         const i = Math.floor(Math.log(cl) / Math.log(1024))
         return `${parseFloat((cl / (1024 ** i)).toFixed((i === 0 ? 0 : 2)))} ${[ 'Bytes', 'KB', 'MB', 'GB' ][i]}`

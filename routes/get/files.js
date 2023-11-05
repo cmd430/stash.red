@@ -10,8 +10,8 @@ const { log, debug, info, warn, error } = new Log('Files (GET)')
 export default function (fastify, opts, done) {
 
   // TEMP: test file delete
-  fastify.get('/f/:id/delete', async (req, reply) => {
-    const { id } = req.params
+  fastify.get('/f/:id/delete', async (request, reply) => {
+    const { id } = request.params
     const { file, uploaded_by } = fastify.betterSqlite3
       .prepare('SELECT file, uploaded_by FROM files WHERE id = ?')
       .get(id)
@@ -30,8 +30,8 @@ export default function (fastify, opts, done) {
 
 
   // Get uploaded file page by ID
-  fastify.get('/f/:id', async (req, reply) => {
-    const { id } = req.params
+  fastify.get('/f/:id', async (request, reply) => {
+    const { id } = request.params
     const dbResult = fastify.betterSqlite3
       .prepare('SELECT file, type, uploaded_by FROM file WHERE id = ?')
       .get(id)
@@ -65,7 +65,7 @@ export default function (fastify, opts, done) {
       openGraph: {
         title: id,
         description: `${description(type)} Hosted at ${reply.locals.title}`,
-        path: `${req.protocol}://${req.hostname}${directPath}`,
+        path: `${request.protocol}://${request.hostname}${directPath}`,
         mimetype: type,
         [`is${isType(type)}`]: true
       }
@@ -73,8 +73,8 @@ export default function (fastify, opts, done) {
   })
 
   // Get uploaded file by ID
-  fastify.get('/f/:id.:ext', async (req, reply) => {
-    const { id } = req.params
+  fastify.get('/f/:id.:ext', async (request, reply) => {
+    const { id } = request.params
     const dbResult = fastify.betterSqlite3
       .prepare('SELECT file, type, uploaded_by, size FROM file WHERE id = ?')
       .get(id)
@@ -82,11 +82,11 @@ export default function (fastify, opts, done) {
     if (!dbResult) return createError(404)
 
     const { file, type, uploaded_by, size } = dbResult
-    const { offset: offsetRaw, count: countRaw } = req.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? { offset: 0, count: '' }
+    const { offset: offsetRaw, count: countRaw } = request.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? { offset: 0, count: '' }
     const offset = (Number(offsetRaw) || 0)
     const count = (Number(countRaw) || (size - offset))
 
-    debug('Range:', req.headers.range, {
+    debug('Range:', request.headers.range, {
       offset: offset,
       count: count,
       size: size,
@@ -105,8 +105,8 @@ export default function (fastify, opts, done) {
   })
 
   // Get uploaded file thumbnail
-  fastify.get('/f/:id/thumbnail', async (req, reply) => {
-    const { id } = req.params
+  fastify.get('/f/:id/thumbnail', async (request, reply) => {
+    const { id } = request.params
     const dbResult = fastify.betterSqlite3
       .prepare('SELECT thumbnail, uploaded_by FROM file WHERE id = ?')
       .get(id)
@@ -121,8 +121,8 @@ export default function (fastify, opts, done) {
   })
 
   // Download file
-  fastify.get('/f/:id/download', async (req, reply) => {
-    const { id } = req.params
+  fastify.get('/f/:id/download', async (request, reply) => {
+    const { id } = request.params
     const dbResult = fastify.betterSqlite3
       .prepare('SELECT type, uploaded_by, file, size FROM file WHERE id = ?')
       .get(id)

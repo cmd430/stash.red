@@ -11,8 +11,8 @@ export default function (fastify, opts, done) {
   const { bcrypt } = fastify.config
 
   // Signup
-  fastify.post('/signup', async (req, reply) => {
-    const { username, email, password, confirm } = req.body
+  fastify.post('/signup', async (request, reply) => {
+    const { username, email, password, confirm } = request.body
     const userameValid = Boolean((/^[a-zA-Z0-9]{3,63}$/).test(username))
 
     if (password !== confirm || !username || !email || !userameValid) return createError(400, password !== confirm ? 'Passwords do not match' : 'All Fields Required')
@@ -26,8 +26,8 @@ export default function (fastify, opts, done) {
 
       await createAzureContainer(username)
 
-      req.session.set('authenticated', true)
-      req.session.set('session', {
+      request.session.set('authenticated', true)
+      request.session.set('session', {
         id: id,
         username: username,
         isAdmin: false
@@ -42,8 +42,8 @@ export default function (fastify, opts, done) {
   })
 
   // Login
-  fastify.post('/login', async (req, reply) => {
-    const { username, password } = req.body
+  fastify.post('/login', async (request, reply) => {
+    const { username, password } = request.body
 
     if (!username || !password) return createError(400, 'All Fields Required')
 
@@ -56,8 +56,8 @@ export default function (fastify, opts, done) {
 
       if (hasValidCredentials === false) return createError(401, 'Invalid username or password')
 
-      req.session.set('authenticated', true)
-      req.session.set('session', {
+      request.session.set('authenticated', true)
+      request.session.set('session', {
         id: id,
         username: username,
         isAdmin: Boolean(isAdmin)

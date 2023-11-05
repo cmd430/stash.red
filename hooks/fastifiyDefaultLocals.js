@@ -6,18 +6,18 @@ const { siteTheme } = config.render
 export default function fastifiyDefaultLocals () {
   return Object.values({
     hook: 'preHandler',
-    handler (req, reply, done) {
-      const base = req.url.split('?')[0]
+    handler (request, reply, done) {
+      const base = request.url.split('?')[0]
 
       reply.locals = {
         base: `${base}${base.endsWith('/') ? '' : '/'}`,
         title: 'stash.red',
         openGraph: {
-          site: req.hostname,
+          site: request.hostname,
           title: null,
           description: null,
           theme: isDevEnv() ? siteTheme.dev : siteTheme.prod,
-          url: `${req.protocol}://${req.hostname}${req.url}`,
+          url: `${request.protocol}://${request.hostname}${request.url}`,
           mimetype: null,
           // the direct path of the thing
           path: null,
@@ -32,7 +32,7 @@ export default function fastifiyDefaultLocals () {
           avatar: null
         },
         ...reply.locals,
-        ...req.session
+        ...request.session
       }
 
       done()

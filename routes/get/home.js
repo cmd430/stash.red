@@ -6,11 +6,11 @@ const { log, debug, info, warn, error } = new Log('Home')
 export default function (fastify, opts, done) {
 
   // Home page
-  fastify.get('/', async (req, reply) => {
+  fastify.get('/', async (request, reply) => {
 
     // TEMP
-    debug('authenticated: ', req.session.get('authenticated') ?? false)
-    debug(req.session.get('session') ?? {})
+    debug('authenticated: ', request.session.get('authenticated') ?? false)
+    debug(request.session.get('session') ?? {})
 
     return reply.view('home')
   })
