@@ -55,6 +55,7 @@
   [ ] Create abstract layer for handling the file buffers so you can choose where to store them
       for example you could send them the AWS S3, Azure Blob Storage, Store them locally or Create
       some other file store
+  [ ] Create abstract layer for DB access to allow using other sql dbs
   [ ] Admin page to control settings / see logs
       -> for logs can probably use websocket or maybe server sent events
 
