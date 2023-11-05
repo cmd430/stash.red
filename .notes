@@ -10,8 +10,12 @@
   [√] File downloading
   [ ] Album file uploading / add files to existing album
   [ ] Album title renaming
-  [ ] File deleting
-  [ ] Album deleting
+  [!] File deleting
+      [√] backend
+      [ ] frontend
+  [!] Album deleting
+      [√] backend
+      [ ] frontend
   [√] upload TTL
   [√] upload is private
   [√] upload dont form album
@@ -40,6 +44,7 @@
       [√] file styles
       [√] error page styles
       [ ] login/sign up page styles
+      [ ] modal styles
   [!] scrap and redo client js
       [!] redo uploading js for dropzone
           -> basically done, need to get url uploads working
