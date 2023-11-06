@@ -12,12 +12,18 @@
   [ ] Album title renaming
       [√] backend
       [ ] frontend
+          [ ] works
+          [ ] confirm/cancel modal
   [!] File deleting
       [√] backend
-      [ ] frontend
+      [!] frontend
+          [√] works
+          [ ] delete/cancel modal
   [!] Album deleting
       [√] backend
-      [ ] frontend
+      [!] frontend
+          [√] works
+          [ ] delete/cancel modal
   [√] upload TTL
   [√] upload is private
   [√] upload dont form album
