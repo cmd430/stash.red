@@ -9,11 +9,12 @@
   [√] Album downloading
   [√] File downloading
   [ ] Album file uploading / add files to existing album
-  [ ] Album title renaming
+  [!] Album title renaming
       [√] backend
-      [ ] frontend
-          [ ] works
+      [√] frontend
+          [√] works
           [ ] confirm/cancel modal
+          [ ] cancel editing without changes
   [!] File deleting
       [√] backend
       [!] frontend
@@ -60,7 +61,7 @@
       [√] redo audio player
       [√] redo video player
       [√] redo text loader
-      [ ] album title editing
+      [!] album title editing
       [ ] album order editing
       [ ] album file adding
   [√] restyle video and audio players so i can use the default player controls
