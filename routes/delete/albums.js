@@ -46,17 +46,21 @@ export default function (fastify, opts, done) {
       }
     }
 
-    if (removed === 0) return {
-      message: 'album not deleted'
-    }
+    if (removed === 0) return reply
+      .status(400)
+      .send({
+        message: 'album not deleted'
+      })
 
-    if (dbResultFiles.length !== removed) return {
-      message: 'album partially deleted'
-    }
+    if (dbResultFiles.length !== removed) return reply
+      .status(200)
+      .send({
+        message: 'album partially deleted'
+      })
 
-    return {
-      message: 'album deleted'
-    }
+    return reply
+      .status(204)
+      .end()
   })
 
   done()
