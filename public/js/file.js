@@ -13,3 +13,4 @@ for (const fileDeleteButton of fileDeleteButtons) fileDeleteButton.addEventListe
   return location.assign(`/u/${fileUser}/`)
 })
 
+// TODO: show popup modal to confirm/cancel the delete

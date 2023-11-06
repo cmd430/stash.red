@@ -10,3 +10,5 @@ document.querySelector('a.album__delete')?.addEventListener('click', async () =>
 
   return console.error('something went wrong deleting the album')
 })
+
+// TODO: show popup modal to confirm/cancel the delete
