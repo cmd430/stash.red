@@ -15,8 +15,8 @@
       <i class="icon-download"></i>
       <span>Save</span>
     </a>
-    {{#if_either_eq uploaded_by @root.album.uploaded_by @session.username this}}
-      <a class="action__delete" title="Delete this audio" data-id="/f/{{id}}" data-username="{{uploaded_by}}">
+    {{#if_either_eq uploadedBy @root.album.uploadedBy @session.username this}}
+      <a class="action__delete" title="Delete this audio" data-id="/f/{{id}}" data-username="{{uploadedBy}}">
         <i class="icon-trash"></i>
       </a>
     {{/if_either_eq}}

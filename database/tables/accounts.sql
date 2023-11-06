@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS "accounts" (
   Create internal SYSTEM account only
   if it doesnt exist, this account is not
   usable but is the default account used
-  if an item is uploaded without an `uploaded_by`
+  if an item is uploaded without an `uploadedBy`
   paramater set somehow
 */
 INSERT INTO "accounts" ("id", "username", "email", "password", "isAdmin") SELECT 'INTERNAL', 'SYSTEM', 'SYSTEM', 'SYSTEM', '1' WHERE NOT EXISTS (

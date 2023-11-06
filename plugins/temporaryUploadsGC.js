@@ -9,17 +9,17 @@ const { log, debug, info, warn, error } = new Log('Temporary Uploads')
 async function performGC (db) {
   const expired = []
   const temporal = db
-    .prepare('SELECT id, file, uploaded_at, uploaded_by, ttl FROM files WHERE ttl NOT NULL')
+    .prepare('SELECT id, file, uploadedAt, uploadedBy, ttl FROM files WHERE ttl NOT NULL')
     .all()
 
-  for (const { id, file, uploaded_at, uploaded_by, ttl } of temporal) {
-    if (Date.now() - new Date(new Date(uploaded_at).getTime() + (1000 * ttl)) >= 0) {
-      expired.push({ id, uploaded_by, file })
+  for (const { id, file, uploadedAt, uploadedBy, ttl } of temporal) {
+    if (Date.now() - new Date(new Date(uploadedAt).getTime() + (1000 * ttl)) >= 0) {
+      expired.push({ id, uploadedBy, file })
     }
   }
 
-  for (const { id, file, uploaded_by } of expired) {
-    const removedBlob = await deleteAzureBlobWithThumbnail(uploaded_by, file)
+  for (const { id, file, uploadedBy } of expired) {
+    const removedBlob = await deleteAzureBlobWithThumbnail(uploadedBy, file)
 
     if (!removedBlob) delete expired[expired.findIndex(obj => obj.id === id)]
   }

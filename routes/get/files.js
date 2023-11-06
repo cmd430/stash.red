@@ -13,7 +13,7 @@ export default function (fastify, opts, done) {
   fastify.get('/f/:id', async (request, reply) => {
     const { id } = request.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT file, type, uploaded_by FROM file WHERE id = ?')
+      .prepare('SELECT file, type, uploadedBy FROM file WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
@@ -58,12 +58,12 @@ export default function (fastify, opts, done) {
   fastify.get('/f/:id.:ext', async (request, reply) => {
     const { id } = request.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT file, type, uploaded_by, size FROM file WHERE id = ?')
+      .prepare('SELECT file, type, uploadedBy, size FROM file WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
 
-    const { file, type, uploaded_by, size } = dbResult
+    const { file, type, uploadedBy, size } = dbResult
     const { offset: offsetRaw, count: countRaw } = request.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? { offset: 0, count: '' }
     const offset = (Number(offsetRaw) || 0)
     const count = (Number(countRaw) || (size - offset))
@@ -80,7 +80,7 @@ export default function (fastify, opts, done) {
       .type(mimetypeFilter(type))
       .header('accept-ranges', 'bytes')
       .header('content-range', `bytes ${offset}-${count}/${size}`)
-      .send(await getAzureBlobStream(uploaded_by, file, {
+      .send(await getAzureBlobStream(uploadedBy, file, {
         offset: offset,
         count: count
       }))
@@ -90,34 +90,34 @@ export default function (fastify, opts, done) {
   fastify.get('/f/:id/thumbnail', async (request, reply) => {
     const { id } = request.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT thumbnail, uploaded_by FROM file WHERE id = ?')
+      .prepare('SELECT thumbnail, uploadedBy FROM file WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
 
-    const { thumbnail, uploaded_by } = dbResult
+    const { thumbnail, uploadedBy } = dbResult
 
     return reply
       .type('image/webp')
-      .send(await getAzureBlobStream(uploaded_by, thumbnail))
+      .send(await getAzureBlobStream(uploadedBy, thumbnail))
   })
 
   // Download file
   fastify.get('/f/:id/download', async (request, reply) => {
     const { id } = request.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT type, uploaded_by, file, size FROM file WHERE id = ?')
+      .prepare('SELECT type, uploadedBy, file, size FROM file WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
 
-    const { type, uploaded_by, file } = dbResult
+    const { type, uploadedBy, file } = dbResult
     const filename = `${id}${extname(file)}`
 
     return reply
       .type(type)
       .header('content-disposition', `attachment; filename=${filename}`)
-      .send(await getAzureBlobStream(uploaded_by, file))
+      .send(await getAzureBlobStream(uploadedBy, file))
   })
 
   done()

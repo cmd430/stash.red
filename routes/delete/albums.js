@@ -10,25 +10,25 @@ export default function (fastify, opts, done) {
   fastify.delete('/a/:id/delete', async (request, reply) => {
     const { id } = request.params
     const dbResultAlbum = fastify.betterSqlite3
-      .prepare('SELECT uploaded_by FROM albums WHERE id = ?')
+      .prepare('SELECT uploadedBy FROM albums WHERE id = ?')
       .get(id)
 
     if (!dbResultAlbum) return createError(400)
 
-    const { uploaded_by } = dbResultAlbum
+    const { uploadedBy } = dbResultAlbum
     const dbResultFiles = fastify.betterSqlite3
-      .prepare('SELECT id, file FROM files WHERE inAlbum = ? AND uploaded_by = ?')
-      .all(id, uploaded_by)
+      .prepare('SELECT id, file FROM files WHERE inAlbum = ? AND uploadedBy = ?')
+      .all(id, uploadedBy)
 
     if (!dbResultFiles) return createError(400)
     if ((request.session.get('authenticated') ?? false) === false) return createError(401) // Not authd
-    if (request.session.get('session')?.username !== uploaded_by) return createError(403) // Not allowed
+    if (request.session.get('session')?.username !== uploadedBy) return createError(403) // Not allowed
 
     const album = []
 
     for (const { id: fileID, file } of dbResultFiles) album.push({ fileID, file })
     for (const { fileID, file } of album) {
-      const removedBlob = await deleteAzureBlobWithThumbnail(uploaded_by, file)
+      const removedBlob = await deleteAzureBlobWithThumbnail(uploadedBy, file)
 
       if (!removedBlob) delete album[album.findIndex(obj => obj.fileID === fileID)]
     }

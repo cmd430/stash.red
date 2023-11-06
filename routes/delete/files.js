@@ -10,16 +10,16 @@ export default function (fastify, opts, done) {
   fastify.delete('/f/:id/delete', async (request, reply) => {
     const { id } = request.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT file, uploaded_by FROM files WHERE id = ?')
+      .prepare('SELECT file, uploadedBy FROM files WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(400)
 
-    const { file, uploaded_by } = dbResult
+    const { file, uploadedBy } = dbResult
 
     if ((request.session.get('authenticated') ?? false) === false) return createError(401) // Not authd
-    if (request.session.get('session').username !== uploaded_by) return createError(403) // Not allowed
-    if (!await deleteAzureBlobWithThumbnail(uploaded_by, file)) return {
+    if (request.session.get('session').username !== uploadedBy) return createError(403) // Not allowed
+    if (!await deleteAzureBlobWithThumbnail(uploadedBy, file)) return {
       message: 'file not deleted'
     }
 

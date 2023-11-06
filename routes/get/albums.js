@@ -14,7 +14,7 @@ export default function (fastify, opts, done) {
   fastify.get('/a/:id', async (request, reply) => {
     const { id } = request.params
     const album = fastify.betterSqlite3
-      .prepare('SELECT title, uploaded_by FROM album WHERE id = ?')
+      .prepare('SELECT title, uploadedBy FROM album WHERE id = ?')
       .get(id)
 
     if (!album) return createError(404)
@@ -23,7 +23,7 @@ export default function (fastify, opts, done) {
       .prepare('SELECT id, file, type FROM albumFiles WHERE album = ?')
       .all(id)
 
-    const { title, uploaded_by } = album
+    const { title, uploadedBy } = album
     const files = albumFiles
       .map(file => ({
         path: `/f/${file.id}${extname(file.file)}`,
@@ -38,7 +38,7 @@ export default function (fastify, opts, done) {
           id: id,
           title: title,
           files: files,
-          uploaded_by: uploaded_by
+          uploadedBy: uploadedBy
         },
         openGraph: {
           title: title,
@@ -52,23 +52,23 @@ export default function (fastify, opts, done) {
   fastify.get('/a/:id/thumbnail', async (request, reply) => {
     const { id } = request.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT thumbnail, uploaded_by FROM album WHERE id = ?')
+      .prepare('SELECT thumbnail, uploadedBy FROM album WHERE id = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
 
-    const { thumbnail, uploaded_by } = dbResult
+    const { thumbnail, uploadedBy } = dbResult
 
     return reply
       .type('image/webp')
-      .send(await getAzureBlobStream(uploaded_by, thumbnail))
+      .send(await getAzureBlobStream(uploadedBy, thumbnail))
   })
 
   // Download album
   fastify.get('/a/:id/download', async (request, reply) => {
     const { id } = request.params
     const album = fastify.betterSqlite3
-      .prepare('SELECT title, uploaded_by FROM album WHERE id = ?')
+      .prepare('SELECT title, uploadedBy FROM album WHERE id = ?')
       .get(id)
 
     if (!album) return createError(404)
@@ -77,7 +77,7 @@ export default function (fastify, opts, done) {
       .prepare('SELECT id, file FROM albumFiles WHERE album = ?')
       .all(id)
 
-    const { title, uploaded_by } = album
+    const { title, uploadedBy } = album
 
     const archive = archiver('zip', {
       comment: `Album downloaded from ${reply.locals.title}`,
@@ -85,7 +85,7 @@ export default function (fastify, opts, done) {
     })
 
     for (const { id: fileID, file } of albumFiles) {
-      archive.append(await getAzureBlobStream(uploaded_by, file), {
+      archive.append(await getAzureBlobStream(uploadedBy, file), {
         name: `${fileID}${extname(file)}`
       })
     }

@@ -60,9 +60,9 @@ export default function (fastify, opts, done) {
     const { email } = user
     // Get Files
     const getFilesIncludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, type, isPrivate, total FROM userFiles WHERE uploaded_by = ? AND type LIKE '${filter}%' ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT id, type, isPrivate, total FROM userFiles WHERE uploadedBy = ? AND type LIKE '${filter}%' ORDER BY uploadedAt ${order} LIMIT ? OFFSET ?`)
     const getFilesExcludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, type, isPrivate, total FROM userFiles WHERE uploaded_by = ? AND NOT isPrivate = 1 AND type LIKE '${filter}%' ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT id, type, isPrivate, total FROM userFiles WHERE uploadedBy = ? AND NOT isPrivate = 1 AND type LIKE '${filter}%' ORDER BY uploadedAt ${order} LIMIT ? OFFSET ?`)
 
     // Run SQL
     const files = (showPrivate ? getFilesIncludePrivate : getFilesExcludePrivate)
@@ -115,9 +115,9 @@ export default function (fastify, opts, done) {
     const { email } = user
     // Get Albums
     const getAlbumsIncludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, title, isPrivate, entries, total FROM userAlbums WHERE uploaded_by = ? ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT id, title, isPrivate, entries, total FROM userAlbums WHERE uploadedBy = ? ORDER BY uploadedAt ${order} LIMIT ? OFFSET ?`)
     const getAlbumsExcludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, title, isPrivate, entries, total FROM userAlbums WHERE uploaded_by = ? AND NOT isPrivate = 1  ORDER BY uploaded_at ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT id, title, isPrivate, entries, total FROM userAlbums WHERE uploadedBy = ? AND NOT isPrivate = 1  ORDER BY uploadedAt ${order} LIMIT ? OFFSET ?`)
 
     // Run SQL
     const albums = (showPrivate ? getAlbumsIncludePrivate : getAlbumsExcludePrivate).all(username, limit, offset)
