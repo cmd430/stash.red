@@ -7,7 +7,7 @@ const { log, debug, info, warn, error } = new Log('Files (DELETE)')
 
 export default function (fastify, opts, done) {
 
-  fastify.delete('/f/:id/delete', async (request, reply) => {
+  fastify.delete('/f/:id', async (request, reply) => {
     const { id } = request.params
     const dbResult = fastify.betterSqlite3
       .prepare('SELECT file, uploadedBy FROM files WHERE id = ?')
@@ -34,3 +34,9 @@ export default function (fastify, opts, done) {
 
   done()
 }
+
+/* NOTE:
+
+fetch('.', { method: 'DELETE' })
+
+*/

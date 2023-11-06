@@ -7,7 +7,7 @@ const { log, debug, info, warn, error } = new Log('Albums (DELETE)')
 
 export default function (fastify, opts, done) {
 
-  fastify.delete('/a/:id/delete', async (request, reply) => {
+  fastify.delete('/a/:id', async (request, reply) => {
     const { id } = request.params
     const dbResultAlbum = fastify.betterSqlite3
       .prepare('SELECT uploadedBy FROM albums WHERE id = ?')
@@ -61,3 +61,9 @@ export default function (fastify, opts, done) {
 
   done()
 }
+
+/* NOTE:
+
+fetch('.', { method: 'DELETE' })
+
+*/
