@@ -10,6 +10,8 @@
   [√] File downloading
   [ ] Album file uploading / add files to existing album
   [ ] Album title renaming
+      [√] backend
+      [ ] frontend
   [!] File deleting
       [√] backend
       [ ] frontend
