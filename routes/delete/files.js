@@ -19,24 +19,20 @@ export default function (fastify, opts, done) {
 
     if ((request.session.get('authenticated') ?? false) === false) return createError(401) // Not authd
     if (request.session.get('session').username !== uploadedBy) return createError(403) // Not allowed
-    if (!await deleteAzureBlobWithThumbnail(uploadedBy, file)) return {
-      message: 'file not deleted'
-    }
+    if (!await deleteAzureBlobWithThumbnail(uploadedBy, file)) return reply
+      .status(500)
+      .send({
+        message: 'album not deleted'
+      })
 
     fastify.betterSqlite3
       .prepare('DELETE FROM files WHERE id = ?')
       .run(id)
 
-    return {
-      message: 'file deleted'
-    }
+    return reply
+      .status(204)
+      .send()
   })
 
   done()
 }
-
-/* NOTE:
-
-fetch('.', { method: 'DELETE' })
-
-*/

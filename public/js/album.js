@@ -1,16 +1,12 @@
-const albumDeleteButton = document.querySelector('a.album__delete')
-
-albumDeleteButton?.addEventListener('click', async e => {
-  const albumID = albumDeleteButton.dataset.id
-  const albumUser = albumDeleteButton.dataset.username
-
-  const deleteAlbum = await fetch(albumID, { method: 'DELETE' })
+document.querySelector('a.album__delete')?.addEventListener('click', async () => {
+  const albumContainer = document.querySelector('main > section')
+  const albumID = albumContainer.getAttribute('data-id')
+  const albumUser = albumContainer.getAttribute('data-username')
+  const deleteAlbum = await fetch(`/a/${albumID}`, { method: 'DELETE' })
   const deleteAlbumStatus = deleteAlbum.status
 
-  if (deleteAlbumStatus === 204) return location.assign(`/u/${albumUser}`)
+  if (deleteAlbumStatus === 204) return location.assign(`/u/${albumUser}/albums/`)
+  if (deleteAlbumStatus === 200) return location.reload()
 
-  const deleteAlbumBody = await deleteAlbum.json()
-
-  // TODO: show the error/info
-  return console.error('something went wrong:', deleteAlbumBody)
+  return console.error('something went wrong deleting the album')
 })

@@ -13,14 +13,14 @@ export default function (fastify, opts, done) {
       .prepare('SELECT uploadedBy FROM albums WHERE id = ?')
       .get(id)
 
-    if (!dbResultAlbum) return createError(400)
+    if (!dbResultAlbum) return createError(404)
 
     const { uploadedBy } = dbResultAlbum
     const dbResultFiles = fastify.betterSqlite3
       .prepare('SELECT id, file FROM files WHERE inAlbum = ? AND uploadedBy = ?')
       .all(id, uploadedBy)
 
-    if (!dbResultFiles) return createError(400)
+    if (!dbResultFiles) return createError(404)
     if ((request.session.get('authenticated') ?? false) === false) return createError(401) // Not authd
     if (request.session.get('session')?.username !== uploadedBy) return createError(403) // Not allowed
 
@@ -47,7 +47,7 @@ export default function (fastify, opts, done) {
     }
 
     if (removed === 0) return reply
-      .status(400)
+      .status(500)
       .send({
         message: 'album not deleted'
       })
@@ -60,14 +60,8 @@ export default function (fastify, opts, done) {
 
     return reply
       .status(204)
-      .end()
+      .send()
   })
 
   done()
 }
-
-/* NOTE:
-
-fetch('.', { method: 'DELETE' })
-
-*/
