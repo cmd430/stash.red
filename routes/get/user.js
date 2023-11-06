@@ -72,7 +72,7 @@ export default function (fastify, opts, done) {
         type: mimetypeFilter(file.type)
       }))
 
-    const { total } = files[0] ?? 0
+    const { total } = files[0] ?? { total: 0 }
 
     // Return Page
     return reply
@@ -121,7 +121,7 @@ export default function (fastify, opts, done) {
 
     // Run SQL
     const albums = (showPrivate ? getAlbumsIncludePrivate : getAlbumsExcludePrivate).all(username, limit, offset)
-    const { total } = albums[0] ?? 0
+    const { total } = albums[0] ?? { total: 0 }
 
     // Return Page
     return reply
