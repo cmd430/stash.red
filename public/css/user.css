@@ -19,12 +19,15 @@ header {
   padding-right: 0.5rem;
 }
 header h1 {
+  flex-grow: 1;
+  position: relative;
   max-width: 100%;
   font-weight: 400;
   font-variant: small-caps;
   text-transform: lowercase;
-  overflow: hidden;
   text-overflow: ellipsis;
+  text-align: end;
+  overflow: hidden;
   white-space: nowrap;
   cursor: default;
   color: var(--color-header-text);

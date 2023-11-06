@@ -12,7 +12,7 @@
       {{> logo}}
       {{#if_eq @session.username album.uploadedBy this}}
         <h1 class="editable">
-          <input type="text" class="album__title_input" placeholder="Untitled Album" value="{{album.title}}" data-title="{{album.title}}" maxlength="100" />
+          <input type="text" class="album__title_input" placeholder="Untitled Album" value="{{album.title}}" maxlength="100" />
           {{album.title}}
         </h1>
       {{else}}
@@ -36,7 +36,7 @@
       {{/if_eq}}
     </nav>
     <main>
-      <section data-id="{{album.id}}" data-username="{{album.uploadedBy}}">
+      <section data-id="{{album.id}}" data-username="{{album.uploadedBy}}" data-title="{{album.title}}">
         {{#each album.files}}
           {{#if_contains type 'image' this}}
             {{> image this}}

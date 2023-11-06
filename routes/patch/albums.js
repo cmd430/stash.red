@@ -26,25 +26,10 @@ export default function (fastify, opts, done) {
       .prepare('UPDATE albums SET title = ? WHERE id = ?')
       .run(newTitle, id)
 
-    return {
-      message: 'album title updated'
-    }
+    return reply
+      .status(204)
+      .send()
   })
 
   done()
 }
-
-
-/* NOTE:
-
-fetch('.', {
-  method: 'PATCH',
-    headers:{
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: new URLSearchParams({
-        'title': 'new album title'
-    })
-})
-
-*/

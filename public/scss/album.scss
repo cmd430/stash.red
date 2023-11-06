@@ -1,5 +1,31 @@
 @import 'shared/userAlbumFileBase';
 
+
+header h1.editable input {
+  position: absolute;
+  width: calc(100% - 1.5rem);
+  height: 100%;
+  text-align: end;
+  right: 0;
+  font-weight: 400;
+  font-variant: small-caps;
+  font-size: 1em;
+  background: var(--color-theme);
+  border: 1px dashed var(--color-action-active);
+  color: var(--color-theme-inverted);
+  padding: 0.3rem;
+  outline: none;
+  opacity: 0;
+  visibility: collapse;
+  transition: opacity 250ms linear, visibility 250ms linear;
+
+  &.editing {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 250ms linear, visibility 0ms linear;
+  }
+}
+
 .wrapper {
   .image img,
   .video video,
