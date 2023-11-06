@@ -1,10 +1,9 @@
 const textFiles = document.querySelectorAll('.wrapper[data-type="text"]')
 
 for (const textFile of textFiles) {
-  const path = textFile.getAttribute('data-path')
   const code = textFile.querySelector('pre.text > code')
 
-  fetch(path)
+  fetch(code.textContent)
     .then(r => r.text())
     .then(text => (code.textContent = text))
     .catch(err => console.error(err))
