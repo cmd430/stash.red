@@ -1,19 +1,19 @@
-<span class="wrapper">
+<span class="wrapper" data-type="image"  data-id="{{id}}" data-username="{{uploadedBy}}">
   <a class="image" href="{{path}}">
     <img src="{{path}}" />
   </a>
-    <div class="actions">
-      <a class="action__save" title="Download this image" href="/f/{{id}}/download">
-        <i class="icon-download"></i>
-        <span>Save</span>
+  <div class="actions">
+    <a class="action__save" title="Download this image" href="/f/{{id}}/download">
+      <i class="icon-download"></i>
+      <span>Save</span>
+    </a>
+    {{#if_either_eq uploadedBy @root.album.uploadedBy @session.username this}}
+      <a class="action__delete" title="Delete this image">
+        <i class="icon-trash"></i>
+        <span></span>
       </a>
-      {{#if_either_eq uploadedBy @root.album.uploadedBy @session.username this}}
-        <a class="action__delete" title="Delete this image" data-id="/f/{{id}}" data-username="{{uploadedBy}}">
-          <i class="icon-trash"></i>
-          <span></span>
-        </a>
-      {{/if_either_eq}}
-    </div>
+    {{/if_either_eq}}
+  </div>
 </span>
 <link rel="stylesheet" href="/css/partials/image.css" />
 <script type="module"  src="/js/partials/image.js" defer></script>

@@ -1,4 +1,4 @@
-<span class="wrapper">
+<span class="wrapper" data-type="video" data-id="{{id}}" data-username="{{uploadedBy}}">
   <div class="video">
     <video controls preload playsinline>
       <source src="{{path}}" />
@@ -10,7 +10,7 @@
       <span>Save</span>
     </a>
     {{#if_either_eq uploadedBy @root.album.uploadedBy @session.username this}}
-      <a class="action__delete" title="Delete this video" data-id="/f/{{id}}" data-username="{{uploadedBy}}">
+      <a class="action__delete" title="Delete this video">
         <i class="icon-trash"></i>
       </a>
     {{/if_either_eq}}

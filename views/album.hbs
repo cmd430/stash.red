@@ -4,6 +4,7 @@
     {{> head}}
     <link rel="stylesheet" href="/css/album.css" />
     <script type="module"  src="/js/album.js" defer></script>
+    <script type="module"  src="/js/file.js" defer></script>
   </head>
   <body>
     {{> themeToggle}}
@@ -25,17 +26,17 @@
       </a>
       {{#if_eq @session.username album.uploadedBy this}}
         <span></span>
-        <a class="album__edit" title="Edit this Album" data-id="/a/{{album.id}}" data-username="{{album.uploadedBy}}">
+        <a class="album__edit" title="Edit this Album">
           <i class="icon-pencil"></i>
           <span>Edit Album</span>
         </a>
-        <a class="album__delete" title="Delete this Album" data-id="/a/{{album.id}}" data-username="{{album.uploadedBy}}">
+        <a class="album__delete" title="Delete this Album">
           <i class="icon-trash"></i>
         </a>
       {{/if_eq}}
     </nav>
     <main>
-      <section>
+      <section data-id="{{album.id}}" data-username="{{album.uploadedBy}}">
         {{#each album.files}}
           {{#if_contains type 'image' this}}
             {{> image this}}

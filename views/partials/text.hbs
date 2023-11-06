@@ -1,4 +1,4 @@
-<span class="wrapper fullwidth" data-text-id="{{id}}" data-text-path="{{path}}">
+<span class="wrapper fullwidth" data-type="text"  data-id="{{id}}" data-username="{{uploadedBy}}" data-path="{{path}}">
   <pre class="text">
     <code></code>
   </pre>
@@ -12,7 +12,7 @@
       <span>Save</span>
     </a>
     {{#if_either_eq uploadedBy @root.album.uploadedBy @session.username this}}
-      <a class="action__delete" title="Delete this text file" data-id="/f/{{id}}" data-username="{{uploadedBy}}">
+      <a class="action__delete" title="Delete this text file">
         <i class="icon-trash"></i>
         <span></span>
       </a>
