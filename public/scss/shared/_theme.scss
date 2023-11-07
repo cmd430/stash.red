@@ -22,6 +22,10 @@
   --color-action-delete:             #{$action-delete};
   --color-action-default:            #{$action-default};
   --color-action-active:             #{$action-active};
+
+  --color-modal-delete:             #{$modal-delete};
+  --color-modal-update:             #{$modal-update};
+  --color-modal-cancel:             #{$modal-cancel};
 }
 
 // Lightmode

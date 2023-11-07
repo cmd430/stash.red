@@ -61,11 +61,21 @@ $dark-error-text:          rgb(222, 222, 222);
 
 
 // Modal Colors
-$color-blackout:               rgba(0, 0 ,0, 0.8);
-$color-modal:                  rgb(232, 235, 237);
-$color-modal-border:           rgb(208, 213, 217);
-$color-modal-header:           rgb(119, 119, 119);
-$color-modal-divider:          rgb(208, 213, 217);
-$color-modal-cancel:           rgb(250, 250, 250);
-$color-modal-delete:           rgb(234, 56, 56);
-$color-modal-update:           rgb(56, 136, 234);
+$light-modal-background:   rgb(250, 250, 250);
+$light-modal-border:       rgb(218, 223, 227);
+$light-modal-header:       rgb(10, 10, 10);
+$light-modal-divider:      rgb(218, 223, 227);
+$light-modal-text:         rgb(10, 10, 10);
+
+$dark-modal-background:    rgb(36, 41, 46);
+$dark-modal-border:        rgb(10, 10, 10);
+$dark-modal-header:        rgb(250, 250, 250);
+$dark-modal-divider:       rgb(10, 10, 10);
+$dark-modal-text:          rgb(250, 250, 250);
+
+$light-modal-default:      rgb(218, 223, 227);
+$dark-modal-default:       rgb(10, 10, 10);
+
+$modal-delete:             rgb(234, 56, 56);
+$modal-update:             rgb(57, 136, 234);
+$modal-cancel:             rgb(56, 136, 234);
