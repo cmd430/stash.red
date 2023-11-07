@@ -2,13 +2,14 @@ const progress = document.querySelector('#progress')
 const progressFill = progress.querySelector('#fill')
 const progressText = progress.querySelector('#text')
 
-function setClass (c) {
-  progress.classList.remove('processing', 'warning', 'error')
-  if (c) progress.classList.add(c)
+function clearClasses () {
+  progress.classList.remove('hidden', 'invisible', 'processing', 'warning', 'error')
 }
 
-function clearClasses () {
-  progress.classList.remove(progress.classList)
+function setClass (c) {
+  clearClasses()
+
+  if (c) progress.classList.add(c)
 }
 
 function setProgressFill (percentage) {

@@ -47,10 +47,8 @@ async function uploadFiles (files) {
     if (!buttons) return
 
     buttons.classList.add('invisible')
-    setTimeout(() => buttons.classList.add('hidden'), 200)
 
     if (settingsButton.classList.contains('active')) settingsButton.click()
-    settingsButton.classList.add('hidden')
   })
 
   if (typeof files === 'string') {
