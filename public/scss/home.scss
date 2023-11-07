@@ -171,8 +171,6 @@ footer {
     padding: 1rem;
 
     & > svg {
-      width: 24px;
-      height: 24px;
       transition: fill 200ms;
       fill: var(--color-footer-text);
     }
