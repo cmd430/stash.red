@@ -27,10 +27,13 @@ export default function (fastify, opts, done) {
     const album = []
 
     for (const { id: fileID, file } of dbResultFiles) album.push({ fileID, file })
+
+    debug(album)
+
     for (const { fileID, file } of album) {
       const removedBlob = await deleteAzureBlobWithThumbnail(uploadedBy, file)
 
-      if (!removedBlob) delete album[album.findIndex(obj => obj.fileID === fileID)]
+      if (!removedBlob) delete album[album.findIndex(obj => obj?.fileID === fileID)]
     }
 
     const statement = fastify.betterSqlite3.prepare('DELETE FROM files WHERE id = ?')

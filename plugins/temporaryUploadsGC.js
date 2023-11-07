@@ -21,7 +21,7 @@ async function performGC (db) {
   for (const { id, file, uploadedBy } of expired) {
     const removedBlob = await deleteAzureBlobWithThumbnail(uploadedBy, file)
 
-    if (!removedBlob) delete expired[expired.findIndex(obj => obj.id === id)]
+    if (!removedBlob) delete expired[expired.findIndex(obj => obj?.id === id)]
   }
 
   const statement = db.prepare('DELETE FROM files WHERE id = ?')
