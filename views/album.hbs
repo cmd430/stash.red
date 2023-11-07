@@ -3,8 +3,8 @@
   <head>
     {{> head}}
     <link rel="stylesheet" href="/css/album.css" />
-    <script type="module"  src="/js/album.js" defer></script>
-    <script type="module"  src="/js/file.js" defer></script>
+    <script type="module"  src="/js/album.js"></script>
+    <script type="module"  src="/js/file.js"></script>
   </head>
   <body>
     {{> themeToggle}}
@@ -52,7 +52,7 @@
           {{/if_contains}}
         {{/each}}
       </section>
-      {{!-- {{> modals}} --}}
+      {{> modals}}
     </main>
   </body>
 </html>
