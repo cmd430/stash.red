@@ -3,12 +3,12 @@ const progressFill = progress.querySelector('#fill')
 const progressText = progress.querySelector('#text')
 
 function setClass (c) {
-  for (const r of [ 'processing', 'warning', 'error' ]) progress.classList.remove(r)
+  progress.classList.remove('processing', 'warning', 'error')
   if (c) progress.classList.add(c)
 }
 
 function clearClasses () {
-  for (const c of Array.from(progress.classList)) progress.classList.remove(c)
+  progress.classList.remove(progress.classList)
 }
 
 function setProgressFill (percentage) {
