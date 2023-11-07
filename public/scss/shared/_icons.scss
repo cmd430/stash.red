@@ -2,12 +2,12 @@
 
 @font-face {
   font-family: 'icons';
-  src: url('../font/icons.eot?29898629');
-  src: url('../font/icons.eot?29898629#iefix') format('embedded-opentype'),
-       url('../font/icons.woff2?29898629') format('woff2'),
-       url('../font/icons.woff?29898629') format('woff'),
-       url('../font/icons.ttf?29898629') format('truetype'),
-       url('../font/icons.svg?29898629#icons') format('svg');
+  src: url('../font/icons.eot?80553060');
+  src: url('../font/icons.eot?80553060#iefix') format('embedded-opentype'),
+       url('../font/icons.woff2?80553060') format('woff2'),
+       url('../font/icons.woff?80553060') format('woff'),
+       url('../font/icons.ttf?80553060') format('truetype'),
+       url('../font/icons.svg?80553060#icons') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -35,7 +35,28 @@
 .icon-eye:before { content: '\e802'; }
 .icon-cog:before { content: '\e803'; }
 .icon-adjust:before { content: '\e804'; }
+.icon-info-circled:before { content: '\e805'; }
+.icon-help-circled:before { content: '\e806'; }
+.icon-edit:before { content: '\e807'; }
+.icon-heart:before { content: '\e808'; }
+.icon-heart-empty:before { content: '\e809'; }
+.icon-star:before { content: '\e80a'; }
+.icon-star-empty:before { content: '\e80b'; }
+.icon-th-large:before { content: '\e80c'; }
+.icon-th:before { content: '\e80d'; }
+.icon-th-list:before { content: '\e80e'; }
+.icon-minus:before { content: '\e80f'; }
+.icon-minus-circled:before { content: '\e810'; }
+.icon-plus-circled:before { content: '\e811'; }
 .icon-music:before { content: '\e812'; }
+.icon-cancel-circled2:before { content: '\e813'; }
+.icon-cancel-circled:before { content: '\e814'; }
+.icon-ok-circled2:before { content: '\e815'; }
+.icon-ok-circled:before { content: '\e816'; }
+.icon-bookmark:before { content: '\e817'; }
+.icon-tags:before { content: '\e818'; }
+.icon-attention:before { content: '\e819'; }
+.icon-attention-circled:before { content: '\e81a'; }
 .icon-video:before { content: '\e81b'; }
 .icon-picture:before { content: '\e81c'; }
 .icon-trash-empty:before { content: '\e81d'; }
@@ -51,13 +72,42 @@
 .icon-volume-off:before { content: '\e827'; }
 .icon-volume-down:before { content: '\e828'; }
 .icon-volume-up:before { content: '\e829'; }
+.icon-cog-alt:before { content: '\e82a'; }
 .icon-link:before { content: '\e82b'; }
 .icon-resize-full:before { content: '\e82c'; }
+.icon-floppy:before { content: '\e82d'; }
+.icon-ccw:before { content: '\e82e'; }
 .icon-resize-small:before { content: '\e82f'; }
-.icon-link-ext:before { content: '\f08e'; }
+.icon-user:before { content: '\e830'; }
+.icon-logout:before { content: '\e831'; }
+.icon-link-ext-alt:before { content: '\f08e'; }
+.icon-bookmark-empty:before { content: '\f097'; }
+.icon-list-numbered:before { content: '\f0cb'; }
+.icon-doc-text:before { content: '\f0f6'; }
+.icon-plus-squared:before { content: '\f0fe'; }
 .icon-angle-double-left:before { content: '\f100'; }
 .icon-angle-double-right:before { content: '\f101'; }
 .icon-angle-left:before { content: '\f104'; }
 .icon-angle-right:before { content: '\f105'; }
+.icon-code:before { content: '\f121'; }
+.icon-unlink:before { content: '\f127'; }
+.icon-help:before { content: '\f128'; }
 .icon-info:before { content: '\f129'; }
+.icon-attention-alt:before { content: '\f12a'; }
+.icon-minus-squared:before { content: '\f146'; }
+.icon-minus-squared-alt:before { content: '\f147'; }
+.icon-ok-squared:before { content: '\f14a'; }
+.icon-pencil-squared:before { content: '\f14b'; }
+.icon-link-ext:before { content: '\f14c'; }
+.icon-plus-squared-alt:before { content: '\f196'; }
+.icon-file-image:before { content: '\f1c5'; }
+.icon-file-archive:before { content: '\f1c6'; }
+.icon-file-audio:before { content: '\f1c7'; }
+.icon-file-video:before { content: '\f1c8'; }
+.icon-file-code:before { content: '\f1c9'; }
+.icon-sliders:before { content: '\f1de'; }
+.icon-share:before { content: '\f1e0'; }
+.icon-share-squared:before { content: '\f1e1'; }
 .icon-trash:before { content: '\f1f8'; }
+.icon-question-circle-o:before { content: '\f29c'; }
+.icon-user-o:before { content: '\f2c0'; }
