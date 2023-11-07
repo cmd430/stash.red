@@ -1,0 +1,137 @@
+.blackout {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  padding: 5rem;
+  background-color: color-mix(in srgb, var(--color-black) 50%, var(--color-transparent));
+  opacity: 0;
+  visibility: collapse;
+  pointer-events: all;
+  z-index: 100;
+  transition: opacity 250ms linear, visibility 250ms linear;
+}
+.blackout.delete, .blackout.update, .blackout.dropzone {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 250ms linear, visibility 0ms linear;
+}
+.blackout.delete #delete_modal, .blackout.update #update_modal {
+  background-color: var(--color-modal-background);
+  border-color: var(--color-modal-border);
+}
+.blackout.delete #delete_modal {
+  visibility: visible;
+}
+.blackout.update #update_modal {
+  visibility: visible;
+}
+.blackout.dropzone #dropzone {
+  visibility: visible;
+}
+.blackout .modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 28rem;
+  min-height: 11rem;
+  max-height: 15rem;
+  border-radius: 0.3rem;
+  border: 1px solid;
+  visibility: collapse;
+}
+.blackout .modal h1 {
+  font-weight: 600;
+  font-size: 1.5rem;
+  padding: 0.6rem 1rem;
+  margin: 0;
+  width: 100%;
+  color: var(--color-modal-header);
+}
+.blackout .modal hr {
+  flex-shrink: 0;
+  height: 1px;
+  width: 95%;
+  border: 0;
+  padding: 0;
+  margin: 0.5rem;
+  background-color: var(--color-modal-divider);
+}
+.blackout .modal p {
+  display: flex;
+  flex-grow: 1;
+  justify-content: start;
+  align-items: start;
+  margin: 0;
+  padding: 0.5rem;
+  width: 100%;
+  color: var(--color-modal-text);
+}
+.blackout .modal p:has(.icon-attention) {
+  color: var(--color-modal-delete);
+}
+.blackout .modal p:has(.icon-info-circled) {
+  color: var(--color-modal-update);
+}
+.blackout .modal p i {
+  margin-top: 0.1em;
+}
+.blackout .modal p span > span {
+  color: var(--color-theme-inverted);
+}
+.blackout .modal div {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  width: 100%;
+  padding: 0.4rem;
+}
+.blackout .modal div button {
+  --color-background-opacity: 90%;
+  --color-text-opacity: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 5.5rem;
+  height: 2.32rem;
+  border: 0;
+  text-decoration: none;
+  padding: 0.5rem 0.25rem;
+  color: color-mix(in srgb, var(--color-modal-text) var(--color-text-opacity), var(--color-transparent));
+  background-color: var(--color-modal-default);
+  transition: background-color 100ms linear, color 100ms linear;
+  cursor: pointer;
+}
+.blackout .modal div button:has([class^=icon-]) {
+  padding: 0 0.5rem 0 0.3rem;
+}
+.blackout .modal div button:hover {
+  --color-background-opacity: 100%;
+  --color-text-opacity: 100%;
+}
+.blackout .modal div button:first-of-type {
+  border-radius: 0.2rem 0 0 0.2rem;
+  border-left-width: 1px;
+}
+.blackout .modal div button:last-of-type {
+  border-radius: 0 0.2rem 0.2rem 0;
+}
+.blackout .modal div button.delete {
+  background: color-mix(in srgb, var(--color-modal-delete) var(--color-background-opacity), var(--color-white));
+  color: color-mix(in srgb, var(--color-white) var(--color-text-opacity), var(--color-transparent));
+}
+.blackout .modal div button.update {
+  background: color-mix(in srgb, var(--color-modal-update) var(--color-background-opacity), var(--color-white));
+  color: color-mix(in srgb, var(--color-white) var(--color-text-opacity), var(--color-transparent));
+}
+.blackout #dropzone {
+  visibility: collapse;
+}
+
+/*# sourceMappingURL=modals.css.map */

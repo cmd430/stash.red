@@ -164,9 +164,6 @@ main section {
   padding-inline-start: 0.15rem;
   padding-inline-end: 0.35rem;
 }
-.wrapper .actions a i.icon-link-ext {
-  padding: 0.2rem 0 0 0.1rem;
-}
 
 header h1.editable input {
   position: absolute;

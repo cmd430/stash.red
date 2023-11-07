@@ -15,6 +15,9 @@
   --color-action-delete: rgb(234, 56, 56);
   --color-action-default: rgb(119, 119, 119);
   --color-action-active: rgb(56, 137, 234);
+  --color-modal-delete: rgb(234, 56, 56);
+  --color-modal-update: rgb(57, 136, 234);
+  --color-modal-cancel: rgb(56, 136, 234);
 }
 
 :root[data-theme=light],
@@ -29,6 +32,12 @@
   --color-content-text-hover: rgb(36, 41, 46);
   --color-action-background: rgb(218, 223, 227);
   --color-action-border: rgb(36, 41, 46);
+  --color-modal-background: rgb(250, 250, 250);
+  --color-modal-border: rgb(218, 223, 227);
+  --color-modal-header: rgb(10, 10, 10);
+  --color-modal-divider: rgb(218, 223, 227);
+  --color-modal-text: rgb(10, 10, 10);
+  --color-modal-default: rgb(218, 223, 227);
   --color-footer-text: rgb(218, 223, 227);
   --color-footer-text-hover: rgb(36, 41, 46);
   --color-error-text: rgb(32, 32, 32);
@@ -47,6 +56,12 @@
     --color-content-text-hover: rgb(36, 41, 46);
     --color-action-background: rgb(218, 223, 227);
     --color-action-border: rgb(36, 41, 46);
+    --color-modal-background: rgb(250, 250, 250);
+    --color-modal-border: rgb(218, 223, 227);
+    --color-modal-header: rgb(10, 10, 10);
+    --color-modal-divider: rgb(218, 223, 227);
+    --color-modal-text: rgb(10, 10, 10);
+    --color-modal-default: rgb(218, 223, 227);
     --color-footer-text: rgb(218, 223, 227);
     --color-footer-text-hover: rgb(36, 41, 46);
     --color-error-text: rgb(32, 32, 32);
@@ -64,6 +79,12 @@
   --color-content-text-hover: rgb(232, 228, 222);
   --color-action-background: rgb(36, 41, 46);
   --color-action-border: rgb(218, 223, 227);
+  --color-modal-background: rgb(36, 41, 46);
+  --color-modal-border: rgb(10, 10, 10);
+  --color-modal-header: rgb(250, 250, 250);
+  --color-modal-divider: rgb(10, 10, 10);
+  --color-modal-text: rgb(250, 250, 250);
+  --color-modal-default: rgb(10, 10, 10);
   --color-footer-text: rgb(36, 41, 46);
   --color-footer-text-hover: rgb(218, 223, 227);
   --color-error-text: rgb(222, 222, 222);
@@ -82,6 +103,12 @@
     --color-content-text-hover: rgb(232, 228, 222);
     --color-action-background: rgb(36, 41, 46);
     --color-action-border: rgb(218, 223, 227);
+    --color-modal-background: rgb(36, 41, 46);
+    --color-modal-border: rgb(10, 10, 10);
+    --color-modal-header: rgb(250, 250, 250);
+    --color-modal-divider: rgb(10, 10, 10);
+    --color-modal-text: rgb(250, 250, 250);
+    --color-modal-default: rgb(10, 10, 10);
     --color-footer-text: rgb(36, 41, 46);
     --color-footer-text-hover: rgb(218, 223, 227);
     --color-error-text: rgb(222, 222, 222);
@@ -103,6 +130,7 @@ body {
 
 body {
   overflow: hidden overlay;
+  color: var(--color-theme-inverted);
   background-color: var(--color-page-background);
 }
 
@@ -116,8 +144,8 @@ body {
 
 @font-face {
   font-family: "icons";
-  src: url("../font/icons.eot?29898629");
-  src: url("../font/icons.eot?29898629#iefix") format("embedded-opentype"), url("../font/icons.woff2?29898629") format("woff2"), url("../font/icons.woff?29898629") format("woff"), url("../font/icons.ttf?29898629") format("truetype"), url("../font/icons.svg?29898629#icons") format("svg");
+  src: url("../font/icons.eot?80553060");
+  src: url("../font/icons.eot?80553060#iefix") format("embedded-opentype"), url("../font/icons.woff2?80553060") format("woff2"), url("../font/icons.woff?80553060") format("woff"), url("../font/icons.ttf?80553060") format("truetype"), url("../font/icons.svg?80553060#icons") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -159,8 +187,92 @@ body {
   content: "\e804";
 }
 
+.icon-info-circled:before {
+  content: "\e805";
+}
+
+.icon-help-circled:before {
+  content: "\e806";
+}
+
+.icon-edit:before {
+  content: "\e807";
+}
+
+.icon-heart:before {
+  content: "\e808";
+}
+
+.icon-heart-empty:before {
+  content: "\e809";
+}
+
+.icon-star:before {
+  content: "\e80a";
+}
+
+.icon-star-empty:before {
+  content: "\e80b";
+}
+
+.icon-th-large:before {
+  content: "\e80c";
+}
+
+.icon-th:before {
+  content: "\e80d";
+}
+
+.icon-th-list:before {
+  content: "\e80e";
+}
+
+.icon-minus:before {
+  content: "\e80f";
+}
+
+.icon-minus-circled:before {
+  content: "\e810";
+}
+
+.icon-plus-circled:before {
+  content: "\e811";
+}
+
 .icon-music:before {
   content: "\e812";
+}
+
+.icon-cancel-circled2:before {
+  content: "\e813";
+}
+
+.icon-cancel-circled:before {
+  content: "\e814";
+}
+
+.icon-ok-circled2:before {
+  content: "\e815";
+}
+
+.icon-ok-circled:before {
+  content: "\e816";
+}
+
+.icon-bookmark:before {
+  content: "\e817";
+}
+
+.icon-tags:before {
+  content: "\e818";
+}
+
+.icon-attention:before {
+  content: "\e819";
+}
+
+.icon-attention-circled:before {
+  content: "\e81a";
 }
 
 .icon-video:before {
@@ -223,6 +335,10 @@ body {
   content: "\e829";
 }
 
+.icon-cog-alt:before {
+  content: "\e82a";
+}
+
 .icon-link:before {
   content: "\e82b";
 }
@@ -231,12 +347,44 @@ body {
   content: "\e82c";
 }
 
+.icon-floppy:before {
+  content: "\e82d";
+}
+
+.icon-ccw:before {
+  content: "\e82e";
+}
+
 .icon-resize-small:before {
   content: "\e82f";
 }
 
-.icon-link-ext:before {
+.icon-user:before {
+  content: "\e830";
+}
+
+.icon-logout:before {
+  content: "\e831";
+}
+
+.icon-link-ext-alt:before {
   content: "\f08e";
+}
+
+.icon-bookmark-empty:before {
+  content: "\f097";
+}
+
+.icon-list-numbered:before {
+  content: "\f0cb";
+}
+
+.icon-doc-text:before {
+  content: "\f0f6";
+}
+
+.icon-plus-squared:before {
+  content: "\f0fe";
 }
 
 .icon-angle-double-left:before {
@@ -255,12 +403,92 @@ body {
   content: "\f105";
 }
 
+.icon-code:before {
+  content: "\f121";
+}
+
+.icon-unlink:before {
+  content: "\f127";
+}
+
+.icon-help:before {
+  content: "\f128";
+}
+
 .icon-info:before {
   content: "\f129";
 }
 
+.icon-attention-alt:before {
+  content: "\f12a";
+}
+
+.icon-minus-squared:before {
+  content: "\f146";
+}
+
+.icon-minus-squared-alt:before {
+  content: "\f147";
+}
+
+.icon-ok-squared:before {
+  content: "\f14a";
+}
+
+.icon-pencil-squared:before {
+  content: "\f14b";
+}
+
+.icon-link-ext:before {
+  content: "\f14c";
+}
+
+.icon-plus-squared-alt:before {
+  content: "\f196";
+}
+
+.icon-file-image:before {
+  content: "\f1c5";
+}
+
+.icon-file-archive:before {
+  content: "\f1c6";
+}
+
+.icon-file-audio:before {
+  content: "\f1c7";
+}
+
+.icon-file-video:before {
+  content: "\f1c8";
+}
+
+.icon-file-code:before {
+  content: "\f1c9";
+}
+
+.icon-sliders:before {
+  content: "\f1de";
+}
+
+.icon-share:before {
+  content: "\f1e0";
+}
+
+.icon-share-squared:before {
+  content: "\f1e1";
+}
+
 .icon-trash:before {
   content: "\f1f8";
+}
+
+.icon-question-circle-o:before {
+  content: "\f29c";
+}
+
+.icon-user-o:before {
+  content: "\f2c0";
 }
 
 /*# sourceMappingURL=base.css.map */
