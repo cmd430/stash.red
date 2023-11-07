@@ -9,7 +9,7 @@
     {{> themeToggle}}
     <header>{{> logo}}</header>
     <main>
-      <section data-username="{{album.uploadedBy}}">
+      <section data-username="{{uploadedBy}}">
         {{#if_contains file.type 'image' file}}
           {{> image this}}
         {{/if_contains}}
