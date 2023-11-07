@@ -1,34 +1,43 @@
-<span class="blackout">
-  <div id="delete_modal">
-    <h2>Confirm Deletion</h2>
+<div id="modals" class="blackout" >
+  <div id="delete_modal" class="modal">
+    <h1>Confirm Deletion</h1>
     <hr>
-    <span>
-      <button class="delete">Delete</button>
-      <button class="cancel">Cancel</button>
-    </span>
+    <p>
+      <i class="icon-attention"></i>
+      <span>This action can not be undone</span>
+    </p>
+    <div>
+      <button class="delete">
+        <i class="icon-trash"></i>
+        Delete
+      </button>
+      <button class="cancel">
+        <i class="icon-cancel"></i>
+        Cancel
+      </button>
+    </div>
   </div>
-  <div id="update_modal">
-    <h2>Confirm Update</h2>
+  <div id="update_modal" class="modal">
+    <h1>Confirm Update</h1>
     <hr>
-    <span>
-      <button class="update">Update</button>
-      <button class="cancel">Cancel</button>
-    </span>
-  </div>
-  <div id="params_modal">
-    <h2>[WIP] Params</h2>
-    <hr>
-    <ul>
-      <li>Sort:   [ASC|DESC]</li>
-      <li>Filter: [image|audio|video]</li>
-      <li>Limit:  [35]</li>
-    </ul>
-    <span>
-      <button class="params">Apply</button>
-      <button class="cancel">Cancel</button>
-    </span>
+    <p>
+      <i class="icon-info-circled"></i>
+      <span></span>
+    </p>
+    <div>
+      <button class="update">
+        <i class="icon-ok"></i>
+        Update
+      </button>
+      <button class="cancel">
+        <i class="icon-cancel"></i>
+        Cancel
+      </button>
+    </div>
   </div>
   {{#if album}}
     {{> dropzone}}
   {{/if}}
-</span>
+</div>
+<link href="/css/partials/modals.css" rel="stylesheet" />
+<script type="module" src="/js/partials/modals.js"></script>
