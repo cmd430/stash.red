@@ -13,6 +13,7 @@ export default function errorHandler (err, request, reply) {
 
   // Message Overrides
   const errorMessages = {
+    '404': 'Not Found',
     '416': 'Invalid Range'
   }
 
