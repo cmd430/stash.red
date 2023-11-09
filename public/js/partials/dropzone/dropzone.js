@@ -48,7 +48,7 @@ async function uploadFiles (files) {
 
     buttons.classList.add('invisible')
 
-    if (settingsButton.classList.contains('active')) settingsButton.click()
+    if (settingsButton?.classList.contains('active')) settingsButton.click()
   })
 
   if (typeof files === 'string') {
