@@ -28,14 +28,18 @@
   --color-modal-cancel:             #{$modal-cancel};
 }
 
-// Lightmode
+// Darkmode default
+@import 'darkTheme';
+
+// Lightmode default
 @import 'lightTheme';
+
+// Lightmode
 @media (prefers-color-scheme: light) {
   @import 'lightTheme';
 }
 
 // Darkmode
-@import 'darkTheme';
 @media (prefers-color-scheme: dark) {
   @import 'darkTheme';
 }
