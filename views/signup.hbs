@@ -3,6 +3,7 @@
   <head>
     {{> head}}
     <link rel="stylesheet" href="/css/login_signup.css" />
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
   </head>
   <body>
     {{> themeToggle}}
@@ -15,8 +16,7 @@
           <input name="password" type="password" placeholder="Password" />
           <input name="passwordConfirm" type="password" placeholder="Confirm Password" />
           {{#if captcha}}
-            <img src="/captcha"/>
-            <input type="text" name="captcha" placeholder="Captcha" />
+            <div class="cf-turnstile" data-sitekey="{{captcha}}"></div>
           {{/if}}
           <input name="submit" type="submit" value="sign up" />
         </form>
