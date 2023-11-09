@@ -11,7 +11,7 @@ export default function (fastify, opts, done) {
   const { bcrypt } = fastify.config
 
   // Signup
-  fastify.post('/signup', async (request, reply) => {
+  fastify.post('/signup', { preHandler: fastify.cfTurnstile }, async (request, reply) => {
     const { username, email, password, confirm } = request.body
     const userameValid = Boolean((/^[a-zA-Z0-9]{3,63}$/).test(username))
 
@@ -42,7 +42,7 @@ export default function (fastify, opts, done) {
   })
 
   // Login
-  fastify.post('/login', async (request, reply) => {
+  fastify.post('/login', { preHandler: fastify.cfTurnstile }, async (request, reply) => {
     const { username, password } = request.body
 
     if (!username || !password) return createError(400, 'All Fields Required')

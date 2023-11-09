@@ -7,6 +7,7 @@ import multipart from '@fastify/multipart'
 import formbody from '@fastify/formbody'
 import cookie from '@fastify/cookie'
 import session from '@fastify/session'
+import cfTurnstile from 'fastify-cloudflare-turnstile'
 import { evaluate } from 'mathjs'
 import SqliteStore from 'fastify-session-better-sqlite3-store'
 import view from '@fastify/view'
@@ -63,6 +64,10 @@ try {
     }
   })
   fastify.register(formbody)
+  fastify.register(cfTurnstile,{
+    sitekey: config.captcha.siteKey,
+    privatekey: config.captcha.secretKey
+  })
   fastify.register(betterSqlite3, databaseConnection)
   fastify.register(view, {
     engine: {

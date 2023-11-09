@@ -6,18 +6,24 @@ const { log, debug, info, warn, error } = new Log('Account (GET)')
 
 export default function (fastify, opts, done) {
 
+  const captcha = fastify.config.captcha
+
   // Signup page
   fastify.get('/signup', async (request, reply) => {
     if (request.session.get('authenticated')) return reply.redirect('/')
 
-    return reply.view('signup')
+    return reply.view('signup', {
+      captcha: captcha.siteKey
+    })
   })
 
   // Login page
   fastify.get('/login', async (request, reply) => {
     if (request.session.get('authenticated')) return reply.redirect('/')
 
-    return reply.view('login')
+    return reply.view('login', {
+      captcha: captcha.siteKey
+    })
   })
 
   // Logout
