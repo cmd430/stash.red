@@ -7,20 +7,23 @@
   </head>
   <body>
     {{> themeToggle}}
-    <div id="content">
+    <header>
       {{> logo}}
-      <div id="accountzone">
+    </header>
+    <main>
+      <section>
         <form method="POST" action="/signup">
           <input name="username" type="text" placeholder="Username" />
           <input name="email" type="email" placeholder="Email" />
           <input name="password" type="password" placeholder="Password" />
           <input name="passwordConfirm" type="password" placeholder="Confirm Password" />
           {{#if captcha}}
-            <div class="cf-turnstile" data-sitekey="{{captcha}}"></div>
+            <div class="cf-turnstile" data-sitekey="{{captcha}}" data-appearance="always"></div>
           {{/if}}
           <input name="submit" type="submit" value="sign up" />
         </form>
-      </div>
-    </div>
+      </section>
+    </main>
+    <footer></footer>
   </body>
 </html>

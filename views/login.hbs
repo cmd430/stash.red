@@ -16,11 +16,12 @@
           <input name="username" type="text" placeholder="Username" />
           <input name="password" type="password" placeholder="Password" />
           {{#if captcha}}
-            <div class="cf-turnstile" data-sitekey="{{captcha}}"></div>
+            <div class="cf-turnstile" data-sitekey="{{captcha}}" data-appearance="always"></div>
           {{/if}}
           <input name="submit" type="submit" value="login" />
         </form>
       </section>
     </main>
+    <footer></footer>
   </body>
 </html>
