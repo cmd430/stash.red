@@ -69,6 +69,8 @@
           [!] frontend
               [√] code
               [ ] ui
+                  -> maybe add some new buttons to the items (replacing the save/delete buttons)
+                     that move the items up/down in the DOM order?
           [√] backend
       [ ] album file adding
   [√] restyle video and audio players so i can use the default player controls
