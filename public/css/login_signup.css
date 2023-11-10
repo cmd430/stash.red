@@ -34,13 +34,74 @@ form {
   width: 100%;
   max-width: 28rem;
   min-width: 18rem;
-  height: 25dvh;
-  max-height: 15rem;
+  max-height: 18.2rem;
   min-height: 10rem;
-  margin-bottom: 6.18rem;
-  border: 1px dashed var(--color-content-border);
-  background-color: var(--color-page-background-theme-mix);
+  margin-bottom: 3.8rem;
   overflow: hidden;
+}
+form input[type=text],
+form input[type=email],
+form input[type=password] {
+  background: var(--color-content-background);
+  border: 1px solid var(--color-content-border);
+  padding: 0.5rem;
+  color: var(--color-content-text-hover);
+  width: 18.7rem;
+  margin-bottom: 0.5rem;
+  outline: none;
+}
+form input[type=text]:hover, form input[type=text]:focus,
+form input[type=email]:hover,
+form input[type=email]:focus,
+form input[type=password]:hover,
+form input[type=password]:focus {
+  background: var(--color-page-background-theme-mix);
+}
+form input[type=text]:focus,
+form input[type=email]:focus,
+form input[type=password]:focus {
+  border-color: var(--color-action-active);
+}
+form .cf-turnstile {
+  display: flex;
+}
+form div:last-of-type {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 18.7rem;
+  margin-top: 0.5rem;
+}
+form div:last-of-type a {
+  color: var(--color-action-default);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+form div:last-of-type a:hover, form div:last-of-type a:focus {
+  text-decoration: underline;
+}
+form div:last-of-type input[type=submit] {
+  --color-background-opacity: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 5.5rem;
+  height: 2.32rem;
+  border: 0;
+  border-radius: 0.2rem;
+  text-decoration: none;
+  text-transform: capitalize;
+  padding: 0.5rem 0.25rem;
+  transition: background-color 100ms linear, color 100ms linear;
+  cursor: pointer;
+}
+form div:last-of-type input[type=submit]:focus, form div:last-of-type input[type=submit]:hover {
+  --color-background-opacity: 100%;
+}
+form div:last-of-type input[type=submit] {
+  background: color-mix(in srgb, var(--color-modal-update) var(--color-background-opacity), var(--color-white));
+  color: var(--color-white);
 }
 
 footer {

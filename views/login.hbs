@@ -18,7 +18,10 @@
           {{#if captcha}}
             <div class="cf-turnstile" data-sitekey="{{captcha}}" data-appearance="always"></div>
           {{/if}}
-          <input name="submit" type="submit" value="login" />
+          <div>
+            <a href="/signup">Don't have an Account? Sign up</a>
+            <input name="submit" type="submit" value="login" />
+          </div>
         </form>
       </section>
     </main>
