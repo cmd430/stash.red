@@ -19,52 +19,97 @@ export default function (fastify, opts, done) {
         message: 'You must be logged in to upload files'
       }
 
-      const files = request.files()
-      const fileIDs = []
-      const fileExts = []
-
-      let timeToLive = null
-      let isPrivate = null
-      let dontFormAlbum = null
-
       const { username } = request.session.get('session')
+      const fields = {
+        timeToLive: null,
+        isPrivate: 0,
+        dontFormAlbum: false,
+        // Used to tell if we are adding to an album or not
+        isFromHomepage: false
+      }
+      const uploadedFiles = []
 
-      for await (const file of files) {
-        const fileBuffer = await file.toBuffer()
+      for await (const part of request.parts()) {
+        if (part.type === 'field') {
+          // Load in field data for the upload
+          switch (part.fieldname) {
+            case 'timeToLive': {
+              fields.timeToLive = Number(part.value) || null
+              break
+            }
+            case 'isPrivate': {
+              fields.isPrivate = Number(part.value) ?? 0
+              break
+            }
+            case 'dontFormAlbum': {
+              fields.dontFormAlbum = Boolean(Number(part.value) ?? 0)
+              break
+            }
+            default: {
+              debug('Unknown field in upload', part)
+              continue
+            }
+          }
 
-        if (fileBuffer instanceof Buffer === false || fileBuffer.byteLength === 0) {
-          debug('Skipping file with no data')
-          continue
+          /*
+            only gets set if we have at least one valid field
+            only the homepage sets the fields so this should mean
+            we are uploading from the homepage
+          */
+          fields.isFromHomepage = true
+        } else if (part.type === 'file') {
+          // Process the upload files
+          const file = await part.toBuffer()
+
+          if (file instanceof Buffer === false || file.byteLength === 0) {
+            debug('Skipping file with no data')
+            continue
+          }
+
+          const mimetype = getMimetype(file)
+
+          if (isValidMimetype(mimetype) === false) {
+            debug('Skipping file with invalid mimetype: ', mimetype)
+            continue
+          }
+
+          const filename = part.filename
+          const { timeToLive, isPrivate, isFromHomepage } = fields
+          const thumbnail = await generateThumbnail(mimetype, file)
+          const { fileBlobName, azureBlobClients } = createAzureBlob(username, filename)
+          const fileID = nanoid(8)
+
+          // TODO see if we need to keep this
+          let insertResult = {}
+
+          if (isFromHomepage) {
+            insertResult = fastify.betterSqlite3
+              .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+              .run(fileID, filename, fileBlobName, file.byteLength, mimetype, username, timeToLive, isPrivate)
+          } else {
+            /*
+              TODO: get album data, upload time, ttl, id etc and use for the insert
+              we also need to get the existing number of files in the album (-1)
+              and then use that to set our new files albumOrder
+            */
+            insertResult = fastify.betterSqlite3
+              .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+              .run(fileID, filename, fileBlobName, file.byteLength, mimetype, username, timeToLive, isPrivate)
+          }
+
+          debug('Upload File DB Result', insertResult)
+
+          await setAzureBlob(file, thumbnail, azureBlobClients)
+
+          // Make sure we can access the file ids after the upload
+          uploadedFiles.push({
+            id: fileID,
+            ext: extname(filename)
+          })
         }
-
-        const mimetype = getMimetype(fileBuffer)
-
-        if (isValidMimetype(mimetype) === false) {
-          debug('Skipping file with invalid mimetype: ', mimetype)
-          continue
-        }
-
-        const thumbnailBuffer = await generateThumbnail(mimetype, fileBuffer)
-        const { fileBlobName, azureBlobClients } = createAzureBlob(username, file.filename)
-        const fileID = nanoid(8)
-
-        // TODO: if we are inside an album read these from the album data
-        if (timeToLive === null) timeToLive = Number(file.fields.timeToLive.value) || null
-        if (isPrivate === null) isPrivate = Number(file.fields.isPrivate.value) ?? 0
-        if (dontFormAlbum === null) dontFormAlbum = Number(file.fields.dontFormAlbum.value) ?? 0
-
-        fastify.betterSqlite3
-          .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-          .run(fileID, file.filename, fileBlobName, fileBuffer.byteLength, mimetype, username, timeToLive, isPrivate)
-
-        await setAzureBlob(fileBuffer, thumbnailBuffer, azureBlobClients)
-
-        // Make sure we can access the file ids after the upload
-        fileIDs.push(fileID)
-        fileExts.push(extname(file.filename))
       }
 
-      if (fileIDs.length === 0) { // no files uploaded
+      if (uploadedFiles.length === 0) { // no files uploaded
         debug('No valid files found in payload')
 
         return {
@@ -73,29 +118,44 @@ export default function (fastify, opts, done) {
         }
       }
 
-      debug({ fileIDs })
+      debug('Uploaded files', uploadedFiles)
+
+      // our field data
+      const { timeToLive, isPrivate, dontFormAlbum, isFromHomepage } = fields
+
+      // If we are adding to an album just reload the page once done
+      if (isFromHomepage === false) return {
+        status: 201,
+        path: '.'
+      }
 
       // If muliple files but `dontFormAlbum` is true then we dont form the album and send the user to their user page
-      if (dontFormAlbum && fileIDs.length > 1) return {
+      if (dontFormAlbum && uploadedFiles.length > 1) return {
         status: 201,
         path: `/u/${username}`
       }
 
       // Generate Album if muliple files
-      if (fileIDs.length > 1) {
+      if (uploadedFiles.length > 1) {
         const albumID = nanoid(8)
 
-        debug({ albumID })
+        debug('Album ID', albumID)
 
         const statement = fastify.betterSqlite3.prepare('UPDATE "files" SET "inAlbum" = ?, "albumOrder" = ? WHERE "id" = ?')
         const transaction = fastify.betterSqlite3.transaction((fIDs, aID) => fIDs.map((fID, index) => statement.run(aID, index, fID)))
-        const updated = transaction(fileIDs, albumID)
+        const updated = transaction(
+          uploadedFiles
+            .reduce((accumulator, currentValue) => (accumulator = [ ...accumulator, currentValue.id ]), []),
+          albumID
+        )
           .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
 
-        fastify.betterSqlite3
+        const insertResult = fastify.betterSqlite3
           .prepare('INSERT INTO "albums" ("id", "title", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?)')
           .run(albumID, 'Untitled Album', username, timeToLive, isPrivate)
 
+        // TODO: do we need this?
+        debug(insertResult)
         debug('Added', updated, 'files to album')
 
         return {
@@ -105,10 +165,12 @@ export default function (fastify, opts, done) {
       }
 
       // Single File
+      const [ { id: fileID, ext: fileExt } ] = uploadedFiles
+
       return {
         status: 201,
-        path: `/f/${fileIDs[0]}`,
-        direct: `/f/${fileIDs[0]}${fileExts[0]}`
+        path: `/f/${fileID}`,
+        direct: `/f/${fileExt}`
       }
     } catch (err) {
       error(err.stack)
