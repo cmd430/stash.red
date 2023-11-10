@@ -12,7 +12,11 @@ const nanoid = customAlphabet('123456789ABCDEFGHJKLMNPQRSTUVWXYZ_abcdefghijkmnpq
 export default function (fastify, opts, done) {
 
   // Upload a file
+  //eslint-disable-next-line complexity
   fastify.post('/upload', async (request, reply) => {
+
+    // TODO split out the uploading/processing into seperate functions to tidy code up a bit (and hopefully allow reusing for the URL uploads)
+
     try {
       if (!request.session.get('authenticated')) return {
         status: 401,
@@ -24,6 +28,8 @@ export default function (fastify, opts, done) {
         timeToLive: null,
         isPrivate: 0,
         dontFormAlbum: false,
+        // Used when grabbing external resource
+        fetchURL: null,
         // Used to tell if we are adding to an album or not
         isFromHomepage: false
       }
@@ -38,11 +44,15 @@ export default function (fastify, opts, done) {
               break
             }
             case 'isPrivate': {
-              fields.isPrivate = Number(part.value) ?? 0
+              fields.isPrivate = Number(part.value || 0) ?? 0
               break
             }
             case 'dontFormAlbum': {
-              fields.dontFormAlbum = Boolean(Number(part.value) ?? 0)
+              fields.dontFormAlbum = Boolean(Number(part.value || 0) ?? 0)
+              break
+            }
+            case 'fetchURL': {
+              fields.fetchURL = part.value || null
               break
             }
             default: {
@@ -107,6 +117,11 @@ export default function (fastify, opts, done) {
             ext: extname(filename)
           })
         }
+      }
+
+      // TODO: use fields.fetchURL (if set) to grab external file and process it
+      if (fields.fetchURL !== null) {
+        debug('URL to fetch', fields.fetchURL)
       }
 
       if (uploadedFiles.length === 0) { // no files uploaded

@@ -54,7 +54,7 @@ async function uploadFiles (files) {
   if (typeof files === 'string') {
     if (files.startsWith('http')) {
       // URL
-      // TODO: allow sending the server a URL and then the server will attempt to fetch the resource
+      formData.append('fetchURL', files)
     } else {
       // Text Upload
       files = new File([ files ], 'clipboard.txt', {
