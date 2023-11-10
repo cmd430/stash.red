@@ -25,6 +25,9 @@ function checkForChanges () { // Called when we click 'Save'
   // Check if items are out of order (aka changed)
   if (albumItems.every((elm, index) => Number(elm.dataset.order) === index) === false) {
     // Sort into correct order and create edit payload
+    // NOTE: Currently this sorts by `the data-order` attribute but i might have to change it to sort by the DOM order
+    // depending on how i impliment the UI for order editing (manipulating DOM order might be easier because then we
+    // dont have to worry about having multiple items with the same `data-order` value)
     const sortedAlbumItems = albumItems.sort((a, b) => a.dataset.order > b.dataset.order)
     const orderPayload = {}
 
