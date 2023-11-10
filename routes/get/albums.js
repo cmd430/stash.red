@@ -74,7 +74,7 @@ export default function (fastify, opts, done) {
     if (!album) return createError(404)
 
     const albumFiles = fastify.betterSqlite3
-      .prepare('SELECT "id", "file" FROM "albumFiles" WHERE "album" = ?')
+      .prepare('SELECT "id", "file", "order" FROM "albumFiles" WHERE "album" = ?')
       .all(id)
 
     const { title, uploadedBy } = album
