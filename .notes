@@ -8,7 +8,7 @@
 -= Things needed for Feature parity with stash =-
   [√] Album downloading
   [√] File downloading
-  [ ] Album file uploading / add files to existing album
+  [!] Album file uploading / add files to existing album
   [√] Album title renaming
       [√] backend
       [√] frontend
@@ -53,10 +53,10 @@
       [√] file styles
       [√] error page styles
       [√] login/sign up page styles
-      [!] modal styles
+      [√] modal styles
           [√] update
           [√] delete
-          [ ] dropzone/upload
+          [√] dropzone/upload
   [!] scrap and redo client js
       [!] redo uploading js for dropzone
           -> basically done, need to get url uploads working
