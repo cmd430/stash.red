@@ -25,9 +25,11 @@ export default function (fastify, opts, done) {
         message: 'album not deleted'
       })
 
-    fastify.betterSqlite3
+    const { changes } = fastify.betterSqlite3
       .prepare('DELETE FROM "files" WHERE "id" = ?')
       .run(id)
+
+    if (changes > 0) debug('Removed file', id)
 
     return reply
       .status(204)
