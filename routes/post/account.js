@@ -8,10 +8,12 @@ import { createAzureContainer } from '../../utils/azureBlobStorage.js'
 const { log, debug, info, warn, error } = new Log('Account (POST)')
 
 export default function (fastify, opts, done) {
-  const { bcrypt } = fastify.config
+  const { site, bcrypt } = fastify.config
 
   // Signup
   fastify.post('/signup', { preHandler: fastify.cfTurnstile }, async (request, reply) => {
+    if (site.allowSignups === false) return createError(403, 'Account creation is disabled')
+
     const { username, email, password, confirm } = request.body
     const userameValid = Boolean((/^[a-zA-Z0-9]{3,63}$/).test(username))
 

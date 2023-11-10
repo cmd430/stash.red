@@ -6,11 +6,13 @@ const { log, debug, info, warn, error } = new Log('Account (GET)')
 
 export default function (fastify, opts, done) {
 
-  const captcha = fastify.config.captcha
+  const { captcha, site } = fastify.config
 
   // Signup page
   fastify.get('/signup', async (request, reply) => {
     if (request.session.get('authenticated')) return reply.redirect('/')
+
+    if (site.allowSignups === false) return createError(403, 'Account creation is disabled')
 
     return reply.view('signup', {
       captcha: captcha.siteKey
