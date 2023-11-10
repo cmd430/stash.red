@@ -34,6 +34,20 @@ header h1.editable input {
   }
 }
 
-body > nav a[disabled] {
-  display: none;
+body > nav a {
+  &.album__download:hover {
+    color: var(--color-action-active)
+  }
+
+  &.album__save:hover {
+    color: var(--color-action-active)
+  }
+
+  &.album__delete:hover {
+    color: var(--color-action-delete)
+  }
+
+  &[disabled] {
+    display: none;
+  }
 }

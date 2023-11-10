@@ -194,6 +194,15 @@ header h1.editable input.editing {
   max-height: calc(100dvh - 9.8rem);
 }
 
+body > nav a.album__download:hover {
+  color: var(--color-action-active);
+}
+body > nav a.album__save:hover {
+  color: var(--color-action-active);
+}
+body > nav a.album__delete:hover {
+  color: var(--color-action-delete);
+}
 body > nav a[disabled] {
   display: none;
 }
