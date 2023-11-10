@@ -65,7 +65,11 @@
       [√] redo video player
       [√] redo text loader
       [√] album title editing
-      [ ] album order editing
+      [!] album order editing
+          [!] frontend
+              [√] code
+              [ ] ui
+          [√] backend
       [ ] album file adding
   [√] restyle video and audio players so i can use the default player controls
   [ ] Make homepage tell you you need to login before you can upload
