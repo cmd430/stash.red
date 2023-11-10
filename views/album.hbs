@@ -22,13 +22,21 @@
     <nav>
       <a class="album__download" title="Download this Album" href="/a/{{album.id}}/download">
         <i class="icon-download"></i>
-        <span>Download Album</span>
+        <span>Download</span>
       </a>
       {{#if_eq @session.username album.uploadedBy this}}
         <span></span>
         <a class="album__edit" title="Edit this Album">
           <i class="icon-pencil"></i>
-          <span>Edit Album</span>
+          <span>Edit</span>
+        </a>
+        <a class="album__cancel" title="Revert changes to this Album" disabled>
+          <i class="icon-cancel"></i>
+          <span>Revert</span>
+        </a>
+        <a class="album__save" title="Save changes to this Album" disabled>
+          <i class="icon-floppy"></i>
+          <span>Save</span>
         </a>
         <a class="album__delete" title="Delete this Album">
           <i class="icon-trash"></i>

@@ -69,7 +69,6 @@ body > nav a {
 body > nav a:hover, body > nav a.active {
   background: var(--color-content-background);
   color: var(--color-content-text-hover);
-  font-weight: 600;
 }
 body > nav a.active {
   border-bottom: 1px solid var(--color-transparent);
@@ -193,6 +192,10 @@ header h1.editable input.editing {
 .wrapper .video video,
 .wrapper .text {
   max-height: calc(100dvh - 9.8rem);
+}
+
+body > nav a[disabled] {
+  display: none;
 }
 
 /*# sourceMappingURL=album.css.map */

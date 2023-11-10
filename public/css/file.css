@@ -69,7 +69,6 @@ body > nav a {
 body > nav a:hover, body > nav a.active {
   background: var(--color-content-background);
   color: var(--color-content-text-hover);
-  font-weight: 600;
 }
 body > nav a.active {
   border-bottom: 1px solid var(--color-transparent);

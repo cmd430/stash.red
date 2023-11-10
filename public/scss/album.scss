@@ -34,3 +34,6 @@ header h1.editable input {
   }
 }
 
+body > nav a[disabled] {
+  display: none;
+}

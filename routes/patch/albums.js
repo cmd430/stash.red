@@ -21,7 +21,7 @@ export default function (fastify, opts, done) {
     if (request.session.get('session').username !== uploadedBy) return createError(403) // Not allowed
 
     // Edits
-    if (request.body.title && request.body.order) { // We currently only support editing one thing at a time
+    if (request.body.title && request.body.order) { // Only support one type of edit per request
       return reply
         .status(400)
         .send()
@@ -29,11 +29,10 @@ export default function (fastify, opts, done) {
 
     if (request.body.title) { // Update Album Title
       const { title } = request.body
-      const newTitle = title.trim() === '' ? null : title.trim()
-
+      const newTitle = title !== null && title.trim() === '' ? 'Untitled Album' : title.trim()
       const { changes } = fastify.betterSqlite3
-        .prepare('UPDATE "albums" SET "title" = ? WHERE "id" = ? AND "title" <> ?  AND ? <> NULL')
-        .run(newTitle, id, newTitle, newTitle)
+        .prepare('UPDATE "albums" SET "title" = ? WHERE "id" = ? AND "title" <> ?')
+        .run(newTitle, id, newTitle)
 
       if (changes > 0) debug('Updated title of album', id)
 
@@ -43,6 +42,8 @@ export default function (fastify, opts, done) {
     }
 
     if (request.body.order) { // Update Album Order
+      debug(request.body.order)
+
       const order = JSON.parse(request.body.order)
       const files = []
 
