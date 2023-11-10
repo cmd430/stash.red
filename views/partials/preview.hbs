@@ -1,7 +1,7 @@
 <div class="preview{{#if isPrivate}} private{{/if}}">
   {{#if type}}
     <a href="/f/{{id}}">
-      <img class="thumbnail" src="/f/{{id}}/thumbnail">
+      <img class="thumbnail" src="/f/{{id}}/thumbnail" loading="lazy">
       {{#if_contains type 'image' this}}<span class="icon image"></span>{{/if_contains}}
       {{#if_contains type 'audio' this}}<span class="icon audio"></span>{{/if_contains}}
       {{#if_contains type 'video' this}}<span class="icon video"></span>{{/if_contains}}
@@ -9,7 +9,7 @@
     </a>
   {{else}}
     <a href="/a/{{id}}">
-      <img class="thumbnail" src="/a/{{id}}/thumbnail">
+      <img class="thumbnail" src="/a/{{id}}/thumbnail" loading="lazy">
       <span class="icon album"></span>
       <span class="album_title">{{title}}</span>
       <span class="album_items">{{entries}}</span>
