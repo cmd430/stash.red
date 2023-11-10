@@ -32,7 +32,7 @@
   [√] upload file(s) on drop
   [√] upload file(s) from picker
   [ ] upload, paste URL and fetch content
-  [ ] sign up capture (maybe login capture?)
+  [√] sign up capture (maybe login capture?)
 
 -= Things I want to do =-
   [√] optimize by storing file size in bytes in the db so we dont have to ask azure everytime
@@ -52,7 +52,7 @@
       [√] file page styles
       [√] file styles
       [√] error page styles
-      [ ] login/sign up page styles
+      [√] login/sign up page styles
       [!] modal styles
           [√] update
           [√] delete
@@ -80,6 +80,8 @@
 
 -= New things I want to add =-
   [√] Dark mode
+  [ ] P2P file share with WebRTC, URL -> `/t/:id`
+      -> https://github.com/feross/simple-peer
 
 
 -= URL references =-
