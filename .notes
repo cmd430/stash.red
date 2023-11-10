@@ -31,16 +31,16 @@
   [√] upload text or file from paste
   [√] upload file(s) on drop
   [√] upload file(s) from picker
-  [ ] upload, paste URL and fetch content
+  [!] upload, paste URL and fetch content
   [√] sign up capture (maybe login capture?)
 
 -= Things I want to do =-
   [√] optimize by storing file size in bytes in the db so we dont have to ask azure everytime
   [√] stream files to user (and allow range requests) to save memory
-  [ ] refactor upload.js to be a bit nicer,
+  [!] refactor upload.js to be a bit nicer,
       [ ] use `req.parts()` to read feilds and files seperatly
       [ ] make it so we can handle in album uploads without big hacks
-  [!] Go over all the styles to make them less shit
+  [√] Go over all the styles to make them less shit
       [√] Seperate styles into each component
       [√] refactor theme to use em units rather than px
       [√] all colors in themes (allow for light/dark)
