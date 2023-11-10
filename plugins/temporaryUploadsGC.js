@@ -24,8 +24,10 @@ async function performGC (db) {
     if (!removedBlob) delete expired[expired.findIndex(obj => obj?.id === id)]
   }
 
-  const statement = db.prepare('DELETE FROM "files" WHERE "id" = ?')
-  const transaction = db.transaction(expiredFiles => expiredFiles.map(({ id }) => statement.run(id)))
+  const statement = db
+    .prepare('DELETE FROM "files" WHERE "id" = ?')
+  const transaction = db
+    .transaction(expiredFiles => expiredFiles.map(({ id }) => statement.run(id)))
   const removed = transaction(expired.filter(e => e))
     .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
 
