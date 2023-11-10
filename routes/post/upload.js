@@ -48,6 +48,7 @@ export default function (fastify, opts, done) {
         const { fileBlobName, azureBlobClients } = createAzureBlob(username, file.filename)
         const fileID = nanoid(8)
 
+        // TODO: if we are inside an album read these from the album data
         if (timeToLive === null) timeToLive = Number(file.fields.timeToLive.value) || null
         if (isPrivate === null) isPrivate = Number(file.fields.isPrivate.value) ?? 0
         if (dontFormAlbum === null) dontFormAlbum = Number(file.fields.dontFormAlbum.value) ?? 0
