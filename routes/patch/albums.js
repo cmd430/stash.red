@@ -6,28 +6,69 @@ const { log, debug, info, warn, error } = new Log('Albums (PATCH)')
 
 export default function (fastify, opts, done) {
 
-  // TODO: support album file reordering
-
   fastify.patch('/a/:id', async (request, reply) => {
     const { id } = request.params
-    const { title: newTitle } = request.body
+
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT "title", "uploadedBy" FROM "album" WHERE "id" = ?')
+      .prepare('SELECT "uploadedBy" FROM "album" WHERE "id" = ?')
       .get(id)
 
     if (!dbResult) return createError(400)
 
-    const { title, uploadedBy } = dbResult
+    const { uploadedBy } = dbResult
 
     if ((request.session.get('authenticated') ?? false) === false) return createError(401) // Not authd
     if (request.session.get('session').username !== uploadedBy) return createError(403) // Not allowed
 
-    if (newTitle && newTitle !== title) fastify.betterSqlite3
-      .prepare('UPDATE "albums" SET "title" = ? WHERE "id" = ?')
-      .run(newTitle, id)
+    // Edits
+    if (request.body.title && request.body.order) { // We currently only support editing one thing at a time
+      return reply
+        .status(400)
+        .send()
+    }
 
+    if (request.body.title) { // Update Album Title
+      const { title } = request.body
+      const newTitle = title.trim() === '' ? null : title.trim()
+
+      const { changes } = fastify.betterSqlite3
+        .prepare('UPDATE "albums" SET "title" = ? WHERE "id" = ? AND "title" <> ?  AND ? <> NULL')
+        .run(newTitle, id, newTitle, newTitle)
+
+      if (changes > 0) debug('Updated title of album', id)
+
+      return reply
+        .status(204)
+        .send()
+    }
+
+    if (request.body.order) { // Update Album Order
+      const order = JSON.parse(request.body.order)
+      const files = []
+
+      for (const [ fileID, fileOrder ] of Object.entries(order)) files.push({
+        fileID: fileID,
+        fileOrder: fileOrder,
+        albumID: id
+      })
+
+      const statement = fastify.betterSqlite3
+        .prepare('UPDATE "files" SET "albumOrder" = ? WHERE "id" = ? AND "inAlbum" = ? AND "albumOrder" <> ?')
+      const transaction = fastify.betterSqlite3
+        .transaction(albumFiles => albumFiles.map(({ fileID, fileOrder, albumID }) => statement.run(fileOrder, fileID, albumID, fileOrder)))
+      const updated = transaction(files)
+        .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
+
+      if (updated > 0) debug('Updated order of', updated, 'files in album', id)
+
+      return reply
+        .status(204)
+        .send()
+    }
+
+    // ?? no valid edit payload
     return reply
-      .status(204)
+      .status(400)
       .send()
   })
 
