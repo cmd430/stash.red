@@ -1,3 +1,7 @@
+const themeToggles = Array.from(document.querySelectorAll('#themeToggle input'))
+const pageRoot = document.querySelector('html')
+const turnstile = document.querySelector('div.cf-turnstile')
+
 function getStoredThemePref () {
   const validThemes = [
     'auto',
@@ -9,25 +13,25 @@ function getStoredThemePref () {
   return validThemes.includes(storedTheme) ? storedTheme : 'auto'
 }
 
-function setTheme (root, theme) {
+function setTheme (theme) {
   if (theme === 'auto') {
-    root.removeAttribute('data-theme')
+    pageRoot.removeAttribute('data-theme')
   } else {
-    root.setAttribute('data-theme', theme)
+    pageRoot.setAttribute('data-theme', theme)
   }
+
+  turnstile?.setAttribute('data-theme', theme)
   localStorage.setItem('theme', theme)
 }
 
 const initalTheme = getStoredThemePref()
-const themeToggles = Array.from(document.querySelectorAll('#themeToggle input'))
-const pageRoot = document.querySelector('html')
 
 themeToggles.find(t => t.value === initalTheme).click()
-setTheme(pageRoot, initalTheme)
+setTheme(initalTheme)
 
 for (const themeToggle of themeToggles) {
   themeToggle.addEventListener('click', e => {
     if (!themeToggle.checked) return
-    setTheme(pageRoot, themeToggle.value)
+    setTheme(themeToggle.value)
   })
 }
