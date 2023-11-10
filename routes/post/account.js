@@ -23,7 +23,7 @@ export default function (fastify, opts, done) {
       const id = randomUUID()
 
       fastify.betterSqlite3
-        .prepare('INSERT INTO accounts (id, username, email, password) VALUES (?, ?, ?)')
+        .prepare('INSERT INTO "accounts" ("id", "username", "email", "password") VALUES (?, ?, ?)')
         .run(id, username, email, await hash(password, bcrypt.rounds))
 
       await createAzureContainer(username)
@@ -51,7 +51,7 @@ export default function (fastify, opts, done) {
 
     try {
       const { id, password: passwordHash, isAdmin } = fastify.betterSqlite3
-        .prepare('SELECT id, password, isAdmin FROM accounts WHERE username = ?')
+        .prepare('SELECT "id", "password", "isAdmin" FROM "accounts" WHERE "username" = ?')
         .get(username)
 
       const hasValidCredentials = await compare(password, passwordHash)

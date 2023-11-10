@@ -13,7 +13,7 @@ export default function (fastify, opts, done) {
   fastify.get('/f/:id', async (request, reply) => {
     const { id } = request.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT file, type, uploadedBy FROM file WHERE id = ?')
+      .prepare('SELECT "file", "type", "uploadedBy" FROM "file" WHERE "id" = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
@@ -58,7 +58,7 @@ export default function (fastify, opts, done) {
   fastify.get('/f/:id.:ext', async (request, reply) => {
     const { id } = request.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT file, type, uploadedBy, size FROM file WHERE id = ?')
+      .prepare('SELECT "file", "type", "uploadedBy", "size" FROM "file" WHERE "id" = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
@@ -90,7 +90,7 @@ export default function (fastify, opts, done) {
   fastify.get('/f/:id/thumbnail', async (request, reply) => {
     const { id } = request.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT thumbnail, uploadedBy FROM file WHERE id = ?')
+      .prepare('SELECT "thumbnail", "uploadedBy" FROM "file" WHERE "id" = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
@@ -106,7 +106,7 @@ export default function (fastify, opts, done) {
   fastify.get('/f/:id/download', async (request, reply) => {
     const { id } = request.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT type, uploadedBy, file, size FROM file WHERE id = ?')
+      .prepare('SELECT "type", "uploadedBy", "file", "size" FROM "file" WHERE "id" = ?')
       .get(id)
 
     if (!dbResult) return createError(404)

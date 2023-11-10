@@ -14,13 +14,13 @@ export default function (fastify, opts, done) {
   fastify.get('/a/:id', async (request, reply) => {
     const { id } = request.params
     const album = fastify.betterSqlite3
-      .prepare('SELECT title, uploadedBy FROM album WHERE id = ?')
+      .prepare('SELECT "title", "uploadedBy" FROM "album" WHERE "id" = ?')
       .get(id)
 
     if (!album) return createError(404)
 
     const albumFiles = fastify.betterSqlite3
-      .prepare('SELECT id, file, type FROM albumFiles WHERE album = ?')
+      .prepare('SELECT "id", "file", "type", "order" FROM "albumFiles" WHERE "album" = ?')
       .all(id)
 
     const { title, uploadedBy } = album
@@ -52,7 +52,7 @@ export default function (fastify, opts, done) {
   fastify.get('/a/:id/thumbnail', async (request, reply) => {
     const { id } = request.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT thumbnail, uploadedBy FROM album WHERE id = ?')
+      .prepare('SELECT "thumbnail", "uploadedBy" FROM "album" WHERE "id" = ?')
       .get(id)
 
     if (!dbResult) return createError(404)
@@ -68,13 +68,13 @@ export default function (fastify, opts, done) {
   fastify.get('/a/:id/download', async (request, reply) => {
     const { id } = request.params
     const album = fastify.betterSqlite3
-      .prepare('SELECT title, uploadedBy FROM album WHERE id = ?')
+      .prepare('SELECT "title", "uploadedBy" FROM "album" WHERE "id" = ?')
       .get(id)
 
     if (!album) return createError(404)
 
     const albumFiles = fastify.betterSqlite3
-      .prepare('SELECT id, file FROM albumFiles WHERE album = ?')
+      .prepare('SELECT "id", "file" FROM "albumFiles" WHERE "album" = ?')
       .all(id)
 
     const { title, uploadedBy } = album

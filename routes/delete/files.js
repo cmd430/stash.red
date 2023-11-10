@@ -10,7 +10,7 @@ export default function (fastify, opts, done) {
   fastify.delete('/f/:id', async (request, reply) => {
     const { id } = request.params
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT file, uploadedBy FROM files WHERE id = ?')
+      .prepare('SELECT "file", "uploadedBy" FROM "files" WHERE "id" = ?')
       .get(id)
 
     if (!dbResult) return createError(400)
@@ -26,7 +26,7 @@ export default function (fastify, opts, done) {
       })
 
     fastify.betterSqlite3
-      .prepare('DELETE FROM files WHERE id = ?')
+      .prepare('DELETE FROM "files" WHERE "id" = ?')
       .run(id)
 
     return reply

@@ -12,7 +12,7 @@ export default function (fastify, opts, done) {
     const { id } = request.params
     const { title: newTitle } = request.body
     const dbResult = fastify.betterSqlite3
-      .prepare('SELECT title, uploadedBy FROM album WHERE id = ?')
+      .prepare('SELECT "title", "uploadedBy" FROM "album" WHERE "id" = ?')
       .get(id)
 
     if (!dbResult) return createError(400)
@@ -23,7 +23,7 @@ export default function (fastify, opts, done) {
     if (request.session.get('session').username !== uploadedBy) return createError(403) // Not allowed
 
     if (newTitle && newTitle !== title) fastify.betterSqlite3
-      .prepare('UPDATE albums SET title = ? WHERE id = ?')
+      .prepare('UPDATE "albums" SET "title" = ? WHERE "id" = ?')
       .run(newTitle, id)
 
     return reply

@@ -7,7 +7,7 @@ const { log, debug, info, warn, error } = new Log('Session GC')
 
 async function performGC (db) {
   const { changes: removed } = db
-    .prepare('DELETE FROM session WHERE expires < strftime(\'%Y-%m-%dT%H:%M:%fZ\', \'now\')')
+    .prepare('DELETE FROM "session" WHERE "expires" < strftime(\'%Y-%m-%dT%H:%M:%fZ\', \'now\')')
     .run()
 
   if (removed > 0) debug('Removed', removed, 'expired sessions')

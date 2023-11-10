@@ -10,14 +10,14 @@ export default function (fastify, opts, done) {
   fastify.delete('/a/:id', async (request, reply) => {
     const { id } = request.params
     const dbResultAlbum = fastify.betterSqlite3
-      .prepare('SELECT uploadedBy FROM albums WHERE id = ?')
+      .prepare('SELECT "uploadedBy" FROM "albums" WHERE "id" = ?')
       .get(id)
 
     if (!dbResultAlbum) return createError(404)
 
     const { uploadedBy } = dbResultAlbum
     const dbResultFiles = fastify.betterSqlite3
-      .prepare('SELECT id, file FROM files WHERE inAlbum = ? AND uploadedBy = ?')
+      .prepare('SELECT "id", "file" FROM "files" WHERE "inAlbum" = ? AND "uploadedBy" = ?')
       .all(id, uploadedBy)
 
     if (!dbResultFiles) return createError(404)
@@ -36,7 +36,7 @@ export default function (fastify, opts, done) {
       if (!removedBlob) delete album[album.findIndex(obj => obj?.fileID === fileID)]
     }
 
-    const statement = fastify.betterSqlite3.prepare('DELETE FROM files WHERE id = ?')
+    const statement = fastify.betterSqlite3.prepare('DELETE FROM "files" WHERE "id" = ?')
     const transaction = fastify.betterSqlite3.transaction(albumFiles => albumFiles.map(({ fileID }) => statement.run(fileID)))
     const removed = transaction(album.filter(e => e))
       .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)

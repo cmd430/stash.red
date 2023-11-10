@@ -1,4 +1,4 @@
-<span class="wrapper" data-type="video" data-id="{{id}}" data-username="{{uploadedBy}}">
+<span class="wrapper" data-type="video" data-id="{{id}}" data-username="{{uploadedBy}}" {{#if @root.album}}data-order="{{albumOrder}}"{{/if}}>
   <div class="video">
     <video controls preload playsinline>
       <source src="{{path}}" />

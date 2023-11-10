@@ -9,7 +9,7 @@ const { log, debug, info, warn, error } = new Log('Temporary Uploads')
 async function performGC (db) {
   const expired = []
   const temporal = db
-    .prepare('SELECT id, file, uploadedAt, uploadedBy, ttl FROM files WHERE ttl NOT NULL')
+    .prepare('SELECT "id", "file", "uploadedAt", "uploadedBy", "ttl" FROM "files" WHERE "ttl" NOT NULL')
     .all()
 
   for (const { id, file, uploadedAt, uploadedBy, ttl } of temporal) {
@@ -24,7 +24,7 @@ async function performGC (db) {
     if (!removedBlob) delete expired[expired.findIndex(obj => obj?.id === id)]
   }
 
-  const statement = db.prepare('DELETE FROM files WHERE id = ?')
+  const statement = db.prepare('DELETE FROM "files" WHERE "id" = ?')
   const transaction = db.transaction(expiredFiles => expiredFiles.map(({ id }) => statement.run(id)))
   const removed = transaction(expired.filter(e => e))
     .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)

@@ -1,6 +1,6 @@
 import databaseConnection from '../database/databaseConnection.js'
 
-export const config = databaseConnection.prepare('SELECT * FROM config')
+export const config = databaseConnection.prepare('SELECT * FROM "config"')
   .all()
   .reduce((obj, item) => {
     obj[item.key] = item.value

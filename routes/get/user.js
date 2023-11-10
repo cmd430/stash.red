@@ -51,7 +51,7 @@ export default function (fastify, opts, done) {
     const showPrivate = request.session.get('authenticated') && request.session.get('session').username === username
 
     const user = fastify.betterSqlite3
-      .prepare('SELECT email FROM accounts WHERE username = ?')
+      .prepare('SELECT "email" FROM "accounts" WHERE "username" = ?')
       .get(username)
 
     // If the user not exist return a 404
@@ -60,9 +60,9 @@ export default function (fastify, opts, done) {
     const { email } = user
     // Get Files
     const getFilesIncludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, type, isPrivate, total FROM userFiles WHERE uploadedBy = ? AND type LIKE '${filter}%' ORDER BY uploadedAt ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT "id", "type", "isPrivate", "total" FROM "userFiles" WHERE "uploadedBy" = ? AND "type" LIKE '${filter}%' ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
     const getFilesExcludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, type, isPrivate, total FROM userFiles WHERE uploadedBy = ? AND NOT isPrivate = 1 AND type LIKE '${filter}%' ORDER BY uploadedAt ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT "id", "type", "isPrivate", "total" FROM "userFiles" WHERE "uploadedBy" = ? AND NOT "isPrivate" = 1 AND "type" LIKE '${filter}%' ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
 
     // Run SQL
     const files = (showPrivate ? getFilesIncludePrivate : getFilesExcludePrivate)
@@ -106,7 +106,7 @@ export default function (fastify, opts, done) {
     const showPrivate = request.session.get('authenticated') && request.session.get('session').username === username
 
     const user = fastify.betterSqlite3
-      .prepare('SELECT email FROM accounts WHERE username = ?')
+      .prepare('SELECT "email" FROM "accounts" WHERE "username" = ?')
       .get(username)
 
     // If the user not exist then we get no email, return a 404
@@ -115,9 +115,9 @@ export default function (fastify, opts, done) {
     const { email } = user
     // Get Albums
     const getAlbumsIncludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, title, isPrivate, entries, total FROM userAlbums WHERE uploadedBy = ? ORDER BY uploadedAt ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT "id", "title", "isPrivate", "entries", "total" FROM "userAlbums" WHERE "uploadedBy" = ? ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
     const getAlbumsExcludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT id, title, isPrivate, entries, total FROM userAlbums WHERE uploadedBy = ? AND NOT isPrivate = 1  ORDER BY uploadedAt ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT "id", "title", "isPrivate", "entries", "total" FROM "userAlbums" WHERE "uploadedBy" = ? AND NOT "isPrivate" = 1  ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
 
     // Run SQL
     const albums = (showPrivate ? getAlbumsIncludePrivate : getAlbumsExcludePrivate).all(username, limit, offset)
