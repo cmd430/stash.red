@@ -31,9 +31,9 @@
   [√] upload text or file from paste
   [√] upload file(s) on drop
   [√] upload file(s) from picker
-  [!] upload, paste URL and fetch content
+  [√] upload, paste URL and fetch content
       [√] frontend
-      [ ] backend
+      [√] backend
   [√] sign up capture (maybe login capture?)
 
 -= Things I want to do =-
