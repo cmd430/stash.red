@@ -89,25 +89,29 @@ export default function (fastify, opts, done) {
           const { fileBlobName, azureBlobClients } = createAzureBlob(username, filename)
           const fileID = nanoid(8)
 
-          // TODO see if we need to keep this
-          let insertResult = {}
-
           if (isFromHomepage) {
-            insertResult = fastify.betterSqlite3
+            fastify.betterSqlite3
               .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
               .run(fileID, filename, fileBlobName, file.byteLength, mimetype, username, timeToLive, isPrivate)
           } else {
-            /*
-              TODO: get album data, upload time, ttl, id etc and use for the insert
-              we also need to get the existing number of files in the album (-1)
-              and then use that to set our new files albumOrder
-            */
-            insertResult = fastify.betterSqlite3
-              .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-              .run(fileID, filename, fileBlobName, file.byteLength, mimetype, username, timeToLive, isPrivate)
-          }
+            const { albumID } = request.headers.referer.match(/\/a\/(?<albumID>[a-zA-Z0-9-]{8})\/?$/).groups
 
-          debug('Upload File DB Result', insertResult)
+            const album = fastify.betterSqlite3
+              .prepare(`SELECT * FROM (SELECT "id", "uploadedAt", "uploadedBy", "isPrivate", "entries", "ttl" FROM "albums" INNER JOIN (
+                          SELECT "entries" FROM "album"
+                        ) AS "entries" ON "id" = "id" GROUP BY "id") WHERE "id" = ?`)
+              .get(albumID)
+
+            if (!album) continue
+
+            const { uploadedAt: albumUploadedAt, uploadedBy: albumUploadedBy, isPrivate: albumIsPrivate, ttl: albumTimeToLive, entries: albumEntries } = album
+
+            if (albumUploadedBy !== username) continue
+
+            fastify.betterSqlite3
+              .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedAt", "uploadedBy", "ttl", "isPrivate", "inAlbum", "albumOrder") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+              .run(fileID, filename, fileBlobName, file.byteLength, mimetype, albumUploadedAt, username, albumTimeToLive, albumIsPrivate, albumID, albumEntries)
+          }
 
           await setAzureBlob(file, thumbnail, azureBlobClients)
 
@@ -165,12 +169,10 @@ export default function (fastify, opts, done) {
         )
           .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
 
-        const insertResult = fastify.betterSqlite3
+        fastify.betterSqlite3
           .prepare('INSERT INTO "albums" ("id", "title", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?)')
           .run(albumID, 'Untitled Album', username, timeToLive, isPrivate)
 
-        // TODO: do we need this?
-        debug(insertResult)
         debug('Added', updated, 'files to album')
 
         return {

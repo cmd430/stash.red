@@ -11,6 +11,7 @@ const albumTitleInput = document.querySelector('header > h1.editable > input')
 
 const albumItems = Array.from(albumContainer.querySelectorAll('span[data-order]'))
 const modalContainer = document.querySelector('div#modals')
+const dropzone = modalContainer.querySelector('#dropzone')
 
 function checkForChanges () { // Called when we click 'Save'
   const changes = []
@@ -139,4 +140,32 @@ document.querySelector('a.album__delete')?.addEventListener('click', () => {
 
     return console.error('something went wrong deleting the album')
   })
+})
+
+document.addEventListener('dragover', e => {
+  e.preventDefault()
+  if (!modalContainer.classList.contains('dropzone')) modalContainer.classList.add('dropzone')
+})
+document.addEventListener('dragenter', e => {
+  e.preventDefault()
+  if (!modalContainer.classList.contains('dropzone')) modalContainer.classList.add('dropzone')
+})
+document.addEventListener('dragleave', e => {
+  e.preventDefault()
+  if ((/Chrome/).test(navigator.userAgent) && !e.clientX && !e.clientY) {
+    if (modalContainer.classList.contains('dropzone')) modalContainer.classList.remove('dropzone')
+  } else if (!(/Chrome/).test(navigator.userAgent)) {
+    if (modalContainer.classList.contains('dropzone')) modalContainer.classList.remove('dropzone')
+  }
+}, false)
+document.addEventListener('drop', e => {
+  const { target, target: { parentElement }, preventDefault } = e
+
+  preventDefault()
+
+  if (modalContainer.classList.contains('dropzone') && (target === dropzone || parentElement === dropzone) === false) modalContainer.classList.remove('dropzone')
+})
+window.addEventListener('paste', async e => {
+  e.preventDefault()
+  if (!modalContainer.classList.contains('dropzone')) modalContainer.classList.add('dropzone')
 })
