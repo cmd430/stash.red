@@ -1,9 +1,10 @@
-import { extname } from 'node:path'
+import { extname, basename } from 'node:path'
 import { customAlphabet } from 'nanoid'
 import { Log } from 'cmd430-utils'
 import { createAzureBlob, setAzureBlob } from '../../utils/azureBlobStorage.js'
 import generateThumbnail from '../../utils/generateThumbnail.js'
 import { getMimetype, isValidMimetype } from '../../utils/mimetype.js'
+import { grab } from '../../utils/fetchExternal.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Upload')
@@ -14,9 +15,6 @@ export default function (fastify, opts, done) {
   // Upload a file
   //eslint-disable-next-line complexity
   fastify.post('/upload', async (request, reply) => {
-
-    // TODO split out the uploading/processing into seperate functions to tidy code up a bit (and hopefully allow reusing for the URL uploads)
-
     try {
       if (!request.session.get('authenticated')) return {
         status: 401,
@@ -34,6 +32,56 @@ export default function (fastify, opts, done) {
         isFromHomepage: false
       }
       const uploadedFiles = []
+      const processFile = async (file, filename) => {
+        if (file instanceof Buffer === false || file.byteLength === 0) {
+          debug('Skipping file with no data')
+          return
+        }
+
+        const mimetype = getMimetype(file)
+
+        if (isValidMimetype(mimetype) === false) {
+          debug('Skipping file with invalid mimetype: ', mimetype)
+          return
+        }
+
+        const { timeToLive, isPrivate, isFromHomepage } = fields
+        const thumbnail = await generateThumbnail(mimetype, file)
+        const { fileBlobName, azureBlobClients } = createAzureBlob(username, filename)
+        const fileID = nanoid(8)
+
+        if (isFromHomepage) {
+          fastify.betterSqlite3
+            .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+            .run(fileID, filename, fileBlobName, file.byteLength, mimetype, username, timeToLive, isPrivate)
+        } else {
+          const { albumID } = request.headers.referer.match(/\/a\/(?<albumID>[a-zA-Z0-9-]{8})\/?$/).groups
+
+          const album = fastify.betterSqlite3
+            .prepare(`SELECT * FROM (SELECT "id", "uploadedAt", "uploadedBy", "isPrivate", "entries", "ttl" FROM "albums" INNER JOIN (
+                        SELECT "entries" FROM "album"
+                      ) AS "entries" ON "id" = "id" GROUP BY "id") WHERE "id" = ?`)
+            .get(albumID)
+
+          if (!album) return
+
+          const { uploadedAt: albumUploadedAt, uploadedBy: albumUploadedBy, isPrivate: albumIsPrivate, ttl: albumTimeToLive, entries: albumEntries } = album
+
+          if (albumUploadedBy !== username) return
+
+          fastify.betterSqlite3
+            .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedAt", "uploadedBy", "ttl", "isPrivate", "inAlbum", "albumOrder") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+            .run(fileID, filename, fileBlobName, file.byteLength, mimetype, albumUploadedAt, username, albumTimeToLive, albumIsPrivate, albumID, albumEntries)
+        }
+
+        await setAzureBlob(file, thumbnail, azureBlobClients)
+
+        // Make sure we can access the file ids after the upload
+        uploadedFiles.push({
+          id: fileID,
+          ext: extname(filename)
+        })
+      }
 
       for await (const part of request.parts()) {
         if (part.type === 'field') {
@@ -68,69 +116,15 @@ export default function (fastify, opts, done) {
           */
           fields.isFromHomepage = true
         } else if (part.type === 'file') {
-          // Process the upload files
-          const file = await part.toBuffer()
-
-          if (file instanceof Buffer === false || file.byteLength === 0) {
-            debug('Skipping file with no data')
-            continue
-          }
-
-          const mimetype = getMimetype(file)
-
-          if (isValidMimetype(mimetype) === false) {
-            debug('Skipping file with invalid mimetype: ', mimetype)
-            continue
-          }
-
-          const filename = part.filename
-          const { timeToLive, isPrivate, isFromHomepage } = fields
-          const thumbnail = await generateThumbnail(mimetype, file)
-          const { fileBlobName, azureBlobClients } = createAzureBlob(username, filename)
-          const fileID = nanoid(8)
-
-          if (isFromHomepage) {
-            fastify.betterSqlite3
-              .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-              .run(fileID, filename, fileBlobName, file.byteLength, mimetype, username, timeToLive, isPrivate)
-          } else {
-            const { albumID } = request.headers.referer.match(/\/a\/(?<albumID>[a-zA-Z0-9-]{8})\/?$/).groups
-
-            const album = fastify.betterSqlite3
-              .prepare(`SELECT * FROM (SELECT "id", "uploadedAt", "uploadedBy", "isPrivate", "entries", "ttl" FROM "albums" INNER JOIN (
-                          SELECT "entries" FROM "album"
-                        ) AS "entries" ON "id" = "id" GROUP BY "id") WHERE "id" = ?`)
-              .get(albumID)
-
-            if (!album) continue
-
-            const { uploadedAt: albumUploadedAt, uploadedBy: albumUploadedBy, isPrivate: albumIsPrivate, ttl: albumTimeToLive, entries: albumEntries } = album
-
-            if (albumUploadedBy !== username) continue
-
-            fastify.betterSqlite3
-              .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedAt", "uploadedBy", "ttl", "isPrivate", "inAlbum", "albumOrder") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-              .run(fileID, filename, fileBlobName, file.byteLength, mimetype, albumUploadedAt, username, albumTimeToLive, albumIsPrivate, albumID, albumEntries)
-          }
-
-          await setAzureBlob(file, thumbnail, azureBlobClients)
-
-          // Make sure we can access the file ids after the upload
-          uploadedFiles.push({
-            id: fileID,
-            ext: extname(filename)
-          })
+          await processFile(await part.toBuffer(), part.filename)
         }
       }
 
-      // TODO: grab file from external and "upload" it
-      if (fields.fetchURL !== null) {
-        debug('URL to fetch', fields.fetchURL)
+      // our field data
+      const { timeToLive, isPrivate, dontFormAlbum, fetchURL, isFromHomepage } = fields
 
-        if (fields.fetchURL.startsWith(`${request.protocol}://${request.hostname}`) === false) {
-          // TODO: This code should be split out into `fetchExternal.js`
-
-        }
+      if (fetchURL !== null && fetchURL.startsWith(`${request.protocol}://${request.hostname}`) === false && fetchURL.startsWith('https://')) {
+        await processFile(await grab(fetchURL), basename(fetchURL))
       }
 
       if (uploadedFiles.length === 0) { // no files uploaded
@@ -143,9 +137,6 @@ export default function (fastify, opts, done) {
       }
 
       debug('Uploaded files', uploadedFiles)
-
-      // our field data
-      const { timeToLive, isPrivate, dontFormAlbum, isFromHomepage } = fields
 
       // If we are adding to an album just reload the page once done
       if (isFromHomepage === false) return {
