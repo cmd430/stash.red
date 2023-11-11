@@ -1,5 +1,9 @@
 <div id="dropzone">
-  <span id="label">Click here or Dropfiles</span> {{! TODO: Check if we are in an album and if so remove the "Click here" text }}
+  {{#if @root.album}}
+    <span id="label">Dropfiles Here</span>
+  {{else}}
+    <span id="label">Click or Dropfiles Here</span>
+  {{/if}}
   <span id="progress" class="hidden invisible">
     <span id="fill"></span>
     <span id="text">Uploading: 0%</span>
