@@ -59,7 +59,7 @@
           [√] update
           [√] delete
           [√] dropzone/upload
-  [!] scrap and redo client js
+  [√] scrap and redo client js
       [√] redo uploading js for dropzone
           -> basically done, need to get url uploads working
              so waiting until i redo upload handling on the server
@@ -67,10 +67,10 @@
       [√] redo video player
       [√] redo text loader
       [√] album title editing
-      [!] album order editing
-          [!] frontend
+      [√] album order editing
+          [√] frontend
               [√] code
-              [ ] ui
+              [√] ui
                   -> maybe add some new buttons to the items (replacing the save/delete buttons)
                      that move the items up/down in the DOM order?
           [√] backend
@@ -88,6 +88,7 @@
 
 -= New things I want to add =-
   [√] Dark mode
+  [ ] Add file to file to form album
   [ ] P2P file share with WebRTC, URL -> `/t/:id`
       -> https://github.com/feross/simple-peer
 
