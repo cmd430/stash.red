@@ -31,9 +31,11 @@
 .blackout.update #update_modal {
   visibility: visible;
 }
+.blackout.dropzone {
+  justify-content: center;
+}
 .blackout.dropzone #dropzone {
   visibility: visible;
-  justify-content: center;
 }
 .blackout .modal {
   display: flex;

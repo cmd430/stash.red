@@ -38,9 +38,12 @@
     visibility: visible;
   }
 
-  &.dropzone #dropzone {
-    visibility: visible;
+  &.dropzone {
     justify-content: center;
+
+    #dropzone {
+      visibility: visible;
+    }
   }
 
   .modal {
