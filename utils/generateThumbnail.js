@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process'
-import { resolve } from 'path'
-import { readFile } from 'fs/promises'
+import { MIMEType } from 'node:util'
+import { resolve } from 'node:path'
+import { readFile } from 'node:fs/promises'
 import { Readable } from 'node:stream'
 import ffmpegBin from 'ffmpeg-static'
 import { Log } from 'cmd430-utils'
@@ -92,7 +93,7 @@ async function getDefaultThumbnail (type) {
 }
 
 export default async function generateThumbnail (mimetype, fileBuffer) {
-  const type = mimetypeFilter(mimetype).split('/')[0]
+  const type = new MIMEType(mimetypeFilter(mimetype)).type
 
   let imageBuffer
 

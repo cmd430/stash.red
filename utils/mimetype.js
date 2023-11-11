@@ -1,3 +1,4 @@
+import { MIMEType } from 'node:util'
 import { WASMagic } from 'wasmagic'
 import { Log } from 'cmd430-utils'
 
@@ -15,9 +16,8 @@ export function mimetypeFilter (mimetype) {
   return mimetypeMap[mimetype] ?? mimetype
 }
 
-
 export function isValidMimetype (mimetype) {
-  const type = mimetypeFilter(mimetype).split('/')[0]
+  const type = new MIMEType(mimetypeFilter(mimetype)).type
   const allowedTypes = [
     'image',
     'video',
