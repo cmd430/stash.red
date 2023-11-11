@@ -55,6 +55,7 @@ async function uploadFiles (files) {
     if (files.startsWith('http')) {
       // URL
       formData.append('fetchURL', files)
+      files = null
     } else {
       // Text Upload
       files = new File([ files ], 'clipboard.txt', {
@@ -71,13 +72,13 @@ async function uploadFiles (files) {
   }
 
   // Files
-  for (const file of Array.from([ ...(files[Symbol.iterator] ? files : [ files ]) ])) formData.append('files[]', file)
+  if (files !== null) {
+    for (const file of Array.from([ ...(files[Symbol.iterator] ? files : [ files ]) ])) formData.append('files[]', file)
+  }
 
   setProgressText('Uploading: 0%')
 
   return new Promise((resolve, reject) => {
-    if (files.length === 0) return reject(new Error('File upload failed'))
-
     const xhr = new XMLHttpRequest()
 
     xhr.upload.addEventListener('progress', setProgress)
