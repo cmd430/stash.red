@@ -21,6 +21,18 @@
       </a>
     {{/if_either_eq}}
   </div>
+  {{#if @root.album}}
+    {{#if_eq @root.album.uploadedBy @session.username this}}
+      <div class="orders" disabled>
+        <a class="order__up" title="Move audio up">
+          <i class="icon-up-big"></i>
+        </a>
+        <a class="order__down" title="Move audio down">
+          <i class="icon-down-big"></i>
+        </a>
+      </div>
+    {{/if_eq}}
+  {{/if}}
 </span>
 <link rel="stylesheet" href="/css/partials/audio.css" />
 <script type="module" src="/js/partials/audio.js"></script>

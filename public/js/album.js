@@ -8,8 +8,9 @@ const albumEditButton = document.querySelector('a.album__edit')
 const albumEditSaveButton = document.querySelector('a.album__save')
 const albumEditCancelButton = document.querySelector('a.album__cancel')
 const albumTitleInput = document.querySelector('header > h1.editable > input')
-
 const albumItems = Array.from(albumContainer.querySelectorAll('span[data-order]'))
+const actionButtonContainers = albumContainer?.querySelectorAll('div.actions')
+const orderButtonContainers = albumContainer?.querySelectorAll('div.orders')
 const modalContainer = document.querySelector('div#modals')
 const dropzone = modalContainer.querySelector('#dropzone')
 
@@ -26,9 +27,6 @@ function checkForChanges () { // Called when we click 'Save'
   // Check if items are out of order (aka changed)
   if (albumItems.every((elm, index) => Number(elm.dataset.order) === index) === false) {
     // Sort into correct order and create edit payload
-    // NOTE: Currently this sorts by `the data-order` attribute but i might have to change it to sort by the DOM order
-    // depending on how i impliment the UI for order editing (manipulating DOM order might be easier because then we
-    // dont have to worry about having multiple items with the same `data-order` value)
     const sortedAlbumItems = albumItems.sort((a, b) => a.dataset.order > b.dataset.order)
     const orderPayload = {}
 
@@ -42,7 +40,15 @@ function checkForChanges () { // Called when we click 'Save'
 
 function revertChanges (change) {
   if (change === undefined || change.title) albumTitleInput.value = albumTitle
-  if (change === undefined || change.order) for (const [ index, albumItem ] of albumItems.entries()) albumItem.dataset.order = index
+  if (change === undefined || change.order) {
+    const sortedAlbumItems = albumItems.sort((a, b) => (a.dataset.originalOrder ?? a.dataset.order) > (b.dataset.originalOrder ?? b.dataset.order))
+
+    for (const [ index, albumItem ] of sortedAlbumItems.entries()) {
+      albumItem.dataset.order = index
+      albumContainer.append(albumItem)
+      albumItem.removeAttribute('data-original-order')
+    }
+  }
 }
 
 function toggleEditing (enable) {
@@ -51,11 +57,25 @@ function toggleEditing (enable) {
     albumEditSaveButton?.removeAttribute('disabled')
     albumEditCancelButton?.removeAttribute('disabled')
     albumTitleInput?.classList.add('editing')
+
+    for (const actionButtonContainer of actionButtonContainers) {
+      actionButtonContainer.setAttribute('disabled', '')
+    }
+    for (const orderButtonContainer of orderButtonContainers) {
+      orderButtonContainer.removeAttribute('disabled')
+    }
   } else {
     albumEditButton?.removeAttribute('disabled')
     albumEditSaveButton?.setAttribute('disabled', '')
     albumEditCancelButton?.setAttribute('disabled', '')
     albumTitleInput?.classList.remove('editing')
+
+    for (const actionButtonContainer of actionButtonContainers) {
+      actionButtonContainer.removeAttribute('disabled')
+    }
+    for (const orderButtonContainer of orderButtonContainers) {
+      orderButtonContainer.setAttribute('disabled', '')
+    }
   }
 }
 
@@ -94,10 +114,12 @@ async function saveEdits () {
 
         if (editAlbum.status === 204) {
           successfulChanges.push(changeType)
+
           return resolve()
         }
 
         console.error('something went wrong editing the album', changeType)
+        revertChanges(change)
         resolve()
       }, () => {
         revertChanges(change)
@@ -109,13 +131,59 @@ async function saveEdits () {
   if (successfulChanges.length > 0) return location.reload()
 }
 
+function getFile (e) {
+  return e.currentTarget.parentElement.parentElement
+}
+function getSiblingFiles () {
+  return Array.from(albumContainer.querySelectorAll('span.wrapper'))
+}
+function swapElements (elm1, elm2) {
+  const temp = document.createElement('div')
+
+  elm1.parentNode.insertBefore(temp, elm1)
+  elm2.parentNode.insertBefore(elm1, elm2)
+  temp.parentNode.insertBefore(elm2, temp)
+  temp.parentNode.removeChild(temp)
+}
+
+for (const orderButtonContainer of orderButtonContainers) {
+  orderButtonContainer.querySelector('a.order__up').addEventListener('click', e => {
+    const file = getFile(e)
+    const siblings = getSiblingFiles()
+    const order = siblings.indexOf(file) - 1
+    const prevFile = siblings[order]
+
+    prevFile.dataset.order = order + 1
+    prevFile.dataset.originalOrder ??= order
+    file.dataset.order = order
+    file.dataset.originalOrder ??= order + 1
+
+    swapElements(prevFile, file)
+  })
+  orderButtonContainer.querySelector('a.order__down').addEventListener('click', e => {
+    const file = getFile(e)
+    const siblings = getSiblingFiles()
+    const order = siblings.indexOf(file) + 1
+    const nextFile = siblings[order]
+
+    file.dataset.order = order
+    file.dataset.originalOrder ??= order - 1
+    nextFile.dataset.order = order - 1
+    nextFile.dataset.originalOrder ??= order
+
+    swapElements(file, nextFile)
+  })
+}
+
 albumEditButton?.addEventListener('click', () => {
   toggleEditing(true)
 })
+
 albumEditSaveButton?.addEventListener('click', () => {
   toggleEditing(false)
   saveEdits()
 })
+
 albumEditCancelButton?.addEventListener('click', () => {
   toggleEditing(false)
   revertChanges()
@@ -124,6 +192,7 @@ albumEditCancelButton?.addEventListener('click', () => {
 albumTitleInput?.addEventListener('keyup', e => {
   if (e.key === 'Escape') albumTitleInput.dispatchEvent(new Event('change'))
 })
+
 albumTitleInput?.addEventListener('change', albumTitleInput.blur)
 
 document.querySelector('a.album__delete')?.addEventListener('click', () => {
@@ -146,10 +215,12 @@ document.addEventListener('dragover', e => {
   e.preventDefault()
   if (!modalContainer.classList.contains('dropzone')) modalContainer.classList.add('dropzone')
 })
+
 document.addEventListener('dragenter', e => {
   e.preventDefault()
   if (!modalContainer.classList.contains('dropzone')) modalContainer.classList.add('dropzone')
 })
+
 document.addEventListener('dragleave', e => {
   e.preventDefault()
   if ((/Chrome/).test(navigator.userAgent) && !e.clientX && !e.clientY) {
@@ -158,13 +229,13 @@ document.addEventListener('dragleave', e => {
     if (modalContainer.classList.contains('dropzone')) modalContainer.classList.remove('dropzone')
   }
 }, false)
+
 document.addEventListener('drop', e => {
-  const { target, target: { parentElement }, preventDefault } = e
+  e.preventDefault()
 
-  preventDefault()
-
-  if (modalContainer.classList.contains('dropzone') && (target === dropzone || parentElement === dropzone) === false) modalContainer.classList.remove('dropzone')
+  if (modalContainer.classList.contains('dropzone') && e.currentTarget !== dropzone) modalContainer.classList.remove('dropzone')
 })
+
 window.addEventListener('paste', async e => {
   e.preventDefault()
   if (!modalContainer.classList.contains('dropzone')) modalContainer.classList.add('dropzone')

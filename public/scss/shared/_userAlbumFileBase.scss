@@ -133,14 +133,15 @@ main {
   }
 
   &:hover {
-    .actions {
+    .actions:not([disabled]) {
       opacity: 1;
       visibility: visible;
       transition: opacity 250ms linear, visibility 0ms linear;
     }
   }
 
-  .actions {
+  .actions,
+  .orders {
     display: flex;
     flex-direction: row;
     position: absolute;
@@ -183,5 +184,19 @@ main {
         }
       }
     }
+  }
+
+  .orders:not([disabled]) {
+    flex-direction: column;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 250ms linear, visibility 0ms linear;
+  }
+
+  &:first-of-type .orders a:first-of-type {
+    display: none;
+  }
+  &:last-of-type .orders a:last-of-type {
+    display: none;
   }
 }
