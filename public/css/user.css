@@ -119,12 +119,13 @@ main section {
   min-height: 3rem;
   overflow: hidden;
 }
-.wrapper:hover .actions {
+.wrapper:hover .actions:not([disabled]) {
   opacity: 1;
   visibility: visible;
   transition: opacity 250ms linear, visibility 0ms linear;
 }
-.wrapper .actions {
+.wrapper .actions,
+.wrapper .orders {
   display: flex;
   flex-direction: row;
   position: absolute;
@@ -134,7 +135,8 @@ main section {
   visibility: collapse;
   transition: opacity 250ms linear, visibility 250ms linear;
 }
-.wrapper .actions a {
+.wrapper .actions a,
+.wrapper .orders a {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -148,20 +150,36 @@ main section {
   text-decoration: none;
   cursor: pointer;
 }
-.wrapper .actions a:hover {
+.wrapper .actions a:hover,
+.wrapper .orders a:hover {
   color: var(--color-action-active);
 }
-.wrapper .actions a.action__delete:hover {
+.wrapper .actions a.action__delete:hover,
+.wrapper .orders a.action__delete:hover {
   color: var(--color-action-delete);
 }
-.wrapper .actions a span {
+.wrapper .actions a span,
+.wrapper .orders a span {
   overflow: hidden;
   text-overflow: clip;
   transition: width 200ms linear;
 }
-.wrapper .actions a span:not(:empty) {
+.wrapper .actions a span:not(:empty),
+.wrapper .orders a span:not(:empty) {
   padding-inline-start: 0.15rem;
   padding-inline-end: 0.35rem;
+}
+.wrapper .orders:not([disabled]) {
+  flex-direction: column;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 250ms linear, visibility 0ms linear;
+}
+.wrapper:first-of-type .orders a:first-of-type {
+  display: none;
+}
+.wrapper:last-of-type .orders a:last-of-type {
+  display: none;
 }
 
 main section {
