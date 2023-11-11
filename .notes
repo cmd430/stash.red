@@ -8,7 +8,7 @@
 -= Things needed for Feature parity with stash =-
   [√] Album downloading
   [√] File downloading
-  [!] Album file uploading / add files to existing album
+  [√] Album file uploading / add files to existing album
   [√] Album title renaming
       [√] backend
       [√] frontend
@@ -32,14 +32,16 @@
   [√] upload file(s) on drop
   [√] upload file(s) from picker
   [!] upload, paste URL and fetch content
+      [√] frontend
+      [ ] backend
   [√] sign up capture (maybe login capture?)
 
 -= Things I want to do =-
   [√] optimize by storing file size in bytes in the db so we dont have to ask azure everytime
   [√] stream files to user (and allow range requests) to save memory
-  [!] refactor upload.js to be a bit nicer,
-      [ ] use `req.parts()` to read feilds and files seperatly
-      [ ] make it so we can handle in album uploads without big hacks
+  [√] refactor upload.js to be a bit nicer,
+      [√] use `req.parts()` to read feilds and files seperatly
+      [√] make it so we can handle in album uploads without big hacks
   [√] Go over all the styles to make them less shit
       [√] Seperate styles into each component
       [√] refactor theme to use em units rather than px
@@ -58,7 +60,7 @@
           [√] delete
           [√] dropzone/upload
   [!] scrap and redo client js
-      [!] redo uploading js for dropzone
+      [√] redo uploading js for dropzone
           -> basically done, need to get url uploads working
              so waiting until i redo upload handling on the server
       [√] redo audio player
@@ -72,7 +74,7 @@
                   -> maybe add some new buttons to the items (replacing the save/delete buttons)
                      that move the items up/down in the DOM order?
           [√] backend
-      [ ] album file adding
+      [√] album file adding
   [√] restyle video and audio players so i can use the default player controls
   [ ] Make homepage tell you you need to login before you can upload
   [ ] Create abstract layer for handling the file buffers so you can choose where to store them

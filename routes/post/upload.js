@@ -56,7 +56,7 @@ export default function (fastify, opts, done) {
               break
             }
             default: {
-              debug('Unknown field in upload', part)
+              debug('Unknown field in upload', part.fieldname)
               continue
             }
           }
@@ -123,9 +123,14 @@ export default function (fastify, opts, done) {
         }
       }
 
-      // TODO: use fields.fetchURL (if set) to grab external file and process it
+      // TODO: grab file from external and "upload" it
       if (fields.fetchURL !== null) {
         debug('URL to fetch', fields.fetchURL)
+
+        if (fields.fetchURL.startsWith(`${request.protocol}://${request.hostname}`) === false) {
+          // TODO: This code should be split out into `fetchExternal.js`
+
+        }
       }
 
       if (uploadedFiles.length === 0) { // no files uploaded
