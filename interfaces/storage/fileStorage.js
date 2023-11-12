@@ -3,12 +3,12 @@ import { extname, resolve, join } from 'node:path'
 import { mkdir, writeFile, access, constants, unlink } from 'node:fs/promises'
 import { createReadStream } from 'node:fs'
 import { Log } from 'cmd430-utils'
-import { StorageInterface } from '../storage.js'
+import { StorageInterfaceBase } from '../storage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Storage (File)')
 
-export default class FileStorageInterface extends StorageInterface {
+export default class StorageInterface extends StorageInterfaceBase {
 
   #baseStoragePath = resolve('./storage/')
 
@@ -16,7 +16,6 @@ export default class FileStorageInterface extends StorageInterface {
    * @constructor
    * @param {object} opts Options for the Storage Interface
    * @param {string} [opts.thumbnailExt=".webp"] Thumbnail file extention (including leading '.')
-   * @returns FileStorageInterface
    */
 
   /**

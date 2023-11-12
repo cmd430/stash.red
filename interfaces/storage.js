@@ -7,12 +7,11 @@ const { log, debug, info, warn, error } = new Log('Storage')
 /**
  * @private
  */
-export class StorageInterface {
+export class StorageInterfaceBase {
 
   /**
    * @param {object} opts Options for the Storage Interface
    * @param {string} [opts.thumbnailExt=".webp"] Thumbnail file extention (including leading '.')
-   * @returns StorageInterface
    */
   constructor (opts) {
     this.thumbnailExt = opts?.thumbnailExt ?? '.webp'
