@@ -8,6 +8,8 @@ import { config } from '../../config/config.js'
 const { log, debug, info, warn, error } = new Log('Storage (Azure)')
 const { storageConnectionString } = config.azure
 
+// TODO: rewrite this into a `StorageInterface`
+
 export function deriveThumbnailBlob (fileBlobName) {
   return `thumbnail/thumbnail_${basename(fileBlobName, extname(fileBlobName))}.webp`
 }
