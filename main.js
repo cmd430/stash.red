@@ -22,11 +22,13 @@ import disableCache from './plugins/disableCache.js'
 import databaseConnection from './database/databaseConnection.js'
 import fastifyLogger from './helpers/fastifyLogger.js'
 import fastifyLoadPartials from './helpers/fastifyLoadPartials.js'
+import { getStorageInterface } from './interfaces/storage.js'
 import './helpers/handlebarsHelpers.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Main')
 const nanoid = customAlphabet('123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz')
+const FileStore = await getStorageInterface(config.storage.store)
 
 try {
   const fastify = Fastify({
@@ -38,6 +40,9 @@ try {
 
   // Make config accessable as fastify.config
   fastify.decorate('config', config)
+
+  // Make storage accessable as fastify.storage
+  fastify.decorate('storage', new FileStore())
 
   // Fastify Plugins
   fastify.register(cookie)
