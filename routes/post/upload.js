@@ -1,7 +1,7 @@
 import { extname, basename } from 'node:path'
 import { customAlphabet } from 'nanoid'
 import { Log } from 'cmd430-utils'
-import { createAzureBlob, setAzureBlob } from '../../interfaces/storage/azureBlobStorage.js'
+import { createAzureBlob, setAzureBlob } from '../../interfaces/storage/azureStorage.js'
 import generateThumbnail from '../../utils/generateThumbnail.js'
 import { getMimetype, isValidMimetype } from '../../utils/mimetype.js'
 import { grab } from '../../utils/fetchExternal.js'

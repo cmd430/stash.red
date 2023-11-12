@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { hash, compare } from 'bcrypt'
 import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
-import { createAzureContainer } from '../../interfaces/storage/azureBlobStorage.js'
+import { createAzureContainer } from '../../interfaces/storage/azureStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Account (POST)')

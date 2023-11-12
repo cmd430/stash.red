@@ -1,6 +1,6 @@
 import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
-import { deleteAzureBlobWithThumbnail } from '../../interfaces/storage/azureBlobStorage.js'
+import { deleteAzureBlobWithThumbnail } from '../../interfaces/storage/azureStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Albums (DELETE)')
