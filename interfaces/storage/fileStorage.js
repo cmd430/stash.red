@@ -13,16 +13,11 @@ export default class FileStorageInterface extends StorageInterface {
   #baseStoragePath = resolve('./storage/')
 
   /**
+   * @constructor
    * @param {object} opts Options for the Storage Interface
    * @param {string} [opts.thumbnailExt=".webp"] Thumbnail file extention (including leading '.')
    * @returns FileStorageInterface
    */
-  // eslint-disable-next-line no-useless-constructor
-  constructor (opts) {
-    super(opts)
-
-    // Any other stuff for this store here
-  }
 
   /**
    * Create the storage container for a user
