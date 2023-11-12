@@ -108,7 +108,6 @@ try {
 } catch (err) {
   error(err.stack)
   process.exit(1)
-
 }
 
 // Gracefully close the DB on exit
