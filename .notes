@@ -77,9 +77,13 @@
       [√] album file adding
   [√] restyle video and audio players so i can use the default player controls
   [ ] Make homepage tell you you need to login before you can upload
-  [ ] Create abstract layer for handling the file buffers so you can choose where to store them
+  [!] Create abstract layer for handling the file buffers so you can choose where to store them
       for example you could send them the AWS S3, Azure Blob Storage, Store them locally or Create
       some other file store
+      [!] storage adaptor class
+          [√] filesystem storage
+          [ ] azure blob storage
+      [ ] refactor calls to azureblobstorage to the new `fastify.storage.<method>()` methods
   [ ] Create abstract layer for DB access to allow using other sql dbs
   [ ] Admin page to control settings / see logs
       -> for logs can probably use websocket or maybe server sent events
@@ -91,6 +95,8 @@
   [ ] Add file to file to form album
   [ ] P2P file share with WebRTC, URL -> `/t/:id`
       -> https://github.com/feross/simple-peer
+  [ ] Typescript type defs so we get nice Typescript
+      -> https://www.typescriptlang.org/docs/handbook/declaration-files/dts-from-js.html
 
 
 -= URL references =-
