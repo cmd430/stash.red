@@ -2,7 +2,7 @@ import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
 import { mimetypeFilter } from '../../utils/mimetype.js'
-import { getAzureBlobStream } from '../../utils/azureBlobStorage.js'
+import { getAzureBlobStream } from '../../interfaces/storage/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Files (GET)')

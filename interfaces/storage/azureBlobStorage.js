@@ -2,24 +2,11 @@ import { randomUUID } from 'node:crypto'
 import { basename, extname } from 'node:path'
 import { BlobServiceClient } from '@azure/storage-blob'
 import { Log } from 'cmd430-utils'
-import { config } from '../config/config.js'
+import { config } from '../../config/config.js'
 
 // eslint-disable-next-line no-unused-vars
-const { log, debug, info, warn, error } = new Log('Azure')
+const { log, debug, info, warn, error } = new Log('Storage (Azure)')
 const { storageConnectionString } = config.azure
-
-function streamToBuffer (readableStream) {
-  return new Promise((resolve, reject) => {
-    const chunks = []
-    readableStream.on('data', data => {
-      chunks.push(data instanceof Buffer ? data : Buffer.from(data))
-    })
-    readableStream.on('end', () => {
-      resolve(Buffer.concat(chunks))
-    })
-    readableStream.on('error', reject)
-  })
-}
 
 export function deriveThumbnailBlob (fileBlobName) {
   return `thumbnail/thumbnail_${basename(fileBlobName, extname(fileBlobName))}.webp`
@@ -68,11 +55,6 @@ export async function getAzureBlobStream (username, blobID, range = { offset: 0,
   const azureDownloadBlockBlobResponse = await azureFileBlockBlobClient.download(range.offset, range.count)
 
   return azureDownloadBlockBlobResponse.readableStreamBody
-}
-
-// INFO: This is Unused, should remove?
-export async function getAzureBlobBuffer (username, blobID, range = { offset: 0, count: undefined }) {
-  return streamToBuffer(await getAzureBlobStream(username, blobID, range))
 }
 
 async function deleteAzureBlob (username, blobID) {

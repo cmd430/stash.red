@@ -1,7 +1,7 @@
 import { Log } from 'cmd430-utils'
 import { evaluate } from 'mathjs'
 import { fastifyPlugin } from 'fastify-plugin'
-import { deleteAzureBlobWithThumbnail } from '../utils/azureBlobStorage.js'
+import { deleteAzureBlobWithThumbnail } from '../interfaces/storage/azureBlobStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Temporary Uploads')
