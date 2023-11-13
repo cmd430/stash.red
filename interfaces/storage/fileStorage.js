@@ -111,10 +111,9 @@ export default class StorageInterface extends StorageInterfaceBase {
    * @param {string} file The file id for the file or the thumbnail id for the thumbnail
    * @returns {{ succeeded: boolean }}
    */
-  async #delete (data) {
-    const { username, file } = data
-
+  async #delete (username, file) {
     const filePath = this.#formatFilePath(username, file)
+
     try {
       await access(filePath, constants.F_OK)
       await unlink(filePath)

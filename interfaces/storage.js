@@ -59,7 +59,12 @@ export class StorageInterfaceBase {
   // eslint-disable-next-line
   async read (username, file, range = {}) {}
 
-  // Delete a file AND its thumbnial from the store
+  /**
+   * Delete a file AND its thumbnail from storage
+   * @param {string} username
+   * @param {string} file
+   * @returns {boolean}
+   */
   // eslint-disable-next-line
   async delete () {}
 
