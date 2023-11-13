@@ -32,7 +32,7 @@ export default class StorageInterface extends StorageInterfaceBase {
    * @param {string} filename
    * @returns {{filename: string, thumbnailFilename: string}}
    */
-  async create (username, filename) {
+  create (username, filename) {
     const storageFilename = `${randomUUID()}${extname(filename)}`
     const thumbnailFilename = this.deriveThumbnail(storageFilename)
 
