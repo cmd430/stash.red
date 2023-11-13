@@ -45,7 +45,7 @@ export class StorageInterfaceBase {
    * @param {Buffer} data.thumbnail.fileData The thumbnail data
    */
   // eslint-disable-next-line
-  write (data) {}
+  async write (data) {}
 
   /**
    * Read a file OR thumbnail from storage
@@ -57,11 +57,11 @@ export class StorageInterfaceBase {
    * @returns ReadStream
    */
   // eslint-disable-next-line
-  read (username, file, range = {}) {}
+  async read (username, file, range = {}) {}
 
   // Delete a file AND its thumbnial from the store
   // eslint-disable-next-line
-  delete () {}
+  async delete () {}
 
   /**
    * Get the thumbnail name from a file
