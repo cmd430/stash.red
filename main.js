@@ -52,7 +52,7 @@ try {
     cookieName: config.session.cookieName,
     cookie: {
       maxAge: config.session.maxAge,
-      secure: true,
+      secure: isDevEnv() ? 'auto' : true,
       httpOnly: true,
       sameSite: 'strict'
     },
