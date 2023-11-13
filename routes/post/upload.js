@@ -1,7 +1,6 @@
 import { extname, basename } from 'node:path'
 import { customAlphabet } from 'nanoid'
 import { Log } from 'cmd430-utils'
-import { createAzureBlob, setAzureBlob } from '../../interfaces/storage/azureStorage.js'
 import generateThumbnail from '../../utils/generateThumbnail.js'
 import { getMimetype, isValidMimetype } from '../../utils/mimetype.js'
 import { grab } from '../../utils/fetchExternal.js'
@@ -45,15 +44,18 @@ export default function (fastify, opts, done) {
           return
         }
 
+        const fileID = nanoid(8)
         const { timeToLive, isPrivate, isFromHomepage } = fields
         const thumbnail = await generateThumbnail(mimetype, file)
-        const { fileBlobName, azureBlobClients } = createAzureBlob(username, filename)
-        const fileID = nanoid(8)
+        const { filename: storageFilename, thumbnailFilename: storageThumbnailFilename } = fastify.storage.create(username, filename)
+
+        // TEMP: To remove after azureStorage rewrite
+        // const { fileBlobName, azureBlobClients } = createAzureBlob(username, filename)
 
         if (isFromHomepage) {
           fastify.betterSqlite3
             .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-            .run(fileID, filename, fileBlobName, file.byteLength, mimetype, username, timeToLive, isPrivate)
+            .run(fileID, filename, storageFilename, file.byteLength, mimetype, username, timeToLive, isPrivate)
         } else {
           const { albumID } = request.headers.referer.match(/\/a\/(?<albumID>[a-zA-Z0-9-]{8})\/?$/).groups
 
@@ -71,10 +73,23 @@ export default function (fastify, opts, done) {
 
           fastify.betterSqlite3
             .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedAt", "uploadedBy", "ttl", "isPrivate", "inAlbum", "albumOrder") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-            .run(fileID, filename, fileBlobName, file.byteLength, mimetype, albumUploadedAt, username, albumTimeToLive, albumIsPrivate, albumID, albumEntries)
+            .run(fileID, filename, storageFilename, file.byteLength, mimetype, albumUploadedAt, username, albumTimeToLive, albumIsPrivate, albumID, albumEntries)
         }
 
-        await setAzureBlob(file, thumbnail, azureBlobClients)
+        await fastify.storage.write({
+          username: username,
+          file: {
+            filename: storageFilename,
+            fileData: file
+          },
+          thumbnail: {
+            filename: storageThumbnailFilename,
+            fileData: thumbnail
+          }
+        })
+
+        // TEMP:TO remove after azureStorage Rewrite
+        // await setAzureBlob(file, thumbnail, azureBlobClients)
 
         // Make sure we can access the file ids after the upload
         uploadedFiles.push({
