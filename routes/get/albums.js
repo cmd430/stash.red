@@ -2,7 +2,6 @@ import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import archiver from 'archiver'
 import { extname } from 'node:path'
-import { getAzureBlobStream } from '../../interfaces/storage/azureStorage.js'
 import { mimetypeFilter } from '../../utils/mimetype.js'
 
 // eslint-disable-next-line no-unused-vars
@@ -61,7 +60,7 @@ export default function (fastify, opts, done) {
 
     return reply
       .type('image/webp')
-      .send(await getAzureBlobStream(uploadedBy, thumbnail))
+      .send(await fastify.storage.read(uploadedBy, thumbnail))
   })
 
   // Download album
@@ -85,7 +84,7 @@ export default function (fastify, opts, done) {
     })
 
     for (const { id: fileID, file } of albumFiles) {
-      archive.append(await getAzureBlobStream(uploadedBy, file), {
+      archive.append(await fastify.storage.read(uploadedBy, file), {
         name: `${fileID}${extname(file)}`
       })
     }

@@ -77,7 +77,7 @@ export default class StorageInterface extends StorageInterfaceBase {
    * @param {number|undefined} range.count The amount in bytes of the file to read
    * @returns ReadStream
    */
-  read (username, file, range = {}) {
+  async read (username, file, range = {}) {
     const { offset = 0, count = Infinity } = range
 
     return createReadStream(this.#formatFilePath(username, file), {

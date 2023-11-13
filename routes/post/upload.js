@@ -49,9 +49,6 @@ export default function (fastify, opts, done) {
         const thumbnail = await generateThumbnail(mimetype, file)
         const { filename: storageFilename, thumbnailFilename: storageThumbnailFilename } = fastify.storage.create(username, filename)
 
-        // TEMP: To remove after azureStorage rewrite
-        // const { fileBlobName, azureBlobClients } = createAzureBlob(username, filename)
-
         if (isFromHomepage) {
           fastify.betterSqlite3
             .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
@@ -87,9 +84,6 @@ export default function (fastify, opts, done) {
             fileData: thumbnail
           }
         })
-
-        // TEMP:TO remove after azureStorage Rewrite
-        // await setAzureBlob(file, thumbnail, azureBlobClients)
 
         // Make sure we can access the file ids after the upload
         uploadedFiles.push({

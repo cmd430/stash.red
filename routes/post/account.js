@@ -2,7 +2,6 @@ import { randomUUID } from 'node:crypto'
 import { hash, compare } from 'bcrypt'
 import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
-import { createAzureContainer } from '../../interfaces/storage/azureStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Account (POST)')
@@ -26,7 +25,7 @@ export default function (fastify, opts, done) {
         .prepare('INSERT INTO "accounts" ("id", "username", "email", "password") VALUES (?, ?, ?)')
         .run(id, username, email, await hash(password, bcrypt.rounds))
 
-      await createAzureContainer(username)
+      await fastify.storage.createContainer(username)
 
       request.session.set('authenticated', true)
       request.session.set('session', {

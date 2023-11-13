@@ -1,6 +1,5 @@
 import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
-import { deleteAzureBlobWithThumbnail } from '../../interfaces/storage/azureStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Files (DELETE)')
@@ -19,7 +18,7 @@ export default function (fastify, opts, done) {
 
     if ((request.session.get('authenticated') ?? false) === false) return createError(401) // Not authd
     if (request.session.get('session').username !== uploadedBy) return createError(403) // Not allowed
-    if (!await deleteAzureBlobWithThumbnail(uploadedBy, file)) return reply
+    if (!await fastify.storage.delete(uploadedBy, file)) return reply
       .status(500)
       .send({
         message: 'album not deleted'

@@ -1,6 +1,5 @@
 import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
-import { deleteAzureBlobWithThumbnail } from '../../interfaces/storage/azureStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Albums (DELETE)')
@@ -31,7 +30,7 @@ export default function (fastify, opts, done) {
     debug(album)
 
     for (const { fileID, file } of album) {
-      const removedBlob = await deleteAzureBlobWithThumbnail(uploadedBy, file)
+      const removedBlob = await fastify.storage.delete(uploadedBy, file)
 
       if (!removedBlob) delete album[album.findIndex(obj => obj?.fileID === fileID)]
     }

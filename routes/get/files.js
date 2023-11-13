@@ -2,7 +2,6 @@ import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
 import { mimetypeFilter } from '../../utils/mimetype.js'
-import { getAzureBlobStream } from '../../interfaces/storage/azureStorage.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Files (GET)')
@@ -80,7 +79,7 @@ export default function (fastify, opts, done) {
       .type(mimetypeFilter(type))
       .header('accept-ranges', 'bytes')
       .header('content-range', `bytes ${offset}-${count}/${size}`)
-      .send(await getAzureBlobStream(uploadedBy, file, {
+      .send(await fastify.storage.read(uploadedBy, file, {
         offset: offset,
         count: count
       }))
@@ -99,7 +98,7 @@ export default function (fastify, opts, done) {
 
     return reply
       .type('image/webp')
-      .send(await getAzureBlobStream(uploadedBy, thumbnail))
+      .send(await fastify.storage.read(uploadedBy, thumbnail))
   })
 
   // Download file
@@ -117,7 +116,7 @@ export default function (fastify, opts, done) {
     return reply
       .type(type)
       .header('content-disposition', `attachment; filename=${filename}`)
-      .send(await getAzureBlobStream(uploadedBy, file))
+      .send(await fastify.storage.read(uploadedBy, file))
   })
 
   done()
