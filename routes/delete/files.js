@@ -21,7 +21,7 @@ export default function (fastify, opts, done) {
     if (!await fastify.storage.delete(uploadedBy, file)) return reply
       .status(500)
       .send({
-        message: 'album not deleted'
+        message: 'file not deleted'
       })
 
     const { changes } = fastify.betterSqlite3
