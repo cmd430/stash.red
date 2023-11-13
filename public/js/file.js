@@ -1,7 +1,7 @@
 import { EventListener } from './utils/EventListner.js'
 
-const albumContainer = document.querySelector('main > section')
-const fileUser = albumContainer.getAttribute('data-username')
+const fileContainer = document.querySelector('main > section')
+const fileUser = fileContainer.getAttribute('data-username')
 const fileDeleteButtons = document.querySelectorAll('a.action__delete')
 const modalContainer = document.querySelector('div#modals')
 
