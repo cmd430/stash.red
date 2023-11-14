@@ -77,6 +77,9 @@
       [√] album file adding
   [√] restyle video and audio players so i can use the default player controls
   [ ] Make homepage tell you you need to login before you can upload
+      -> not 100% sure how to do this, mabe just ignore uploads and hide the dropzone with a
+         "you must be logged in to upload" message on the client side since the server will
+         already ignore invalid upload attempts
   [√] Create abstract layer for handling the file buffers so you can choose where to store them
       for example you could send them the AWS S3, Azure Blob Storage, Store them locally or Create
       some other file store
@@ -85,13 +88,36 @@
           [√] azure blob storage
       [√] refactor calls to azureblobstorage to the new `fastify.storage.<method>()` methods
   [ ] Create abstract layer for DB access to allow using other sql dbs
-  [ ] Admin page to control settings / see logs
-      -> for logs can probably use websocket or maybe server sent events
+      -> probably just do `fastify.db.<method>()` but maybe could do something
+         like `fastify.db.<file|album|user>.<method>()` to make it more clear what you are querying
+      -> im thinking basically just do what i did for the storage but for the DB
+         so we would have the SQL (or i suppose NoSQL) querries be per interface and just inforce
+         the returned data conforms to a set result
+      -> mysql/mariadb can both use https://www.npmjs.com/package/mariadb
+      -> would have to incur a small speed penalty for better-sqlite3 because we'd have
+         to make the calls with await to support async db drivers (basically all others)
+         but i think it would be fine
+      -> would probably still want to use better-sqlite3 for session/config stores so
+         would probably need to split those out into a seperate db (or seperate dbs?)
+  [x] Admin page to control settings / see logs
+      -> to much work for basically no gain
+         would have to modifiy logging to allow it to go to the TTY and also be sent to admins
+         IF i decide to revisit this would be better to tell it where logs are stored (from pm2 for example)
+         and just stream that to admin somehow
+      -> very very rarely need to edit settings and config is also only loaded once at load
+         so would be easier to just dit the config and restart
   [ ] Find out why styles are flashing on load
       -> might need to load them in the head based of page rather than in the body from the partials
 
 -= New things I want to add =-
   [√] Dark mode
+  [ ] look into seeing if we can process the uploads as streams to improve memory use
+      -> maybe upload to temp file to generate thumbnail then delete once done
+         -> probably just have a stream to write to temp file (fastify.multipart has a
+            built in method for this) and a stream to do the upload
+            this should be doable by just adding 2 `.pipe()`s to the upload file stream
+            i.e `stream.pipe(toTemp)` `stream.pipe(toStorage)` this would require some minor
+            changes to the `StorageInterface#write` methods
   [ ] Add file to file to form album
   [ ] P2P file share with WebRTC, URL -> `/t/:id`
       -> https://github.com/feross/simple-peer
