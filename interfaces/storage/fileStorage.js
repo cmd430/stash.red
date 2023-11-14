@@ -1,5 +1,4 @@
-import { randomUUID } from 'node:crypto'
-import { extname, resolve, join } from 'node:path'
+import { resolve, join } from 'node:path'
 import { mkdir, writeFile, access, constants, unlink } from 'node:fs/promises'
 import { createReadStream } from 'node:fs'
 import { Log } from 'cmd430-utils'
@@ -8,42 +7,32 @@ import { StorageInterfaceBase } from '../storage.js'
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Storage (File)')
 
+/**
+ * @extends {StorageInterfaceBase}
+ */
 export default class StorageInterface extends StorageInterfaceBase {
 
   #baseStoragePath = resolve('./storage/')
 
   /**
-   * @constructor
-   * @param {object} opts Options for the Storage Interface
-   * @param {string} [opts.thumbnailExt=".webp"] Thumbnail file extention (including leading '.')
-   */
-
-  /**
    * Create the storage container for a user
+   * @public
+   * @override
    * @param {string} username
    */
   async createContainer (username) {
-    await mkdir(join(this.#baseStoragePath, username.toLowerCase(), 'thumbnail'), { recursive: true })
-  }
+    const containerPath = join(this.#baseStoragePath, username.toLowerCase())
 
-  /**
-   * Create unique filenames for file AND its thumbnail
-   * @param {string} username
-   * @param {string} filename
-   * @returns {{filename: string, thumbnailFilename: string}}
-   */
-  create (username, filename) {
-    const storageFilename = `${randomUUID()}${extname(filename)}`
-    const thumbnailFilename = this.deriveThumbnail(storageFilename)
+    await mkdir(join(containerPath, this.thumbnailDirectory), {
+      recursive: true
+    })
 
-    return {
-      filename: storageFilename,
-      thumbnailFilename: thumbnailFilename
-    }
+    debug(`Container was created successfully.\n\tPath: ${containerPath}`)
   }
 
   /**
    * Set the file AND thumbnail data for a file
+   * @public
    * @param {object} data
    * @param {string} data.username The Username for the upload
    * @param {object} data.file
@@ -70,12 +59,13 @@ export default class StorageInterface extends StorageInterfaceBase {
 
   /**
    * Read a file OR thumbnail from storage
+   * @public
    * @param {string} username The Username for the upload
    * @param {string} file The file id for the file or the thumbnail id for the thumbnail
    * @param {object} [range]
    * @param {number} range.offset The file offset in bytes to start reading
    * @param {number|undefined} range.count The amount in bytes of the file to read
-   * @returns ReadStream
+   * @returns {ReadStream}
    */
   async read (username, file, range = {}) {
     const { offset = 0, count = Infinity } = range
@@ -88,6 +78,7 @@ export default class StorageInterface extends StorageInterfaceBase {
 
   /**
    * Delete a file AND its thumbnail from storage
+   * @public
    * @param {string} username
    * @param {string} file
    * @returns {boolean}
@@ -107,6 +98,7 @@ export default class StorageInterface extends StorageInterfaceBase {
 
   /**
    * Delete a file from storage
+   * @private
    * @param {string} username The Username for the upload
    * @param {string} file The file id for the file or the thumbnail id for the thumbnail
    * @returns {{ succeeded: boolean }}
@@ -130,6 +122,7 @@ export default class StorageInterface extends StorageInterfaceBase {
 
   /**
    * Return formatted filepath for a file OR thumbnail
+   * @private
    * @param {string} username
    * @param {string} file
    * @returns {string}
