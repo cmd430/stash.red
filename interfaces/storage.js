@@ -103,17 +103,13 @@ export class StorageInterfaceBase {
 /**
  * @typedef { "file" | "azure" } interfaceTypes
  */
-const interfaceTypes = {
-  'file': 'fileStorage.js',
-  'azure': 'azureStorage.js'
-}
 
 /**
  * @param {interfaceTypes} interfaceType
  * @returns {StorageInterface}
  */
 export async function getStorageInterface (interfaceType) {
-  const { default: storageInterface } = await import(`./storage/${interfaceTypes[interfaceType]}`)
+  const { default: storageInterface } = await import(`./storage/${interfaceType}Storage.js`)
 
   return storageInterface
 }
