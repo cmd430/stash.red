@@ -5,6 +5,7 @@ const { log, debug, info, warn, error } = new Log('Error Handler')
 
 export default function errorHandler (err, request, reply) {
   if (!err.status && err.statusCode) err.status = err.statusCode
+  if (err.code === 'ENOENT') err.status = '404'
   if (!err.status) {
     err.status = 500
     err.message = 'Internal Server Error'
