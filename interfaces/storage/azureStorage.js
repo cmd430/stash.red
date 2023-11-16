@@ -5,7 +5,7 @@ import { config } from '../../config/config.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Storage (Azure)')
-const { storageConnectionString } = config.azure
+const { storageConnectionString } = config.storage
 
 export default class StorageInterface extends StorageInterfaceBase {
 
