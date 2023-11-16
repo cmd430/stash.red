@@ -55,7 +55,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.username The account username
    * @param {string} data.email The account email
    * @param {string} data.password The hashed account password
-   * @returns {result|Error}
+   * @returns {result}
    */
   async createAccount (data) {
     const { id, username, email, password } = data
@@ -96,7 +96,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} [data.album] The optional id of an album to add the file to
    * @param {number|null} [data.ttl] The time to live in milliseconds or null for infinity
    * @param {boolean} [data.isPrivate] If the file is hidden from the user page for others
-   * @returns {result|Error}
+   * @returns {result}
    */
   async addFile (data) {
     if (data.album) return this.#addNewFileToAlbum(data)
@@ -112,7 +112,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.uploadedBy The username of the uploader
    * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
-   * @returns {result|Error}
+   * @returns {result}
    */
   async createAlbum (data) {
     const { id: albumID, files, uploadedBy, ttl, isPrivate } = data
@@ -137,7 +137,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * delete a file from the DB
    * @param {string} id The file ID
    * @param {string} username the username trying to delete the file
-   * @returns {result|Error}
+   * @returns {result}
    */
   async deleteFile (id, username) {
     const { file, uploadedBy } = this.#database
@@ -173,7 +173,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.type The mimetype of the file
    * @param {string} data.uploadedBy The username of the uploader
    * @param {string} data.album The id of an album to add the file to
-   * @returns {result|Error}
+   * @returns {result}
    */
   #addNewFile (data) {
     const { id, name, file, size, type, uploadedBy, ttl, isPrivate } = data
@@ -196,7 +196,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.uploadedBy The username of the uploader
    * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
-   * @returns {result|Error}
+   * @returns {result}
    */
   #addNewFileToAlbum (data) {
     const { album: albumID, id, name, file, size, type, uploadedBy } = data

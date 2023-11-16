@@ -28,7 +28,7 @@ export class DatabaseInterfaceBase {
    * @param {string} data.username The account username
    * @param {string} data.email The account email
    * @param {string} data.password The hashed account password
-   * @returns {result|Error}
+   * @returns {result}
    */
 
   /**
@@ -57,7 +57,7 @@ export class DatabaseInterfaceBase {
    * @param {string} [data.album] The optional id of an album to add the file to
    * @param {number|null} [data.ttl] The time to live in milliseconds or null for infinity
    * @param {boolean} [data.isPrivate] If the file is hidden from the user page for others
-   * @returns {result|Error}
+   * @returns {result}
    */
 
   /**
@@ -72,7 +72,7 @@ export class DatabaseInterfaceBase {
    * @param {string} data.uploadedBy The username of the uploader
    * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
-   * @returns {result|Error}
+   * @returns {result}
    */
 
   /**
@@ -83,7 +83,7 @@ export class DatabaseInterfaceBase {
    * @name deleteFile
    * @param {string} id The file ID
    * @param {string} username the username trying to delete the file
-   * @returns {result|Error}
+   * @returns {result}
    */
 
   /**
