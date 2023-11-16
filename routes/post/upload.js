@@ -12,7 +12,6 @@ const nanoid = customAlphabet('123456789ABCDEFGHJKLMNPQRSTUVWXYZ_abcdefghijkmnpq
 export default function (fastify, opts, done) {
 
   // Upload a file
-  //eslint-disable-next-line complexity
   fastify.post('/upload', async (request, reply) => {
     try {
       if (!request.session.get('authenticated')) return {
@@ -50,27 +49,29 @@ export default function (fastify, opts, done) {
         const { filename: storageFilename, thumbnailFilename: storageThumbnailFilename } = fastify.storage.create(username, filename)
 
         if (isFromHomepage) {
-          fastify.betterSqlite3
-            .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-            .run(fileID, filename, storageFilename, file.byteLength, mimetype, username, timeToLive, isPrivate)
+          await fastify.db.addFile({
+            id: fileID,
+            name: filename,
+            file: storageFilename,
+            size: file.byteLength,
+            type: mimetype,
+            uploadedBy: username,
+            ttl: timeToLive,
+            isPrivate: isPrivate
+          })
         } else {
           const { albumID } = request.headers.referer.match(/\/a\/(?<albumID>[a-zA-Z0-9-]{8})\/?$/).groups
+          const { succeeded } = await fastify.db.addFile({
+            album: albumID,
+            id: fileID,
+            name: filename,
+            file: storageFilename,
+            size: file.byteLength,
+            type: mimetype,
+            uploadedBy: username
+          })
 
-          const album = fastify.betterSqlite3
-            .prepare(`SELECT * FROM (SELECT "id", "uploadedAt", "uploadedBy", "isPrivate", "entries", "ttl" FROM "albums" INNER JOIN (
-                        SELECT "entries" FROM "album"
-                      ) AS "entries" ON "id" = "id" GROUP BY "id") WHERE "id" = ?`)
-            .get(albumID)
-
-          if (!album) return
-
-          const { uploadedAt: albumUploadedAt, uploadedBy: albumUploadedBy, isPrivate: albumIsPrivate, ttl: albumTimeToLive, entries: albumEntries } = album
-
-          if (albumUploadedBy !== username) return
-
-          fastify.betterSqlite3
-            .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedAt", "uploadedBy", "ttl", "isPrivate", "inAlbum", "albumOrder") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-            .run(fileID, filename, storageFilename, file.byteLength, mimetype, albumUploadedAt, username, albumTimeToLive, albumIsPrivate, albumID, albumEntries)
+          if (succeeded === false) return // file not added because either album not exist or user isnt the owner
         }
 
         await fastify.storage.write({
@@ -162,23 +163,16 @@ export default function (fastify, opts, done) {
       // Generate Album if muliple files
       if (uploadedFiles.length > 1) {
         const albumID = nanoid(8)
+        const fileIDs = uploadedFiles
+          .reduce((accumulator, currentValue) => (accumulator = [ ...accumulator, currentValue.id ]), [])
 
-        debug('Album ID', albumID)
-
-        const statement = fastify.betterSqlite3.prepare('UPDATE "files" SET "inAlbum" = ?, "albumOrder" = ? WHERE "id" = ?')
-        const transaction = fastify.betterSqlite3.transaction((fIDs, aID) => fIDs.map((fID, index) => statement.run(aID, index, fID)))
-        const updated = transaction(
-          uploadedFiles
-            .reduce((accumulator, currentValue) => (accumulator = [ ...accumulator, currentValue.id ]), []),
-          albumID
-        )
-          .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
-
-        fastify.betterSqlite3
-          .prepare('INSERT INTO "albums" ("id", "title", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?)')
-          .run(albumID, 'Untitled Album', username, timeToLive, isPrivate)
-
-        debug('Added', updated, 'files to album')
+        await fastify.db.createAlbum({
+          id: albumID,
+          files: fileIDs,
+          uploadedBy: username,
+          ttl: timeToLive,
+          isPrivate: isPrivate
+        })
 
         return {
           status: 201,
