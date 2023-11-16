@@ -12,6 +12,10 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   #database = null
 
   /**
+   * @typedef {{ succeeded: boolean, code: number, data?: object }} result
+   */
+
+  /**
    * Connect to the database
    */
   async connect () {
@@ -51,7 +55,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.username The account username
    * @param {string} data.email The account email
    * @param {string} data.password The hashed account password
-   * @returns {void|Error}
+   * @returns {result|Error}
    */
   async createAccount (data) {
     const { id, username, email, password } = data
@@ -59,6 +63,8 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     this.#database
       .prepare('INSERT INTO "accounts" ("id", "username", "email", "password") VALUES (?, ?, ?)')
       .run(id, username, email, password)
+
+    return { succeeded: true, code: 'OK' }
   }
 
   /**
@@ -69,7 +75,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   async getAccount (username) {
     const { id: accountID, password: passwordHash, isAdmin } = this.#database
       .prepare('SELECT "id", "password", "isAdmin" FROM "accounts" WHERE "username" = ?')
-      .get(username)
+      .get(username) ?? {}
 
     return {
       id: accountID,
@@ -106,7 +112,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.uploadedBy The username of the uploader
    * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
-   * @returns {void|Error}
+   * @returns {result|Error}
    */
   async createAlbum (data) {
     const { id: albumID, files, uploadedBy, ttl, isPrivate } = data
@@ -123,17 +129,37 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
       .run(albumID, 'Untitled Album', uploadedBy, ttl, isPrivate)
 
     debug('Added', updated, 'files to album')
+
+    return { succeeded: true, code: 'OK' }
   }
 
   /**
-   * Return succeeded object with result
-   * @param {boolean} result
-   * @returns {result}
+   * delete a file from the DB
+   * @param {string} id The file ID
+   * @param {string} username the username trying to delete the file
+   * @returns {result|Error}
    */
-  // eslint-disable-next-line class-methods-use-this
-  #result (result) {
+  async deleteFile (id, username) {
+    const { file, uploadedBy } = this.#database
+      .prepare('SELECT "file", "uploadedBy" FROM "files" WHERE "id" = ?')
+      .get(id) ?? {}
+
+    if (username !== uploadedBy) return { succeeded: false, code: 403 } // File is owned by another user
+
+    const { changes } = this.#database
+      .prepare('DELETE FROM "files" WHERE "id" = ?')
+      .run(id) ?? {}
+
+    if (changes === 0) return { succeeded: false, code: 500 } // Unable to remove file from DB
+
+    debug('Removed file from DB', id)
+
     return {
-      succeeded: Boolean(result)
+      succeeded: true,
+      code: 'OK',
+      data: {
+        file: file
+      }
     }
   }
 
@@ -156,7 +182,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
       .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
       .run(id, name, file, size, type, uploadedBy, ttl, isPrivate)
 
-    return this.#result(true)
+    return { succeeded: true, code: 'OK' }
   }
 
   /**
@@ -181,21 +207,17 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
               ) AS "entries" ON "id" = "id" GROUP BY "id") WHERE "id" = ?`)
       .get(albumID)
 
-    if (!album) return this.#result(false)
+    if (!album) return { succeeded: false, code: 404 } // Album does not exist
 
     const { uploadedAt: albumUploadedAt, uploadedBy: albumUploadedBy, isPrivate: albumIsPrivate, ttl: albumTimeToLive, entries: albumEntries } = album
 
-    if (albumUploadedBy !== uploadedBy) return this.#result(false)
+    if (albumUploadedBy !== uploadedBy) return { succeeded: false, code: 403 } // Album is owned by another user
 
     this.#database
       .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedAt", "uploadedBy", "ttl", "isPrivate", "inAlbum", "albumOrder") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
       .run(id, name, file, size, type, albumUploadedAt, uploadedBy, albumTimeToLive, albumIsPrivate, albumID, albumEntries)
 
-    return this.#result(true)
+    return { succeeded: true, code: 'OK' }
   }
-
-  /**
-   * @typedef {{ succeeded: boolean }} result
-   */
 
 }

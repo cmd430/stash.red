@@ -13,8 +13,8 @@ export class DatabaseInterfaceBase {
    * Connect to the database
    * @public
    * @async
-   * @name connect
    * @method
+   * @name connect
    */
 
   /**
@@ -28,7 +28,7 @@ export class DatabaseInterfaceBase {
    * @param {string} data.username The account username
    * @param {string} data.email The account email
    * @param {string} data.password The hashed account password
-   * @returns {void|Error}
+   * @returns {result|Error}
    */
 
   /**
@@ -76,8 +76,20 @@ export class DatabaseInterfaceBase {
    */
 
   /**
-   * @typedef {{ succeeded: boolean }} result
+   * delete a file from the DB
+   * @public
+   * @async
+   * @method
+   * @name deleteFile
+   * @param {string} id The file ID
+   * @param {string} username the username trying to delete the file
+   * @returns {result|Error}
    */
+
+  /**
+   * @typedef {{ succeeded: boolean, code: number, data?: object }} result
+   */
+
 }
 
 /**

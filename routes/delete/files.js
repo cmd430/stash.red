@@ -8,27 +8,15 @@ export default function (fastify, opts, done) {
 
   fastify.delete('/f/:id', async (request, reply) => {
     const { id } = request.params
-    const dbResult = fastify.betterSqlite3
-      .prepare('SELECT "file", "uploadedBy" FROM "files" WHERE "id" = ?')
-      .get(id)
-
-    if (!dbResult) return createError(400)
-
-    const { file, uploadedBy } = dbResult
 
     if ((request.session.get('authenticated') ?? false) === false) return createError(401) // Not authd
-    if (request.session.get('session').username !== uploadedBy) return createError(403) // Not allowed
-    if (!await fastify.storage.delete(uploadedBy, file)) return reply
-      .status(500)
-      .send({
-        message: 'file not deleted'
-      })
 
-    const { changes } = fastify.betterSqlite3
-      .prepare('DELETE FROM "files" WHERE "id" = ?')
-      .run(id)
+    const { username } = request.session.get('session') ?? null
+    const { succeeded, data, reason } = await fastify.db.deleteFile(id, username)
 
-    if (changes > 0) debug('Removed file', id)
+    if (succeeded === false) return createError(reason.code)
+
+    await fastify.storage.delete(username, data.file)
 
     return reply
       .status(204)
