@@ -99,6 +99,22 @@
          but i think it would be fine
       -> would probably still want to use better-sqlite3 for session/config stores so
          would probably need to split those out into a seperate db (or seperate dbs?)
+      [√] post
+          [√] upload files
+          [√] upload albums
+          [√] create account
+          [√] login
+      [ ] patch
+          [ ] edit album title
+          [ ] edit album order
+      [ ] get
+          [ ] get file
+          [ ] get album
+          [ ] get user page
+      [!] delete
+          [√] delete file
+          [ ] delete album
+      [ ] TemporaryGC
   [x] Admin page to control settings / see logs
       -> to much work for basically no gain
          would have to modifiy logging to allow it to go to the TTY and also be sent to admins
