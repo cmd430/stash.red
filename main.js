@@ -104,6 +104,7 @@ try {
   // Setup Temp file removing and session clean up tasks
   fastify.register(temporaryUploadsGC)
 
+  await fastify.db.connect()
   await fastify.listen({
     port: config.fastify.port,
     host: config.fastify.bind

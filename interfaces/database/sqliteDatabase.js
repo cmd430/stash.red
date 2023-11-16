@@ -1,3 +1,5 @@
+import { readFile, readdir } from 'node:fs/promises'
+import { resolve } from 'node:path'
 import { Log } from 'cmd430-utils'
 import Database from 'better-sqlite3'
 import { DatabaseInterfaceBase } from '../database.js'
@@ -7,16 +9,40 @@ const { log, debug, info, warn, error } = new Log('Database (Sqlite3)')
 
 export default class DatabaseInterface extends DatabaseInterfaceBase {
 
-  #database = new Database('./database/stash.db', {
-    readonly: false,
-    fileMustExist: false,
-    timeout: 5000,
-    verbose: null
-  })
+  #database = null
 
   /**
-   * @typedef {{ succeeded: boolean }} result
+   * Connect to the database
    */
+  async connect () {
+    this.#database = new Database('./database/stash.db', {
+      readonly: false,
+      fileMustExist: false,
+      timeout: 5000,
+      verbose: null
+    })
+
+    this.#database.pragma('journal_mode = WAL')
+
+    for (const table of await readdir(resolve('./database/tables'))) this.#database.exec(await readFile(resolve(`./database/tables/${table}`), {
+      encoding: 'utf8'
+    }))
+    for (const index of await readdir(resolve('./database/indices'))) this.#database.exec(await readFile(resolve(`./database/indices/${index}`), {
+      encoding: 'utf8'
+    }))
+    for (const trigger of await readdir(resolve('./database/triggers'))) this.#database.exec(await readFile(resolve(`./database/triggers/${trigger}`), {
+      encoding: 'utf8'
+    }))
+    for (const view of await readdir(resolve('./database/views'))) this.#database.exec(await readFile(resolve(`./database/views/${view}`), {
+      encoding: 'utf8'
+    }))
+
+    // Gracefully close the DB on exit
+    process.on('exit', () => this.#database.close())
+    process.on('SIGHUP', () => process.exit(128 + 1))
+    process.on('SIGINT', () => process.exit(128 + 2))
+    process.on('SIGTERM', () => process.exit(128 + 15))
+  }
 
   /**
    * add a new account to the db
@@ -167,5 +193,9 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
 
     return this.#result(true)
   }
+
+  /**
+   * @typedef {{ succeeded: boolean }} result
+   */
 
 }

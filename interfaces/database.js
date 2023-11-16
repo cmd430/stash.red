@@ -10,7 +10,11 @@ const { log, debug, info, warn, error } = new Log('Database')
 export class DatabaseInterfaceBase {
 
   /**
-   * @typedef {{ succeeded: boolean }} result
+   * Connect to the database
+   * @public
+   * @async
+   * @name connect
+   * @method
    */
 
   /**
@@ -69,6 +73,10 @@ export class DatabaseInterfaceBase {
    * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
    * @returns {result|Error}
+   */
+
+  /**
+   * @typedef {{ succeeded: boolean }} result
    */
 }
 
