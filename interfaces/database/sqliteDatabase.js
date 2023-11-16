@@ -19,6 +19,40 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    */
 
   /**
+   * add a new account to the db
+   * @param {object} data
+   * @param {string} data.id The account ID
+   * @param {string} data.username The account username
+   * @param {string} data.email The account email
+   * @param {string} data.password The hashed account password
+   * @returns {void|Error}
+   */
+  async createAccount (data) {
+    const { id, username, email, password } = data
+
+    this.#database
+      .prepare('INSERT INTO "accounts" ("id", "username", "email", "password") VALUES (?, ?, ?)')
+      .run(id, username, email, password)
+  }
+
+  /**
+   * Get an account by username
+   * @param {string} username The username of the account
+   * @returns {{id: string, password: string, isAdmin: boolean }}
+   */
+  async getAccount (username) {
+    const { id: accountID, password: passwordHash, isAdmin } = this.#database
+      .prepare('SELECT "id", "password", "isAdmin" FROM "accounts" WHERE "username" = ?')
+      .get(username)
+
+    return {
+      id: accountID,
+      password: passwordHash,
+      isAdmin: Boolean(isAdmin)
+    }
+  }
+
+  /**
    * Add a file
    * @param {object} data
    * @param {string} data.id The file id
@@ -46,7 +80,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.uploadedBy The username of the uploader
    * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
-   * @returns {result|Error}
+   * @returns {void|Error}
    */
   async createAlbum (data) {
     const { id: albumID, files, uploadedBy, ttl, isPrivate } = data
@@ -63,8 +97,6 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
       .run(albumID, 'Untitled Album', uploadedBy, ttl, isPrivate)
 
     debug('Added', updated, 'files to album')
-
-    return this.#result(true)
   }
 
   /**

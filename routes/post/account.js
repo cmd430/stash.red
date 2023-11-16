@@ -20,10 +20,14 @@ export default function (fastify, opts, done) {
 
     try {
       const id = randomUUID()
+      const passwordHash = await hash(password, bcrypt.rounds)
 
-      fastify.betterSqlite3
-        .prepare('INSERT INTO "accounts" ("id", "username", "email", "password") VALUES (?, ?, ?)')
-        .run(id, username, email, await hash(password, bcrypt.rounds))
+      await fastify.db.createAccount({
+        id: id,
+        username: username,
+        email: email,
+        password: passwordHash
+      })
 
       await fastify.storage.createContainer(username)
 
@@ -49,10 +53,7 @@ export default function (fastify, opts, done) {
     if (!username || !password) return createError(400, 'All Fields Required')
 
     try {
-      const { id, password: passwordHash, isAdmin } = fastify.betterSqlite3
-        .prepare('SELECT "id", "password", "isAdmin" FROM "accounts" WHERE "username" = ?')
-        .get(username)
-
+      const { id, password: passwordHash, isAdmin } = await fastify.db.getAccount(username)
       const hasValidCredentials = await compare(password, passwordHash)
 
       if (hasValidCredentials === false) return createError(401, 'Invalid username or password')
@@ -61,7 +62,7 @@ export default function (fastify, opts, done) {
       request.session.set('session', {
         id: id,
         username: username,
-        isAdmin: Boolean(isAdmin)
+        isAdmin: isAdmin
       })
 
       return reply.redirect('/')

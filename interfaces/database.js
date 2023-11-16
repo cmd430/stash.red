@@ -10,14 +10,31 @@ const { log, debug, info, warn, error } = new Log('Database')
 export class DatabaseInterfaceBase {
 
   /**
-   * Constructor for DatabaseInterface with optional options
+   * @typedef {{ succeeded: boolean }} result
    */
-  constructor (opts) {
-    debug('Hello')
-  }
 
   /**
-   * @typedef {{ succeeded: boolean }} result
+   * add a new account to the db
+   * @public
+   * @async
+   * @method
+   * @name createAccount
+   * @param {object} data
+   * @param {string} data.id The account ID
+   * @param {string} data.username The account username
+   * @param {string} data.email The account email
+   * @param {string} data.password The hashed account password
+   * @returns {void|Error}
+   */
+
+  /**
+   * Get an account by username
+   * @public
+   * @async
+   * @method
+   * @name getAccount
+   * @param {string} username The username of the account
+   * @returns {{id: string, password: string, isAdmin: boolean }}
    */
 
   /**
