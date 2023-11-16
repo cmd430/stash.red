@@ -118,6 +118,11 @@
             this should be doable by just adding 2 `.pipe()`s to the upload file stream
             i.e `stream.pipe(toTemp)` `stream.pipe(toStorage)` this would require some minor
             changes to the `StorageInterface#write` methods
+         -> might be able to do something with `fluent-ffmpeg` since that seems to support streams
+            off the bat, but might also be easier to roll my own
+         -> sharp seems to support streaming in and out
+      -> mimetype detection will need to be updated to support streams
+         -> https://github.com/moshen/wasmagic/blob/master/examples/stream-detection/index.js
   [ ] Add file to file to form album
   [ ] P2P file share with WebRTC, URL -> `/t/:id`
       -> https://github.com/feross/simple-peer
