@@ -1,0 +1,69 @@
+-- Site settings
+INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('site', '{
+  "allowSignups": true
+}');
+
+-- Fastify settings
+INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('fastify', '{
+  "port": 8080,
+  "bind": "::"
+}');
+
+-- Site render config, these are added to the handlebars template
+INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('render', '{
+  "siteTheme": {
+    "prod": "#db0303",
+    "dev": "#3889ea"
+  },
+  "pagination": {
+    "limit": {
+      "default": 35,
+      "max": 70
+    }
+  }
+}');
+
+-- Upload settings
+INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('uploads', '{
+  "limits": {
+    "fileSize": "499 * 1000 * 1000",
+    "files": 100
+  },
+  "temporary": {
+    "gcInterval": "1000 * 60 * 5"
+  }
+}
+');
+
+-- Session cookie settings
+INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('session', '{
+  "cookieName": "session",
+  "secret": "<32_char_long_secret>",
+  "maxAge": 604800000,
+  "gcInterval": "1000 * 60 * 60 * 24"
+}');
+
+-- Account security settings
+INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('bcrypt', '{
+  "rounds": 10
+}');
+
+-- Cloudeflare turnstile captcha config
+INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('captcha', '{
+  "siteKey": "<cloudeflare_turnstile_sitekey>",
+  "secretKey": "<cloudeflare_turnstile_secretkey>"
+}');
+
+-- Filestorage [ONLY SET ONE]
+INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('storage', '{
+  "store": "azure",
+  "storageConnectionString": "<azure_connection_string>"
+}'); -- If using azureblob storage
+INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('storage', '{
+  "store": "file"
+}'); -- If using filestorage
+
+-- Database
+INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('database', '{
+  "store": "sqlite"
+}');

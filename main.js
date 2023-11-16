@@ -14,20 +14,22 @@ import view from '@fastify/view'
 import betterSqlite3 from '@punkish/fastify-better-sqlite3'
 import handlebars from 'handlebars'
 import { config } from './config/config.js'
+import { sessions } from './sessions/sessions.js'
 import temporaryUploadsGC from './plugins/temporaryUploadsGC.js'
-import sessionGC from './plugins/sessionGC.js'
 import fastifyLoadHooks from './plugins/fastifyLoadHooks.js'
 import loadRoutes from './plugins/loadRoutes.js'
 import disableCache from './plugins/disableCache.js'
 import databaseConnection from './database/databaseConnection.js'
 import fastifyLogger from './helpers/fastifyLogger.js'
 import fastifyLoadPartials from './helpers/fastifyLoadPartials.js'
+import { getDatabaseInterface } from './interfaces/database.js'
 import { getStorageInterface } from './interfaces/storage.js'
 import './helpers/handlebarsHelpers.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Main')
 const nanoid = customAlphabet('123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz')
+const DataStore = await getDatabaseInterface(config.database.store)
 const FileStore = await getStorageInterface(config.storage.store)
 
 try {
@@ -41,13 +43,17 @@ try {
   // Make config accessable as fastify.config
   fastify.decorate('config', config)
 
+  // Make database data accessable as fastify.db
+  fastify.decorate('db', new DataStore())
+  fastify.register(betterSqlite3, databaseConnection) // TEMP: to remove once updated code to use databaseInterface, Also to remove `@punkish/fastify-better-sqlite3`
+
   // Make storage accessable as fastify.storage
   fastify.decorate('storage', new FileStore())
 
   // Fastify Plugins
   fastify.register(cookie)
   fastify.register(session, {
-    store: new SqliteStore(databaseConnection),
+    store: new SqliteStore(sessions),
     secret: config.session.secret,
     cookieName: config.session.cookieName,
     cookie: {
@@ -73,7 +79,6 @@ try {
     sitekey: config.captcha.siteKey,
     privatekey: config.captcha.secretKey
   })
-  fastify.register(betterSqlite3, databaseConnection)
   fastify.register(view, {
     engine: {
       handlebars: handlebars
@@ -98,7 +103,6 @@ try {
 
   // Setup Temp file removing and session clean up tasks
   fastify.register(temporaryUploadsGC)
-  fastify.register(sessionGC)
 
   await fastify.listen({
     port: config.fastify.port,
@@ -109,9 +113,3 @@ try {
   error(err.stack)
   process.exit(1)
 }
-
-// Gracefully close the DB on exit
-process.on('exit', () => databaseConnection.close())
-process.on('SIGHUP', () => process.exit(128 + 1))
-process.on('SIGINT', () => process.exit(128 + 2))
-process.on('SIGTERM', () => process.exit(128 + 15))

@@ -29,4 +29,11 @@ for (const view of views) db.exec(await readFile(resolve(`./database/views/${vie
   encoding: 'utf8'
 }))
 
+export const database = db
 export default db
+
+// Gracefully close the DB on exit
+process.on('exit', () => db.close())
+process.on('SIGHUP', () => process.exit(128 + 1))
+process.on('SIGINT', () => process.exit(128 + 2))
+process.on('SIGTERM', () => process.exit(128 + 15))
