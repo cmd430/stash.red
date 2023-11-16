@@ -16,7 +16,7 @@ for (const fileDeleteButton of fileDeleteButtons) fileDeleteButton.addEventListe
     const deleteFile = await fetch(`/f/${fileID}`, { method: 'DELETE' })
     const deleteFileStatus = deleteFile.status
 
-    if (deleteFileStatus !== 204) return console.error('something went wrong deleting the album')
+    if (deleteFileStatus !== 204) return console.error('something went wrong deleting the file')
     if (location.pathname.startsWith('/a/') && document.querySelectorAll('span.wrapper').length > 1) return location.reload()
 
     return location.pathname.startsWith('/a/') ? location.assign(`/u/${fileUser}/albums`) : location.assign(`/u/${fileUser}`)
