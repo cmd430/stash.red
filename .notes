@@ -4,7 +4,6 @@
   [√] COMPLETE
   [x] CANT/WONT DO
 
-
 -= Things needed for Feature parity with stash =-
   [√] Album downloading
   [√] File downloading
@@ -123,9 +122,6 @@
          so would be easier to just dit the config and restart
   [ ] Find out why styles are flashing on load
       -> might need to load them in the head based of page rather than in the body from the partials
-
--= New things I want to add =-
-  [√] Dark mode
   [ ] look into seeing if we can process the uploads as streams to improve memory use
       -> maybe upload to temp file to generate thumbnail then delete once done
          -> probably just have a stream to write to temp file (fastify.multipart has a
@@ -138,13 +134,17 @@
          -> sharp seems to support streaming in and out
       -> mimetype detection will need to be updated to support streams
          -> https://github.com/moshen/wasmagic/blob/master/examples/stream-detection/index.js
-  [ ] Add file to file to form album
-  [ ] P2P file share with WebRTC, URL -> `/t/:id`
-      -> https://github.com/feross/simple-peer
-  [x] Typescript type defs so we get nice Typescript
+
+-= New things I want to add at some point =-
+  [√] Dark mode
+  [x] Add file to file to form album
+      -> doable but would be a pain
+      -> wasnt part of original stash
+  [x] Typescript type defs so we get nice Typescript annotations
       -> https://www.typescriptlang.org/docs/handbook/declaration-files/dts-from-js.html
       -> cant be bothered lamo
-
+  [ ] P2P file share with WebRTC, URL -> `/t/:id`
+      -> https://github.com/feross/simple-peer
 
 -= URL references =-
   - `/f/:id` for files
