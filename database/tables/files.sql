@@ -10,5 +10,7 @@ CREATE TABLE IF NOT EXISTS "files" (
   "isPrivate" INTEGER NOT NULL DEFAULT 0,
   "inAlbum" TEXT,
   "albumOrder" INTEGER,
-  PRIMARY KEY("id")
+  PRIMARY KEY("id"),
+  FOREIGN KEY("uploadedBy") REFERENCES "accounts"("username") ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY("inAlbum") REFERENCES "albums"("id") ON UPDATE CASCADE ON DELETE CASCADE
 );

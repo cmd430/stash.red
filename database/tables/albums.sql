@@ -5,5 +5,6 @@ CREATE TABLE IF NOT EXISTS "albums" (
   "uploadedBy" TEXT NOT NULL DEFAULT "SYSTEM",
   "ttl" INTEGER,
   "isPrivate" INTEGER NOT NULL DEFAULT 0,
-  PRIMARY KEY("id")
+  PRIMARY KEY("id"),
+  FOREIGN KEY("uploadedBy") REFERENCES "accounts"("username") ON UPDATE CASCADE ON DELETE CASCADE
 );
