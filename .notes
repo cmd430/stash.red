@@ -76,13 +76,10 @@
           [√] backend
       [√] album file adding
   [√] restyle video and audio players so i can use the default player controls
-  [ ] Make homepage tell you you need to login before you can upload
-      -> not 100% sure how to do this, mabe just ignore uploads and hide the dropzone with a
-         "you must be logged in to upload" message on the client side since the server will
-         already ignore invalid upload attempts
+  [√] Make homepage tell you you need to login before you can upload
   [√] Create abstract layer for handling the file buffers so you can choose where to store them
-      for example you could send them the AWS S3, Azure Blob Storage, Store them locally or Create
-      some other file store
+      -> for example you could send them the AWS S3, Azure Blob Storage, Store them locally or Create
+         some other file store
       [√] storage adaptor class
           [√] filesystem storage
           [√] azure blob storage
@@ -111,9 +108,9 @@
           [ ] get file
           [ ] get album
           [ ] get user page
-      [!] delete
+      [√] delete
           [√] delete file
-          [ ] delete album
+          [√] delete album
       [ ] TemporaryGC
   [x] Admin page to control settings / see logs
       -> to much work for basically no gain
