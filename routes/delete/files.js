@@ -7,10 +7,9 @@ const { log, debug, info, warn, error } = new Log('Files (DELETE)')
 export default function (fastify, opts, done) {
 
   fastify.delete('/f/:id', async (request, reply) => {
-    const { id } = request.params
-
     if ((request.session.get('authenticated') ?? false) === false) return createError(401) // Not authd
 
+    const { id } = request.params
     const { username } = request.session.get('session') ?? null
     const { succeeded, code, data } = await fastify.db.deleteFile(id, username)
 
