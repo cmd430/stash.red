@@ -202,6 +202,69 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   }
 
   /**
+   * update an albums title or file order
+   * @param {string} id The id of the album
+   * @param {string} username The user trying to edit the album
+   * @param {object} payload
+   * @param {string} [payload.title] The new title to set for the album
+   * @param {object} [payload.order] and object of `fileID: albumOrders` for the album
+   * @returns
+   */
+  async editAlbum (id, username, payload) {
+    const { uploadedBy } = this.#database
+      .prepare('SELECT "uploadedBy" FROM "albums" WHERE "id" = ?')
+      .get(id) ?? {}
+
+    if (uploadedBy === undefined) return { succeeded: false, code: 404 } // Album doesnt exist
+    if (username !== uploadedBy) return { succeeded: false, code: 403 } // Album is owned by another user
+
+    const { title, order } = payload
+
+    if (title) await this.#editAlbumTitle(id, title)
+    if (order) await this.#editAlbumOrder(id, JSON.parse(order))
+
+    return { succeeded: true, code: 'OK' }
+  }
+
+  /**
+   * Update an albums title
+   * @param {string} id The album id
+   * @param {string} title The new album title
+   */
+  async #editAlbumTitle (id, title) {
+    const newTitle = title !== null && title.trim() === '' ? 'Untitled Album' : title.trim()
+    const { changes } = this.#database
+      .prepare('UPDATE "albums" SET "title" = ? WHERE "id" = ? AND "title" <> ?')
+      .run(newTitle, id, newTitle)
+
+    if (changes > 0) debug('Updated title of album', id)
+  }
+
+  /**
+   * Update an albums file orders
+   * @param {string} id The album id
+   * @param {object} order An object of fileID: FileOrder to set the file order in the album
+   */
+  async #editAlbumOrder (id, order) {
+    const files = []
+
+    for (const [ fileID, fileOrder ] of Object.entries(order)) files.push({
+      fileID: fileID,
+      fileOrder: fileOrder,
+      albumID: id
+    })
+
+    const statement = this.#database
+      .prepare('UPDATE "files" SET "albumOrder" = ? WHERE "id" = ? AND "inAlbum" = ? AND "albumOrder" <> ?')
+    const transaction = this.#database
+      .transaction(albumFiles => albumFiles.map(({ fileID, fileOrder, albumID }) => statement.run(fileOrder, fileID, albumID, fileOrder)))
+    const updated = transaction(files)
+      .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
+
+    if (updated > 0) debug('Updated order of', updated, 'files in album', id)
+  }
+
+  /**
    * Add a file (no album)
    * @param {object} data
    * @param {string} data.id The file id
@@ -213,7 +276,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.album The id of an album to add the file to
    * @returns {result}
    */
-  #addNewFile (data) {
+  async #addNewFile (data) {
     const { id, name, file, size, type, uploadedBy, ttl, isPrivate } = data
 
     this.#database
@@ -236,7 +299,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
    * @returns {result}
    */
-  #addNewFileToAlbum (data) {
+  async #addNewFileToAlbum (data) {
     const { album: albumID, id, name, file, size, type, uploadedBy } = data
 
     const album = this.#database
