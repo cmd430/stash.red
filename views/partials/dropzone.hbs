@@ -1,8 +1,12 @@
-<div id="dropzone">
-  {{#if @root.album}}
-    <span id="label">Dropfiles Here</span>
+<div id="dropzone" data-authenticated="{{@authenticated}}">
+  {{#if @authenticated}}
+    {{#if @root.album}}
+      <span id="label">Dropfiles Here</span>
+    {{else}}
+      <span id="label">Click or Dropfiles Here</span>
+    {{/if}}
   {{else}}
-    <span id="label">Click or Dropfiles Here</span>
+    <span id="label">Login to upload files</span>
   {{/if}}
   <span id="progress" class="hidden invisible">
     <span id="fill"></span>

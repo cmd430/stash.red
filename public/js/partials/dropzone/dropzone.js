@@ -96,27 +96,29 @@ document.addEventListener('dragover', e => e.preventDefault())
 document.addEventListener('dragenter', e => e.preventDefault())
 document.addEventListener('dragleave', e => e.preventDefault())
 document.addEventListener('drop', e => e.preventDefault())
-
-window.addEventListener('paste', async e => {
-  if (fileInput.disabled) return
-
-  for (const clipboardItem of e.clipboardData.items) {
-    if (clipboardItem.kind === 'file') {
-      if (!clipboardItem.type.includes('image') && !clipboardItem.type.includes('video') && !clipboardItem.type.includes('audio')) continue
-
-      uploadFiles(clipboardItem.getAsFile())
-    } else if (clipboardItem.kind === 'string' && clipboardItem.type === 'text/plain') {
-      clipboardItem.getAsString(text => uploadFiles(text))
-    }
-  }
-})
-
-dropzone.addEventListener('click', e => (fileInput.files.length === 0 ? fileInput.click() : undefined))
 dropzone.addEventListener('dragover', e => e.preventDefault())
 dropzone.addEventListener('dragenter', e => e.preventDefault())
-dropzone.addEventListener('drop', e => {
-  e.preventDefault()
-  uploadFiles(e.dataTransfer.files)
-})
 
-fileInput.addEventListener('change', e => uploadFiles(fileInput.files))
+if (dropzone.dataset.authenticated === 'true') {
+  window.addEventListener('paste', async e => {
+    if (fileInput.disabled) return
+
+    for (const clipboardItem of e.clipboardData.items) {
+      if (clipboardItem.kind === 'file') {
+        if (!clipboardItem.type.includes('image') && !clipboardItem.type.includes('video') && !clipboardItem.type.includes('audio')) continue
+
+        uploadFiles(clipboardItem.getAsFile())
+      } else if (clipboardItem.kind === 'string' && clipboardItem.type === 'text/plain') {
+        clipboardItem.getAsString(text => uploadFiles(text))
+      }
+    }
+  })
+
+  dropzone.addEventListener('click', e => (fileInput.files.length === 0 ? fileInput.click() : undefined))
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault()
+    uploadFiles(e.dataTransfer.files)
+  })
+
+  fileInput.addEventListener('change', e => uploadFiles(fileInput.files))
+}
