@@ -198,14 +198,15 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
 
     debug('Album ID', albumID)
 
+    this.#database
+      .prepare('INSERT INTO "albums" ("id", "title", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?)')
+      .run(albumID, 'Untitled Album', uploadedBy, ttl, isPrivate)
+
+
     const statement = this.#database.prepare('UPDATE "files" SET "inAlbum" = ?, "albumOrder" = ? WHERE "id" = ?')
     const transaction = this.#database.transaction((fIDs, aID) => fIDs.map((fID, index) => statement.run(aID, index, fID)))
     const updated = transaction(files, albumID)
       .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
-
-    this.#database
-      .prepare('INSERT INTO "albums" ("id", "title", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?)')
-      .run(albumID, 'Untitled Album', uploadedBy, ttl, isPrivate)
 
     debug('Added', updated, 'files to album')
 
