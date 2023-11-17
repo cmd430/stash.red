@@ -49,7 +49,7 @@ export default function (fastify, opts, done) {
     const { page, limit, offset, order, filter, params } = request.view
     const { username } = request.params
     const includePrivate = request.session.get('authenticated') && request.session.get('session').username === username
-    const { success, code, data } = await fastify.db.getUserFiles(username, {
+    const { succeeded , code, data } = await fastify.db.getUserFiles(username, {
       offset: offset,
       limit: limit,
       order: order,
@@ -57,7 +57,7 @@ export default function (fastify, opts, done) {
       includePrivate: includePrivate
     })
 
-    if (success === false) return createError(code)
+    if (succeeded === false) return createError(code)
 
     const { files, email, total } = data
 
@@ -94,14 +94,14 @@ export default function (fastify, opts, done) {
     const { page, limit, offset, order, params } = request.view
     const { username } = request.params
     const includePrivate = request.session.get('authenticated') && request.session.get('session').username === username
-    const { success, code, data } = await fastify.db.getUserAlbums(username, {
+    const { succeeded , code, data } = await fastify.db.getUserAlbums(username, {
       offset: offset,
       limit: limit,
       order: order,
       includePrivate: includePrivate
     })
 
-    if (success === false) return createError(code)
+    if (succeeded === false) return createError(code)
 
     const { albums, email, total } = data
 

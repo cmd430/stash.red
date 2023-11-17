@@ -16,9 +16,9 @@ export default function (fastify, opts, done) {
   // Get uploaded file page by ID
   fastify.get('/f/:id', async (request, reply) => {
     const { id } = request.params
-    const { success, code, data } = await fastify.db.getFile(id)
+    const { succeeded , code, data } = await fastify.db.getFile(id)
 
-    if (success === false) return createError(code)
+    if (succeeded === false) return createError(code)
 
     const { file, type: unsafeType } = data
     const mimetype = mimetypeFilter(unsafeType)
@@ -53,9 +53,9 @@ export default function (fastify, opts, done) {
   // Get uploaded file by ID
   fastify.get('/f/:id.:ext', async (request, reply) => {
     const { id } = request.params
-    const { success, code, data } = await fastify.db.getFile(id)
+    const { succeeded , code, data } = await fastify.db.getFile(id)
 
-    if (success === false) return createError(code)
+    if (succeeded === false) return createError(code)
 
     const { file, type, uploadedBy, size } = data
     const { offset: offsetRaw = 0, count: countRaw = '' } = request.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? {}
@@ -83,9 +83,9 @@ export default function (fastify, opts, done) {
   // Get uploaded file thumbnail
   fastify.get('/f/:id/thumbnail', async (request, reply) => {
     const { id } = request.params
-    const { success, code, data } = await fastify.db.getThumbnail(id)
+    const { succeeded , code, data } = await fastify.db.getThumbnail(id)
 
-    if (success === false) return createError(code)
+    if (succeeded === false) return createError(code)
 
     const { thumbnail, uploadedBy } = data
 
@@ -97,9 +97,9 @@ export default function (fastify, opts, done) {
   // Download file
   fastify.get('/f/:id/download', async (request, reply) => {
     const { id } = request.params
-    const { success, code, data } = await fastify.db.getFile(id)
+    const { succeeded , code, data } = await fastify.db.getFile(id)
 
-    if (success === false) return createError(code)
+    if (succeeded === false) return createError(code)
 
     const { type, uploadedBy, file } = data
     const filename = `${id}${extname(file)}`

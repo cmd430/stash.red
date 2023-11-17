@@ -12,9 +12,9 @@ export default function (fastify, opts, done) {
   // Get album by ID
   fastify.get('/a/:id', async (request, reply) => {
     const { id } = request.params
-    const { success, code, data } = await fastify.db.getAlbum(id)
+    const { succeeded , code, data } = await fastify.db.getAlbum(id)
 
-    if (success === false) return createError(code)
+    if (succeeded === false) return createError(code)
 
     const { title, uploadedBy, files } = data
 
@@ -42,9 +42,9 @@ export default function (fastify, opts, done) {
   // Get album thumbnail
   fastify.get('/a/:id/thumbnail', async (request, reply) => {
     const { id } = request.params
-    const { success, code, data } = await fastify.db.getThumbnail(id)
+    const { succeeded , code, data } = await fastify.db.getThumbnail(id)
 
-    if (success === false) return createError(code)
+    if (succeeded === false) return createError(code)
 
     const { thumbnail, uploadedBy } = data
 
@@ -56,9 +56,9 @@ export default function (fastify, opts, done) {
   // Download album
   fastify.get('/a/:id/download', async (request, reply) => {
     const { id } = request.params
-    const { success, code, data } = await fastify.db.getAlbum(id)
+    const { succeeded , code, data } = await fastify.db.getAlbum(id)
 
-    if (success === false) return createError(code)
+    if (succeeded === false) return createError(code)
 
     const { title, uploadedBy, files } = data
     const archive = archiver('zip', {
