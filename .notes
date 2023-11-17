@@ -101,9 +101,9 @@
           [√] upload albums
           [√] create account
           [√] login
-      [ ] patch
-          [ ] edit album title
-          [ ] edit album order
+      [√] patch
+          [√] edit album title
+          [√] edit album order
       [ ] get
           [ ] get file
           [ ] get album
