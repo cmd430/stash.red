@@ -8,7 +8,6 @@ const { log, debug, info, warn, error } = new Log('Database')
  * @interface
  */
 export class DatabaseInterfaceBase {
-
   /**
    * Connect to the database
    * @public
@@ -28,7 +27,10 @@ export class DatabaseInterfaceBase {
    * @param {string} data.username The account username
    * @param {string} data.email The account email
    * @param {string} data.password The hashed account password
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number
+   * }}
    */
 
   /**
@@ -38,7 +40,11 @@ export class DatabaseInterfaceBase {
    * @method
    * @name getAccount
    * @param {string} username The username of the account
-   * @returns {{id: string, password: string, isAdmin: boolean }}
+   * @returns {{
+   *  id: string,
+   *  password: string,
+   *  isAdmin: boolean
+   * }}
    */
 
   /**
@@ -57,7 +63,10 @@ export class DatabaseInterfaceBase {
    * @param {string} [data.album] The optional id of an album to add the file to
    * @param {number|null} [data.ttl] The time to live in milliseconds or null for infinity
    * @param {boolean} [data.isPrivate] If the file is hidden from the user page for others
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number
+   * }}
    */
 
   /**
@@ -67,7 +76,16 @@ export class DatabaseInterfaceBase {
    * @method
    * @name getFile
    * @param {string} id The file id
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number,
+   *  data?: {
+   *    file: string,
+   *    type: string
+   *    uploadedBy: string
+   *    size: number
+   *  }
+   * }}
    */
 
   /**
@@ -78,7 +96,13 @@ export class DatabaseInterfaceBase {
    * @name deleteFile
    * @param {string} id The file ID
    * @param {string} username the username trying to delete the file
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number,
+   *  data?: {
+   *    file: string
+   *  }
+   * }}
    */
 
   /**
@@ -93,7 +117,10 @@ export class DatabaseInterfaceBase {
    * @param {string} data.uploadedBy The username of the uploader
    * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number
+   * }}
    */
 
   /**
@@ -103,7 +130,20 @@ export class DatabaseInterfaceBase {
    * @method
    * @name getAlbum
    * @param {string} id The album id
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    title: string,
+   *    uploadedBy: string,
+   *    files: array<{
+   *      id: string,
+   *      file: string,
+   *      type: string,
+   *      order: number
+   *    }>
+   *  }
+   * }}
    */
 
   /**
@@ -114,7 +154,13 @@ export class DatabaseInterfaceBase {
    * @name deleteAlbum
    * @param {string} id The album ID
    * @param {string} username the username trying to delete the album
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    files: array<string>
+   *  }
+   * }}
    */
 
   /**
@@ -128,7 +174,10 @@ export class DatabaseInterfaceBase {
    * @param {object} payload
    * @param {string} [payload.title] The new title to set for the album
    * @param {object} [payload.order] and object of `fileID: albumOrders` for the album
-   * @returns
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number
+   * }}
    */
 
   /**
@@ -138,7 +187,14 @@ export class DatabaseInterfaceBase {
    * @method
    * @name getThumbnail
    * @param {string} id The file/album id
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    uploadedBy: string,
+   *    thumbnail: string
+   *  }
+   * }}
    */
 
   /**
@@ -154,7 +210,19 @@ export class DatabaseInterfaceBase {
    * @param {'ASC'|'DESC'} options.order the order of the items
    * @param {string} options.filter the filetype filter
    * @param {boolean} options.includePrivate if we should return private files
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    email: string,
+   *    files: array<{
+   *      id: string,
+   *      type: string,
+   *      isPrivate: number|boolean
+   *    }>,
+   *    total: number
+   *  }
+   * }}
    */
 
   /**
@@ -169,7 +237,20 @@ export class DatabaseInterfaceBase {
    * @param {number} options.limit the max amount of items to return
    * @param {'ASC'|'DESC'} options.order the order of the items
    * @param {boolean} options.includePrivate if we should return private albums
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    email: string,
+   *    albums: array<{
+   *      id: string,
+   *      title: string,
+   *      isPrivate: number|boolean,
+   *      entries: number
+   *    }>,
+   *    total: number
+   *  }
+   * }}
    */
 
   /**
@@ -178,13 +259,17 @@ export class DatabaseInterfaceBase {
    * @async
    * @method
    * @name cleanExpired
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    expired: array<{
+   *      file: string,
+   *      uploadedBy: string
+   *    }>
+   *  }
+   * }}
    */
-
-  /**
-   * @typedef {{ succeeded: boolean, code: number, data?: object }} result
-   */
-
 }
 
 /**

@@ -12,10 +12,6 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   #database = null
 
   /**
-   * @typedef {{ succeeded: boolean, code: number, data?: object }} result
-   */
-
-  /**
    * Connect to the database
    */
   async connect () {
@@ -55,7 +51,10 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.username The account username
    * @param {string} data.email The account email
    * @param {string} data.password The hashed account password
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number
+   * }}
    */
   async createAccount (data) {
     const { id, username, email, password } = data
@@ -70,7 +69,11 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   /**
    * Get an account by username
    * @param {string} username The username of the account
-   * @returns {{id: string, password: string, isAdmin: boolean }}
+   * @returns {{
+   *  id: string,
+   *  password: string,
+   *  isAdmin: boolean
+   * }}
    */
   async getAccount (username) {
     const { id: accountID, password: passwordHash, isAdmin } = this.#database
@@ -96,7 +99,10 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} [data.album] The optional id of an album to add the file to
    * @param {number|null} [data.ttl] The time to live in milliseconds or null for infinity
    * @param {boolean} [data.isPrivate] If the file is hidden from the user page for others
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number
+   * }}
    */
   async addFile (data) {
     if (data.album) return this.#addNewFileToAlbum(data)
@@ -107,7 +113,16 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   /**
    * Get a file
    * @param {string} id The file id
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number,
+   *  data?: {
+   *    file: string,
+   *    type: string
+   *    uploadedBy: string
+   *    size: number
+   *  }
+   * }}
    */
   async getFile (id) {
     const { file, type, uploadedBy, size } = this.#database
@@ -132,7 +147,13 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * delete a file from the DB
    * @param {string} id The file ID
    * @param {string} username the username trying to delete the file
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number,
+   *  data?: {
+   *    file: string
+   *  }
+   * }}
    */
   async deleteFile (id, username) {
     const { file, uploadedBy } = this.#database
@@ -167,7 +188,10 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.uploadedBy The username of the uploader
    * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number
+   * }}
    */
   async createAlbum (data) {
     const { id: albumID, files, uploadedBy, ttl, isPrivate } = data
@@ -191,7 +215,20 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   /**
    * Get an album and its files
    * @param {string} id The album id
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    title: string,
+   *    uploadedBy: string,
+   *    files: array<{
+   *      id: string,
+   *      file: string,
+   *      type: string,
+   *      order: number
+   *    }>
+   *  }
+   * }}
    */
   async getAlbum (id) {
     const { title, uploadedBy } = this.#database
@@ -219,7 +256,13 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * delete an album from the DB
    * @param {string} id The album ID
    * @param {string} username the username trying to delete the album
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    files: array<string>
+   *  }
+   * }}
    */
   async deleteAlbum (id, username) {
     const { uploadedBy } = this.#database
@@ -259,7 +302,10 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {object} payload
    * @param {string} [payload.title] The new title to set for the album
    * @param {object} [payload.order] and object of `fileID: albumOrders` for the album
-   * @returns
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number
+   * }}
    */
   async editAlbum (id, username, payload) {
     const { uploadedBy } = this.#database
@@ -280,7 +326,14 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   /**
    * Get a file or albums thumbnail
    * @param {string} id The file/album id
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    uploadedBy: string,
+   *    thumbnail: string
+   *  }
+   * }}
    */
   async getThumbnail (id) {
     const { thumbnail, uploadedBy } = this.#database
@@ -308,7 +361,19 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {'ASC'|'DESC'} options.order the order of the items
    * @param {string} options.filter the filetype filter
    * @param {boolean} options.includePrivate if we should return private files
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    email: string,
+   *    files: array<{
+   *      id: string,
+   *      type: string,
+   *      isPrivate: number|boolean
+   *    }>,
+   *    total: number
+   *  }
+   * }}
    */
   async getUserFiles (username, options) {
     const { includePrivate, offset, limit, order, filter } = options
@@ -345,7 +410,20 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {number} options.limit the max amount of items to return
    * @param {'ASC'|'DESC'} options.order the order of the items
    * @param {boolean} options.includePrivate if we should return private albums
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    email: string,
+   *    albums: array<{
+   *      id: string,
+   *      title: string,
+   *      isPrivate: number|boolean,
+   *      entries: number
+   *    }>,
+   *    total: number
+   *  }
+   * }}
    */
   async getUserAlbums (username, options) {
     const { includePrivate, offset, limit, order } = options
@@ -377,7 +455,16 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
 
   /**
    * Remove uploads from the DB where the ttl has expired
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    expired: array<{
+   *      file: string,
+   *      uploadedBy: string
+   *    }>
+   *  }
+   * }}
    */
   async cleanExpired () {
     const expired = []
@@ -413,6 +500,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * Update an albums title
    * @param {string} id The album id
    * @param {string} title The new album title
+   * @returns {void}
    */
   async #editAlbumTitle (id, title) {
     const newTitle = title !== null && title.trim() === '' ? 'Untitled Album' : title.trim()
@@ -427,6 +515,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * Update an albums file orders
    * @param {string} id The album id
    * @param {object} order An object of fileID: FileOrder to set the file order in the album
+   * @returns {void}
    */
   async #editAlbumOrder (id, order) {
     const files = []
@@ -457,7 +546,10 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.type The mimetype of the file
    * @param {string} data.uploadedBy The username of the uploader
    * @param {string} data.album The id of an album to add the file to
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number
+   * }}
    */
   async #addNewFile (data) {
     const { id, name, file, size, type, uploadedBy, ttl, isPrivate } = data
@@ -480,7 +572,10 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.uploadedBy The username of the uploader
    * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
-   * @returns {result}
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: 'OK'|number
+   * }}
    */
   async #addNewFileToAlbum (data) {
     const { album: albumID, id, name, file, size, type, uploadedBy } = data
