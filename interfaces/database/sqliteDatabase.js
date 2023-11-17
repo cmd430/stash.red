@@ -144,6 +144,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
       .prepare('SELECT "file", "uploadedBy" FROM "files" WHERE "id" = ?')
       .get(id) ?? {}
 
+    if (file === undefined) return { succeeded: false, code: 404 } // File doesnt exist
     if (username !== uploadedBy) return { succeeded: false, code: 403 } // File is owned by another user
 
     const { changes } = this.#database
@@ -159,6 +160,43 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
       code: 'OK',
       data: {
         file: file
+      }
+    }
+  }
+
+  /**
+   * delete an album from the DB
+   * @param {string} id The album ID
+   * @param {string} username the username trying to delete the album
+   * @returns {result}
+   */
+  async deleteAlbum (id, username) {
+    const { uploadedBy } = this.#database
+      .prepare('SELECT "uploadedBy" FROM "albums" WHERE "id" = ?')
+      .get(id) ?? {}
+
+    if (uploadedBy === undefined) return { succeeded: false, code: 404 } // Album doesnt exist
+    if (username !== uploadedBy) return { succeeded: false, code: 403 } // Album is owned by another user
+
+    const files = this.#database
+      .prepare('SELECT "id", "file" FROM "files" WHERE "inAlbum" = ? AND "uploadedBy" = ?')
+      .all(id, uploadedBy) ?? []
+    const statement = this.#database
+      .prepare('DELETE FROM "files" WHERE "id" = ?')
+    const transaction = this.#database
+      .transaction(albumFiles => albumFiles.map(({ id: fID }) => statement.run(fID)))
+    const removed = transaction(files)
+      .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
+
+    if (removed === 0) return { succeeded: false, code: 500 }
+
+    debug('Removed album', id, 'with', removed, 'files')
+
+    return {
+      succeeded: true,
+      code: 'OK',
+      data: {
+        files: files.map(({ file }) => file)
       }
     }
   }
