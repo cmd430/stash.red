@@ -134,6 +134,9 @@
          -> sharp seems to support streaming in and out
       -> mimetype detection will need to be updated to support streams
          -> https://github.com/moshen/wasmagic/blob/master/examples/stream-detection/index.js
+  [ ] Change TTL field in DB to uploadedUntil and store as a timestamp
+      -> will allow for simpler query to get expired uploads
+      -> need to calculate the timestamp add add it with the upload arather than the ttl from upload
 
 -= New things I want to add at some point =-
   [√] Dark mode
