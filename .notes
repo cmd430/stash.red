@@ -111,7 +111,7 @@
       [√] delete
           [√] delete file
           [√] delete album
-      [ ] TemporaryGC
+      [√] TemporaryGC
   [x] Admin page to control settings / see logs
       -> to much work for basically no gain
          would have to modifiy logging to allow it to go to the TTY and also be sent to admins
@@ -139,8 +139,9 @@
   [ ] Add file to file to form album
   [ ] P2P file share with WebRTC, URL -> `/t/:id`
       -> https://github.com/feross/simple-peer
-  [ ] Typescript type defs so we get nice Typescript
+  [x] Typescript type defs so we get nice Typescript
       -> https://www.typescriptlang.org/docs/handbook/declaration-files/dts-from-js.html
+      -> cant be bothered lamo
 
 
 -= URL references =-
