@@ -1,3 +1,4 @@
+import { MIMEType } from 'node:util'
 import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
@@ -6,31 +7,27 @@ import { mimetypeFilter } from '../../utils/mimetype.js'
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Files (GET)')
 
+function toUpperCaseFirstLetter (str) {
+  return `${str.charAt(0).toUpperCase()}${str.slice(1)}`
+}
+
 export default function (fastify, opts, done) {
 
   // Get uploaded file page by ID
   fastify.get('/f/:id', async (request, reply) => {
     const { id } = request.params
-    const dbResult = fastify.betterSqlite3
-      .prepare('SELECT "file", "type", "uploadedBy" FROM "file" WHERE "id" = ?')
-      .get(id)
+    const { success, code, data } = await fastify.db.getFile(id)
 
-    if (!dbResult) return createError(404)
+    if (success === false) return createError(code)
 
-    const { file, type: unsafeType } = dbResult
-    const type = mimetypeFilter(unsafeType)
+    const { file, type: unsafeType } = data
+    const mimetype = mimetypeFilter(unsafeType)
+    const type = new MIMEType(mimetype).type
     const description = t => {
-      t = t.split('/')[0]
-
-      if (t === 'image') return `An ${t.charAt(0).toUpperCase()}${t.slice(1)}`
-      if (t === 'audio') return `${t.charAt(0).toUpperCase()}${t.slice(1)}`
-      if (t === 'video') return `A ${t.charAt(0).toUpperCase()}${t.slice(1)}`
-      if (t === 'text') return `A ${t.charAt(0).toUpperCase()}${t.slice(1)} file`
-    }
-    const isType = t => {
-      t = t.split('/')[0]
-
-      return `${t.charAt(0).toUpperCase()}${t.slice(1)}`
+      if (t === 'image') return `An ${toUpperCaseFirstLetter(t)}`
+      if (t === 'audio') return toUpperCaseFirstLetter(t)
+      if (t === 'video') return `A ${toUpperCaseFirstLetter(t)}`
+      if (t === 'text') return `A ${toUpperCaseFirstLetter(t)} file`
     }
     const directPath = `/f/${id}${extname(file)}`
 
@@ -40,15 +37,15 @@ export default function (fastify, opts, done) {
         file: {
           id: id,
           path: directPath,
-          ...dbResult,
-          type: type
+          ...data,
+          type: mimetype
         },
         openGraph: {
           title: id,
           description: `${description(type)} Hosted at ${reply.locals.title}`,
           path: `${request.protocol}://${request.hostname}${directPath}`,
-          mimetype: type,
-          [`is${isType(type)}`]: true
+          mimetype: mimetype,
+          [`is${toUpperCaseFirstLetter(type)}`]: true
         }
       })
   })
@@ -56,14 +53,12 @@ export default function (fastify, opts, done) {
   // Get uploaded file by ID
   fastify.get('/f/:id.:ext', async (request, reply) => {
     const { id } = request.params
-    const dbResult = fastify.betterSqlite3
-      .prepare('SELECT "file", "type", "uploadedBy", "size" FROM "file" WHERE "id" = ?')
-      .get(id)
+    const { success, code, data } = await fastify.db.getFile(id)
 
-    if (!dbResult) return createError(404)
+    if (success === false) return createError(code)
 
-    const { file, type, uploadedBy, size } = dbResult
-    const { offset: offsetRaw, count: countRaw } = request.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? { offset: 0, count: '' }
+    const { file, type, uploadedBy, size } = data
+    const { offset: offsetRaw = 0, count: countRaw = '' } = request.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? {}
     const offset = (Number(offsetRaw) || 0)
     const count = (Number(countRaw) || (size - offset))
 
@@ -88,13 +83,11 @@ export default function (fastify, opts, done) {
   // Get uploaded file thumbnail
   fastify.get('/f/:id/thumbnail', async (request, reply) => {
     const { id } = request.params
-    const dbResult = fastify.betterSqlite3
-      .prepare('SELECT "thumbnail", "uploadedBy" FROM "file" WHERE "id" = ?')
-      .get(id)
+    const { success, code, data } = await fastify.db.getThumbnail(id)
 
-    if (!dbResult) return createError(404)
+    if (success === false) return createError(code)
 
-    const { thumbnail, uploadedBy } = dbResult
+    const { thumbnail, uploadedBy } = data
 
     return reply
       .type('image/webp')
@@ -104,13 +97,11 @@ export default function (fastify, opts, done) {
   // Download file
   fastify.get('/f/:id/download', async (request, reply) => {
     const { id } = request.params
-    const dbResult = fastify.betterSqlite3
-      .prepare('SELECT "type", "uploadedBy", "file", "size" FROM "file" WHERE "id" = ?')
-      .get(id)
+    const { success, code, data } = await fastify.db.getFile(id)
 
-    if (!dbResult) return createError(404)
+    if (success === false) return createError(code)
 
-    const { type, uploadedBy, file } = dbResult
+    const { type, uploadedBy, file } = data
     const filename = `${id}${extname(file)}`
 
     return reply

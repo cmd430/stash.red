@@ -61,6 +61,27 @@ export class DatabaseInterfaceBase {
    */
 
   /**
+   * Get a file
+   * @public
+   * @async
+   * @method
+   * @name getFile
+   * @param {string} id The file id
+   * @returns {result}
+   */
+
+  /**
+   * delete a file from the DB
+   * @public
+   * @async
+   * @method
+   * @name deleteFile
+   * @param {string} id The file ID
+   * @param {string} username the username trying to delete the file
+   * @returns {result}
+   */
+
+  /**
    * Create album and add files to it
    * @public
    * @async
@@ -76,13 +97,12 @@ export class DatabaseInterfaceBase {
    */
 
   /**
-   * delete a file from the DB
+   * Get an album and its files
    * @public
    * @async
    * @method
-   * @name deleteFile
-   * @param {string} id The file ID
-   * @param {string} username the username trying to delete the file
+   * @name getAlbum
+   * @param {string} id The album id
    * @returns {result}
    */
 
@@ -109,6 +129,47 @@ export class DatabaseInterfaceBase {
    * @param {string} [payload.title] The new title to set for the album
    * @param {object} [payload.order] and object of `fileID: albumOrders` for the album
    * @returns
+   */
+
+  /**
+   * Get a file or albums thumbnail
+   * @public
+   * @async
+   * @method
+   * @name getThumbnail
+   * @param {string} id The file/album id
+   * @returns {result}
+   */
+
+  /**
+   * Get user files
+   * @public
+   * @async
+   * @method
+   * @name getUserFiles
+   * @param {string} username The username to get the files for
+   * @param {object} options
+   * @param {number} options.offset the offset for pagination
+   * @param {number} options.limit the max amount of items to return
+   * @param {'ASC'|'DESC'} options.order the order of the items
+   * @param {string} options.filter the filetype filter
+   * @param {boolean} options.includePrivate if we should return private files
+   * @returns {result}
+   */
+
+  /**
+   * Get user albums
+   * @public
+   * @async
+   * @method
+   * @name getUserAlbums
+   * @param {string} username The username to get the albums for
+   * @param {object} options
+   * @param {number} options.offset the offset for pagination
+   * @param {number} options.limit the max amount of items to return
+   * @param {'ASC'|'DESC'} options.order the order of the items
+   * @param {boolean} options.includePrivate if we should return private albums
+   * @returns {result}
    */
 
   /**

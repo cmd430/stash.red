@@ -105,32 +105,27 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   }
 
   /**
-   * Create album and add files to it
-   * @param {object} data
-   * @param {string} data.id The album id
-   * @param {string} data.name The name of the uploaded file
-   * @param {string} data.uploadedBy The username of the uploader
-   * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
-   * @param {boolean} data.isPrivate If the file is hidden from the user page for others
+   * Get a file
+   * @param {string} id The file id
    * @returns {result}
    */
-  async createAlbum (data) {
-    const { id: albumID, files, uploadedBy, ttl, isPrivate } = data
+  async getFile (id) {
+    const { file, type, uploadedBy, size } = this.#database
+      .prepare('SELECT "file", "type", "uploadedBy", "size" FROM "file" WHERE "id" = ?')
+      .get(id) ?? {}
 
-    debug('Album ID', albumID)
+    if (uploadedBy === undefined) return { succeeded: false, code: 404 } // File doesnt exist
 
-    const statement = this.#database.prepare('UPDATE "files" SET "inAlbum" = ?, "albumOrder" = ? WHERE "id" = ?')
-    const transaction = this.#database.transaction((fIDs, aID) => fIDs.map((fID, index) => statement.run(aID, index, fID)))
-    const updated = transaction(files, albumID)
-      .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
-
-    this.#database
-      .prepare('INSERT INTO "albums" ("id", "title", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?)')
-      .run(albumID, 'Untitled Album', uploadedBy, ttl, isPrivate)
-
-    debug('Added', updated, 'files to album')
-
-    return { succeeded: true, code: 'OK' }
+    return {
+      succeeded: true,
+      code: 'OK',
+      data: {
+        file: file,
+        type: type,
+        uploadedBy: uploadedBy,
+        size: size
+      }
+    }
   }
 
   /**
@@ -160,6 +155,62 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
       code: 'OK',
       data: {
         file: file
+      }
+    }
+  }
+
+  /**
+   * Create album and add files to it
+   * @param {object} data
+   * @param {string} data.id The album id
+   * @param {string} data.name The name of the uploaded file
+   * @param {string} data.uploadedBy The username of the uploader
+   * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
+   * @param {boolean} data.isPrivate If the file is hidden from the user page for others
+   * @returns {result}
+   */
+  async createAlbum (data) {
+    const { id: albumID, files, uploadedBy, ttl, isPrivate } = data
+
+    debug('Album ID', albumID)
+
+    const statement = this.#database.prepare('UPDATE "files" SET "inAlbum" = ?, "albumOrder" = ? WHERE "id" = ?')
+    const transaction = this.#database.transaction((fIDs, aID) => fIDs.map((fID, index) => statement.run(aID, index, fID)))
+    const updated = transaction(files, albumID)
+      .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
+
+    this.#database
+      .prepare('INSERT INTO "albums" ("id", "title", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?)')
+      .run(albumID, 'Untitled Album', uploadedBy, ttl, isPrivate)
+
+    debug('Added', updated, 'files to album')
+
+    return { succeeded: true, code: 'OK' }
+  }
+
+  /**
+   * Get an album and its files
+   * @param {string} id The album id
+   * @returns {result}
+   */
+  async getAlbum (id) {
+    const { title, uploadedBy } = this.#database
+      .prepare('SELECT "title", "uploadedBy" FROM "album" WHERE "id" = ?')
+      .get(id) ?? {}
+
+    if (uploadedBy === undefined) return { succeeded: false, code: 404 } // Album doesnt exist
+
+    const albumFiles = this.#database
+      .prepare('SELECT "id", "file", "type", "order" FROM "albumFiles" WHERE "album" = ?')
+      .all(id) ?? []
+
+    return {
+      succeeded: true,
+      code: 'OK',
+      data: {
+        title: title,
+        uploadedBy: uploadedBy,
+        files: albumFiles
       }
     }
   }
@@ -225,6 +276,104 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
 
     return { succeeded: true, code: 'OK' }
   }
+
+  /**
+   * Get a file or albums thumbnail
+   * @param {string} id The file/album id
+   * @returns {result}
+   */
+  async getThumbnail (id) {
+    const { thumbnail, uploadedBy } = this.#database
+      .prepare('SELECT "thumbnail", "uploadedBy" FROM (SELECT "id", "thumbnail", "uploadedBy" FROM "file" UNION SELECT "id", "thumbnail", "uploadedBy" FROM "album") WHERE "id" = ?')
+      .get(id)
+
+    if (uploadedBy === undefined) return { succeeded: false, code: 404 } // File/Album doesnt exist
+
+    return {
+      succeeded: true,
+      code: 'OK',
+      data: {
+        uploadedBy: uploadedBy,
+        thumbnail: thumbnail
+      }
+    }
+  }
+
+  /**
+   * Get user files
+   * @param {string} username The username to get the files for
+   * @param {object} options
+   * @param {number} options.offset the offset for pagination
+   * @param {number} options.limit the max amount of items to return
+   * @param {'ASC'|'DESC'} options.order the order of the items
+   * @param {string} options.filter the filetype filter
+   * @param {boolean} options.includePrivate if we should return private files
+   * @returns {result}
+   */
+  async getUserFiles (username, options) {
+    const { includePrivate, offset, limit, order, filter } = options
+    const { email } = this.#database
+      .prepare('SELECT "email" FROM "accounts" WHERE "username" = ?')
+      .get(username)
+
+    if (email === undefined) return { succeeded: false, code: 404 } // User doesnt exist
+
+    const getFilesIncludePrivate = this.#database
+      .prepare(`SELECT "id", "type", "isPrivate", "total" FROM "userFiles" WHERE "uploadedBy" = ? AND "type" LIKE '${filter}%' ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
+    const getFilesExcludePrivate = this.#database
+      .prepare(`SELECT "id", "type", "isPrivate", "total" FROM "userFiles" WHERE "uploadedBy" = ? AND NOT "isPrivate" = 1 AND "type" LIKE '${filter}%' ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
+    const files = (includePrivate ? getFilesIncludePrivate : getFilesExcludePrivate)
+      .all(username, limit, offset) ?? []
+    const { total = 0 } = files[0] ?? {}
+
+    return {
+      succeeded: true,
+      code: 'OK',
+      data: {
+        email: email,
+        files: files,
+        total: total
+      }
+    }
+  }
+
+  /**
+   * Get user albums
+   * @param {string} username The username to get the albums for
+   * @param {object} options
+   * @param {number} options.offset the offset for pagination
+   * @param {number} options.limit the max amount of items to return
+   * @param {'ASC'|'DESC'} options.order the order of the items
+   * @param {boolean} options.includePrivate if we should return private albums
+   * @returns {result}
+   */
+  async getUserAlbums (username, options) {
+    const { includePrivate, offset, limit, order } = options
+    const { email } = this.#database
+      .prepare('SELECT "email" FROM "accounts" WHERE "username" = ?')
+      .get(username)
+
+    if (email === undefined) return { succeeded: false, code: 404 } // User doesnt exist
+
+    const getAlbumsIncludePrivate = this.#database
+      .prepare(`SELECT "id", "title", "isPrivate", "entries", "total" FROM "userAlbums" WHERE "uploadedBy" = ? ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
+    const getAlbumsExcludePrivate = this.#database
+      .prepare(`SELECT "id", "title", "isPrivate", "entries", "total" FROM "userAlbums" WHERE "uploadedBy" = ? AND NOT "isPrivate" = 1  ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
+    const albums = (includePrivate ? getAlbumsIncludePrivate : getAlbumsExcludePrivate)
+      .all(username, limit, offset) ?? []
+    const { total = 0 } = albums[0] ?? {}
+
+    return {
+      succeeded: true,
+      code: 'OK',
+      data: {
+        email: email,
+        albums: albums,
+        total: total
+      }
+    }
+  }
+
 
   /**
    * Remove uploads from the DB where the ttl has expired

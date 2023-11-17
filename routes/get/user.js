@@ -48,31 +48,18 @@ export default function (fastify, opts, done) {
   fastify.get('/u/:username', { preHandler }, async (request, reply) => {
     const { page, limit, offset, order, filter, params } = request.view
     const { username } = request.params
-    const showPrivate = request.session.get('authenticated') && request.session.get('session').username === username
+    const includePrivate = request.session.get('authenticated') && request.session.get('session').username === username
+    const { success, code, data } = await fastify.db.getUserFiles(username, {
+      offset: offset,
+      limit: limit,
+      order: order,
+      filter: filter,
+      includePrivate: includePrivate
+    })
 
-    const user = fastify.betterSqlite3
-      .prepare('SELECT "email" FROM "accounts" WHERE "username" = ?')
-      .get(username)
+    if (success === false) return createError(code)
 
-    // If the user not exist return a 404
-    if (!user) return createError(404)
-
-    const { email } = user
-    // Get Files
-    const getFilesIncludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT "id", "type", "isPrivate", "total" FROM "userFiles" WHERE "uploadedBy" = ? AND "type" LIKE '${filter}%' ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
-    const getFilesExcludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT "id", "type", "isPrivate", "total" FROM "userFiles" WHERE "uploadedBy" = ? AND NOT "isPrivate" = 1 AND "type" LIKE '${filter}%' ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
-
-    // Run SQL
-    const files = (showPrivate ? getFilesIncludePrivate : getFilesExcludePrivate)
-      .all(username, limit, offset)
-      .map(file => ({
-        ...file,
-        type: mimetypeFilter(file.type)
-      }))
-
-    const { total } = files[0] ?? { total: 0 }
+    const { files, email, total } = data
 
     // Return Page
     return reply
@@ -87,7 +74,10 @@ export default function (fastify, opts, done) {
           username: username,
           type: 'files'
         },
-        uploads: files,
+        uploads: files.map(file => ({
+          ...file,
+          type: mimetypeFilter(file.type)
+        })),
         openGraph: {
           title: username,
           description: `A User Profile for ${reply.locals.title}`,
@@ -103,25 +93,17 @@ export default function (fastify, opts, done) {
   fastify.get('/u/:username/albums', { preHandler }, async (request, reply) => {
     const { page, limit, offset, order, params } = request.view
     const { username } = request.params
-    const showPrivate = request.session.get('authenticated') && request.session.get('session').username === username
+    const includePrivate = request.session.get('authenticated') && request.session.get('session').username === username
+    const { success, code, data } = await fastify.db.getUserAlbums(username, {
+      offset: offset,
+      limit: limit,
+      order: order,
+      includePrivate: includePrivate
+    })
 
-    const user = fastify.betterSqlite3
-      .prepare('SELECT "email" FROM "accounts" WHERE "username" = ?')
-      .get(username)
+    if (success === false) return createError(code)
 
-    // If the user not exist then we get no email, return a 404
-    if (!user) return createError(404)
-
-    const { email } = user
-    // Get Albums
-    const getAlbumsIncludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT "id", "title", "isPrivate", "entries", "total" FROM "userAlbums" WHERE "uploadedBy" = ? ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
-    const getAlbumsExcludePrivate = fastify.betterSqlite3
-      .prepare(`SELECT "id", "title", "isPrivate", "entries", "total" FROM "userAlbums" WHERE "uploadedBy" = ? AND NOT "isPrivate" = 1  ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
-
-    // Run SQL
-    const albums = (showPrivate ? getAlbumsIncludePrivate : getAlbumsExcludePrivate).all(username, limit, offset)
-    const { total } = albums[0] ?? { total: 0 }
+    const { albums, email, total } = data
 
     // Return Page
     return reply

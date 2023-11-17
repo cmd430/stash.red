@@ -12,23 +12,11 @@ export default function (fastify, opts, done) {
   // Get album by ID
   fastify.get('/a/:id', async (request, reply) => {
     const { id } = request.params
-    const album = fastify.betterSqlite3
-      .prepare('SELECT "title", "uploadedBy" FROM "album" WHERE "id" = ?')
-      .get(id)
+    const { success, code, data } = await fastify.db.getAlbum(id)
 
-    if (!album) return createError(404)
+    if (success === false) return createError(code)
 
-    const albumFiles = fastify.betterSqlite3
-      .prepare('SELECT "id", "file", "type", "order" FROM "albumFiles" WHERE "album" = ?')
-      .all(id)
-
-    const { title, uploadedBy } = album
-    const files = albumFiles
-      .map(file => ({
-        path: `/f/${file.id}${extname(file.file)}`,
-        ...file,
-        type: mimetypeFilter(file.type)
-      }))
+    const { title, uploadedBy, files } = data
 
     return reply
       .disableCache()
@@ -36,7 +24,11 @@ export default function (fastify, opts, done) {
         album: {
           id: id,
           title: title,
-          files: files,
+          files: files.map(file => ({
+            path: `/f/${file.id}${extname(file.file)}`,
+            ...file,
+            type: mimetypeFilter(file.type)
+          })),
           uploadedBy: uploadedBy
         },
         openGraph: {
@@ -50,13 +42,11 @@ export default function (fastify, opts, done) {
   // Get album thumbnail
   fastify.get('/a/:id/thumbnail', async (request, reply) => {
     const { id } = request.params
-    const dbResult = fastify.betterSqlite3
-      .prepare('SELECT "thumbnail", "uploadedBy" FROM "album" WHERE "id" = ?')
-      .get(id)
+    const { success, code, data } = await fastify.db.getThumbnail(id)
 
-    if (!dbResult) return createError(404)
+    if (success === false) return createError(code)
 
-    const { thumbnail, uploadedBy } = dbResult
+    const { thumbnail, uploadedBy } = data
 
     return reply
       .type('image/webp')
@@ -66,24 +56,17 @@ export default function (fastify, opts, done) {
   // Download album
   fastify.get('/a/:id/download', async (request, reply) => {
     const { id } = request.params
-    const album = fastify.betterSqlite3
-      .prepare('SELECT "title", "uploadedBy" FROM "album" WHERE "id" = ?')
-      .get(id)
+    const { success, code, data } = await fastify.db.getAlbum(id)
 
-    if (!album) return createError(404)
+    if (success === false) return createError(code)
 
-    const albumFiles = fastify.betterSqlite3
-      .prepare('SELECT "id", "file", "order" FROM "albumFiles" WHERE "album" = ?')
-      .all(id)
-
-    const { title, uploadedBy } = album
-
+    const { title, uploadedBy, files } = data
     const archive = archiver('zip', {
       comment: `Album downloaded from ${reply.locals.title}`,
       store: true
     })
 
-    for (const { id: fileID, file } of albumFiles) {
+    for (const { id: fileID, file } of files) {
       archive.append(await fastify.storage.read(uploadedBy, file), {
         name: `${fileID}${extname(file)}`
       })
