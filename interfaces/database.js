@@ -136,12 +136,12 @@ export class DatabaseInterfaceBase {
    *  data?: {
    *    title: string,
    *    uploadedBy: string,
-   *    files: array<{
+   *    files: [{
    *      id: string,
    *      file: string,
    *      type: string,
    *      order: number
-   *    }>
+   *    }]
    *  }
    * }}
    */
@@ -158,7 +158,9 @@ export class DatabaseInterfaceBase {
    *  succeeded: boolean,
    *  code: number|'OK',
    *  data?: {
-   *    files: array<string>
+   *    files: [
+   *      string
+   *    ]
    *  }
    * }}
    */
@@ -215,11 +217,11 @@ export class DatabaseInterfaceBase {
    *  code: number|'OK',
    *  data?: {
    *    email: string,
-   *    files: array<{
+   *    files: [{
    *      id: string,
    *      type: string,
    *      isPrivate: number|boolean
-   *    }>,
+   *    }],
    *    total: number
    *  }
    * }}
@@ -242,12 +244,12 @@ export class DatabaseInterfaceBase {
    *  code: number|'OK',
    *  data?: {
    *    email: string,
-   *    albums: array<{
+   *    albums: [{
    *      id: string,
    *      title: string,
    *      isPrivate: number|boolean,
    *      entries: number
-   *    }>,
+   *    }],
    *    total: number
    *  }
    * }}
@@ -263,10 +265,10 @@ export class DatabaseInterfaceBase {
    *  succeeded: boolean,
    *  code: number|'OK',
    *  data?: {
-   *    expired: array<{
+   *    expired: [{
    *      file: string,
    *      uploadedBy: string
-   *    }>
+   *    }]
    *  }
    * }}
    */
