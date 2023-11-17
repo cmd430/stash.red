@@ -80,8 +80,8 @@ export default class StorageInterface extends StorageInterfaceBase {
     const { succeeded: fileDeleteResult } = await this.#delete(username, file)
     const { succeeded: thumbnailDeleteResult } = await this.#delete(username, this.deriveThumbnail(file))
 
-    debug('File was', fileDeleteResult ? 'deleted successfully.' : 'unabled to be deleted.')
-    debug('Files Thumbnail was', thumbnailDeleteResult ? 'deleted successfully.' : 'unabled to be deleted.')
+    debug('File was', fileDeleteResult ? 'deleted successfully.' : 'unable to be deleted.')
+    debug('Files Thumbnail was', thumbnailDeleteResult ? 'deleted successfully.' : 'unable to be deleted.')
 
     return [
       fileDeleteResult,
