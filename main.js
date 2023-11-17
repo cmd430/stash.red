@@ -11,7 +11,6 @@ import cfTurnstile from 'fastify-cloudflare-turnstile'
 import { evaluate } from 'mathjs'
 import SqliteStore from 'fastify-session-better-sqlite3-store'
 import view from '@fastify/view'
-import betterSqlite3 from '@punkish/fastify-better-sqlite3'
 import handlebars from 'handlebars'
 import { config } from './config/config.js'
 import { sessions } from './sessions/sessions.js'
@@ -19,7 +18,6 @@ import temporaryUploadsGC from './plugins/temporaryUploadsGC.js'
 import fastifyLoadHooks from './plugins/fastifyLoadHooks.js'
 import loadRoutes from './plugins/loadRoutes.js'
 import disableCache from './plugins/disableCache.js'
-import databaseConnection from './database/databaseConnection.js'
 import fastifyLogger from './helpers/fastifyLogger.js'
 import fastifyLoadPartials from './helpers/fastifyLoadPartials.js'
 import { getDatabaseInterface } from './interfaces/database.js'
@@ -45,7 +43,6 @@ try {
 
   // Make database data accessable as fastify.db
   fastify.decorate('db', new DataStore())
-  fastify.register(betterSqlite3, databaseConnection) // TEMP: to remove once updated code to use databaseInterface, Also to remove `@punkish/fastify-better-sqlite3`
 
   // Make storage accessable as fastify.storage
   fastify.decorate('storage', new FileStore())
