@@ -87,6 +87,40 @@ export class DatabaseInterfaceBase {
    */
 
   /**
+   * delete an album from the DB
+   * @public
+   * @async
+   * @method
+   * @name deleteAlbum
+   * @param {string} id The album ID
+   * @param {string} username the username trying to delete the album
+   * @returns {result}
+   */
+
+  /**
+   * update an albums title or file order
+   * @public
+   * @async
+   * @method
+   * @name editAlbum
+   * @param {string} id The id of the album
+   * @param {string} username The user trying to edit the album
+   * @param {object} payload
+   * @param {string} [payload.title] The new title to set for the album
+   * @param {object} [payload.order] and object of `fileID: albumOrders` for the album
+   * @returns
+   */
+
+  /**
+   * Remove uploads from the DB where the ttl has expired
+   * @public
+   * @async
+   * @method
+   * @name cleanExpired
+   * @returns {result}
+   */
+
+  /**
    * @typedef {{ succeeded: boolean, code: number, data?: object }} result
    */
 

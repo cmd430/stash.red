@@ -227,6 +227,40 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   }
 
   /**
+   * Remove uploads from the DB where the ttl has expired
+   * @returns {result}
+   */
+  async cleanExpired () {
+    const expired = []
+    const temporal = this.#database
+      .prepare('SELECT "id", "file", "uploadedAt", "uploadedBy", "ttl" FROM "files" WHERE "ttl" NOT NULL')
+      .all()
+
+    for (const { id, file, uploadedAt, uploadedBy, ttl } of temporal) {
+      if (Date.now() - new Date(new Date(uploadedAt).getTime() + (1000 * ttl)) >= 0) {
+        expired.push({ id, uploadedBy, file })
+      }
+    }
+
+    const statement = this.#database
+      .prepare('DELETE FROM "files" WHERE "id" = ?')
+    const transaction = this.#database
+      .transaction(expiredFiles => expiredFiles.map(({ id }) => statement.run(id)))
+    const removed = transaction(expired.filter(e => e))
+      .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
+
+    if (removed > 0) debug('Removed', removed, 'temporary uploads')
+
+    return {
+      succeeded: true,
+      code: 'OK',
+      data: {
+        expired: expired
+      }
+    }
+  }
+
+  /**
    * Update an albums title
    * @param {string} id The album id
    * @param {string} title The new album title
