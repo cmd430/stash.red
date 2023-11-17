@@ -28,6 +28,7 @@ export class StorageInterfaceBase {
    * @method
    * @name createContainer
    * @param {string} username
+   * @returns {void}
    */
 
   /**
@@ -35,7 +36,10 @@ export class StorageInterfaceBase {
    * @protected
    * @param {string} username
    * @param {string} filename
-   * @returns {{filename: string, thumbnailFilename: string}}
+   * @returns {{
+   *  filename: string,
+   *  thumbnailFilename: string
+   * }}
    */
   create (username, filename) {
     const storageFilename = `${randomUUID()}${extname(filename)}`
@@ -61,6 +65,7 @@ export class StorageInterfaceBase {
    * @param {object} data.thumbnail
    * @param {string} data.thumbnail.filename The name of the thumbnail
    * @param {Buffer} data.thumbnail.fileData The thumbnail data
+   * @returns {void}
    */
 
   /**
