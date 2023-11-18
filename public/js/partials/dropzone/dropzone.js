@@ -82,7 +82,13 @@ async function uploadFiles (files) {
     const xhr = new XMLHttpRequest()
 
     xhr.upload.addEventListener('progress', setProgress)
-    xhr.addEventListener('load', () => resolve(JSON.parse(xhr.responseText)))
+    xhr.addEventListener('load', () => {
+      try {
+        resolve(JSON.parse(xhr.responseText))
+      } catch {
+        resolve(xhr) // Allow proxy errors to be caught nicely (eg cloudflare)
+      }
+    })
     xhr.addEventListener('error', () => reject(new Error('File upload failed')))
     xhr.addEventListener('abort', () => reject(new Error('File upload aborted')))
     xhr.open('POST', '/upload', true)

@@ -27,7 +27,10 @@ export function setProgressWarning (msg) {
 }
 
 export function setProgressError (error = {}) {
-  const errorMessage = error.message ?? 'Unknown Error'
+  const errors = {
+    413: 'Request payload too large'
+  }
+  const errorMessage = error.message ?? errors[error.status] ?? 'Unknown Error'
 
   console.debug(error.status ? `${error.status}: ${errorMessage}` : errorMessage)
 
