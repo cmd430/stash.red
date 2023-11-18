@@ -30,6 +30,9 @@ export default function (fastify, opts, done) {
         isFromHomepage: false
       }
       const uploadedFiles = []
+      const uploadTimestamp = Date.now()
+      const uploadedAt = new Date(uploadTimestamp).toISOString()
+      const uploadedUntil = ttl => ttl ? new Date(uploadTimestamp + ttl).toISOString() : 'Infinity'
       const processFile = async (file, filename) => {
         if (file instanceof Buffer === false || file.byteLength === 0) {
           debug('Skipping file with no data')
@@ -56,7 +59,8 @@ export default function (fastify, opts, done) {
             size: file.byteLength,
             type: mimetype,
             uploadedBy: username,
-            ttl: timeToLive,
+            uploadedAt: uploadedAt,
+            uploadedUntil: uploadedUntil(timeToLive),
             isPrivate: isPrivate
           })
         } else {
@@ -170,7 +174,8 @@ export default function (fastify, opts, done) {
           id: albumID,
           files: fileIDs,
           uploadedBy: username,
-          ttl: timeToLive,
+          uploadedAt: uploadedAt,
+          uploadedUntil: uploadedUntil(timeToLive),
           isPrivate: isPrivate
         })
 

@@ -60,8 +60,9 @@ export class DatabaseInterfaceBase {
    * @param {number} data.size The size in bytes of the file
    * @param {string} data.type The mimetype of the file
    * @param {string} data.uploadedBy The username of the uploader
+   * @param {string} data.uploadedAt The upload date & time of the file
+   * @param {number|null} data.uploadedUntil The date a file is uploaded until or null for infinity
    * @param {string} [data.album] The optional id of an album to add the file to
-   * @param {number|null} [data.ttl] The time to live in milliseconds or null for infinity
    * @param {boolean} [data.isPrivate] If the file is hidden from the user page for others
    * @returns {{
    *  succeeded: boolean,
@@ -115,7 +116,8 @@ export class DatabaseInterfaceBase {
    * @param {string} data.id The album id
    * @param {string} data.name The name of the uploaded file
    * @param {string} data.uploadedBy The username of the uploader
-   * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
+   * @param {number|null} data.uploadedAt The upload date & time an ablum was uploaded
+   * @param {number|null} data.uploadedUntil The date an ablum is uploaded until or null for infinity
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
    * @returns {{
    *  succeeded: boolean,
@@ -256,7 +258,7 @@ export class DatabaseInterfaceBase {
    */
 
   /**
-   * Remove uploads from the DB where the ttl has expired
+   * Remove uploads from the DB where the uploadedUntil has expired
    * @public
    * @async
    * @method

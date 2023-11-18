@@ -96,8 +96,9 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {number} data.size The size in bytes of the file
    * @param {string} data.type The mimetype of the file
    * @param {string} data.uploadedBy The username of the uploader
+   * @param {string} data.uploadedAt The upload date & time of the file
+   * @param {number|null} data.uploadedUntil The date a file is uploaded until or null for infinity
    * @param {string} [data.album] The optional id of an album to add the file to
-   * @param {number|null} [data.ttl] The time to live in milliseconds or null for infinity
    * @param {boolean} [data.isPrivate] If the file is hidden from the user page for others
    * @returns {{
    *  succeeded: boolean,
@@ -186,7 +187,8 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.id The album id
    * @param {string} data.name The name of the uploaded file
    * @param {string} data.uploadedBy The username of the uploader
-   * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
+   * @param {number|null} data.uploadedAt The upload date & time an ablum was uploaded
+   * @param {number|null} data.uploadedUntil The date an ablum is uploaded until or null for infinity
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
    * @returns {{
    *  succeeded: boolean,
@@ -194,13 +196,13 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * }}
    */
   async createAlbum (data) {
-    const { id: albumID, files, uploadedBy, ttl, isPrivate } = data
+    const { id: albumID, files, uploadedBy, uploadedAt, uploadedUntil, isPrivate } = data
 
     debug('Album ID', albumID)
 
     this.#database
-      .prepare('INSERT INTO "albums" ("id", "title", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?)')
-      .run(albumID, 'Untitled Album', uploadedBy, ttl, isPrivate)
+      .prepare('INSERT INTO "albums" ("id", "title", "uploadedBy", "uploadedAt", "uploadedUntil", "isPrivate") VALUES (?, ?, ?, ?, ?, ?)')
+      .run(albumID, 'Untitled Album', uploadedBy, uploadedAt, uploadedUntil, isPrivate)
 
 
     const statement = this.#database.prepare('UPDATE "files" SET "inAlbum" = ?, "albumOrder" = ? WHERE "id" = ?')
@@ -451,7 +453,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
 
 
   /**
-   * Remove uploads from the DB where the ttl has expired
+   * Remove uploads from the DB where the uploadedUntil has expired
    * @returns {{
    *  succeeded: boolean,
    *  code: number|'OK',
@@ -464,25 +466,11 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * }}
    */
   async cleanExpired () {
-    const expired = []
-    const temporal = this.#database
-      .prepare('SELECT "id", "file", "uploadedAt", "uploadedBy", "ttl" FROM "files" WHERE "ttl" NOT NULL')
-      .all()
+    const expired = this.#database
+      .prepare('DELETE FROM "files" WHERE "uploadedUntil" <= strftime(\'%Y-%m-%dT%H:%M:%fZ\', \'now\') RETURNING "file", "uploadedBy"')
+      .all() ?? []
 
-    for (const { id, file, uploadedAt, uploadedBy, ttl } of temporal) {
-      if (Date.now() - new Date(new Date(uploadedAt).getTime() + (1000 * ttl)) >= 0) {
-        expired.push({ id, uploadedBy, file })
-      }
-    }
-
-    const statement = this.#database
-      .prepare('DELETE FROM "files" WHERE "id" = ?')
-    const transaction = this.#database
-      .transaction(expiredFiles => expiredFiles.map(({ id }) => statement.run(id)))
-    const removed = transaction(expired.filter(e => e))
-      .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
-
-    if (removed > 0) debug('Removed', removed, 'temporary uploads')
+    if (expired.length > 0) debug('Removed', expired.length, 'temporary uploads')
 
     return {
       succeeded: true,
@@ -542,6 +530,8 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {number} data.size The size in bytes of the file
    * @param {string} data.type The mimetype of the file
    * @param {string} data.uploadedBy The username of the uploader
+   * @param {string} data.uploadedAt The upload date & time the file was uploaded
+   * @param {number|null} data.uploadedUntil The date a file is uploaded until or null for infinity
    * @param {string} data.album The id of an album to add the file to
    * @returns {{
    *  succeeded: boolean,
@@ -549,11 +539,11 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * }}
    */
   async #addNewFile (data) {
-    const { id, name, file, size, type, uploadedBy, ttl, isPrivate } = data
+    const { id, name, file, size, type, uploadedBy, uploadedAt, uploadedUntil, isPrivate } = data
 
     this.#database
-      .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "ttl", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(id, name, file, size, type, uploadedBy, ttl, isPrivate)
+      .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "uploadedAt", "uploadedUntil", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .run(id, name, file, size, type, uploadedBy, uploadedAt, uploadedUntil, isPrivate)
 
     return { succeeded: true, code: 'OK' }
   }
@@ -567,7 +557,6 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {number} data.size The size in bytes of the file
    * @param {string} data.type The mimetype of the file
    * @param {string} data.uploadedBy The username of the uploader
-   * @param {number|null} data.ttl The time to live in milliseconds or null for infinity
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
    * @returns {{
    *  succeeded: boolean,
@@ -578,20 +567,20 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     const { album: albumID, id, name, file, size, type, uploadedBy } = data
 
     const album = this.#database
-      .prepare(`SELECT * FROM (SELECT "id", "uploadedAt", "uploadedBy", "isPrivate", "entries", "ttl" FROM "albums" INNER JOIN (
+      .prepare(`SELECT * FROM (SELECT "id", "uploadedAt", "uploadedBy", "isPrivate", "entries", "uploadedUntil" FROM "albums" INNER JOIN (
                 SELECT "entries" FROM "album"
               ) AS "entries" ON "id" = "id" GROUP BY "id") WHERE "id" = ?`)
       .get(albumID)
 
     if (!album) return { succeeded: false, code: 404 } // Album does not exist
 
-    const { uploadedAt: albumUploadedAt, uploadedBy: albumUploadedBy, isPrivate: albumIsPrivate, ttl: albumTimeToLive, entries: albumEntries } = album
+    const { uploadedAt: albumUploadedAt, uploadedBy: albumUploadedBy, isPrivate: albumIsPrivate, uploadedUntil: albumUploadedUntil, entries: albumEntries } = album
 
     if (albumUploadedBy !== uploadedBy) return { succeeded: false, code: 403 } // Album is owned by another user
 
     this.#database
-      .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedAt", "uploadedBy", "ttl", "isPrivate", "inAlbum", "albumOrder") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(id, name, file, size, type, albumUploadedAt, uploadedBy, albumTimeToLive, albumIsPrivate, albumID, albumEntries)
+      .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "uploadedAt", "uploadedUntil", "isPrivate", "inAlbum", "albumOrder") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .run(id, name, file, size, type, uploadedBy, albumUploadedAt, albumUploadedUntil, albumIsPrivate, albumID, albumEntries)
 
     return { succeeded: true, code: 'OK' }
   }
