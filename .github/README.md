@@ -1,7 +1,6 @@
 ![](./img/logo.png)
 > stash.red is a Small footprint File host (Specificly for Image/Video and Audio files)
 
-![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/cmd430/stash.red?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/cmd430/stash.red?style=flat-square)
 ![GitHub issues](https://img.shields.io/github/issues-raw/cmd430/stash.red?style=flat-square)
 ![GitHub repo size](https://img.shields.io/github/repo-size/cmd430/stash.red?style=flat-square)
