@@ -192,7 +192,7 @@ export default function (fastify, opts, done) {
       return {
         status: 201,
         path: `/f/${fileID}`,
-        direct: `/f/${fileExt}`
+        direct: `/f/${fileID}${fileExt}`
       }
     } catch (err) {
       error(err.stack)
