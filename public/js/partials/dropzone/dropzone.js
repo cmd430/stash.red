@@ -29,6 +29,7 @@ async function uploadComplete (response) {
       } else {
         await navigator.clipboard.writeText(`${origin}${response.path}`)
       }
+    } catch {
     } finally {
       location.assign(response.path)
     }
