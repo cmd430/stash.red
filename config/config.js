@@ -17,20 +17,19 @@ for (const script of await readdir(resolve('./config/sql'))) {
   }))
 }
 
-export const config = db.prepare('SELECT "key", "value" FROM "config"')
+const config = db.prepare('SELECT "key", "value" FROM "config"')
   .all()
   .reduce((obj, { key, value }) => {
     try {
       obj[key] = JSON.parse(value)
-    } catch (e) {
+    } catch {
       obj[key] = value
     }
     return obj
   }, {})
-export default config
 
-// Gracefully close the DB on exit
-process.on('exit', () => db.close())
-process.on('SIGHUP', () => process.exit(128 + 1))
-process.on('SIGINT', () => process.exit(128 + 2))
-process.on('SIGTERM', () => process.exit(128 + 15))
+// Close the DB
+db.close()
+
+export { config }
+export default config
