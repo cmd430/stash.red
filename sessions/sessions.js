@@ -27,6 +27,7 @@ async function performGC () {
 
   if (removed > 0) debug('Removed', removed, 'expired sessions')
 }
+
 setInterval(() => performGC(), evaluate(gcInterval))
 performGC()
 
