@@ -85,12 +85,9 @@ export default async function generateThumbnail (mimetype, filestream) {
 
   try {
     const imageStream = type === 'image' ? filestream : await ffmpeg(filestream, type)
-    const imageBuffer = await streamToBuffer(imageStream)
-
-    if (imageBuffer instanceof Buffer === false || imageBuffer.byteLength === 0) return getDefaultThumbnail(type)
 
     // Resize and crop Thumbnails
-    const thumbnailBuffer = sharp(imageBuffer)
+    const thumbnailBuffer = sharp()
       .rotate()
       .resize({
         width: 250,
