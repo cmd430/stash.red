@@ -5,7 +5,7 @@ INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('site', '{
 
 -- Fastify settings
 INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('fastify', '{
-  "port": 8080,
+  "port": 3000,
   "bind": "::"
 }');
 
@@ -38,7 +38,7 @@ INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('uploads', '{
 -- Session cookie settings
 INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('session', '{
   "cookieName": "session",
-  "secret": "<32_char_long_secret>",
+  "secret": "<CHANGE_ME:32_char_long_secret>",
   "maxAge": 604800000,
   "gcInterval": "1000 * 60 * 60 * 24"
 }');
@@ -50,18 +50,20 @@ INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('bcrypt', '{
 
 -- Cloudeflare turnstile captcha config
 INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('captcha', '{
-  "siteKey": "<cloudeflare_turnstile_sitekey>",
-  "secretKey": "<cloudeflare_turnstile_secretkey>"
+  "siteKey": "<CHANGE_ME:cloudeflare_turnstile_sitekey>",
+  "secretKey": "<CHANGE_ME:cloudeflare_turnstile_secretkey>"
 }');
 
 -- Filestorage [ONLY SET ONE]
 INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('storage', '{
-  "store": "azure",
-  "storageConnectionString": "<azure_connection_string>"
-}'); -- If using azureblob storage
-INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('storage', '{
   "store": "file"
 }'); -- If using filestorage
+/*
+INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('storage', '{
+  "store": "azure",
+  "storageConnectionString": "<CHANGE_ME:azure_connection_string>"
+}'); -- If using azureblob storage
+*/
 
 -- Database
 INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('database', '{
