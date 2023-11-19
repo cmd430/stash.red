@@ -39,7 +39,8 @@
   },
   "scripts": {
     "sass: compile": "npx sass public/scss:public/css",
-    "sass: watch": "npx sass --watch public/scss:public/css"
+    "sass: watch": "npx sass --watch public/scss:public/css",
+    "start": "node main.js"
   },
   "engines": {
     "node": ">=18.18.2 <=20.9.0"
