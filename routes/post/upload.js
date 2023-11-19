@@ -1,9 +1,9 @@
 import { extname, basename } from 'node:path'
+import { Readable } from 'node:stream'
 import { customAlphabet } from 'nanoid'
 import { Log } from 'cmd430-utils'
 import generateThumbnail from '../../utils/generateThumbnail.js'
 import { getMimetype, isValidMimetype } from '../../utils/mimetype.js'
-import { grab } from '../../utils/fetchExternal.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Upload')
@@ -33,13 +33,12 @@ export default function (fastify, opts, done) {
       const uploadTimestamp = Date.now()
       const uploadedAt = new Date(uploadTimestamp).toISOString()
       const uploadedUntil = ttl => ttl ? new Date(uploadTimestamp + ttl).toISOString() : 'Infinity'
-      const processFile = async (file, filename) => {
-        if (file instanceof Buffer === false || file.byteLength === 0) {
-          debug('Skipping file with no data')
-          return
-        }
-
-        const mimetype = getMimetype(file)
+      const processFile = async (stream, filename) => {
+        // Glorious hack to get access to the stream with 2 seperate readers
+        const [ fileWebStream, thumbnailWebStream ] = Readable.toWeb(stream).tee()
+        const filestream = Readable.fromWeb(fileWebStream)
+        const thumbnailStream = Readable.fromWeb(thumbnailWebStream)
+        const { stream: fileStream, mimetype } = await getMimetype(filestream)
 
         if (isValidMimetype(mimetype) === false) {
           debug('Skipping file with invalid mimetype: ', mimetype)
@@ -48,15 +47,26 @@ export default function (fastify, opts, done) {
 
         const fileID = nanoid(8)
         const { timeToLive, isPrivate, isFromHomepage } = fields
-        const thumbnail = await generateThumbnail(mimetype, file)
         const { filename: storageFilename, thumbnailFilename: storageThumbnailFilename } = fastify.storage.create(username, filename)
+
+        const { filesize } = await fastify.storage.write({
+          username: username,
+          file: {
+            filename: storageFilename,
+            filestream: fileStream
+          },
+          thumbnail: {
+            filename: storageThumbnailFilename,
+            filestream: await generateThumbnail(mimetype, thumbnailStream)
+          }
+        })
 
         if (isFromHomepage) {
           await fastify.db.addFile({
             id: fileID,
             name: filename,
             file: storageFilename,
-            size: file.byteLength,
+            size: filesize,
             type: mimetype,
             uploadedBy: username,
             uploadedAt: uploadedAt,
@@ -70,25 +80,13 @@ export default function (fastify, opts, done) {
             id: fileID,
             name: filename,
             file: storageFilename,
-            size: file.byteLength,
+            size: filesize,
             type: mimetype,
             uploadedBy: username
           })
 
           if (succeeded === false) return // file not added because either album not exist or user isnt the owner
         }
-
-        await fastify.storage.write({
-          username: username,
-          file: {
-            filename: storageFilename,
-            fileData: file
-          },
-          thumbnail: {
-            filename: storageThumbnailFilename,
-            fileData: thumbnail
-          }
-        })
 
         // Make sure we can access the file ids after the upload
         uploadedFiles.push({
@@ -130,7 +128,7 @@ export default function (fastify, opts, done) {
           */
           fields.isFromHomepage = true
         } else if (part.type === 'file') {
-          await processFile(await part.toBuffer(), part.filename)
+          await processFile(part.file, part.filename)
         }
       }
 
@@ -138,7 +136,10 @@ export default function (fastify, opts, done) {
       const { timeToLive, isPrivate, dontFormAlbum, fetchURL, isFromHomepage } = fields
 
       if (fetchURL !== null && fetchURL.startsWith(`${request.protocol}://${request.hostname}`) === false && fetchURL.startsWith('https://')) {
-        await processFile(await grab(fetchURL), basename(fetchURL))
+        const externalResponse = await fetch(fetchURL)
+        const externalStream = Readable.fromWeb(externalResponse.body)
+
+        await processFile(externalStream, basename(fetchURL))
       }
 
       if (uploadedFiles.length === 0) { // no files uploaded

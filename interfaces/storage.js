@@ -61,11 +61,14 @@ export class StorageInterfaceBase {
    * @param {string} data.username The Username for the upload
    * @param {object} data.file
    * @param {string} data.file.filename The name of the file
-   * @param {Buffer} data.file.fileData The file data
+   * @param {ReadStream} data.file.filestream The file data stream
    * @param {object} data.thumbnail
    * @param {string} data.thumbnail.filename The name of the thumbnail
-   * @param {Buffer} data.thumbnail.fileData The thumbnail data
-   * @returns {void}
+   * @param {ReadStream} data.thumbnail.filestream The thumbnail data stream
+   * @returns {{
+   *  filesize: number,
+   *  thumbnailSize: number
+   * }} the size of the written file and thumbnail
    */
 
   /**

@@ -1,4 +1,5 @@
 import { BlobServiceClient } from '@azure/storage-blob'
+import StreamMeter from 'stream-meter'
 import { Log } from 'cmd430-utils'
 import { StorageInterfaceBase } from '../storage.js'
 import { config } from '../../config/config.js'
@@ -30,25 +31,34 @@ export default class StorageInterface extends StorageInterfaceBase {
    * @param {string} data.username The Username for the upload
    * @param {object} data.file
    * @param {string} data.file.filename The name of the file
-   * @param {Buffer} data.file.fileData The file data
+   * @param {ReadStream} data.file.filestream The file data stream
    * @param {object} data.thumbnail
    * @param {string} data.thumbnail.filename The name of the thumbnail
-   * @param {Buffer} data.thumbnail.fileData The thumbnail data
+   * @param {ReadStream} data.thumbnail.filestream The thumbnail data stream
+   * @returns {{
+   *  filesize: number,
+   *  thumbnailSize: number
+   * }} the size of the written file and thumbnail
    */
   async write (data) {
     const { username, file, thumbnail } = data
 
-    await this.#write(username, {
+    const filesize = await this.#write(username, {
       filename: file.filename,
-      data: file.fileData
+      stream: file.filestream
     })
     debug('File was Created successfully.')
 
-    await this.#write(username, {
+    const thumbnailSize = await this.#write(username, {
       filename: thumbnail.filename,
-      data: thumbnail.fileData
+      stream: thumbnail.filestream
     })
     debug('Thumbnail was Created successfully.')
+
+    return {
+      filesize: filesize,
+      thumbnailSize: thumbnailSize
+    }
   }
 
   /**
@@ -116,15 +126,19 @@ export default class StorageInterface extends StorageInterfaceBase {
    * @param {string} username The username
    * @param {object} file
    * @param {string} filename The filename
-   * @param {Buffer} data The file buffer
+   * @param {ReadStream} stream The file stream
+   * @returns {number} the size of the written file
    */
   async #write (username, file) {
-    const { filename, data } = file
+    const { filename, stream } = file
     const blobClient = this.#getBlobClient(username, filename)
+    const meter = new StreamMeter()
 
     debug(`Uploading file to Azure storage as blob\n\tname: ${filename}:\n\tURL: ${blobClient.url}`)
 
-    await blobClient.upload(data, data.byteLength)
+    await blobClient.uploadStream(stream.pipe(meter))
+
+    return meter.bytes
   }
 
   /**

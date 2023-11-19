@@ -1,6 +1,7 @@
 import { MIMEType } from 'node:util'
 import { WASMagic } from 'wasmagic'
 import { Log } from 'cmd430-utils'
+import streamHead from 'stream-head'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Mimetype')
@@ -28,40 +29,45 @@ export function isValidMimetype (mimetype) {
   return allowedTypes.includes(type)
 }
 
-export function getMimetype (fileBuffer) {
+export async function getMimetype (filestream) {
   try {
     const KB = 1024
 
-    /*
-      if the filebuffer is >= than KB we start looking at KB
-      if the filebuffer is < than KB we look at the entire filebuffer
-
-      if we dont get a valid mime keep checking more of the filebuffer to confirm
-    */
-    let searchBytes = fileBuffer.byteLength >= KB ? KB : fileBuffer.byteLength
+    let lastSearchBytes = 0
+    let searchBytes = KB
     let mimetype = 'invalid/mimetype'
-    let found = false
+    let isDetected = false
+    let returnStream
 
-    while (found === false && searchBytes <= fileBuffer.byteLength) {
-      mimetype = magic.getMime(fileBuffer.subarray(0, searchBytes))
+    // Keep looking for a valid mimetype until we run out of new bytes
+    // Generally we should only need the first 1KB or less
+    while (isDetected === false && searchBytes > lastSearchBytes) {
+      const { head, stream } = await streamHead(filestream, {
+        bytes: searchBytes
+      })
 
-      if (mimetype !== 'application/octet-stream' || searchBytes === fileBuffer.byteLength) {
-        // we either found a mimetype or we run out of filebuffer to search
-        found = true
+      mimetype = magic.getMime(head)
+      returnStream = stream
+
+      if (mimetype !== 'application/octet-stream') {
+        isDetected = true
       } else {
-        if (searchBytes + KB > fileBuffer.byteLength) {
-          // add the last bytes to search
-          searchBytes += fileBuffer.byteLength - searchBytes
-        } else if (searchBytes + KB <= fileBuffer.byteLength) {
-          // add additional KB to search
-          searchBytes += KB
-        }
+        lastSearchBytes = searchBytes
+        searchBytes += KB
       }
     }
 
-    return mimetype
+    return {
+      stream: returnStream,
+      mimetype: mimetype
+    }
   } catch (err) {
     error(err.stack)
-    return 'invalid/mimetype'
+
+    return {
+      stream: filestream,
+      mimetype: 'invalid/mimetype'
+    }
   }
 }
+

@@ -1,6 +1,7 @@
 import { resolve, join } from 'node:path'
-import { mkdir, writeFile, access, constants, unlink } from 'node:fs/promises'
-import { createReadStream } from 'node:fs'
+import { mkdir, access, constants, unlink } from 'node:fs/promises'
+import { createReadStream, createWriteStream } from 'node:fs'
+import { pipeline } from 'node:stream/promises'
 import { Log } from 'cmd430-utils'
 import { StorageInterfaceBase } from '../storage.js'
 
@@ -37,24 +38,36 @@ export default class StorageInterface extends StorageInterfaceBase {
    * @param {string} data.username The Username for the upload
    * @param {object} data.file
    * @param {string} data.file.filename The name of the file
-   * @param {Buffer} data.file.fileData The file data
+   * @param {ReadStream} data.file.filestream The file data stream
    * @param {object} data.thumbnail
    * @param {string} data.thumbnail.filename The name of the thumbnail
-   * @param {Buffer} data.thumbnail.fileData The thumbnail data
+   * @param {ReadStream} data.thumbnail.filestream The thumbnail data stream
+   * @returns {{
+   *  filesize: number,
+   *  thumbnailSize: number
+   * }} the size of the written file and thumbnail
    */
   async write (data) {
     const { username, file, thumbnail } = data
-    const { filename, fileData } = file
-    const { filename: thumbnailFilename, fileData: thumbnailData } = thumbnail
+    const { filename, filestream } = file
+    const { filename: thumbnailFilename, filestream: thumbnailStream } = thumbnail
 
     const filePath = this.#formatFilePath(username, filename)
     const thumbnailPath = this.#formatFilePath(username, thumbnailFilename)
 
-    await writeFile(filePath, fileData)
+    const writeFile = createWriteStream(filePath)
+    const writeThumbnail = createWriteStream(thumbnailPath)
+
+    await pipeline(filestream, writeFile)
     debug('File was Created successfully.')
 
-    await writeFile(thumbnailPath, thumbnailData)
+    await pipeline(thumbnailStream, writeThumbnail)
     debug('Thumbnail was Created successfully.')
+
+    return {
+      filesize: writeFile.bytesWritten,
+      thumbnailSize: writeThumbnail.bytesWritten
+    }
   }
 
   /**
@@ -68,7 +81,7 @@ export default class StorageInterface extends StorageInterfaceBase {
    * @returns {ReadStream}
    */
   async read (username, file, range = {}) {
-    const { offset = 0, count = Infinity } = range
+    const { offset = 0, count = undefined } = range
 
     return createReadStream(this.#formatFilePath(username, file), {
       start: offset,

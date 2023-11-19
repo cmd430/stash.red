@@ -21,6 +21,19 @@ const defaultThumbnailPaths = {
 // Disable cache to reduce memory usage
 sharp.cache(false)
 
+function streamToBuffer (readableStream) {
+  return new Promise((resolve, reject) => {
+    const chunks = []
+    readableStream.on('data', data => {
+      chunks.push(data instanceof Buffer ? data : Buffer.from(data))
+    })
+    readableStream.on('end', () => {
+      resolve(Buffer.concat(chunks))
+    })
+    readableStream.on('error', reject)
+  })
+}
+
 function ffmpegEscapeString (str) {
   // escape ffmpeg special chars
   str = str.replace(/\\/g, '\\\\\\\\')
@@ -31,84 +44,54 @@ function ffmpegEscapeString (str) {
   return str
 }
 
-async function ffmpeg (inputBuffer, type) {
+async function ffmpeg (inputStream, type) {
+  // So we dont do unnessasary processing
+  const inputText = type === 'text' ? ffmpegEscapeString((await streamToBuffer(inputStream)).toString()) : ''
   const args = {
     'video': [ '-r', '1', '-i', 'pipe:0', '-f', 'image2', '-vframes', '1', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
     'audio': [ '-i', 'pipe:0', '-f', 'image2', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
-    'text': [ '-f', 'lavfi', '-i', 'color=c=white:s=250x250:d=5.396', '-filter_complex', `drawtext=text='${ffmpegEscapeString(inputBuffer.toString())}':x=5:y=5:fontsize=16:fontcolor=000000:fontfile='${thumbnailFontPath}'`, '-vframes', '1', '-f', 'image2','-c:v', 'mjpeg', 'pipe:1' ]
+    'text': [ '-f', 'lavfi', '-i', 'color=c=white:s=250x250:d=5.396', '-filter_complex', `drawtext=text='${inputText}':x=5:y=5:fontsize=16:fontcolor=000000:fontfile='${thumbnailFontPath}'`, '-vframes', '1', '-f', 'image2','-c:v', 'mjpeg', 'pipe:1' ]
   }
 
-  let imageBuffer = null
+  return new Promise((resolve, reject) => {
+    const ffmpegProc = spawn(ffmpegBin, args[type])
 
-  try {
-
-    const image = new Promise((resolve, reject) => {
-      let outBuffer = null
-      const ffmpegProc = spawn(ffmpegBin, args[type])
-
-      // Get Buffer as Input Stream
-      ffmpegProc.stdin.on('error', err => {
-        /*
-         * we get an EOF error without this error handler but everything is fine,
-         * log the error if it is anything else
-         */
-        if (err.code === 'EOF') return
-
-        error('[FFMPEG stdin Error]', err.message)
-        ffmpegProc.kill()
-      })
-
-      if (type !== 'text') Readable.from(inputBuffer).pipe(ffmpegProc.stdin)
-
-      // Get output as Buffer
-      const buffers = []
-      ffmpegProc.stdout.on('readable', () => {
-        for (;;) {
-          const buffer = ffmpegProc.stdout.read()
-          if (!buffer) break
-          buffers.push(buffer)
-        }
-      })
-      ffmpegProc.stdout.on('end', () => {
-        outBuffer = Buffer.concat(buffers)
-      })
-
-      ffmpegProc.on('close', () => resolve(outBuffer))
-      ffmpegProc.on('error', err => {
-        error('[FFMPEG Error]', err.message)
-        resolve(outBuffer)
-        ffmpegProc.kill()
-      })
+    // Handle process Errors
+    ffmpegProc.on('error', err => {
+      error('[FFMPEG Error]', err.message)
+      ffmpegProc.kill()
     })
 
-    imageBuffer = await image
-  } catch (err) {
-    imageBuffer = null
-  }
-  return imageBuffer
+    ffmpegProc.stdin.on('error', err => {
+      // we get an EOF error without this error handler but everything is fine,
+      // log the error if it is anything else
+      if (err.code === 'EOF') return
+
+      error('[FFMPEG stdin Error]', err.message)
+      ffmpegProc.kill()
+    })
+
+    if (type !== 'text') inputStream.pipe(ffmpegProc.stdin)
+
+    resolve(ffmpegProc.stdout)
+  })
 }
 
 async function getDefaultThumbnail (type) {
-  return readFile(defaultThumbnailPaths[type])
+  return Readable.from(await readFile(defaultThumbnailPaths[type]))
 }
 
-export default async function generateThumbnail (mimetype, fileBuffer) {
+export default async function generateThumbnail (mimetype, filestream) {
   const type = new MIMEType(mimetypeFilter(mimetype)).type
 
-  let imageBuffer
-
-  if (type === 'image') {
-    imageBuffer = fileBuffer
-  }
-  if (type === 'video' || type === 'audio' || type === 'text') {
-    imageBuffer = await ffmpeg(fileBuffer, type)
-  }
-
-  if (imageBuffer instanceof Buffer === false || imageBuffer.byteLength === 0) return getDefaultThumbnail(type)
-
   try {
+    const imageStream = type === 'image' ? filestream : await ffmpeg(filestream, type)
+    const imageBuffer = await streamToBuffer(imageStream)
+
+    if (imageBuffer instanceof Buffer === false || imageBuffer.byteLength === 0) return getDefaultThumbnail(type)
+
     // Resize and crop Thumbnails
-    return sharp(imageBuffer)
+    const thumbnailBuffer = await sharp(imageBuffer)
       .resize({
         width: 250,
         height: 250,
@@ -128,7 +111,11 @@ export default async function generateThumbnail (mimetype, fileBuffer) {
         quality: 80
       })
       .toBuffer()
+
+    return Readable.from(thumbnailBuffer)
   } catch (err) {
+    error(err.stack)
+
     return getDefaultThumbnail(type)
   }
 }
