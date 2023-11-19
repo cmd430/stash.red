@@ -66,7 +66,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     const { id, username, email, password } = data
 
     this.#database
-      .prepare('INSERT INTO "accounts" ("id", "username", "email", "password") VALUES (?, ?, ?)')
+      .prepare('INSERT INTO "accounts" ("id", "username", "email", "password") VALUES (?, ?, ?, ?)')
       .run(id, username, email, password)
 
     return { succeeded: true, code: 'OK' }
