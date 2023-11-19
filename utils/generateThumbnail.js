@@ -1,8 +1,7 @@
 import { spawn } from 'node:child_process'
 import { MIMEType } from 'node:util'
 import { resolve } from 'node:path'
-import { readFile } from 'node:fs/promises'
-import { Readable } from 'node:stream'
+import { createReadStream } from 'node:fs'
 import ffmpegBin from 'ffmpeg-static'
 import { Log } from 'cmd430-utils'
 import sharp from 'sharp'
@@ -45,7 +44,7 @@ function ffmpegEscapeString (str) {
 }
 
 async function ffmpeg (inputStream, type) {
-  // So we dont do unnessasary processing
+  // So we dont do unnessasary processing, text needs to be buffered to generate the thumbnail
   const inputText = type === 'text' ? ffmpegEscapeString((await streamToBuffer(inputStream)).toString()) : ''
   const args = {
     'video': [ '-r', '1', '-i', 'pipe:0', '-f', 'image2', '-vframes', '1', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
@@ -77,8 +76,8 @@ async function ffmpeg (inputStream, type) {
   })
 }
 
-async function getDefaultThumbnail (type) {
-  return Readable.from(await readFile(defaultThumbnailPaths[type]))
+function getDefaultThumbnail (type) {
+  return createReadStream(defaultThumbnailPaths[type])
 }
 
 export default async function generateThumbnail (mimetype, filestream) {
@@ -91,7 +90,8 @@ export default async function generateThumbnail (mimetype, filestream) {
     if (imageBuffer instanceof Buffer === false || imageBuffer.byteLength === 0) return getDefaultThumbnail(type)
 
     // Resize and crop Thumbnails
-    const thumbnailBuffer = await sharp(imageBuffer)
+    const thumbnailBuffer = sharp(imageBuffer)
+      .rotate()
       .resize({
         width: 250,
         height: 250,
@@ -110,9 +110,8 @@ export default async function generateThumbnail (mimetype, filestream) {
       .webp({
         quality: 80
       })
-      .toBuffer()
 
-    return Readable.from(thumbnailBuffer)
+    return imageStream.pipe(thumbnailBuffer)
   } catch (err) {
     error(err.stack)
 
