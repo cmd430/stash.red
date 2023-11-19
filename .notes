@@ -167,3 +167,41 @@
 
     listen 80;
   }
+
+
+# code to help migrating old stash.red to new
+[sql]
+  -- Get users
+  -- Fields needed to be generated: id
+  SELECT NULL AS "id",
+    "username",
+    "email",
+    "password",
+    "admin" AS "isAdmin"
+  FROM "users";
+
+  -- Get files
+  -- Fields needed to be generated: albumOrder
+  -- Fields needed to be changed: file <- need to remove the folder from the start and give its file extention
+  SELECT "file_id" AS "id",
+    "original_filename" AS "name",
+    rtrim("mimetype", replace("mimetype", '/', '' ) )||"file_id"||'.*' AS "file",
+    "filesize" AS "size",
+    "mimetype" AS "type",
+    "uploaded_by" AS "uploadedBy",
+    "uploaded_at" AS "uploadedAt",
+    ifnull("uploaded_until", 'Infinity') AS "uploadedUntil",
+    NOT "public" AS "isPrivate",
+    "in_album" AS "inAlbum",
+    NULL AS "albumOrder"
+  FROM "files";
+
+  -- Get albums
+  SELECT "album_id" AS "id",
+    ifnull("title", 'Untitled Album') AS "title",
+    "uploaded_by" AS "uploadedBy",
+    "uploaded_at" AS "uploadedAt",
+    ifnull("uploaded_until", 'Infinity') AS "uploadedUntil",
+    NOT "public" AS "isPrivate"
+  FROM "albums";
+[/sql]
