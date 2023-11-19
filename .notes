@@ -122,7 +122,7 @@
          so would be easier to just dit the config and restart
   [ ] Find out why styles are flashing on load
       -> might need to load them in the head based of page rather than in the body from the partials
-  [ ] look into seeing if we can process the uploads as streams to improve memory use
+  [√] look into seeing if we can process the uploads as streams to improve memory use
       -> maybe upload to temp file to generate thumbnail then delete once done
          -> probably just have a stream to write to temp file (fastify.multipart has a
             built in method for this) and a stream to do the upload
