@@ -566,16 +566,13 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   async #addNewFileToAlbum (data) {
     const { album: albumID, id, name, file, size, type, uploadedBy } = data
 
-    const album = this.#database
-      .prepare(`SELECT * FROM (SELECT "id", "uploadedAt", "uploadedBy", "isPrivate", "entries", "uploadedUntil" FROM "albums" INNER JOIN (
+    const { uploadedAt: albumUploadedAt, uploadedBy: albumUploadedBy, isPrivate: albumIsPrivate, uploadedUntil: albumUploadedUntil, entries: albumEntries } = this.#database
+      .prepare(`SELECT "uploadedAt", "uploadedBy", "isPrivate", "entries", "uploadedUntil" FROM (SELECT "id", "uploadedAt", "uploadedBy", "isPrivate", "entries", "uploadedUntil" FROM "albums" INNER JOIN (
                 SELECT "entries" FROM "album"
               ) AS "entries" ON "id" = "id" GROUP BY "id") WHERE "id" = ?`)
-      .get(albumID)
+      .get(albumID) ?? {}
 
-    if (!album) return { succeeded: false, code: 404 } // Album does not exist
-
-    const { uploadedAt: albumUploadedAt, uploadedBy: albumUploadedBy, isPrivate: albumIsPrivate, uploadedUntil: albumUploadedUntil, entries: albumEntries } = album
-
+    if (albumUploadedBy === undefined) return { succeeded: false, code: 404 } // Album does not exist
     if (albumUploadedBy !== uploadedBy) return { succeeded: false, code: 403 } // Album is owned by another user
 
     this.#database
