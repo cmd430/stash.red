@@ -66,8 +66,13 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     const { id, username, email, password } = data
 
     this.#database
-      .prepare('INSERT INTO "accounts" ("id", "username", "email", "password") VALUES (?, ?, ?, ?)')
-      .run(id, username, email, password)
+      .prepare('INSERT INTO "accounts" VALUES (:id, :username, :email, :password)')
+      .run({
+        id: id,
+        username: username,
+        email: email,
+        password: password
+      })
 
     return { succeeded: true, code: 'OK' }
   }
@@ -83,8 +88,10 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    */
   async getAccount (username) {
     const { id: accountID, password: passwordHash, isAdmin } = this.#database
-      .prepare('SELECT "id", "password", "isAdmin" FROM "accounts" WHERE "username" = ?')
-      .get(username) ?? {}
+      .prepare('SELECT "id", "password", "isAdmin" FROM "accounts" WHERE "username" = :username')
+      .get({
+        username: username
+      }) ?? {}
 
     return {
       id: accountID,
@@ -133,8 +140,10 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    */
   async getFile (id) {
     const { file, type, uploadedBy, size } = this.#database
-      .prepare('SELECT "file", "type", "uploadedBy", "size" FROM "file" WHERE "id" = ?')
-      .get(id) ?? {}
+      .prepare('SELECT "file", "type", "uploadedBy", "size" FROM "files" WHERE "id" = :fileID')
+      .get({
+        fileID: id
+      }) ?? {}
 
     if (uploadedBy === undefined) return { succeeded: false, code: 404 } // File doesnt exist
 
@@ -164,15 +173,19 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    */
   async deleteFile (id, username) {
     const { file, uploadedBy } = this.#database
-      .prepare('SELECT "file", "uploadedBy" FROM "files" WHERE "id" = ?')
-      .get(id) ?? {}
+      .prepare('SELECT "file", "uploadedBy" FROM "files" WHERE "id" = :fileID')
+      .get({
+        fileID: id
+      }) ?? {}
 
     if (file === undefined) return { succeeded: false, code: 404 } // File doesnt exist
     if (username !== uploadedBy) return { succeeded: false, code: 403 } // File is owned by another user
 
     const { changes } = this.#database
-      .prepare('DELETE FROM "files" WHERE "id" = ?')
-      .run(id) ?? {}
+      .prepare('DELETE FROM "files" WHERE "id" = :fileID')
+      .run({
+        fileID: id
+      }) ?? {}
 
     if (changes === 0) return { succeeded: false, code: 500 } // Unable to remove file from DB
 
@@ -207,12 +220,23 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     debug('Album ID', albumID)
 
     this.#database
-      .prepare('INSERT INTO "albums" ("id", "title", "uploadedBy", "uploadedAt", "uploadedUntil", "isPrivate") VALUES (?, ?, ?, ?, ?, ?)')
-      .run(albumID, 'Untitled Album', uploadedBy, uploadedAt, uploadedUntil, isPrivate)
+      .prepare('INSERT INTO "albums" VALUES (:id, :title, :uploadedBy, :uploadedAt, :uploadedUntil, :isPrivate)')
+      .run({
+        id: albumID,
+        title: 'Untitled Album',
+        uploadedBy: uploadedBy,
+        uploadedAt: uploadedAt,
+        uploadedUntil: uploadedUntil,
+        isPrivate: isPrivate
+      })
 
 
-    const statement = this.#database.prepare('UPDATE "files" SET "inAlbum" = ?, "albumOrder" = ? WHERE "id" = ?')
-    const transaction = this.#database.transaction((fIDs, aID) => fIDs.map((fID, index) => statement.run(aID, index, fID)))
+    const statement = this.#database.prepare('UPDATE "files" SET "inAlbum" = :albumID, "albumOrder" = :albumOrder WHERE "id" = :fileID')
+    const transaction = this.#database.transaction((fIDs, aID) => fIDs.map((fID, index) => statement.run({
+      albumID: aID,
+      albumOrder: index,
+      fileID: fID
+    })))
     const updated = transaction(files, albumID)
       .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
 
@@ -241,14 +265,18 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    */
   async getAlbum (id) {
     const { title, uploadedBy } = this.#database
-      .prepare('SELECT "title", "uploadedBy" FROM "album" WHERE "id" = ?')
-      .get(id) ?? {}
+      .prepare('SELECT "title", "uploadedBy" FROM "albums" WHERE "id" = :fileID')
+      .get({
+        fileID: id
+      }) ?? {}
 
     if (uploadedBy === undefined) return { succeeded: false, code: 404 } // Album doesnt exist
 
     const albumFiles = this.#database
-      .prepare('SELECT "id", "file", "type", "order" FROM "albumFiles" WHERE "album" = ?')
-      .all(id) ?? []
+      .prepare('SELECT "id", "file", "type", "order" FROM "albumFiles" WHERE "album" = :albumID')
+      .all({
+        albumID: id
+      }) ?? []
 
     return {
       succeeded: true,
@@ -342,7 +370,25 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    */
   async getThumbnail (id) {
     const { thumbnail, uploadedBy } = this.#database
-      .prepare('SELECT "thumbnail", "uploadedBy" FROM (SELECT "id", "thumbnail", "uploadedBy" FROM "file" UNION SELECT "id", "thumbnail", "uploadedBy" FROM "album") WHERE "id" = ?')
+      .prepare(`
+        SELECT
+          "thumbnail",
+          "uploadedBy"
+        FROM
+          (SELECT
+            "id",
+            "thumbnail",
+            "uploadedBy"
+          FROM
+            "file"
+          UNION SELECT
+            "id",
+            "thumbnail",
+            "uploadedBy"
+          FROM
+            "album"
+        ) WHERE "id" = ?
+      `)
       .get(id)
 
     if (uploadedBy === undefined) return { succeeded: false, code: 404 } // File/Album doesnt exist
@@ -395,11 +441,49 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
       return `"${column}" LIKE '${filter}%'`
     }
     const getFilesIncludePrivate = this.#database
-      .prepare(`SELECT "id", "type", "isPrivate", "total" FROM "userFiles" WHERE "uploadedBy" = ? AND ${searchFilter('type')} ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
+      .prepare(`
+        SELECT
+          "id",
+          "type",
+          "isPrivate",
+          "total"
+        FROM
+          "userFiles"
+        WHERE
+          "uploadedBy" = :username
+        AND
+          ${searchFilter('type')}
+        ORDER BY
+          "uploadedAt" ${order}
+        LIMIT :limit
+        OFFSET :offset
+      `)
     const getFilesExcludePrivate = this.#database
-      .prepare(`SELECT "id", "type", "isPrivate", "total" FROM "userFiles" WHERE "uploadedBy" = ? AND NOT "isPrivate" = 1 AND ${searchFilter('type')} ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
+      .prepare(`
+        SELECT
+          "id",
+          "type",
+          "isPrivate",
+          "total"
+        FROM
+          "userFiles"
+        WHERE
+          "uploadedBy" = :username
+        AND NOT
+          "isPrivate" = TRUE
+        AND
+          ${searchFilter('type')}
+        ORDER BY
+          "uploadedAt" ${order}
+        LIMIT :limit
+        OFFSET :offset
+      `)
     const files = (includePrivate ? getFilesIncludePrivate : getFilesExcludePrivate)
-      .all(username, limit, offset) ?? []
+      .all({
+        username: username,
+        limit: limit,
+        offset: offset
+      }) ?? []
     const { total = 0 } = files[0] ?? {}
 
     return {
@@ -445,11 +529,47 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     if (email === undefined) return { succeeded: false, code: 404 } // User doesnt exist
 
     const getAlbumsIncludePrivate = this.#database
-      .prepare(`SELECT "id", "title", "isPrivate", "entries", "total" FROM "userAlbums" WHERE "uploadedBy" = ? ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
+      .prepare(`
+        SELECT
+          "id",
+          "title",
+          "isPrivate",
+          "entries",
+          "total"
+        FROM
+          "userAlbums"
+        WHERE
+          "uploadedBy" = :username
+        ORDER BY
+          "uploadedAt" ${order}
+        LIMIT :limit
+        OFFSET :offset
+      `)
     const getAlbumsExcludePrivate = this.#database
-      .prepare(`SELECT "id", "title", "isPrivate", "entries", "total" FROM "userAlbums" WHERE "uploadedBy" = ? AND NOT "isPrivate" = 1  ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
+      .prepare(`
+        SELECT
+          "id",
+          "title",
+          "isPrivate",
+          "entries",
+          "total"
+        FROM
+          "userAlbums"
+        WHERE
+          "uploadedBy" = :username
+        AND NOT
+          "isPrivate" = TRUE
+        ORDER BY
+          "uploadedAt" ${order}
+        LIMIT :limit
+        OFFSET :offset
+      `)
     const albums = (includePrivate ? getAlbumsIncludePrivate : getAlbumsExcludePrivate)
-      .all(username, limit, offset) ?? []
+      .all({
+        username: username,
+        limit: limit,
+        offset: offset
+      }) ?? []
     const { total = 0 } = albums[0] ?? {}
 
     return {
@@ -502,8 +622,11 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   async #editAlbumTitle (id, title) {
     const newTitle = title !== null && title.trim() === '' ? 'Untitled Album' : title.trim()
     const { changes } = this.#database
-      .prepare('UPDATE "albums" SET "title" = ? WHERE "id" = ? AND "title" <> ?')
-      .run(newTitle, id, newTitle)
+      .prepare('UPDATE "albums" SET "title" = :title WHERE "id" = :albumID AND "title" <> :title')
+      .run({
+        title: newTitle,
+        albumID: id
+      })
 
     if (changes > 0) debug('Updated title of album', id)
   }
@@ -524,9 +647,13 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     })
 
     const statement = this.#database
-      .prepare('UPDATE "files" SET "albumOrder" = ? WHERE "id" = ? AND "inAlbum" = ? AND "albumOrder" <> ?')
+      .prepare('UPDATE "files" SET "albumOrder" = :fileOrder WHERE "id" = :fileID AND "inAlbum" = :albumID AND "albumOrder" <> :fileOrder')
     const transaction = this.#database
-      .transaction(albumFiles => albumFiles.map(({ fileID, fileOrder, albumID }) => statement.run(fileOrder, fileID, albumID, fileOrder)))
+      .transaction(albumFiles => albumFiles.map(({ fileID, fileOrder, albumID }) => statement.run({
+        fileOrder,
+        fileID,
+        albumID
+      })))
     const updated = transaction(files)
       .reduce((accumulator, currentValue) => (accumulator += currentValue.changes), 0)
 
@@ -554,8 +681,18 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     const { id, name, file, size, type, uploadedBy, uploadedAt, uploadedUntil, isPrivate } = data
 
     this.#database
-      .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "uploadedAt", "uploadedUntil", "isPrivate") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(id, name, file, size, type, uploadedBy, uploadedAt, uploadedUntil, isPrivate)
+      .prepare('INSERT INTO "files" VALUES (:id, :name, :file, :size, :type, :uploadedBy, :uploadedAt, :uploadedUntil, :isPrivate)')
+      .run({
+        id: id,
+        name: name,
+        file: file,
+        size: size,
+        type: type,
+        uploadedBy: uploadedBy,
+        uploadedAt: uploadedAt,
+        uploadedUntil: uploadedUntil,
+        isPrivate: isPrivate
+      })
 
     return { succeeded: true, code: 'OK' }
   }
@@ -579,17 +716,43 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     const { album: albumID, id, name, file, size, type, uploadedBy } = data
 
     const { uploadedAt: albumUploadedAt, uploadedBy: albumUploadedBy, isPrivate: albumIsPrivate, uploadedUntil: albumUploadedUntil, entries: albumEntries } = this.#database
-      .prepare(`SELECT "uploadedAt", "uploadedBy", "isPrivate", "entries", "uploadedUntil" FROM (SELECT "id", "uploadedAt", "uploadedBy", "isPrivate", "entries", "uploadedUntil" FROM "albums" INNER JOIN (
-                SELECT "entries" FROM "album"
-              ) AS "entries" ON "id" = "id" GROUP BY "id") WHERE "id" = ?`)
+      .prepare(`
+        SELECT
+          "uploadedAt",
+          "uploadedBy",
+          "isPrivate",
+          (SELECT
+            "entries"
+          FROM
+            "album"
+          WHERE
+            "id" = "albums"."id"
+          ) AS "entries",
+          "uploadedUntil"
+        FROM
+          "albums"
+        WHERE "id" = ?
+      `)
       .get(albumID) ?? {}
 
     if (albumUploadedBy === undefined) return { succeeded: false, code: 404 } // Album does not exist
     if (albumUploadedBy !== uploadedBy) return { succeeded: false, code: 403 } // Album is owned by another user
 
     this.#database
-      .prepare('INSERT INTO "files" ("id", "name", "file", "size", "type", "uploadedBy", "uploadedAt", "uploadedUntil", "isPrivate", "inAlbum", "albumOrder") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(id, name, file, size, type, uploadedBy, albumUploadedAt, albumUploadedUntil, albumIsPrivate, albumID, albumEntries)
+      .prepare('INSERT INTO "files" VALUES (:id, :name, :file, :size, :type, :uploadedBy, :uploadedAt, :uploadedUntil, :isPrivate", :inAlbum", :albumOrder)')
+      .run({
+        id: id,
+        name: name,
+        fil: file,
+        size: size,
+        type: type,
+        uploadedBy: uploadedBy,
+        uploadedAt: albumUploadedAt,
+        uploadedUntil: albumUploadedUntil,
+        isPrivate: albumIsPrivate,
+        inAlbum: albumID,
+        albumOrder: albumEntries
+      })
 
     return { succeeded: true, code: 'OK' }
   }
