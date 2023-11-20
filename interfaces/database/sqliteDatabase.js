@@ -138,8 +138,8 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    *  code: 'OK'|number,
    *  data?: {
    *    file: string,
-   *    type: string
-   *    uploadedBy: string
+   *    type: string,
+   *    uploadedBy: string,
    *    size: number
    *  }
    * }}
