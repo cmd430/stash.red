@@ -56,22 +56,30 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @param {string} data.id The account ID
    * @param {string} data.username The account username
    * @param {string} data.email The account email
-   * @param {string} data.password The hashed account password
+   * @param {string} data.password The hashed account password,
+   * @param {boolean|0|1} [data.isAdmin=false] if the account is an admin
    * @returns {{
    *  succeeded: boolean,
    *  code: 'OK'|number
    * }}
    */
   async createAccount (data) {
-    const { id, username, email, password } = data
+    const { id, username, email, password, isAdmin = false } = data
 
     this.#database
-      .prepare('INSERT INTO "accounts" VALUES (:id, :username, :email, :password)')
+      .prepare(`
+        INSERT INTO "accounts" (
+          "id", "username", "email", "password", "isAdmin"
+        ) VALUES (
+          :id, :username, :email, :password, :isAdmin
+        )
+      `)
       .run({
         id: id,
         username: username,
         email: email,
-        password: password
+        password: password,
+        isAdmin: Number(isAdmin)
       })
 
     return { succeeded: true, code: 'OK' }
@@ -89,9 +97,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   async getAccount (username) {
     const { id: accountID, password: passwordHash, isAdmin } = this.#database
       .prepare('SELECT "id", "password", "isAdmin" FROM "accounts" WHERE "username" = :username')
-      .get({
-        username: username
-      }) ?? {}
+      .get({ username: username }) ?? {}
 
     return {
       id: accountID,
@@ -141,9 +147,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   async getFile (id) {
     const { file, type, uploadedBy, size } = this.#database
       .prepare('SELECT "file", "type", "uploadedBy", "size" FROM "files" WHERE "id" = :fileID')
-      .get({
-        fileID: id
-      }) ?? {}
+      .get({ fileID: id }) ?? {}
 
     if (uploadedBy === undefined) return { succeeded: false, code: 404 } // File doesnt exist
 
@@ -174,18 +178,14 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   async deleteFile (id, username) {
     const { file, uploadedBy } = this.#database
       .prepare('SELECT "file", "uploadedBy" FROM "files" WHERE "id" = :fileID')
-      .get({
-        fileID: id
-      }) ?? {}
+      .get({ fileID: id }) ?? {}
 
     if (file === undefined) return { succeeded: false, code: 404 } // File doesnt exist
     if (username !== uploadedBy) return { succeeded: false, code: 403 } // File is owned by another user
 
     const { changes } = this.#database
       .prepare('DELETE FROM "files" WHERE "id" = :fileID')
-      .run({
-        fileID: id
-      }) ?? {}
+      .run({ fileID: id }) ?? {}
 
     if (changes === 0) return { succeeded: false, code: 500 } // Unable to remove file from DB
 
@@ -220,7 +220,13 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     debug('Album ID', albumID)
 
     this.#database
-      .prepare('INSERT INTO "albums" VALUES (:id, :title, :uploadedBy, :uploadedAt, :uploadedUntil, :isPrivate)')
+      .prepare(`
+        INSERT INTO "albums" (
+          "id", "title", "uploadedBy", "uploadedAt", "uploadedUntil", "isPrivate"
+        ) VALUES (
+          :id, :title, :uploadedBy, :uploadedAt, :uploadedUntil, :isPrivate
+        )
+      `)
       .run({
         id: albumID,
         title: 'Untitled Album',
@@ -229,7 +235,6 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
         uploadedUntil: uploadedUntil,
         isPrivate: isPrivate
       })
-
 
     const statement = this.#database.prepare('UPDATE "files" SET "inAlbum" = :albumID, "albumOrder" = :albumOrder WHERE "id" = :fileID')
     const transaction = this.#database.transaction((fIDs, aID) => fIDs.map((fID, index) => statement.run({
@@ -266,17 +271,13 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   async getAlbum (id) {
     const { title, uploadedBy } = this.#database
       .prepare('SELECT "title", "uploadedBy" FROM "albums" WHERE "id" = :fileID')
-      .get({
-        fileID: id
-      }) ?? {}
+      .get({ fileID: id }) ?? {}
 
     if (uploadedBy === undefined) return { succeeded: false, code: 404 } // Album doesnt exist
 
     const albumFiles = this.#database
       .prepare('SELECT "id", "file", "type", "order" FROM "albumFiles" WHERE "album" = :albumID')
-      .all({
-        albumID: id
-      }) ?? []
+      .all({ albumID: id }) ?? []
 
     return {
       succeeded: true,
@@ -305,15 +306,15 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    */
   async deleteAlbum (id, username) {
     const { uploadedBy, files, entries } = this.#database
-      .prepare('SELECT "uploadedBy", "files", "entries" FROM "album" WHERE "id" = ?')
-      .get(id) ?? {}
+      .prepare('SELECT "uploadedBy", "files", "entries" FROM "album" WHERE "id" = :albumID')
+      .get({ albumID: id }) ?? {}
 
     if (uploadedBy === undefined) return { succeeded: false, code: 404 } // Album doesnt exist
     if (username !== uploadedBy) return { succeeded: false, code: 403 } // Album is owned by another user
 
     const { changes } = this.#database
-      .prepare('DELETE FROM "albums" WHERE "id" = ?')
-      .run(id) ?? {}
+      .prepare('DELETE FROM "albums" WHERE "id" = :albumID')
+      .run({ albumID: id }) ?? {}
 
     if (changes === 0) return { succeeded: false, code: 500 }
 
@@ -342,8 +343,8 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    */
   async editAlbum (id, username, payload) {
     const { uploadedBy } = this.#database
-      .prepare('SELECT "uploadedBy" FROM "albums" WHERE "id" = ?')
-      .get(id) ?? {}
+      .prepare('SELECT "uploadedBy" FROM "albums" WHERE "id" = :albumID')
+      .get({ albumID: id }) ?? {}
 
     if (uploadedBy === undefined) return { succeeded: false, code: 404 } // Album doesnt exist
     if (username !== uploadedBy) return { succeeded: false, code: 403 } // Album is owned by another user
@@ -387,9 +388,9 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
             "uploadedBy"
           FROM
             "album"
-        ) WHERE "id" = ?
+        ) WHERE "id" = :id
       `)
-      .get(id)
+      .get({ id: id })
 
     if (uploadedBy === undefined) return { succeeded: false, code: 404 } // File/Album doesnt exist
 
@@ -429,8 +430,8 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   async getUserFiles (username, options) {
     const { includePrivate, offset, limit, order, filter } = options
     const { email } = this.#database
-      .prepare('SELECT "email" FROM "accounts" WHERE "username" = ?')
-      .get(username)
+      .prepare('SELECT "email" FROM "accounts" WHERE "username" = :username')
+      .get({ username: username })
 
     if (email === undefined) return { succeeded: false, code: 404 } // User doesnt exist
 
@@ -523,8 +524,8 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   async getUserAlbums (username, options) {
     const { includePrivate, offset, limit, order } = options
     const { email } = this.#database
-      .prepare('SELECT "email" FROM "accounts" WHERE "username" = ?')
-      .get(username)
+      .prepare('SELECT "email" FROM "accounts" WHERE "username" = :username')
+      .get({ username: username })
 
     if (email === undefined) return { succeeded: false, code: 404 } // User doesnt exist
 
@@ -681,7 +682,12 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     const { id, name, file, size, type, uploadedBy, uploadedAt, uploadedUntil, isPrivate } = data
 
     this.#database
-      .prepare('INSERT INTO "files" VALUES (:id, :name, :file, :size, :type, :uploadedBy, :uploadedAt, :uploadedUntil, :isPrivate)')
+      .prepare(`
+        INSERT INTO "files" (
+          "id", "name", "file", "size", "type", "uploadedBy", "uploadedAt", "uploadedUntil", "isPrivate"
+        ) VALUES (
+          :id, :name, :file, :size, :type, :uploadedBy, :uploadedAt, :uploadedUntil, :isPrivate
+        )`)
       .run({
         id: id,
         name: name,
@@ -731,15 +737,21 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
           "uploadedUntil"
         FROM
           "albums"
-        WHERE "id" = ?
+        WHERE "id" = :albumID
       `)
-      .get(albumID) ?? {}
+      .get({ albumID: albumID }) ?? {}
 
     if (albumUploadedBy === undefined) return { succeeded: false, code: 404 } // Album does not exist
     if (albumUploadedBy !== uploadedBy) return { succeeded: false, code: 403 } // Album is owned by another user
 
     this.#database
-      .prepare('INSERT INTO "files" VALUES (:id, :name, :file, :size, :type, :uploadedBy, :uploadedAt, :uploadedUntil, :isPrivate", :inAlbum", :albumOrder)')
+      .prepare(`
+        INSERT INTO "files" (
+          "id", "name", "file", "size", "type", "uploadedBy", "uploadedAt", "uploadedUntil", "isPrivate", "inAlbum", "albumOrder"
+        ) VALUES (
+          :id, :name, :file, :size, :type, :uploadedBy, :uploadedAt, :uploadedUntil, :isPrivate", :inAlbum", :albumOrder
+        )
+      `)
       .run({
         id: id,
         name: name,

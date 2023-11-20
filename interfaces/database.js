@@ -27,6 +27,7 @@ export class DatabaseInterfaceBase {
    * @param {string} data.username The account username
    * @param {string} data.email The account email
    * @param {string} data.password The hashed account password
+   * @param {boolean|0|1} [data.isAdmin=false] if the account is an admin
    * @returns {{
    *  succeeded: boolean,
    *  code: 'OK'|number
