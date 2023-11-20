@@ -120,8 +120,10 @@
          and just stream that to admin somehow
       -> very very rarely need to edit settings and config is also only loaded once at load
          so would be easier to just dit the config and restart
-  [ ] Find out why styles are flashing on load
-      -> might need to load them in the head based of page rather than in the body from the partials
+  [x] Find out why styles are flashing on load sometimes
+      -> seems to be unrelated to where the styles are loaded
+      -> might be something JS related but i cant find anything concrete
+      -> might come back to this at a later date
   [√] look into seeing if we can process the uploads as streams to improve memory use
       -> maybe upload to temp file to generate thumbnail then delete once done
          -> probably just have a stream to write to temp file (fastify.multipart has a
@@ -137,6 +139,7 @@
   [√] Change TTL field in DB to uploadedUntil and store as a timestamp
       -> will allow for simpler query to get expired uploads
       -> need to calculate the timestamp add add it with the upload arather than the ttl from upload
+  [√] code for migation from old stash instance to new stash
 
 -= New things I want to add at some point =-
   [√] Dark mode
@@ -146,8 +149,9 @@
   [x] Typescript type defs so we get nice Typescript annotations
       -> https://www.typescriptlang.org/docs/handbook/declaration-files/dts-from-js.html
       -> cant be bothered lamo
-  [ ] P2P file share with WebRTC, URL -> `/t/:id`
+  [x] P2P file share with WebRTC, URL -> `/t/:id`
       -> https://github.com/feross/simple-peer
+      -> out of scope
 
 -= URL references =-
   - `/f/:id` for files
