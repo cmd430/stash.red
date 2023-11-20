@@ -16,5 +16,5 @@ CREATE TABLE IF NOT EXISTS "accounts" (
   paramater set somehow
 */
 INSERT INTO "accounts" ("id", "username", "email", "password", "isAdmin") SELECT 'INTERNAL', 'SYSTEM', 'SYSTEM', 'SYSTEM', '1' WHERE NOT EXISTS (
-  SELECT 1 FROM "accounts" WHERE id = 'INTERNAL'
+  SELECT TRUE FROM "accounts" WHERE "id" = 'INTERNAL'
 );
