@@ -388,10 +388,16 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
 
     if (email === undefined) return { succeeded: false, code: 404 } // User doesnt exist
 
+    const searchFilter = column => {
+      if (filter === '') return `"${column}" LIKE '%'`
+      if (filter === 'text') return `"${column}" LIKE '${filter}%' OR "${column}" LIKE '%javascript'`
+
+      return `"${column}" LIKE '${filter}%'`
+    }
     const getFilesIncludePrivate = this.#database
-      .prepare(`SELECT "id", "type", "isPrivate", "total" FROM "userFiles" WHERE "uploadedBy" = ? AND "type" LIKE '${filter}%' ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT "id", "type", "isPrivate", "total" FROM "userFiles" WHERE "uploadedBy" = ? AND ${searchFilter('type')} ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
     const getFilesExcludePrivate = this.#database
-      .prepare(`SELECT "id", "type", "isPrivate", "total" FROM "userFiles" WHERE "uploadedBy" = ? AND NOT "isPrivate" = 1 AND "type" LIKE '${filter}%' ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
+      .prepare(`SELECT "id", "type", "isPrivate", "total" FROM "userFiles" WHERE "uploadedBy" = ? AND NOT "isPrivate" = 1 AND ${searchFilter('type')} ORDER BY "uploadedAt" ${order} LIMIT ? OFFSET ?`)
     const files = (includePrivate ? getFilesIncludePrivate : getFilesExcludePrivate)
       .all(username, limit, offset) ?? []
     const { total = 0 } = files[0] ?? {}
