@@ -72,6 +72,7 @@ export default function (fastify, opts, done) {
     return reply
       .status((count !== size) ? 206 : 200)
       .type(mimetypeFilter(type))
+      .disableCache()
       .header('accept-ranges', 'bytes')
       .header('content-range', `bytes ${offset}-${count}/${size}`)
       .send(await fastify.storage.read(uploadedBy, file, {
