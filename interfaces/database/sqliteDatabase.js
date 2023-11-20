@@ -687,7 +687,8 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
           "id", "name", "file", "size", "type", "uploadedBy", "uploadedAt", "uploadedUntil", "isPrivate"
         ) VALUES (
           :id, :name, :file, :size, :type, :uploadedBy, :uploadedAt, :uploadedUntil, :isPrivate
-        )`)
+        )
+      `)
       .run({
         id: id,
         name: name,
