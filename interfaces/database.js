@@ -5,7 +5,6 @@ const { log, debug, info, warn, error } = new Log('Database')
 
 /**
  * Base class for DatabaseInterface
- * @interface
  */
 export class DatabaseInterfaceBase {
   /**
@@ -13,7 +12,7 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name connect
+   * @name DatabaseInterfaceBase#connect
    */
 
   /**
@@ -21,17 +20,19 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name createAccount
+   * @name DatabaseInterfaceBase#createAccount
    * @param {object} data
    * @param {string} data.id The account ID
    * @param {string} data.username The account username
    * @param {string} data.email The account email
    * @param {string} data.password The hashed account password
    * @param {boolean|0|1} [data.isAdmin=false] if the account is an admin
-   * @returns {{
-   *  succeeded: boolean,
-   *  code: 'OK'|number
-   * }}
+   * @returns {createAccountResult}
+   */
+  /**
+   * @typedef {object} createAccountResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
    */
 
   /**
@@ -39,13 +40,15 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name getAccount
+   * @name DatabaseInterfaceBase#getAccount
    * @param {string} username The username of the account
-   * @returns {{
-   *  id: string,
-   *  password: string,
-   *  isAdmin: boolean
-   * }}
+   * @returns {getAccountResult}
+   */
+  /**
+   * @typedef {object} getAccountResult
+   * @property {string} id The unique id for the account
+   * @property {string} password The hashed password of the account
+   * @property {boolean} isAdmin A boolean indicating if the account is an admin user
    */
 
   /**
@@ -53,7 +56,7 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name addFile
+   * @name DatabaseInterfaceBase#addFile
    * @param {object} data
    * @param {string} data.id The file id
    * @param {string} data.name The name of the uploaded file
@@ -65,10 +68,12 @@ export class DatabaseInterfaceBase {
    * @param {number|null} data.uploadedUntil The date a file is uploaded until or null for infinity
    * @param {string} [data.album] The optional id of an album to add the file to
    * @param {boolean} [data.isPrivate] If the file is hidden from the user page for others
-   * @returns {{
-   *  succeeded: boolean,
-   *  code: 'OK'|number
-   * }}
+   * @returns {addFileResult}
+   */
+  /**
+   * @typedef {object} addFileResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
    */
 
   /**
@@ -76,18 +81,19 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name getFile
+   * @name DatabaseInterfaceBase#getFile
    * @param {string} id The file id
-   * @returns {{
-   *  succeeded: boolean,
-   *  code: 'OK'|number,
-   *  data?: {
-   *    file: string,
-   *    type: string
-   *    uploadedBy: string
-   *    size: number
-   *  }
-   * }}
+   * @returns {getFileResult}
+   */
+  /**
+   * @typedef {object} getFileResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
+   * @property {object} [data] returned data if succeeded = true
+   * @property {string} data.file the identifier of the file in storage
+   * @property {string} data.type the mimetype of the file
+   * @property {string} data.uploadedBy the file uploaders username
+   * @property {number} data.size the size in bytes of the file
    */
 
   /**
@@ -95,16 +101,17 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name deleteFile
+   * @name DatabaseInterfaceBase#deleteFile
    * @param {string} id The file ID
    * @param {string} username the username trying to delete the file
-   * @returns {{
-   *  succeeded: boolean,
-   *  code: 'OK'|number,
-   *  data?: {
-   *    file: string
-   *  }
-   * }}
+   * @returns {deleteFileResult}
+   */
+  /**
+   * @typedef {object} deleteFileResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
+   * @property {object} [data] returned data if succeeded = true
+   * @property {string} data.file the identifier of the file in storage
    */
 
   /**
@@ -112,7 +119,7 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name createAlbum
+   * @name DatabaseInterfaceBase#createAlbum
    * @param {object} data
    * @param {string} data.id The album id
    * @param {string} data.name The name of the uploaded file
@@ -120,10 +127,12 @@ export class DatabaseInterfaceBase {
    * @param {number|null} data.uploadedAt The upload date & time an ablum was uploaded
    * @param {number|null} data.uploadedUntil The date an ablum is uploaded until or null for infinity
    * @param {boolean} data.isPrivate If the file is hidden from the user page for others
-   * @returns {{
-   *  succeeded: boolean,
-   *  code: 'OK'|number
-   * }}
+   * @returns {createAlbumResult}
+   */
+  /**
+   * @typedef {object} createAlbumResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
    */
 
   /**
@@ -131,22 +140,22 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name getAlbum
+   * @name DatabaseInterfaceBase#getAlbum
    * @param {string} id The album id
-   * @returns {{
-   *  succeeded: boolean,
-   *  code: number|'OK',
-   *  data?: {
-   *    title: string,
-   *    uploadedBy: string,
-   *    files: [{
-   *      id: string,
-   *      file: string,
-   *      type: string,
-   *      order: number
-   *    }]
-   *  }
-   * }}
+   * @returns {getAlbumResult}
+   */
+  /**
+   * @typedef {object} getAlbumResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
+   * @property {object} [data] returned data if succeeded = true
+   * @property {string} data.title the title of the album
+   * @property {string} data.uploadedBy the album uploaders username
+   * @property {object[]} data.files array of files in the album
+   * @property {string} data.files.id the id of the file
+   * @property {string} data.files.file the identifier of the file in storage
+   * @property {string} data.files.type the mimetype of the file
+   * @property {number} data.files.order the order of the file in the album
    */
 
   /**
@@ -154,18 +163,17 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name deleteAlbum
+   * @name DatabaseInterfaceBase#deleteAlbum
    * @param {string} id The album ID
    * @param {string} username the username trying to delete the album
-   * @returns {{
-   *  succeeded: boolean,
-   *  code: number|'OK',
-   *  data?: {
-   *    files: [
-   *      string
-   *    ]
-   *  }
-   * }}
+   * @returns {deleteAlbumResult}
+   */
+  /**
+   * @typedef {object} deleteAlbumResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
+   * @property {object} [data] returned data if succeeded = true
+   * @property {string[]} data.files array of file identifiers for the deleted files in storage
    */
 
   /**
@@ -173,16 +181,18 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name editAlbum
+   * @name DatabaseInterfaceBase#editAlbum
    * @param {string} id The id of the album
    * @param {string} username The user trying to edit the album
    * @param {object} payload
    * @param {string} [payload.title] The new title to set for the album
    * @param {object} [payload.order] and object of `fileID: albumOrders` for the album
-   * @returns {{
-   *  succeeded: boolean,
-   *  code: 'OK'|number
-   * }}
+   * @returns {editAlbumResult}
+   */
+  /**
+   * @typedef {object} editAlbumResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
    */
 
   /**
@@ -190,16 +200,17 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name getThumbnail
+   * @name DatabaseInterfaceBase#getThumbnail
    * @param {string} id The file/album id
-   * @returns {{
-   *  succeeded: boolean,
-   *  code: number|'OK',
-   *  data?: {
-   *    uploadedBy: string,
-   *    thumbnail: string
-   *  }
-   * }}
+   * @returns {getThumbnailResult}
+   */
+  /**
+   * @typedef {object} getThumbnailResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
+   * @property {object} [data] returned data if succeeded = true
+   * @property {string} data.uploadedBy the uploaders username of the thumbnail
+   * @property {string} data.thumbnail the file identifier of the thumbnail
    */
 
   /**
@@ -207,7 +218,7 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name getUserFiles
+   * @name DatabaseInterfaceBase#getUserFiles
    * @param {string} username The username to get the files for
    * @param {object} options
    * @param {number} options.offset the offset for pagination
@@ -215,19 +226,19 @@ export class DatabaseInterfaceBase {
    * @param {'ASC'|'DESC'} options.order the order of the items
    * @param {string} options.filter the filetype filter
    * @param {boolean} options.includePrivate if we should return private files
-   * @returns {{
-   *  succeeded: boolean,
-   *  code: number|'OK',
-   *  data?: {
-   *    email: string,
-   *    files: [{
-   *      id: string,
-   *      type: string,
-   *      isPrivate: number|boolean
-   *    }],
-   *    total: number
-   *  }
-   * }}
+   * @returns {getUserFilesResult}
+   */
+  /**
+   * @typedef {object} getUserFilesResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
+   * @property {object} [data] returned data if succeeded = true
+   * @property {string} data.email the email of the user
+   * @property {object[]} data.files array of files the user has uploaded
+   * @property {string} data.files.id the id of the file
+   * @property {string} data.files.type the mimetype of the file
+   * @property {0|1|boolean} data.files.isPrivate if the file is private or not
+   * @property {number} data.total the total number of files the user has uploaded
    */
 
   /**
@@ -235,27 +246,27 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name getUserAlbums
+   * @name DatabaseInterfaceBase#getUserAlbums
    * @param {string} username The username to get the albums for
    * @param {object} options
    * @param {number} options.offset the offset for pagination
    * @param {number} options.limit the max amount of items to return
    * @param {'ASC'|'DESC'} options.order the order of the items
    * @param {boolean} options.includePrivate if we should return private albums
-   * @returns {{
-   *  succeeded: boolean,
-   *  code: number|'OK',
-   *  data?: {
-   *    email: string,
-   *    albums: [{
-   *      id: string,
-   *      title: string,
-   *      isPrivate: number|boolean,
-   *      entries: number
-   *    }],
-   *    total: number
-   *  }
-   * }}
+   * @returns {getUserAlbumsResult}
+   */
+  /**
+   * @typedef {object} getUserAlbumsResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
+   * @property {object} [data] returned data if succeeded = true
+   * @property {string} data.email the email of the user
+   * @property {object[]} data.albums array of albums the user has uploaded
+   * @property {string} data.albums.id the id of the album
+   * @property {string} data.albums.title the title of the album
+   * @property {0|1|boolean} data.albums.isPrivate if the file is private or not
+   * @property {number} data.albums.entries the total number of files in the album
+   * @property {number} data.total the total number of albums the user has uploaded
    */
 
   /**
@@ -263,24 +274,26 @@ export class DatabaseInterfaceBase {
    * @public
    * @async
    * @method
-   * @name cleanExpired
-   * @returns {{
-   *  succeeded: boolean,
-   *  code: number|'OK',
-   *  data?: {
-   *    expired: [{
-   *      file: string,
-   *      uploadedBy: string
-   *    }]
-   *  }
-   * }}
+   * @name DatabaseInterfaceBase#cleanExpired
+   * @returns {cleanExpiredResult}
+   */
+  /**
+   * @typedef {object} cleanExpiredResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
+   * @property {object} [data] returned data if succeeded = true
+   * @property {object[]} data.expired array of expired files
+   * @property {string} data.expired.file the identifier of the file
+   * @property {string} data.expired.uploadedBy the username of the uploader
    */
 }
 
 /**
- * @typedef { "sqlite" } interfaceTypes
+ * @typedef {"sqlite"} interfaceTypes
  */
-
+/**
+ * @typedef {DatabaseInterfaceBase} DatabaseInterface
+ */
 /**
  * @param {interfaceTypes} interfaceType
  * @returns {DatabaseInterface}

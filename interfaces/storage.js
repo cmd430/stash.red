@@ -7,7 +7,6 @@ const { log, debug, info, warn, error } = new Log('Storage')
 
 /**
  * Base class for StorageInterfaces
- * @interface
  */
 export class StorageInterfaceBase {
 
@@ -26,7 +25,7 @@ export class StorageInterfaceBase {
    * Create the storage container for a user
    * @public
    * @method
-   * @name createContainer
+   * @name StorageInterfaceBase#createContainer
    * @param {string} username
    * @returns {void}
    */
@@ -36,10 +35,7 @@ export class StorageInterfaceBase {
    * @protected
    * @param {string} username
    * @param {string} filename
-   * @returns {{
-   *  filename: string,
-   *  thumbnailFilename: string
-   * }}
+   * @returns {createResult} an object containing the identifiers for the file and thumbnail in storage
    */
   create (username, filename) {
     const storageFilename = `${randomUUID()}${extname(filename)}`
@@ -50,13 +46,18 @@ export class StorageInterfaceBase {
       thumbnailFilename: thumbnailFilename
     }
   }
+  /**
+   * @typedef {object} createResult
+   * @property {string} filename The unique identifier for the file in storage
+   * @property {string} thumbnailFilename The unique identifier for the thumbnail in storage
+   */
 
   /**
    * Set the file AND thumbnail data for a file
    * @public
    * @async
    * @method
-   * @name write
+   * @name StorageInterfaceBase#write
    * @param {object} data
    * @param {string} data.username The Username for the upload
    * @param {object} data.file
@@ -65,10 +66,12 @@ export class StorageInterfaceBase {
    * @param {object} data.thumbnail
    * @param {string} data.thumbnail.filename The name of the thumbnail
    * @param {ReadStream} data.thumbnail.filestream The thumbnail data stream
-   * @returns {{
-   *  filesize: number,
-   *  thumbnailSize: number
-   * }} the size of the written file and thumbnail
+   * @returns {writeResult} the size of the written file and thumbnail
+   */
+  /**
+   * @typedef {object} writeResult
+   * @property {number} filesize The size of the file in bytes
+   * @property {number} thumbnailSize The size of the thumbnail in bytes
    */
 
   /**
@@ -76,13 +79,13 @@ export class StorageInterfaceBase {
    * @public
    * @async
    * @method
-   * @name read
+   * @name StorageInterfaceBase#read
    * @param {string} username The Username for the upload
    * @param {string} file The file id for the file or the thumbnail id for the thumbnail
    * @param {object} [range]
    * @param {number} range.offset The file offset in bytes to start reading
    * @param {number|undefined} range.count The amount in bytes of the file to read
-   * @returns {ReadStream}
+   * @returns {ReadStream} a readable stream of the files content
    */
 
   /**
@@ -90,17 +93,17 @@ export class StorageInterfaceBase {
    * @public
    * @async
    * @method
-   * @name delete
+   * @name StorageInterfaceBase#delete
    * @param {string} username
    * @param {string} file
-   * @returns {boolean}
+   * @returns {boolean} boolean indicating if the file (and its thumbnail) was successfully deleted
    */
 
   /**
    * Get the thumbnail name from a file
    * @protected
    * @param {string} filename the name of the file to get the thumbnail path for
-   * @returns {string}
+   * @returns {string} the unique identifier of the thumbnail based on the identifier of a file
    */
   deriveThumbnail (filename) {
     return join(this.thumbnailDirectory, `thumbnail_${basename(filename, extname(filename))}${this.thumbnailExt}`)
@@ -109,9 +112,11 @@ export class StorageInterfaceBase {
 }
 
 /**
- * @typedef { "file" | "azure" } interfaceTypes
+ * @typedef {"file"|"azure"} interfaceTypes
  */
-
+/**
+ * @typedef {StorageInterfaceBase} StorageInterface
+ */
 /**
  * @param {interfaceTypes} interfaceType
  * @returns {StorageInterface}
