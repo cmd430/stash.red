@@ -35,11 +35,13 @@
   },
   "devDependencies": {
     "eslint": "^8.54.0",
+    "jsdoc": "^4.0.2",
     "sass": "^1.69.5"
   },
   "scripts": {
     "sass: compile": "npx sass public/scss:public/css",
     "sass: watch": "npx sass --watch public/scss:public/css",
+    "jsdoc:generate": "npx jsdoc interfaces/database.js interfaces/storage.js -d .github/docs",
     "start": "node main.js"
   },
   "engines": {
