@@ -4,11 +4,9 @@ import { Log } from 'cmd430-utils'
 const { log, debug, info, warn, error } = new Log('Session Debug')
 
 export default function handler (request, reply, done) {
-
   debug({
     authenticated: (request.session.get('authenticated') ?? false),
     ...request.session.get('session')
   })
-
   done()
 }

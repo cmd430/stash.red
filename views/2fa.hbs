@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {{> head}}
+    <link rel="stylesheet" href="/css/login_signup.css" />
+  </head>
+  <body>
+    {{> themeToggle}}
+    <header>
+      {{> logo}}
+    </header>
+    <main>
+      <section>
+        <form method="POST" action="/verify">
+          <input name="token" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" placeholder="2FA Code" />
+          <div>
+            <span></span>
+            <input name="submit" type="submit" value="submit" />
+          </div>
+        </form>
+      </section>
+    </main>
+    <footer></footer>
+  </body>
+</html>

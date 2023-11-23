@@ -11,6 +11,7 @@ import cfTurnstile from 'fastify-cloudflare-turnstile'
 import { evaluate } from 'mathjs'
 import SqliteStore from 'fastify-session-better-sqlite3-store'
 import view from '@fastify/view'
+import totp from 'fastify-totp'
 import handlebars from 'handlebars'
 import { config } from './config/config.js'
 import { sessions } from './sessions/sessions.js'
@@ -91,6 +92,7 @@ try {
       useDataVariables: true
     }
   })
+  fastify.register(totp)
   fastify.register(disableCache)
   fastify.register(errorPage)
 

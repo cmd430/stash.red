@@ -13,9 +13,9 @@
     <main>
       <section>
         <form method="POST" action="/signup">
-          <input name="username" type="text" placeholder="Username" />
-          <input name="email" type="email" placeholder="Email" />
-          <input name="password" type="password" placeholder="Password" />
+          <input name="username" type="text" autocomplete="username" placeholder="Username" />
+          <input name="email" type="email" autocomplete="email" placeholder="Email" />
+          <input name="password" type="password" autocomplete="new-password" placeholder="Password" />
           <input name="passwordConfirm" type="password" placeholder="Confirm Password" />
           {{#if captcha}}
             <div class="cf-turnstile" data-sitekey="{{captcha}}" data-appearance="always"></div>

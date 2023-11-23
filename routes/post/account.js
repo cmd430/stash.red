@@ -11,6 +11,7 @@ export default function (fastify, opts, done) {
 
   // Signup
   fastify.post('/signup', { preHandler: fastify.cfTurnstile }, async (request, reply) => {
+    if (request.session.get('authenticated')) return reply.redirect('/')
     if (site.allowSignups === false) return createError(403, 'Account creation is disabled')
 
     const { username, email, password, confirm } = request.body
@@ -48,24 +49,61 @@ export default function (fastify, opts, done) {
 
   // Login
   fastify.post('/login', { preHandler: fastify.cfTurnstile }, async (request, reply) => {
+    if (request.session.get('authenticated')) return reply.redirect('/')
+
     const { username, password } = request.body
 
-    if (!username || !password) return createError(400, 'All Fields Required')
-
     try {
-      const { id, password: passwordHash, isAdmin } = await fastify.db.getAccount(username)
+      const { id, password: passwordHash, totpSecret, isAdmin } = await fastify.db.getAccount(username)
+
+      if (!username || !password) return createError(400, 'All Fields Required')
+
       const hasValidCredentials = await compare(password, passwordHash)
 
       if (hasValidCredentials === false) return createError(401, 'Invalid username or password')
 
-      request.session.set('authenticated', true)
       request.session.set('session', {
         id: id,
         username: username,
         isAdmin: isAdmin
       })
 
+      if (totpSecret) return reply.redirect('/2fa')
+
+      request.session.set('authenticated', true)
+
       return reply.redirect('/')
+    } catch (err) {
+      error(err.stack)
+
+      return createError(500)
+    }
+  })
+
+  // Login 2FA
+  fastify.post('/verify', async (request, reply) => {
+    if (request.session.get('authenticated') || request.session.get('session') === undefined) return reply.redirect('/')
+
+    const { token } = request.body
+    const { username } = request.session.get('session')
+
+    if (!username) return reply.redirect('/login')
+    if (!token) return createError(400, 'All Fields Required')
+
+    try {
+      const { totpSecret } = await fastify.db.getAccount(username)
+      const hasValidTotp = totpSecret ? request.totpVerify({
+        secret: totpSecret,
+        token: token
+      }) : true
+
+      request.session.set('authenticated', true)
+
+      if (hasValidTotp) return reply.redirect('/')
+
+      request.session.destroy()
+
+      return createError(401, 'Invalid 2FA token')
     } catch (err) {
       error(err.stack)
 

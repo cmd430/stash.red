@@ -13,8 +13,8 @@
     <main>
       <section>
         <form method="POST" action="/login">
-          <input name="username" type="text" placeholder="Username" />
-          <input name="password" type="password" placeholder="Password" />
+          <input name="username" type="text" autocomplete="username" placeholder="Username" />
+          <input name="password" type="password" autocomplete="current-password" placeholder="Password" />
           {{#if captcha}}
             <div class="cf-turnstile" data-sitekey="{{captcha}}" data-appearance="always"></div>
           {{/if}}

@@ -37,7 +37,7 @@ handlebars.registerHelper('repeat', (n, context) => {
   for (let i = 0; i < n; ++i) accum += context.fn(i)
   return accum
 })
-handlebars.registerHelper('split', (data, split, index) => data.split(split)[index])
+handlebars.registerHelper('split', (data, split, index) => data?.split(split)[index])
 handlebars.registerHelper('ext', data => extname(data).slice(1))
 handlebars.registerHelper('json', data => JSON.stringify(data, null, 2))
 handlebars.registerHelper('opengraph', (data, dataExtended) => {
