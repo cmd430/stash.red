@@ -1,14 +1,14 @@
 import { isDevEnv } from 'cmd430-utils'
 import { config } from '../../config/config.js'
 
-const { siteTheme } = config.render
+const { siteTitle, siteTheme } = config.render
 
 export default function handler (request, reply, done) {
   const base = request.url.split('?')[0]
 
   reply.locals = {
     base: `${base}${base.endsWith('/') ? '' : '/'}`,
-    title: 'stash.red',
+    title: siteTitle,
     openGraph: {
       site: request.hostname,
       title: null,

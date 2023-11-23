@@ -11,6 +11,7 @@ INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('fastify', '{
 
 -- Site render config, these are added to the handlebars template
 INSERT OR IGNORE INTO "config" ("key", "value") VALUES ('render', '{
+  "siteTitle": "<site>.<title>",
   "siteTheme": {
     "prod": "#db0303",
     "dev": "#3889ea"
