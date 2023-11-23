@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto'
 import { hash, compare } from 'bcrypt'
-import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 
 // eslint-disable-next-line no-unused-vars
@@ -12,12 +11,12 @@ export default function (fastify, opts, done) {
   // Signup
   fastify.post('/signup', { preHandler: fastify.cfTurnstile }, async (request, reply) => {
     if (request.session.get('authenticated')) return reply.redirect('/')
-    if (site.allowSignups === false) return createError(403, 'Account creation is disabled')
+    if (site.allowSignups === false) return reply.error(403, 'Account creation is disabled')
 
     const { username, email, password, confirm } = request.body
     const userameValid = Boolean((/^[a-zA-Z0-9]{3,63}$/).test(username))
 
-    if (password !== confirm || !username || !email || !userameValid) return createError(400, password !== confirm ? 'Passwords do not match' : 'All Fields Required')
+    if (password !== confirm || !username || !email || !userameValid) return reply.error(400, password !== confirm ? 'Passwords do not match' : 'All Fields Required')
 
     try {
       const id = randomUUID()
@@ -43,7 +42,7 @@ export default function (fastify, opts, done) {
     } catch (err) {
       error(err.stack)
 
-      return createError(500, 'Internal Server Error')
+      return reply.error(500)
     }
   })
 
@@ -56,11 +55,11 @@ export default function (fastify, opts, done) {
     try {
       const { id, password: passwordHash, totpSecret, isAdmin } = await fastify.db.getAccount(username)
 
-      if (!username || !password) return createError(400, 'All Fields Required')
+      if (!username || !password) return reply.error(400, 'All Fields Required')
 
       const hasValidCredentials = await compare(password, passwordHash)
 
-      if (hasValidCredentials === false) return createError(401, 'Invalid username or password')
+      if (hasValidCredentials === false) return reply.error(401, 'Invalid username or password')
 
       request.session.set('session', {
         id: id,
@@ -76,7 +75,7 @@ export default function (fastify, opts, done) {
     } catch (err) {
       error(err.stack)
 
-      return createError(500)
+      return reply.error(500)
     }
   })
 
@@ -88,7 +87,7 @@ export default function (fastify, opts, done) {
     const { username } = request.session.get('session')
 
     if (!username) return reply.redirect('/login')
-    if (!token) return createError(400, 'All Fields Required')
+    if (!token) return reply.error(400, 'All Fields Required')
 
     try {
       const { totpSecret } = await fastify.db.getAccount(username)
@@ -103,11 +102,11 @@ export default function (fastify, opts, done) {
 
       request.session.destroy()
 
-      return createError(401, 'Invalid 2FA token')
+      return reply.error(401, 'Invalid 2FA token')
     } catch (err) {
       error(err.stack)
 
-      return createError(500)
+      return reply.error(500)
     }
   })
 

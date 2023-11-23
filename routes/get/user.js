@@ -1,6 +1,5 @@
 import { createHash } from 'node:crypto'
 import { Log } from 'cmd430-utils'
-import createError from 'http-errors'
 import { config } from '../../config/config.js'
 import { mimetypeFilter } from '../../utils/mimetype.js'
 
@@ -57,7 +56,7 @@ export default function (fastify, opts, done) {
       includePrivate: includePrivate
     })
 
-    if (succeeded === false) return createError(code)
+    if (succeeded === false) return reply.error(code)
 
     const { files, email, total } = data
 
@@ -101,7 +100,7 @@ export default function (fastify, opts, done) {
       includePrivate: includePrivate
     })
 
-    if (succeeded === false) return createError(code)
+    if (succeeded === false) return reply.error(code)
 
     const { albums, email, total } = data
 

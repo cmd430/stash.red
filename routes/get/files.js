@@ -1,5 +1,4 @@
 import { MIMEType } from 'node:util'
-import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import { extname } from 'node:path'
 import { mimetypeFilter } from '../../utils/mimetype.js'
@@ -18,7 +17,7 @@ export default function (fastify, opts, done) {
     const { id } = request.params
     const { succeeded , code, data } = await fastify.db.getFile(id)
 
-    if (succeeded === false) return createError(code)
+    if (succeeded === false) return reply.error(code)
 
     const { file, type: unsafeType } = data
     const mimetype = mimetypeFilter(unsafeType)
@@ -55,7 +54,7 @@ export default function (fastify, opts, done) {
     const { id } = request.params
     const { succeeded , code, data } = await fastify.db.getFile(id)
 
-    if (succeeded === false) return createError(code)
+    if (succeeded === false) return reply.error(code)
 
     const { file, type, uploadedBy, size } = data
     const { offset: offsetRaw = 0, count: countRaw = '' } = request.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? {}
@@ -86,7 +85,7 @@ export default function (fastify, opts, done) {
     const { id } = request.params
     const { succeeded , code, data } = await fastify.db.getThumbnail(id)
 
-    if (succeeded === false) return createError(code)
+    if (succeeded === false) return reply.error(code)
 
     const { thumbnail, uploadedBy } = data
 
@@ -100,7 +99,7 @@ export default function (fastify, opts, done) {
     const { id } = request.params
     const { succeeded , code, data } = await fastify.db.getFile(id)
 
-    if (succeeded === false) return createError(code)
+    if (succeeded === false) return reply.error(code)
 
     const { type, uploadedBy, file } = data
     const filename = `${id}${extname(file)}`

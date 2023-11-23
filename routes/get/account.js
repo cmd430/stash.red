@@ -1,4 +1,3 @@
-import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 
 // eslint-disable-next-line no-unused-vars
@@ -11,7 +10,7 @@ export default function (fastify, opts, done) {
   // Signup page
   fastify.get('/signup', async (request, reply) => {
     if (request.session.get('authenticated')) return reply.redirect('/')
-    if (site.allowSignups === false) return createError(403, 'Account creation is disabled')
+    if (site.allowSignups === false) return reply.error(403, 'Account creation is disabled')
 
     return reply.view('signup', {
       captcha: captcha.siteKey
@@ -20,7 +19,7 @@ export default function (fastify, opts, done) {
 
   // Enable 2FA
   fastify.get('/enable2fa', async (request, reply) => {
-    if (!request.session.get('authenticated')) return createError(403)
+    if (!request.session.get('authenticated')) return reply.error(403)
 
     const { ascii: secret } = fastify.totp.generateSecret()
     const qrcode = await fastify.totp.generateQRCode({
@@ -64,7 +63,7 @@ export default function (fastify, opts, done) {
     } catch (err) {
       error(err.stack)
 
-      return createError(500)
+      return reply.error(500)
     }
   })
 

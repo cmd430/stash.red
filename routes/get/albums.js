@@ -1,4 +1,3 @@
-import createError from 'http-errors'
 import { Log } from 'cmd430-utils'
 import archiver from 'archiver'
 import { extname } from 'node:path'
@@ -14,7 +13,7 @@ export default function (fastify, opts, done) {
     const { id } = request.params
     const { succeeded , code, data } = await fastify.db.getAlbum(id)
 
-    if (succeeded === false) return createError(code)
+    if (succeeded === false) return reply.error(code)
 
     const { title, uploadedBy, files } = data
 
@@ -44,7 +43,7 @@ export default function (fastify, opts, done) {
     const { id } = request.params
     const { succeeded , code, data } = await fastify.db.getThumbnail(id)
 
-    if (succeeded === false) return createError(code)
+    if (succeeded === false) return reply.error(code)
 
     const { thumbnail, uploadedBy } = data
 
@@ -58,7 +57,7 @@ export default function (fastify, opts, done) {
     const { id } = request.params
     const { succeeded , code, data } = await fastify.db.getAlbum(id)
 
-    if (succeeded === false) return createError(code)
+    if (succeeded === false) return reply.error(code)
 
     const { title, uploadedBy, files } = data
     const archive = archiver('zip', {
