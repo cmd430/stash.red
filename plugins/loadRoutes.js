@@ -1,8 +1,6 @@
 import { readdir } from 'node:fs/promises'
 import { Log } from 'cmd430-utils'
-import createError from 'http-errors'
 import { fastifyPlugin } from 'fastify-plugin'
-import errorHandler from '../utils/errorHandler.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Routes')
@@ -16,8 +14,8 @@ export default fastifyPlugin(async (fastify, opts, done) => {
   }
 
   // Error handling
-  fastify.setNotFoundHandler((request, reply) => errorHandler(createError(404), request, reply))
-  fastify.setErrorHandler((err, request, reply) => errorHandler(err, request, reply))
+  fastify.setNotFoundHandler((request, reply) => reply.error(404))
+  fastify.setErrorHandler((err, request, reply) => reply.error(err))
 
   // Move on to other handlers
   done()

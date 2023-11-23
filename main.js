@@ -18,6 +18,7 @@ import temporaryUploadsGC from './plugins/temporaryUploadsGC.js'
 import fastifyLoadHooks from './plugins/fastifyLoadHooks.js'
 import loadRoutes from './plugins/loadRoutes.js'
 import disableCache from './plugins/disableCache.js'
+import errorPage from './plugins/errorPage.js'
 import fastifyLogger from './helpers/fastifyLogger.js'
 import fastifyLoadPartials from './helpers/fastifyLoadPartials.js'
 import { getDatabaseInterface } from './interfaces/database.js'
@@ -91,6 +92,7 @@ try {
     }
   })
   fastify.register(disableCache)
+  fastify.register(errorPage)
 
   // Hooks
   fastify.register(await fastifyLoadHooks)
