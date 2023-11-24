@@ -24,7 +24,7 @@ export default function (fastify, opts, done) {
     if (!request.session.get('authenticated')) return reply.error(403)
 
     const { username } = request.session.get('session')
-    const { totpSecret: enabled } = await fastify.db.getAccount(username)
+    const { secret: enabled } = await fastify.db.getAccount(username)
 
     if (enabled) return reply.error(409, '2FA is already enabled for this account')
 

@@ -90,19 +90,19 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    * @returns {{
    *  id: string,
    *  password: string,
-   *  totpSecret: string,
+   *  secret: string,
    *  isAdmin: boolean
    * }}
    */
   async getAccount (username) {
-    const { id: accountID, password: passwordHash, totpSecret, isAdmin } = this.#database
-      .prepare('SELECT "id", "password", "totpSecret", "isAdmin" FROM "accounts" WHERE "username" = :username')
+    const { id: accountID, password: passwordHash, secret, isAdmin } = this.#database
+      .prepare('SELECT "id", "password", "secret", "isAdmin" FROM "accounts" WHERE "username" = :username')
       .get({ username: username }) ?? {}
 
     return {
       id: accountID,
       password: passwordHash,
-      totpSecret: totpSecret,
+      secret: secret,
       isAdmin: Boolean(isAdmin)
     }
   }
@@ -115,10 +115,10 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    */
   async enable2FA (username, secret) {
     const { changes } = this.#database
-      .prepare('UPDATE "accounts" SET "totpSecret" = :totpSecret WHERE "username" = :username AND "totpSecret" IS NULL')
+      .prepare('UPDATE "accounts" SET "secret" = :secret WHERE "username" = :username AND "secret" IS NULL')
       .run({
         username: username,
-        totpSecret: secret
+        secret: secret
       })
 
     return changes > 0

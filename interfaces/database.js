@@ -48,7 +48,7 @@ export class DatabaseInterfaceBase {
    * @typedef {object} getAccountResult
    * @property {string} id The unique id for the account
    * @property {string} password The hashed password of the account
-   * @property {string} totpSecret The 2fa secret for the account
+   * @property {string} secret The 2fa secret for the account
    * @property {boolean} isAdmin A boolean indicating if the account is an admin user
    */
 

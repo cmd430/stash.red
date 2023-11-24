@@ -82,7 +82,7 @@ export default function (fastify, opts, done) {
     const { username, password } = request.body
 
     try {
-      const { id, password: passwordHash, totpSecret, isAdmin } = await fastify.db.getAccount(username)
+      const { id, password: passwordHash, secret, isAdmin } = await fastify.db.getAccount(username)
 
       if (!username || !password) return reply.error(400, 'All Fields Required')
 
@@ -96,7 +96,7 @@ export default function (fastify, opts, done) {
         isAdmin: isAdmin
       })
 
-      if (totpSecret) return reply.redirect('/2fa')
+      if (secret) return reply.redirect('/2fa')
 
       request.session.set('authenticated', true)
 
@@ -119,9 +119,9 @@ export default function (fastify, opts, done) {
     if (!token) return reply.error(400, 'Missing 2FA token')
 
     try {
-      const { totpSecret } = await fastify.db.getAccount(username)
-      const hasValidTotp = totpSecret ? request.totpVerify({
-        secret: totpSecret,
+      const { secret } = await fastify.db.getAccount(username)
+      const hasValidTotp = secret ? request.totpVerify({
+        secret: secret,
         token: token
       }) : true
 
