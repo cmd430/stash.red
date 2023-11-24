@@ -410,7 +410,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
             "album"
         ) WHERE "id" = :id
       `)
-      .get({ id: id })
+      .get({ id: id }) ?? {}
 
     if (uploadedBy === undefined) return { succeeded: false, code: 404 } // File/Album doesnt exist
 
@@ -451,7 +451,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     const { includePrivate, offset, limit, order, filter } = options
     const { email } = this.#database
       .prepare('SELECT "email" FROM "accounts" WHERE "username" = :username')
-      .get({ username: username })
+      .get({ username: username }) ?? {}
 
     if (email === undefined) return { succeeded: false, code: 404 } // User doesnt exist
 
@@ -545,7 +545,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     const { includePrivate, offset, limit, order } = options
     const { email } = this.#database
       .prepare('SELECT "email" FROM "accounts" WHERE "username" = :username')
-      .get({ username: username })
+      .get({ username: username }) ?? {}
 
     if (email === undefined) return { succeeded: false, code: 404 } // User doesnt exist
 
