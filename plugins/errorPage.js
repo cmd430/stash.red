@@ -10,20 +10,24 @@ export default fastifyPlugin((fastify, opts, done) => {
     if (isNumber(err)) {
       err = createError(err)
       err.description = description
+      // mark our errors as safe
+      // if safe we will first use description/message from the error before fallingback to the overrides
+      // if not safe then we will always use the overrides and fallback to the generic error messages
+      err.safe = true
     }
 
     if (!err.status && err.statusCode) err.status = err.statusCode
     if (err.code === 'ENOENT') err.status = '404'
     if (!err.status) {
       err.status = 500
-      err.message = 'Internal Server Error'
       error(err.stack)
     }
 
     // Message Overrides
     const errorMessages = {
       '404': 'Not Found',
-      '416': 'Invalid Range'
+      '416': 'Invalid Range',
+      '500': 'Internal Server Error'
     }
 
     // Error Description Overrides
@@ -41,8 +45,8 @@ export default fastifyPlugin((fastify, opts, done) => {
       .status(err.status)
       .view('error', {
         status: err.status,
-        message: errorMessages[err.status] ?? err.message,
-        description: errorDescriptions[err.status] ?? err.description ?? 'An unknown error has occurred',
+        message: (err.safe ? err.message ?? errorMessages[err.status] : errorMessages[err.status]) ?? 'Error',
+        description: (err.safe ? err.description ?? errorDescriptions[err.status] : errorDescriptions[err.status]) ?? 'An unknown error has occurred',
         stack: err.stack
       })
   })
