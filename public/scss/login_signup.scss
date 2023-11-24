@@ -35,10 +35,25 @@ form {
   width: 100%;
   max-width: 28rem;
   min-width: 18rem;
-  max-height: 18.2rem;
+  max-height: 20rem;
   min-height: 10rem;
   margin-bottom: 3.8rem;
   overflow: hidden;
+
+  a {
+    margin-bottom: 0.2rem;
+    line-height: 0;
+
+    img {
+      width: 10rem;
+    }
+  }
+
+  span {
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--color-action-default);
+  }
 
   input[type="text"],
   input[type="email"],
@@ -46,6 +61,7 @@ form {
     background: var(--color-content-background);
     border: 1px solid var(--color-content-border);
     padding: 0.5rem;
+    font-size: 0.84rem;
     color: var(--color-content-text-hover);
     width: 18.7rem;
     margin-bottom: 0.5rem;
@@ -63,6 +79,7 @@ form {
 
   .cf-turnstile {
     display: flex;
+    height: 4rem;
   }
 
   div:last-of-type {
@@ -108,6 +125,19 @@ form {
     input[type="submit"] {
       background: color-mix(in srgb, var(--color-modal-update) var(--color-background-opacity), var(--color-white));
       color: var(--color-white);
+    }
+  }
+}
+
+@media (pointer: none), (pointer: coarse) {
+  // Increase font size if no pointer device
+  // This is really just a hack to stop iOS zooming
+  // on the inputs but probably helps on mobile regardless
+  form {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      font-size: 1rem;
     }
   }
 }

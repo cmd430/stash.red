@@ -46,6 +46,35 @@ export default function (fastify, opts, done) {
     }
   })
 
+  // Enable 2FA
+  fastify.post('/verify-enable', async (request, reply) => {
+    if (!request.session.get('authenticated') || request.session.get('session') === undefined || request.session.get('2FASecret') === undefined) return reply.redirect('/')
+
+    const { token } = request.body
+    const { username } = request.session.get('session')
+    const secret = request.session.get('2FASecret')
+
+    request.session.set('2FASecret', undefined)
+
+    if (!token) return reply.error(400, 'Missing 2FA token')
+
+    try {
+      const hasValidTotp = request.totpVerify({
+        secret: secret,
+        token: token
+      })
+
+      if (!hasValidTotp) return reply.error(401, 'Invalid 2FA token')
+      if (await fastify.db.enable2FA(username, secret)) return reply.redirect('/')
+
+      return reply.error(500, 'Unable to enable 2FA')
+    } catch (err) {
+      error(err.stack)
+
+      return reply.error(500)
+    }
+  })
+
   // Login
   fastify.post('/login', { preHandler: fastify.cfTurnstile }, async (request, reply) => {
     if (request.session.get('authenticated')) return reply.redirect('/')
@@ -87,7 +116,7 @@ export default function (fastify, opts, done) {
     const { username } = request.session.get('session')
 
     if (!username) return reply.redirect('/login')
-    if (!token) return reply.error(400, 'All Fields Required')
+    if (!token) return reply.error(400, 'Missing 2FA token')
 
     try {
       const { totpSecret } = await fastify.db.getAccount(username)

@@ -11,7 +11,13 @@
     </header>
     <main>
       <section>
-        <form method="POST" action="/verify">
+        <form method="POST" action="/{{#if QRCode}}verify-enable{{else}}verify{{/if}}">
+          {{#if QRCode}}
+            <a href="{{url}}" target="_blank">
+              <img src="{{QRCode}}" alt="{{code}}"/>
+            </a>
+            <span>{{code}}</span>
+          {{/if}}
           <input name="token" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" placeholder="2FA Code" />
           <div>
             <span></span>
