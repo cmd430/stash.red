@@ -38,11 +38,10 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     }))
 
     // Optimize DB every ~24h
-    setInterval(() => this.#database.pragma('optimize'), 1000 * 60 * 60 * 24)
+    // setInterval(() => this.#database.pragma('optimize'), 1000 * 60 * 60 * 24)
 
     // Gracefully close the DB on exit
     process.on('exit', () => {
-      this.#database.pragma('optimize')
       this.#database.close()
     })
     process.on('SIGHUP', () => process.exit(128 + 1))
