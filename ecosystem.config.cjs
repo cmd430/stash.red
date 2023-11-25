@@ -6,9 +6,9 @@ module.exports = {
     name: 'stash',
     script: 'main.js',
     watch: false,
-    'args': [
-      '--color'
-    ],
+    env: {
+      'NODE_ENV': 'production'
+    },
     error_file: 'logs/err.log',
     out_file: 'logs/out.log',
     log_file: 'logs/combined.log',
