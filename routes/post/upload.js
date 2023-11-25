@@ -3,7 +3,7 @@ import { Readable } from 'node:stream'
 import { customAlphabet } from 'nanoid'
 import { Log } from 'cmd430-utils'
 import generateThumbnail from '../../utils/generateThumbnail.js'
-import { getMimetype, isValidMimetype } from '../../utils/mimetype.js'
+import { getMimetype, isValidMimetype, getMimeExtension } from '../../utils/mimetype.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Upload')
@@ -33,6 +33,7 @@ export default function (fastify, opts, done) {
       const uploadTimestamp = Date.now()
       const uploadedAt = new Date(uploadTimestamp).toISOString()
       const uploadedUntil = ttl => ttl ? new Date(uploadTimestamp + ttl).toISOString() : 'Infinity'
+      const getExtname = (fn, mt) => extname(fn).length > 0 ? '' : getMimeExtension(mt)
       const processFile = async (stream, filename) => {
         // Glorious hack to get access to the stream with 2 seperate readers
         const [ fileWebStream, thumbnailWebStream ] = Readable.toWeb(stream).tee()
@@ -44,6 +45,9 @@ export default function (fastify, opts, done) {
           debug('Skipping file with invalid mimetype: ', mimetype)
           return
         }
+
+        // Fix files that dont have an extension
+        filename = `${filename}${getExtname(filename, mimetype)}`
 
         const fileID = nanoid(8)
         const { timeToLive, isPrivate, isFromHomepage } = fields
@@ -138,8 +142,9 @@ export default function (fastify, opts, done) {
       if (fetchURL !== null && fetchURL.startsWith(`${request.protocol}://${request.hostname}`) === false && fetchURL.startsWith('https://')) {
         const externalResponse = await fetch(fetchURL)
         const externalStream = Readable.fromWeb(externalResponse.body)
+        const externalFilename = basename(fetchURL)
 
-        await processFile(externalStream, basename(fetchURL))
+        await processFile(externalStream, externalFilename)
       }
 
       if (uploadedFiles.length === 0) { // no files uploaded

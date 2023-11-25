@@ -11,14 +11,15 @@ export function mimetypeFilter (mimetype) {
   // Fix some mimetypes
   const mimetypeMap = {
     'video/x-matroska': 'video/webm',
-    'application/javascript': 'text/javascript'
+    'application/javascript': 'text/javascript',
+    'application/json': 'text/json'
   }
 
   return mimetypeMap[mimetype] ?? mimetype
 }
 
 export function isValidMimetype (mimetype) {
-  const type = new MIMEType(mimetypeFilter(mimetype)).type
+  const { type } = new MIMEType(mimetypeFilter(mimetype))
   const allowedTypes = [
     'image',
     'video',
@@ -71,3 +72,34 @@ export async function getMimetype (filestream) {
   }
 }
 
+export function getMimeExtension (mimetype) {
+  const { subtype, type } = new MIMEType(mimetypeFilter(mimetype))
+  const subtypeMap = {
+    'javascript': '.js',
+    'json': '.json',
+    'plain': '.txt',
+    'webm': '.mkv',
+    'mp4': '.mp4',
+    'mp3': '.mp3',
+    'mpeg': '.mp3',
+    'x-flac': '.flac',
+    'x-m4a': '.m4a',
+    'png': '.png',
+    'gif': '.gif',
+    'jpg': '.jpg',
+    'jpeg': '.jpg',
+    'webp': '.webp'
+  }
+  const typeMap = {
+    'text': '.text',
+    'video': '.video',
+    'audio': '.audio',
+    'image': '.image'
+  }
+
+  debug(subtype, type, subtypeMap[subtype] ?? typeMap[type])
+
+  // We return a real extention for common types and a generic for anything else
+  // This is only a fallback for files missing an extention
+  return subtypeMap[subtype] ?? typeMap[type]
+}
