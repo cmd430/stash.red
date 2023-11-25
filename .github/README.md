@@ -66,7 +66,7 @@
 ##### If using PM2
 - Start with PM2 and run continuously
   ```bash
-  $ pm2 start ecosystem.config.js
+  $ pm2 start ecosystem.config.cjs
   ```
 
 ##### If *not* using PM2 (**NOT** reccomended)
