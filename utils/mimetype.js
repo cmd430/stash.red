@@ -63,7 +63,7 @@ export async function getMimetype (filestream) {
       mimetype: mimetype
     }
   } catch (err) {
-    error(err.stack)
+    error(err)
 
     return {
       stream: filestream,

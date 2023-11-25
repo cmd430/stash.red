@@ -40,7 +40,7 @@ export default function (fastify, opts, done) {
 
       return reply.redirect('/')
     } catch (err) {
-      error(err.stack)
+      error(err)
 
       return reply.error(500)
     }
@@ -69,7 +69,7 @@ export default function (fastify, opts, done) {
 
       return reply.error(500, 'Unable to enable 2FA')
     } catch (err) {
-      error(err.stack)
+      error(err)
 
       return reply.error(500)
     }
@@ -102,7 +102,7 @@ export default function (fastify, opts, done) {
 
       return reply.redirect('/')
     } catch (err) {
-      error(err.stack)
+      error(err)
 
       return reply.error(500)
     }
@@ -133,7 +133,7 @@ export default function (fastify, opts, done) {
 
       return reply.error(401, 'Invalid 2FA token')
     } catch (err) {
-      error(err.stack)
+      error(err)
 
       return reply.error(500)
     }

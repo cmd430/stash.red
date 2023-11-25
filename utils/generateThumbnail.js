@@ -110,7 +110,7 @@ export default async function generateThumbnail (mimetype, filestream) {
 
     return imageStream.pipe(thumbnailBuffer)
   } catch (err) {
-    error(err.stack)
+    error(err)
 
     return getDefaultThumbnail(type)
   }

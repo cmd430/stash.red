@@ -74,7 +74,7 @@ export default function (fastify, opts, done) {
 
       return reply.redirect('/')
     } catch (err) {
-      error(err.stack)
+      error(err)
 
       return reply.error(500)
     }

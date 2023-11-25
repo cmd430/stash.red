@@ -20,7 +20,7 @@ export default fastifyPlugin((fastify, opts, done) => {
     if (err.code === 'ENOENT') err.status = '404'
     if (!err.status) {
       err.status = 500
-      error(err.stack)
+      error(err)
     }
 
     // Message Overrides

@@ -200,7 +200,7 @@ export default function (fastify, opts, done) {
         direct: `/f/${fileID}${fileExt}`
       }
     } catch (err) {
-      error(err.stack)
+      error(err)
 
       return {
         status: 500,
