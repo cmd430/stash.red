@@ -1,11 +1,17 @@
 {
-  "name": "stash",
+  "name": "stash.red",
+  "description": "stash.red is a Small footprint file host (for image, video, audio and text files)",
   "version": "2.0.0",
-  "description": "Stash Revival",
-  "main": "main.js",
-  "type": "module",
-  "author": "Bradley 'cmd430' Treweek",
+  "author": "Bradley 'cmd430' Treweek (https://github.com/cmd430)",
   "license": "ISC",
+  "homepage": "https://github.com/cmd430/stash.red#readme",
+  "bugs": {
+    "url": "https://github.com/cmd430/stash.red/issues"
+  },
+  "repository": "github:cmd430/stash.red",
+  "type": "module",
+  "main": "main.js",
+  "private": true,
   "dependencies": {
     "@azure/storage-blob": "^12.17.0",
     "@fastify/cookie": "^9.2.0",
