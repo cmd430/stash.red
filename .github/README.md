@@ -74,7 +74,7 @@
   ```bash
   $ node main
   # or
-  $ npm run start
+  $ npm start
   ```
 
 #### Configure Reverse Proxy (Nginx)
