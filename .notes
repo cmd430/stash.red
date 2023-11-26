@@ -142,7 +142,6 @@
   [√] code for migation from old stash instance to new stash
 
 -= New things I want to add at some point =-
-  [√] Dark mode
   [x] Add file to file to form album
       -> doable but would be a pain
       -> wasnt part of original stash
@@ -152,6 +151,7 @@
   [x] P2P file share with WebRTC, URL -> `/t/:id`
       -> https://github.com/feross/simple-peer
       -> out of scope
+  [√] Dark mode
 
 -= URL references =-
   - `/f/:id` for files
