@@ -34,6 +34,7 @@
     "handlebars-paginate": "^0.1.0",
     "http-errors": "^2.0.0",
     "mathjs": "^12.1.0",
+    "mime": "^3.0.0",
     "nanoid": "^5.0.3",
     "sharp": "^0.32.6",
     "stream-head": "^3.0.0",

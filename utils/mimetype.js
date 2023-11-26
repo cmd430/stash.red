@@ -2,10 +2,12 @@ import { MIMEType } from 'node:util'
 import { WASMagic } from 'wasmagic'
 import { Log } from 'cmd430-utils'
 import streamHead from 'stream-head'
+import mime from 'mime'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Mimetype')
 const magic = await WASMagic.create()
+const { getExtension } = mime
 
 export function mimetypeFilter (mimetype) {
   // Fix some mimetypes
@@ -73,33 +75,7 @@ export async function getMimetype (filestream) {
 }
 
 export function getMimeExtension (mimetype) {
-  const { subtype, type } = new MIMEType(mimetypeFilter(mimetype))
-  const subtypeMap = {
-    'javascript': '.js',
-    'json': '.json',
-    'plain': '.txt',
-    'webm': '.mkv',
-    'mp4': '.mp4',
-    'mp3': '.mp3',
-    'mpeg': '.mp3',
-    'x-flac': '.flac',
-    'x-m4a': '.m4a',
-    'png': '.png',
-    'gif': '.gif',
-    'jpg': '.jpg',
-    'jpeg': '.jpg',
-    'webp': '.webp'
-  }
-  const typeMap = {
-    'text': '.text',
-    'video': '.video',
-    'audio': '.audio',
-    'image': '.image'
-  }
+  const { type } = new MIMEType(mimetypeFilter(mimetype))
 
-  debug(subtype, type, subtypeMap[subtype] ?? typeMap[type])
-
-  // We return a real extention for common types and a generic for anything else
-  // This is only a fallback for files missing an extention
-  return subtypeMap[subtype] ?? typeMap[type]
+  return `.${getExtension(mimetype) ?? type}`
 }
