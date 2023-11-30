@@ -1,7 +1,7 @@
 <span class="wrapper" data-type="video" data-id="{{id}}" data-username="{{uploadedBy}}" {{#if @root.album}}data-order="{{order}}"{{/if}}>
   <div class="video">
     <video controls preload playsinline>
-      <source src="{{path}}" />
+      <source src="{{path}}" type="{{type}}" />
     </video>
   </div>
   <div class="actions">
