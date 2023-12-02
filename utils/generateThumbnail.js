@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process'
 import { MIMEType } from 'node:util'
 import { resolve } from 'node:path'
 import { createReadStream } from 'node:fs'
+import { pipeline } from 'node:stream/promises'
 import ffmpegBin from 'ffmpeg-static'
 import { Log } from 'cmd430-utils'
 import sharp from 'sharp'
@@ -70,7 +71,7 @@ async function ffmpeg (inputStream, type) {
       ffmpegProc.kill()
     })
 
-    if (type !== 'text') inputStream.pipe(ffmpegProc.stdin)
+    if (type !== 'text') pipeline(inputStream, ffmpegProc.stdin)
 
     resolve(ffmpegProc.stdout)
   })
