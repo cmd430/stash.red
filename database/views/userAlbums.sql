@@ -7,7 +7,7 @@ SELECT
   "entries",
   "isPrivate",
   (SELECT
-      COUNT("id") AS "total"
+      COUNT("id")
     FROM
       "albums"
     WHERE
