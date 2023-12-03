@@ -47,8 +47,8 @@ async function ffmpeg (inputStream, type) {
   // So we dont do unnessasary processing, text needs to be buffered to generate the thumbnail
   const inputText = type === 'text' ? ffmpegEscapeString((await streamToBuffer(inputStream)).toString()) : ''
   const args = {
-    'video': [ '-r', '1', '-i', 'pipe:0', '-f', 'image2', '-vframes', '1', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
-    'audio': [ '-i', 'pipe:0', '-f', 'image2', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
+    'video': [ '-r', '1', '-i', 'pipe:0', '-f', 'image2pipe', '-vframes', '1', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
+    'audio': [ '-i', 'pipe:0', '-f', 'image2pipe', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
     'text': [ '-f', 'lavfi', '-i', 'color=c=white:s=250x250:d=5.396', '-filter_complex', `drawtext=text='${inputText}':x=5:y=5:fontsize=16:fontcolor=000000:fontfile='${thumbnailFontPath}'`, '-vframes', '1', '-f', 'image2','-c:v', 'mjpeg', 'pipe:1' ]
   }
 
@@ -72,7 +72,14 @@ async function ffmpeg (inputStream, type) {
 
     if (type !== 'text') inputStream.pipe(ffmpegProc.stdin)
 
-    resolve(ffmpegProc.stdout)
+    ffmpegProc.stdout.on('data', data => {
+      debug('stdout:', data)
+    })
+    ffmpegProc.stderr.on('data', data => {
+      debug('stderr:', data.toString())
+    })
+
+    //resolve(ffmpegProc.stdout)
   })
 }
 
@@ -81,9 +88,12 @@ function getDefaultThumbnail (type) {
 }
 
 export default async function generateThumbnail (mimetype, filestream) {
-  const type = new MIMEType(mimetypeFilter(mimetype)).type
+  const { type, subtype } = new MIMEType(mimetypeFilter(mimetype))
 
   try {
+    // TODO: fix mp4 thumbnail generation
+    if (subtype === 'mp4') throw new Error('Unable to generate mp4 thumbnails at this time')
+
     const imageStream = type === 'image' ? filestream : await ffmpeg(filestream, type)
 
     // Resize and crop Thumbnails
@@ -111,7 +121,7 @@ export default async function generateThumbnail (mimetype, filestream) {
     return imageStream.pipe(thumbnailBuffer)
   } catch (err) {
     error(err)
-
-    return getDefaultThumbnail(type)
   }
+
+  return getDefaultThumbnail(type)
 }
