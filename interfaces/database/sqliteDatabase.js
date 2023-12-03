@@ -823,7 +823,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
       .run({
         id: id,
         name: name,
-        fil: file,
+        file: file,
         size: size,
         type: type,
         uploadedBy: uploadedBy,
