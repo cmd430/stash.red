@@ -1,6 +1,24 @@
 const themeToggles = Array.from(document.querySelectorAll('#themeToggle input'))
 const pageRoot = document.querySelector('html')
 const turnstile = document.querySelector('div.cf-turnstile')
+const styles = []
+
+function removeStyleFromSite (styleID) {
+  if (!styles[styleID]) return
+
+  document.body.removeChild(styles[styleID])
+  delete styles[styleID]
+}
+
+function addStyleToSite (styleID, styleText) {
+  if (styles[styleID]) removeStyleFromSite(styleID) //update style
+
+  const style = document.createElement('style')
+
+  style.textContent = styleText
+  document.body.appendChild(style)
+  styles[styleID] = style
+}
 
 function getStoredThemePref () {
   const validThemes = [
@@ -14,6 +32,12 @@ function getStoredThemePref () {
 }
 
 function setTheme (theme) {
+  addStyleToSite('toggleTheme', `
+    * {
+      transition: none !important;
+    }
+  `)
+
   if (theme === 'auto') {
     pageRoot.removeAttribute('data-theme')
   } else {
@@ -22,6 +46,8 @@ function setTheme (theme) {
 
   turnstile?.setAttribute('data-theme', theme)
   localStorage.setItem('theme', theme)
+
+  setTimeout(() => removeStyleFromSite('toggleTheme'), 100)
 }
 
 const initalTheme = getStoredThemePref()
