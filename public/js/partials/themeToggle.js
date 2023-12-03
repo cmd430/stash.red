@@ -34,7 +34,7 @@ function getStoredThemePref () {
 function setTheme (theme) {
   addStyleToSite('toggleTheme', `
     * {
-      transition: none !important;
+      transition: 100ms linear !important;
     }
   `)
 
@@ -47,7 +47,7 @@ function setTheme (theme) {
   turnstile?.setAttribute('data-theme', theme)
   localStorage.setItem('theme', theme)
 
-  setTimeout(() => removeStyleFromSite('toggleTheme'), 100)
+  setTimeout(() => removeStyleFromSite('toggleTheme'), 150)
 }
 
 const initalTheme = getStoredThemePref()
