@@ -68,21 +68,15 @@ async function ffmpeg (inputStream, type) {
     const ffmpegProc = spawn(ffmpegBin, args[type])
 
     // Handle process Errors
-    ffmpegProc.on('error', err => {
-      error('[FFMPEG Error]', err.message)
-      ffmpegProc.kill()
-    })
-
+    ffmpegProc.on('error', err => reject(err))
     ffmpegProc.stdin.on('error', err => {
       // we get an EOF error without this error handler but everything is fine,
-      // log the error if it is anything else
-      if (err.code === 'EOF') return
-
-      error('[FFMPEG stdin Error]', err.message)
-      ffmpegProc.kill()
+      // we also get an EPIPE for some videos because it doesnt need all the inputstream, we can also ignore these
+      // we log the error if it is anything else
+      if (err.code !== 'EOF' && err.code !== 'EPIPE') return error('[FFMPEG stdin Error]', err.message)
     })
 
-    if (type !== 'text') inputStream.pipe(ffmpegProc.stdin)
+    if (type !== 'text') ffmpegProc.once('spawn', () => inputStream.pipe(ffmpegProc.stdin))
 
     ffmpegProc.stdout.once('readable', () => resolve(ffmpegProc.stdout))
     ffmpegProc.stderr.once('readable', () => reject(new Error('[FFMPEG] Unable to process filestream')))
