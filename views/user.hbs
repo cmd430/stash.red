@@ -8,7 +8,9 @@
     {{> themeToggle}}
     <header>
       {{> logo}}
-      <h1>{{view.username}}</h1>
+      <h1>
+        <a href="info/">{{view.username}}</a>
+      </h1>
     </header>
     <nav>
       {{#if_eq view.type 'albums' this}}
