@@ -817,7 +817,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
         INSERT INTO "files" (
           "id", "name", "file", "size", "type", "uploadedBy", "uploadedAt", "uploadedUntil", "isPrivate", "inAlbum", "albumOrder"
         ) VALUES (
-          :id, :name, :file, :size, :type, :uploadedBy, :uploadedAt, :uploadedUntil, :isPrivate", :inAlbum", :albumOrder
+          :id, :name, :file, :size, :type, :uploadedBy, :uploadedAt, :uploadedUntil, :isPrivate, :inAlbum, :albumOrder
         )
       `)
       .run({
