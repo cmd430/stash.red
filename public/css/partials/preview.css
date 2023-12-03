@@ -32,7 +32,7 @@
 .preview .icon.video {
   background: no-repeat right top/2.5rem url("/img/types/video.webp");
 }
-.preview .icon.txt {
+.preview .icon.text {
   background: no-repeat right top/2.5rem url("/img/types/text.webp");
 }
 .preview .icon.album {
@@ -47,7 +47,7 @@
 .preview.private .icon.video {
   background: no-repeat left bottom/2.5rem url("/img/types/private.webp"), no-repeat right top/2.5rem url("/img/types/video.webp");
 }
-.preview.private .icon.txt {
+.preview.private .icon.text {
   background: no-repeat left bottom/2.5rem url("/img/types/private.webp"), no-repeat right top/2.5rem url("/img/types/text.webp");
 }
 .preview.private .icon.album {
