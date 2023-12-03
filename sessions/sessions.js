@@ -21,11 +21,13 @@ export default db
 
 // Clean up expired sessions
 async function performGC () {
-  const { changes: removed } = db
-    .prepare('DELETE FROM "session" WHERE "expires" < strftime(\'%Y-%m-%dT%H:%M:%fZ\', \'now\')')
-    .run()
+  try {
+    const { changes: removed } = db
+      .prepare('DELETE FROM "session" WHERE "expires" < strftime(\'%Y-%m-%dT%H:%M:%fZ\', \'now\')')
+      .run()
 
-  if (removed > 0) debug('Removed', removed, 'expired sessions')
+    if (removed > 0) debug('Removed', removed, 'expired sessions')
+  } catch {}
 }
 
 setInterval(() => performGC(), evaluate(gcInterval))

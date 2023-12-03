@@ -11,11 +11,11 @@ WHEN
   FROM
     "files"
   WHERE
-    "inAlbum" = "OLD.inAlbum"
+    "inAlbum" = "OLD"."inAlbum"
   ) = 0
 BEGIN
   DELETE FROM
     "albums"
   WHERE
-    "id" = "OLD.inAlbum";
+    "id" = "OLD"."inAlbum";
 END;
