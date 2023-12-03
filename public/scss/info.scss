@@ -1,0 +1,37 @@
+@import 'shared/userAlbumFileBase';
+
+main {
+  section {
+    flex-direction: row;
+  }
+
+  nav { // Pagination
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: end;
+    padding: 0 0 1rem 0;
+  }
+}
+
+#table {
+  display: flex;
+  flex-direction: column;
+  max-width: 25rem;
+  width: 100%;
+  min-width: 13rem;
+  background: var(--color-page-background);
+  border: 1px solid var(--color-content-border);
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5rem;
+
+    &:nth-child(even) {
+      background: var(--color-content-background);
+    }
+  }
+}

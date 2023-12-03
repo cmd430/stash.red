@@ -604,6 +604,53 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     }
   }
 
+  /**
+   * Get user info
+   * @param {string} username The username to get the info for
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    totalSize: number,
+   *    totalFiles: number,
+   *    totalAlbums: number
+   *  }
+   * }}
+   */
+  async getUserInfo (username) {
+    const { email } = this.#database
+      .prepare('SELECT "email" FROM "accounts" WHERE "username" = :username')
+      .get({ username: username }) ?? {}
+
+    if (email === undefined) return { succeeded: false, code: 404 } // User doesnt exist
+
+    const userInfo = this.#database
+      .prepare(`
+        SELECT
+          "totalAlbums",
+          "totalFiles",
+          "totalSize"
+        FROM
+          "userInfo"
+        WHERE
+          "username" = :username
+      `)
+      .get({
+        username: username
+      }) ?? {}
+
+    const { totalAlbums, totalFiles, totalSize } = userInfo
+
+    return {
+      succeeded: true,
+      code: 'OK',
+      data: {
+        totalAlbums: totalAlbums ?? 0,
+        totalFiles: totalFiles ?? 0,
+        totalSize: totalSize ?? 0
+      }
+    }
+  }
 
   /**
    * Remove uploads from the DB where the uploadedUntil has expired

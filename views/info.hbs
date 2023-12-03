@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {{> head}}
+    <link rel="stylesheet" href="/css/info.css" />
+    <script type="module" src="/js/info.js"></script>
+  </head>
+  <body>
+    {{> themeToggle}}
+    <header>
+      {{> logo}}
+      <h1>{{username}}</h1>
+    </header>
+    <main>
+      <section>
+        <div id="table">
+          <div class="row">
+            <span>Total Files</span><span>{{totalFiles}}</span>
+          </div>
+          <div class="row">
+            <span>Total Albums</span><span>{{totalAlbums}}</span>
+          </div>
+          <div class="row">
+            <span>Total Size</span><span class="totalSize">{{totalSize}}</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

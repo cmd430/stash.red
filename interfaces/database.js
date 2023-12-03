@@ -282,6 +282,25 @@ export class DatabaseInterfaceBase {
    */
 
   /**
+   * Get user info
+   * @public
+   * @async
+   * @method
+   * @name DatabaseInterfaceBase#getUserInfo
+   * @param {string} username The username to get the info for
+   * @returns {getUserInfoResult}
+   */
+  /**
+   * @typedef {object} getUserInfoResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
+   * @property {object} [data] returned data if succeeded = true
+   * @property {number} data.totalSize the total size in bytes of all user uploaded files
+   * @property {number} data.totalFiles the total number of users files
+   * @property {number} data.totalAlbums the total number of user albums
+   */
+
+  /**
    * Remove uploads from the DB where the uploadedUntil has expired
    * @public
    * @async

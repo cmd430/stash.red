@@ -129,5 +129,24 @@ export default function (fastify, opts, done) {
       })
   })
 
+  // Account Info
+  fastify.get('/u/:username/info', async (request, reply) => {
+    const { username } = request.params
+    const { succeeded , code, data } = await fastify.db.getUserInfo(username)
+
+    if (succeeded === false) return reply.error(code)
+
+    const { totalAlbums, totalFiles, totalSize } = data
+
+    return reply
+      .disableCache()
+      .view('info', {
+        username: username,
+        totalAlbums: totalAlbums,
+        totalFiles: totalFiles,
+        totalSize: totalSize
+      })
+  })
+
   done()
 }
