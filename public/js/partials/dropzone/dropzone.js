@@ -109,6 +109,7 @@ dropzone.addEventListener('dragenter', e => e.preventDefault())
 if (dropzone.dataset.authenticated === 'true') {
   window.addEventListener('paste', async e => {
     if (fileInput.disabled) return
+    if (document.activeElement.tagName === 'INPUT') return
 
     for (const clipboardItem of e.clipboardData.items) {
       if (clipboardItem.kind === 'file') {

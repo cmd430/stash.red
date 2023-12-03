@@ -237,6 +237,9 @@ document.addEventListener('drop', e => {
 })
 
 window.addEventListener('paste', async e => {
+  if (document.activeElement.tagName === 'INPUT') return
+
   e.preventDefault()
+
   if (!modalContainer.classList.contains('dropzone')) modalContainer.classList.add('dropzone')
 })
