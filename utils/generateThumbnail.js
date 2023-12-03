@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process'
 import { MIMEType } from 'node:util'
 import { resolve } from 'node:path'
 import { createReadStream } from 'node:fs'
+import { platform } from 'node:os'
 import ffmpegBin from 'ffmpeg-static'
 import { Log } from 'cmd430-utils'
 import sharp from 'sharp'
@@ -27,7 +28,7 @@ function streamToBuffer (readableStream) {
       chunks.push(data instanceof Buffer ? data : Buffer.from(data))
     })
     readableStream.on('end', () => {
-      resolve(Buffer.concat(chunks))
+      resolve(Buffer.concat(chunks).toString())
     })
     readableStream.on('error', reject)
   })
@@ -43,13 +44,24 @@ function ffmpegEscapeString (str) {
   return str
 }
 
+function ffmpegEscapePath (str) {
+  if (platform === 'win32') return str
+
+  // escape ffmpeg special chars
+  str = str.replace(/\\/g, '\\\\\\')
+  str = str.replace(/:/g, '\\\\:')
+
+  return str
+}
+
 async function ffmpeg (inputStream, type) {
   // So we dont do unnessasary processing, text needs to be buffered to generate the thumbnail
-  const inputText = type === 'text' ? ffmpegEscapeString((await streamToBuffer(inputStream)).toString()) : ''
+  const inputText = type === 'text' ? ffmpegEscapeString(await streamToBuffer(inputStream)) : ''
+  const fontPath = ffmpegEscapePath(thumbnailFontPath)
   const args = {
-    'video': [ '-r', '1', '-i', 'pipe:0', '-f', 'image2pipe', '-vframes', '1', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
-    'audio': [ '-i', 'pipe:0', '-f', 'image2pipe', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
-    'text': [ '-f', 'lavfi', '-i', 'color=c=white:s=250x250:d=5.396', '-filter_complex', `drawtext=text='${inputText}':x=5:y=5:fontsize=16:fontcolor=000000:fontfile='${thumbnailFontPath}'`, '-vframes', '1', '-f', 'image2','-c:v', 'mjpeg', 'pipe:1' ]
+    'video': [ '-hide_banner', '-loglevel', 'error', '-r', '1', '-i', 'pipe:0', '-f', 'image2pipe', '-vframes', '1', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
+    'audio': [ '-hide_banner', '-loglevel', 'error','-i', 'pipe:0', '-f', 'image2pipe', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
+    'text': [ '-hide_banner', '-loglevel', 'error', '-f', 'lavfi', '-i', 'color=c=white:s=250x250:d=5.396', '-filter_complex', `drawtext=text='${inputText}':x=5:y=5:fontsize=18:fontcolor=000000:fontfile='${fontPath}':font=Consolas:line_spacing=5`, '-vframes', '1', '-f', 'image2pipe','-c:v', 'mjpeg', 'pipe:1' ]
   }
 
   return new Promise((resolve, reject) => {
@@ -72,25 +84,15 @@ async function ffmpeg (inputStream, type) {
 
     if (type !== 'text') inputStream.pipe(ffmpegProc.stdin)
 
-    ffmpegProc.stdout.on('data', data => {
-      debug('stdout:', data)
-    })
-
-    resolve(ffmpegProc.stdout)
+    ffmpegProc.stdout.once('readable', () => resolve(ffmpegProc.stdout))
+    ffmpegProc.stderr.once('readable', () => reject(new Error('[FFMPEG] Unable to process filestream')))
   })
 }
 
-function getDefaultThumbnail (type) {
-  return createReadStream(defaultThumbnailPaths[type])
-}
-
 export default async function generateThumbnail (mimetype, filestream) {
-  const { type, subtype } = new MIMEType(mimetypeFilter(mimetype))
+  const { type } = new MIMEType(mimetypeFilter(mimetype))
 
   try {
-    // TODO: fix mp4 thumbnail generation
-    if (subtype === 'mp4') throw new Error('Unable to generate mp4 thumbnails at this time')
-
     const imageStream = type === 'image' ? filestream : await ffmpeg(filestream, type)
 
     // Resize and crop Thumbnails
@@ -120,5 +122,5 @@ export default async function generateThumbnail (mimetype, filestream) {
     error(err)
   }
 
-  return getDefaultThumbnail(type)
+  return createReadStream(defaultThumbnailPaths[type])
 }
