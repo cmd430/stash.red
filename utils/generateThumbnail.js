@@ -75,11 +75,8 @@ async function ffmpeg (inputStream, type) {
     ffmpegProc.stdout.on('data', data => {
       debug('stdout:', data)
     })
-    ffmpegProc.stderr.on('data', data => {
-      debug('stderr:', data.toString())
-    })
 
-    //resolve(ffmpegProc.stdout)
+    resolve(ffmpegProc.stdout)
   })
 }
 
