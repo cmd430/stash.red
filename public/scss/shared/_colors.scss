@@ -3,6 +3,7 @@ $white:                    rgb(255, 255, 255);
 $black:                    rgb(0, 0, 0);
 $transparent:              rgba(0, 0 ,0, 0);
 $transparent-gradiant:       url('/img/element/transparent.webp');
+$translucent:              rgba(0, 0, 0, 0.8);
 
 
 // Header
@@ -17,6 +18,8 @@ $light-content-background: rgb(232, 235, 237);
 $light-content-border:     rgb(218, 223, 227);
 $light-content-text:       rgb(198, 203, 207);
 $light-content-text-hover: rgb(36, 41, 46);
+
+$content-text-dark:        rgb(39, 40, 43);
 
 $dark-page-background:     rgb(10, 10, 10);
 $dark-content-background:  rgb(30, 30, 30);

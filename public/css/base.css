@@ -2,9 +2,11 @@
   --color-white: rgb(255, 255, 255);
   --color-black: rgb(0, 0, 0);
   --color-transparent: rgba(0, 0, 0, 0);
+  --color-translucent: rgba(0, 0, 0, 0.8);
   --color-logo: rgb(219, 3, 3);
   --color-logo-dev: rgb(56, 137, 234);
   --color-header-text: rgb(119, 119, 119);
+  --color-content-text-dark: rgb(39, 40, 43);
   --color-page-background-theme-mix: color-mix(in srgb, var(--color-page-background) 40%, var(--color-theme));
   --color-progress-border: rgb(218, 223, 227);
   --color-progress-fill: rgb(56, 136, 234);
@@ -143,8 +145,8 @@ body {
 
 @font-face {
   font-family: "icons";
-  src: url("../font/icons.eot?70219318");
-  src: url("../font/icons.eot?70219318#iefix") format("embedded-opentype"), url("../font/icons.woff2?70219318") format("woff2"), url("../font/icons.woff?70219318") format("woff"), url("../font/icons.ttf?70219318") format("truetype"), url("../font/icons.svg?70219318#icons") format("svg");
+  src: url("../font/icons.eot?50189681");
+  src: url("../font/icons.eot?50189681#iefix") format("embedded-opentype"), url("../font/icons.woff2?50189681") format("woff2"), url("../font/icons.woff?50189681") format("woff"), url("../font/icons.ttf?50189681") format("truetype"), url("../font/icons.svg?50189681#icons") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -556,6 +558,10 @@ body {
 
 .icon-chart-pie:before {
   content: "\f200";
+}
+
+.icon-user-secret:before {
+  content: "\f21b";
 }
 
 .icon-question-circle-o:before {

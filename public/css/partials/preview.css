@@ -19,46 +19,47 @@
   top: 0;
   left: 0;
   margin: 0 !important;
+  padding: 0.2rem 0;
   z-index: 2;
   width: 100%;
   height: 100%;
-}
-.preview .icon.image {
-  background: no-repeat right top/2.5rem url("/img/types/image.webp");
-}
-.preview .icon.audio {
-  background: no-repeat right top/2.5rem url("/img/types/audio.webp");
-}
-.preview .icon.video {
-  background: no-repeat right top/2.5rem url("/img/types/video.webp");
-}
-.preview .icon.text {
-  background: no-repeat right top/2.5rem url("/img/types/text.webp");
+  text-align: right;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-content-text-dark);
+  background: no-repeat right top/2.5rem url("/img/element/type.webp");
 }
 .preview .icon.album {
-  background: no-repeat right top/2.5rem url("/img/types/album.webp");
+  font-size: 1rem;
 }
-.preview.private .icon.image {
-  background: no-repeat left bottom/2.5rem url("/img/types/private.webp"), no-repeat right top/2.5rem url("/img/types/image.webp");
+.preview .icon.album .items {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1.5rem;
+  text-decoration: none;
+  text-align: center;
 }
-.preview.private .icon.audio {
-  background: no-repeat left bottom/2.5rem url("/img/types/private.webp"), no-repeat right top/2.5rem url("/img/types/audio.webp");
+.preview i.icon-user-secret {
+  position: absolute;
+  bottom: 0;
+  color: var(--color-content-text-dark);
+  font-size: 0.9rem;
+  z-index: 2;
+  display: none;
 }
-.preview.private .icon.video {
-  background: no-repeat left bottom/2.5rem url("/img/types/private.webp"), no-repeat right top/2.5rem url("/img/types/video.webp");
+.preview.private .icon {
+  background: no-repeat left bottom/2.5rem url("/img/element/private.webp"), no-repeat right top/2.5rem url("/img/element/type.webp");
 }
-.preview.private .icon.text {
-  background: no-repeat left bottom/2.5rem url("/img/types/private.webp"), no-repeat right top/2.5rem url("/img/types/text.webp");
-}
-.preview.private .icon.album {
-  background: no-repeat left bottom/2.5rem url("/img/types/private.webp"), no-repeat right top/2.5rem url("/img/types/album.webp");
+.preview.private i.icon-user-secret {
+  display: inline;
 }
 .preview .album_title {
   position: absolute;
   bottom: -1.8rem;
   color: var(--color-white);
   font-weight: 500;
-  background: rgba(36, 41, 46, 0.8);
+  background: var(--color-translucent);
   text-align: center;
   width: 100%;
   height: 1.8rem;
@@ -68,16 +69,6 @@
   transition: bottom linear 100ms;
   line-height: 1.8rem;
   padding: 0 0.3rem;
-}
-.preview .album_items {
-  position: absolute;
-  right: 0;
-  width: 1.5rem;
-  color: rgb(80, 81, 82);
-  text-decoration: none;
-  text-align: center;
-  z-index: 9;
-  font-weight: 600;
 }
 .preview:hover .album_title {
   bottom: 0;

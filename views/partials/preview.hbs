@@ -2,19 +2,39 @@
   {{#if type}}
     <a href="/f/{{id}}">
       <img class="thumbnail" src="/f/{{id}}/thumbnail" loading="lazy">
-      {{#if_contains type 'image'}}<span class="icon image"></span>{{/if_contains}}
-      {{#if_contains type 'audio'}}<span class="icon audio"></span>{{/if_contains}}
-      {{#if_contains type 'video'}}<span class="icon video"></span>{{/if_contains}}
-      {{#if_contains type 'text'}}<span class="icon text"></span>{{/if_contains}}
+      {{#if_contains type 'image'}}
+        <span class="icon image">
+          <i class="icon-file-image"></i>
+        </span>
+      {{/if_contains}}
+      {{#if_contains type 'audio'}}
+        <span class="icon audio">
+          <i class="icon-file-audio"></i>
+        </span>
+      {{/if_contains}}
+      {{#if_contains type 'video'}}
+        <span class="icon video">
+          <i class="icon-file-video"></i>
+        </span>
+      {{/if_contains}}
+      {{#if_contains type 'text'}}
+        <span class="icon text">
+          <i class="icon-doc-text"></i>
+        </span>
+      {{/if_contains}}
+      <i class="icon-user-secret"></i>
     </a>
   {{else}}
     <a href="/a/{{id}}">
       <img class="thumbnail" src="/a/{{id}}/thumbnail" loading="lazy">
-      <span class="icon album"></span>
+      <span class="icon album">
+        <span class="items">{{entries}}</span>
+      </span>
       <span class="album_title">{{title}}</span>
-      <span class="album_items">{{entries}}</span>
+      <i class="icon-user-secret"></i>
     </a>
   {{/if}}
+
 </div>
 <link href="/css/partials/preview.css" rel="stylesheet" />
 <script type="module" src="/js/partials/preview.js"></script>

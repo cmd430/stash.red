@@ -2,12 +2,12 @@
 
 @font-face {
   font-family: 'icons';
-  src: url('../font/icons.eot?70219318');
-  src: url('../font/icons.eot?70219318#iefix') format('embedded-opentype'),
-       url('../font/icons.woff2?70219318') format('woff2'),
-       url('../font/icons.woff?70219318') format('woff'),
-       url('../font/icons.ttf?70219318') format('truetype'),
-       url('../font/icons.svg?70219318#icons') format('svg');
+  src: url('../font/icons.eot?50189681');
+  src: url('../font/icons.eot?50189681#iefix') format('embedded-opentype'),
+       url('../font/icons.woff2?50189681') format('woff2'),
+       url('../font/icons.woff?50189681') format('woff'),
+       url('../font/icons.ttf?50189681') format('truetype'),
+       url('../font/icons.svg?50189681#icons') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -128,5 +128,6 @@
 .icon-trash:before { content: '\f1f8'; }
 .icon-chart-area:before { content: '\f1fe'; }
 .icon-chart-pie:before { content: '\f200'; }
+.icon-user-secret:before { content: '\f21b'; }
 .icon-question-circle-o:before { content: '\f29c'; }
 .icon-user-o:before { content: '\f2c0'; }

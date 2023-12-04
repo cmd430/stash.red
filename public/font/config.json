@@ -605,6 +605,12 @@
       "css": "doc",
       "code": 59448,
       "src": "fontawesome"
+    },
+    {
+      "uid": "f9c8ea86275ca16128235c6452b67b8e",
+      "css": "user-secret",
+      "code": 61979,
+      "src": "fontawesome"
     }
   ]
 }
