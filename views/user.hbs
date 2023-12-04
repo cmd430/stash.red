@@ -13,18 +13,23 @@
       </h1>
     </header>
     <nav>
-      {{#if_eq view.type 'albums' this}}
+      {{#if_eq view.type 'albums'}}
         <a href="..">Files</a>
         <a class="active">Albums</a>
       {{else}}
         <a class="active">Files</a>
         <a href="albums/">Albums</a>
+        <span></span>
+        <a class="user__filter" title="Filter uploads">
+          <i class="icon-sliders"></i>
+          <span>Filter</span>
+        </a>
       {{/if_eq}}
     </nav>
     <main>
       <section>
         {{#each uploads}}
-          {{> preview this}}
+          {{> preview}}
         {{/each}}
         {{#repeat 5}}
           <div class="spacer"></div>

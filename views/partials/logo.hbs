@@ -1,4 +1,4 @@
-<div id="logo" {{#if_contains @env 'dev' this}}class="dev"{{/if_contains}}>
+<div id="logo" {{#if_contains @env 'dev'}}class="dev"{{/if_contains}}>
   <a href="/">
     {{split @title '.' 0}}<span>.{{split @title '.' 1}}</span>
   </a>

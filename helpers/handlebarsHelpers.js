@@ -1,44 +1,49 @@
-import { extname } from 'node:path'
 import handlebars from 'handlebars'
 import handlebarsPaginate from 'handlebars-paginate'
 
 handlebars.registerHelper('paginate', handlebarsPaginate)
-handlebars.registerHelper('if_eq', (a, b, context, opts) => {
-  if (context instanceof Function) opts = context
-  // eslint-disable-next-line consistent-this, no-invalid-this
-  if (!(context instanceof Object)) context = this
-  if (a === b) return opts.fn(context)
-  return opts.inverse(context)
+handlebars.registerHelper('if_eq', function (a, b, opts) {
+  // eslint-disable-next-line no-invalid-this, consistent-this
+  const context = this
+
+  return (a === b) ? opts.fn(context) : opts.inverse(context)
 })
-handlebars.registerHelper('if_eq_or', (a, b, c, context, opts) => {
-  if (context instanceof Function) opts = context
-  // eslint-disable-next-line consistent-this, no-invalid-this
-  if (!(context instanceof Object)) context = this
-  if (a === b || c === true) return opts.fn(context)
-  return opts.inverse(context)
+handlebars.registerHelper('if_eq_or', function (a, b, c, opts) {
+  // eslint-disable-next-line no-invalid-this, consistent-this
+  const context = this
+
+  return (a === b || c === true) ? opts.fn(context) : opts.inverse(context)
 })
-handlebars.registerHelper('if_either_eq', (a, b, c, context, opts) => {
-  if (context instanceof Function) opts = context
-  // eslint-disable-next-line consistent-this, no-invalid-this
-  if (!(context instanceof Object)) context = this
+handlebars.registerHelper('if_either_eq', function (a, b, c, opts) {
+  // eslint-disable-next-line no-invalid-this, consistent-this
+  const context = this
+
   if (c === undefined || c === null) c = 'CPMZLqNzl11MaPtSh33uML3Jz' // just a random string that should never match
   if (a === c || b === c) return opts.fn(context)
+
   return opts.inverse(context)
 })
-handlebars.registerHelper('if_contains', (a, b, context, opts) => {
-  if (context instanceof Function) opts = context
-  // eslint-disable-next-line consistent-this, no-invalid-this
-  if (!(context instanceof Object)) context = this
-  if (a.includes(b)) return opts.fn(context)
-  return opts.inverse(context)
+handlebars.registerHelper('if_either', function (a, b, opts) {
+  // eslint-disable-next-line no-invalid-this, consistent-this
+  const context = this
+  const isDefined = a ?? b ?? undefined
+
+  return (isDefined !== undefined) ? opts.fn(context) : opts.inverse(context)
+})
+handlebars.registerHelper('if_contains', function (a, b, opts) {
+  // eslint-disable-next-line no-invalid-this, consistent-this
+  const context = this
+
+  return (a.includes(b)) ? opts.fn(context) : opts.inverse(context)
 })
 handlebars.registerHelper('repeat', (n, context) => {
   let accum = ''
+
   for (let i = 0; i < n; ++i) accum += context.fn(i)
+
   return accum
 })
 handlebars.registerHelper('split', (data, split, index) => data?.split(split)[index])
-handlebars.registerHelper('ext', data => extname(data).slice(1))
 handlebars.registerHelper('json', data => JSON.stringify(data, null, 2))
 handlebars.registerHelper('opengraph', (data, dataExtended) => {
   const ogData = { ...data, ...dataExtended }

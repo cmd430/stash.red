@@ -10,18 +10,20 @@
     <header>{{> logo}}</header>
     <main>
       <section data-username="{{file.uploadedBy}}">
-        {{#if_contains file.type 'image' file}}
-          {{> image this}}
-        {{/if_contains}}
-        {{#if_contains file.type 'video' file}}
-          {{> video this}}
-        {{/if_contains}}
-        {{#if_contains file.type 'audio' file}}
-          {{> audio this}}
-        {{/if_contains}}
-        {{#if_contains file.type 'text' file}}
-          {{> text this}}
-        {{/if_contains}}
+        {{#with file}}
+          {{#if_contains type 'image'}}
+            {{> image}}
+          {{/if_contains}}
+          {{#if_contains type 'video'}}
+            {{> video}}
+          {{/if_contains}}
+          {{#if_contains type 'audio'}}
+            {{> audio}}
+          {{/if_contains}}
+          {{#if_contains type 'text'}}
+            {{> text}}
+          {{/if_contains}}
+        {{/with}}
       </section>
       {{> modals}}
     </main>

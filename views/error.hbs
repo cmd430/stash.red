@@ -12,7 +12,7 @@
         <h1>{{status}}</h1>
         <h2>{{message}}</h2>
         <p>{{description}}</p>
-        {{#if_eq_or @env 'dev' @session.isAdmin this}}
+        {{#if_eq_or @env 'dev' @session.isAdmin}}
           <pre>{{#if stack}}{{stack}}{{/if}}</pre>
         {{/if_eq_or}}
         <span>

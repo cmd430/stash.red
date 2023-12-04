@@ -2,10 +2,10 @@
   {{#if type}}
     <a href="/f/{{id}}">
       <img class="thumbnail" src="/f/{{id}}/thumbnail" loading="lazy">
-      {{#if_contains type 'image' this}}<span class="icon image"></span>{{/if_contains}}
-      {{#if_contains type 'audio' this}}<span class="icon audio"></span>{{/if_contains}}
-      {{#if_contains type 'video' this}}<span class="icon video"></span>{{/if_contains}}
-      {{#if_contains type 'text' this}}<span class="icon text"></span>{{/if_contains}}
+      {{#if_contains type 'image'}}<span class="icon image"></span>{{/if_contains}}
+      {{#if_contains type 'audio'}}<span class="icon audio"></span>{{/if_contains}}
+      {{#if_contains type 'video'}}<span class="icon video"></span>{{/if_contains}}
+      {{#if_contains type 'text'}}<span class="icon text"></span>{{/if_contains}}
     </a>
   {{else}}
     <a href="/a/{{id}}">

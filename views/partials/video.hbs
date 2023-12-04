@@ -9,14 +9,14 @@
       <i class="icon-download"></i>
       <span>Download</span>
     </a>
-    {{#if_either_eq uploadedBy @root.album.uploadedBy @session.username this}}
+    {{#if_either_eq uploadedBy @root.album.uploadedBy @session.username}}
       <a class="action__delete" title="Delete this video">
         <i class="icon-trash"></i>
       </a>
     {{/if_either_eq}}
   </div>
   {{#if @root.album}}
-    {{#if_eq @root.album.uploadedBy @session.username this}}
+    {{#if_eq @root.album.uploadedBy @session.username}}
       <div class="orders" disabled>
         <a class="order__up" title="Move video up">
           <i class="icon-up-big"></i>
