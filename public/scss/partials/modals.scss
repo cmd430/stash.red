@@ -105,8 +105,29 @@
         margin-top: 0.1em;
       }
 
-      span > span {
+      > span > span {
         color: var(--color-theme-inverted);
+      }
+    }
+
+    > span {
+      width: 100%;
+      padding: 0.5rem 1rem;
+
+      > span {
+        font-size: 0.9rem;
+        padding: 0;
+      }
+
+      select {
+        margin: 0 0.4rem;
+        padding: 0.4rem;
+        border: 0;
+        width: 8rem;
+        font-weight: 600;
+        color: var(--color-theme-inverted);
+        background-color: var(--color-page-background-theme-mix);
+        border-radius: 0.2rem;
       }
     }
 

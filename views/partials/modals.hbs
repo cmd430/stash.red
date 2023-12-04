@@ -1,12 +1,23 @@
 <div id="modals" class="blackout" >
   {{#if pagination}} {{!-- User page --}}
     <div id="filter_modal" class="modal">
-      <h1>Filter</h1>
+      <h1>Filter Files</h1>
       <hr>
       <p>
         <i class="icon-info-circled"></i>
-        <span></span>
+        <span>Filter the files shown by type</span>
       </p>
+      <span>
+        <span>Show</span>
+        <select id="filter">
+          <option value="" {{#unless view.filter}}selected{{/unless}}>All</option>
+          <option value="image" {{#if_eq view.filter 'image'}}selected{{/if_eq}}>Image</option>
+          <option value="video" {{#if_eq view.filter 'video'}}selected{{/if_eq}}>Video</option>
+          <option value="audio" {{#if_eq view.filter 'audio'}}selected{{/if_eq}}>Audio</option>
+          <option value="text" {{#if_eq view.filter 'text'}}selected{{/if_eq}}>Text</option>
+        </select>
+        <span>Files</span>
+      </span>
       <div>
         <button class="filter">
           <i class="icon-ok"></i>

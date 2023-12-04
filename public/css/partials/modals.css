@@ -89,8 +89,26 @@
 .blackout .modal p i {
   margin-top: 0.1em;
 }
-.blackout .modal p span > span {
+.blackout .modal p > span > span {
   color: var(--color-theme-inverted);
+}
+.blackout .modal > span {
+  width: 100%;
+  padding: 0.5rem 1rem;
+}
+.blackout .modal > span > span {
+  font-size: 0.9rem;
+  padding: 0;
+}
+.blackout .modal > span select {
+  margin: 0 0.4rem;
+  padding: 0.4rem;
+  border: 0;
+  width: 8rem;
+  font-weight: 600;
+  color: var(--color-theme-inverted);
+  background-color: var(--color-page-background-theme-mix);
+  border-radius: 0.2rem;
 }
 .blackout .modal div {
   display: flex;

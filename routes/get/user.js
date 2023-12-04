@@ -71,7 +71,8 @@ export default function (fastify, opts, done) {
         },
         view: {
           username: username,
-          type: 'files'
+          type: 'files',
+          filter: filter
         },
         uploads: files.map(file => ({
           ...file,
