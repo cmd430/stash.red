@@ -43,7 +43,17 @@ handlebars.registerHelper('repeat', (n, context) => {
 
   return accum
 })
-handlebars.registerHelper('split', (data, split, index) => data?.split(split)[index])
+handlebars.registerHelper('format_title', opts => {
+  const { text, split, tag: tagName } = opts.hash
+  const parts = text?.split(split)
+  const tag = tagName ? `<${tagName}>` : ''
+  const tagEnd = tagName ? `</${tagName}>` : ''
+
+  if (parts === 1) return text
+  if (parts > 2) return `${parts.slice(0, -1).join('.')}${tag}.${parts.pop()}${tagEnd}`
+
+  return `${parts[0]}${tag}.${parts[1]}${tagEnd}`
+})
 handlebars.registerHelper('json', data => JSON.stringify(data, null, 2))
 handlebars.registerHelper('opengraph', (data, dataExtended) => {
   const ogData = { ...data, ...dataExtended }
