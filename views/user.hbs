@@ -3,6 +3,7 @@
   <head>
     {{> head}}
     <link rel="stylesheet" href="/css/user.css" />
+    <script type="module" src="/js/user.js"></script>
   </head>
   <body>
     {{> themeToggle}}
@@ -19,11 +20,13 @@
       {{else}}
         <a class="active">Files</a>
         <a href="albums/">Albums</a>
-        <span></span>
-        <a class="user__filter" title="Filter uploads">
-          <i class="icon-sliders"></i>
-          <span>Filter</span>
-        </a>
+        {{!--
+          <span></span>
+          <a class="user__filter" title="Filter uploads">
+            <i class="icon-sliders"></i>
+            <span>Filter</span>
+          </a>
+        --}}
       {{/if_eq}}
     </nav>
     <main>
@@ -38,6 +41,7 @@
       <nav>
         {{> paginator}}
       </nav>
+      {{> modals}}
     </main>
   </body>
 </html>

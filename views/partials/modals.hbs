@@ -1,43 +1,65 @@
 <div id="modals" class="blackout" >
-  <div id="delete_modal" class="modal">
-    <h1>Confirm Deletion</h1>
-    <hr>
-    <p>
-      <i class="icon-attention"></i>
-      <span>This action can not be undone</span>
-    </p>
-    <div>
-      <button class="delete">
-        <i class="icon-trash"></i>
-        Delete
-      </button>
-      <button class="cancel">
-        <i class="icon-cancel"></i>
-        Cancel
-      </button>
+  {{#if pagination}} {{!-- User page --}}
+    <div id="filter_modal" class="modal">
+      <h1>Filter</h1>
+      <hr>
+      <p>
+        <i class="icon-info-circled"></i>
+        <span></span>
+      </p>
+      <div>
+        <button class="filter">
+          <i class="icon-ok"></i>
+          Apply
+        </button>
+        <button class="cancel">
+          <i class="icon-cancel"></i>
+          Cancel
+        </button>
+      </div>
     </div>
-  </div>
-  <div id="update_modal" class="modal">
-    <h1>Confirm Update</h1>
-    <hr>
-    <p>
-      <i class="icon-info-circled"></i>
-      <span></span>
-    </p>
-    <div>
-      <button class="update">
-        <i class="icon-ok"></i>
-        Update
-      </button>
-      <button class="cancel">
-        <i class="icon-cancel"></i>
-        Cancel
-      </button>
+  {{/if}}
+  {{#if album}} {{!-- Album page --}}
+    <div id="update_modal" class="modal">
+      <h1>Confirm Update</h1>
+      <hr>
+      <p>
+        <i class="icon-info-circled"></i>
+        <span></span>
+      </p>
+      <div>
+        <button class="update">
+          <i class="icon-ok"></i>
+          Update
+        </button>
+        <button class="cancel">
+          <i class="icon-cancel"></i>
+          Cancel
+        </button>
+      </div>
     </div>
-  </div>
-  {{#if album}}
     {{> dropzone}}
   {{/if}}
+  {{#if_either file album}} {{!-- Album or File page --}}
+    <div id="delete_modal" class="modal">
+      <h1>Confirm Deletion</h1>
+      <hr>
+      <p>
+        <i class="icon-attention"></i>
+        <span>This action can not be undone</span>
+      </p>
+      <div>
+        <button class="delete">
+          <i class="icon-trash"></i>
+          Delete
+        </button>
+        <button class="cancel">
+          <i class="icon-cancel"></i>
+          Cancel
+        </button>
+      </div>
+    </div>
+  {{/if_either}}
 </div>
 <link href="/css/partials/modals.css" rel="stylesheet" />
 <script type="module" src="/js/partials/modals.js"></script>
