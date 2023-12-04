@@ -454,7 +454,7 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
     const searchFilter = column => {
       if (filter === '') return `"${column}" LIKE '%'`
       if (filter === 'text') return [
-        `${column}" LIKE '${filter}%'`,
+        `"${column}" LIKE '${filter}%'`,
         `OR "${column}" LIKE '%javascript'`,
         `OR "${column}" LIKE '%json'`
       ].join(' ')
