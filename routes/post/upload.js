@@ -138,7 +138,7 @@ export default function (fastify, opts, done) {
       // our field data
       const { timeToLive, isPrivate, dontFormAlbum, fetchURL, isFromHomepage } = fields
 
-      if (fetchURL !== null && fetchURL.startsWith(`${request.protocol}://${request.hostname}`) === false && fetchURL.startsWith('https://')) {
+      if (fetchURL !== null && fetchURL.startsWith(`${request.protocol}://${request.hostname}`) === false && (fetchURL.startsWith('https://') || fetchURL.startsWith('http://'))) {
         const externalResponse = await fetch(fetchURL)
         const externalStream = Readable.fromWeb(externalResponse.body)
         const externalFilename = basename(fetchURL)

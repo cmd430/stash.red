@@ -53,7 +53,7 @@ async function uploadFiles (files) {
   })
 
   if (typeof files === 'string') {
-    if (files.startsWith('https://')) {
+    if (files.startsWith('https://') || files.startsWith('http://')) {
       // URL
       formData.append('fetchURL', files)
       files = null
