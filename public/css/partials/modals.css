@@ -8,7 +8,7 @@
   left: 0;
   width: 100dvw;
   height: 100dvh;
-  padding: 5rem;
+  padding: 5rem 1rem;
   background-color: color-mix(in srgb, var(--color-black) 50%, var(--color-transparent));
   opacity: 0;
   visibility: collapse;
@@ -48,7 +48,6 @@
   width: 100%;
   max-width: 28rem;
   min-height: 11rem;
-  max-height: 15rem;
   border-radius: 0.3rem;
   border: 1px solid;
   visibility: collapse;
@@ -97,6 +96,8 @@
   padding: 0.5rem 1rem;
 }
 .blackout .modal > span > span {
+  display: inline-block;
+  width: 4rem;
   font-size: 0.9rem;
   padding: 0;
 }
