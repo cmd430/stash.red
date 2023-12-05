@@ -40,12 +40,12 @@ export async function getMimetype (filestream) {
     let searchBytes = KB
     let mimetype = 'invalid/mimetype'
     let isDetected = false
-    let returnStream
+    let returnStream = filestream
 
     // Keep looking for a valid mimetype until we run out of new bytes
     // Generally we should only need the first 1KB or less
     while (isDetected === false && searchBytes > lastSearchBytes) {
-      const { head, stream } = await streamHead(filestream, {
+      const { head, stream } = await streamHead(returnStream, {
         bytes: searchBytes
       })
 
