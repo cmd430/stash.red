@@ -3,7 +3,7 @@ import { MIMEType } from 'node:util'
 import { resolve } from 'node:path'
 import { createReadStream } from 'node:fs'
 import { platform } from 'node:os'
-import ffmpegBin from 'ffmpeg-static'
+import ffmpegPath from 'ffmpeg-static'
 import { Log } from 'cmd430-utils'
 import sharp from 'sharp'
 import { mimetypeFilter } from './mimetype.js'
@@ -34,7 +34,7 @@ function streamToBuffer (readableStream) {
   })
 }
 
-function ffmpegEscapeString (str) {
+function ffEscapeString (str) {
   // escape ffmpeg special chars
   str = str.replace(/\\/g, '\\\\\\\\')
   str = str.replace(/'/g, '\'\'')
@@ -44,7 +44,7 @@ function ffmpegEscapeString (str) {
   return str
 }
 
-function ffmpegEscapePath (str) {
+function ffEscapePath (str) {
   if (platform === 'win32') return str
 
   // escape ffmpeg special chars
@@ -56,34 +56,39 @@ function ffmpegEscapePath (str) {
 
 async function ffmpeg (inputStream, type) {
   // So we dont do unnessasary processing, text needs to be buffered to generate the thumbnail
-  const inputText = type === 'text' ? ffmpegEscapeString(await streamToBuffer(inputStream)) : ''
-  const fontPath = ffmpegEscapePath(thumbnailFontPath)
-  const args = {
-    'video': [ '-hide_banner', '-loglevel', 'error', '-r', '1', '-i', 'pipe:0', '-f', 'image2pipe', '-vframes', '1', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
-    'audio': [ '-hide_banner', '-loglevel', 'error','-i', 'pipe:0', '-f', 'image2pipe', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ],
-    'text': [ '-hide_banner', '-loglevel', 'error', '-f', 'lavfi', '-i', 'color=c=white:s=250x250:d=5.396', '-filter_complex', `drawtext=text='${inputText}':x=5:y=5:fontsize=18:fontcolor=000000:fontfile='${fontPath}':font=Consolas:line_spacing=5`, '-vframes', '1', '-f', 'image2pipe','-c:v', 'mjpeg', 'pipe:1' ]
+  const inputText = type === 'text' ? ffEscapeString(await streamToBuffer(inputStream)) : ''
+  const fontPath = ffEscapePath(thumbnailFontPath)
+  const ffmpegArgs = [ '-hide_banner', '-loglevel', 'error' ]
+  const inputArgs = {
+    'video': [ '-i', 'pipe:0', '-vf', 'blackframe=0,metadata=select:key=lavfi.blackframe.pblack:value=80:function=less' ],
+    'audio': [ '-i', 'pipe:0' ],
+    'text': [ '-f', 'lavfi', '-i', 'color=c=white:s=250x250:d=5.396', '-filter_complex', `drawtext=text='${inputText}':x=5:y=5:fontsize=18:fontcolor=000000:fontfile='${fontPath}':font=Consolas:line_spacing=5` ]
   }
+  const outputArgs = [ '-frames:v', '1', '-f', 'image2pipe', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ]
+  const args = ffmpegArgs.concat(inputArgs[type]).concat(outputArgs)
+
+  debug('ffmpeg args:', args.join(' '))
 
   return new Promise((resolve, reject) => {
-    const ffmpegProc = spawn(ffmpegBin, args[type])
+    const ffProcess = spawn(ffmpegPath, args)
 
     // Handle process Errors
-    ffmpegProc.on('error', err => reject(err))
-    ffmpegProc.stdin.on('error', err => {
+    ffProcess.on('error', err => reject(err))
+    ffProcess.stdin.on('error', err => {
       // we get an EOF error without this error handler but everything is fine,
       // we also get an EPIPE for some videos because it doesnt need all the inputstream, we can also ignore these
       // we log the error if it is anything else
       if (err.code !== 'EOF' && err.code !== 'EPIPE') return error('[FFMPEG stdin Error]', err.message)
     })
 
-    if (type !== 'text') ffmpegProc.once('spawn', () => inputStream.pipe(ffmpegProc.stdin))
+    if (type !== 'text') ffProcess.once('spawn', () => inputStream.pipe(ffProcess.stdin))
 
-    ffmpegProc.stdout.once('readable', () => resolve(ffmpegProc.stdout))
-    ffmpegProc.stderr.once('readable', () => reject(new Error('[FFMPEG] Unable to process filestream')))
+    ffProcess.stdout.once('readable', () => resolve(ffProcess.stdout))
+    ffProcess.stderr.once('readable', () => reject(new Error('[FFMPEG] Unable to process filestream')))
   })
 }
 
-export default async function generateThumbnail (mimetype, filestream) {
+export async function generateThumbnail (mimetype, filestream) {
   const { type } = new MIMEType(mimetypeFilter(mimetype))
 
   try {
