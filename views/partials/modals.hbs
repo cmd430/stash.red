@@ -5,7 +5,7 @@
       <hr>
       <p>
         <i class="icon-info-circled"></i>
-        <span>Filter the files shown by type</span>
+        <span>Filter the files shown by type and the sort order</span>
       </p>
       <span>
         <span>Show</span>
@@ -17,6 +17,13 @@
           <option value="text" {{#if_eq view.filter 'text'}}selected{{/if_eq}}>Text</option>
         </select>
         <span>Files</span>
+        <div></div>
+        <span>Sort by</span>
+        <select id="sort">
+          <option value="" {{#unless view.sort}}selected{{/unless}}>Newest</option>
+          <option value="ASC" {{#if_eq view.sort 'ASC'}}selected{{/if_eq}}>Oldest</option>
+        </select>
+        <span>First</span>
       </span>
       <div>
         <button class="filter">
