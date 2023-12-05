@@ -2,8 +2,10 @@ import { extname, basename } from 'node:path'
 import { Readable } from 'node:stream'
 import { customAlphabet } from 'nanoid'
 import { Log } from 'cmd430-utils'
-import generateThumbnail from '../../utils/generateThumbnail.js'
+import { generateThumbnail } from '../../utils/generateThumbnail.js'
+import { streamTee as tee } from '../../utils/streamTee.js'
 import { getMimetype, isValidMimetype, getMimeExtension } from '../../utils/mimetype.js'
+
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Upload')
@@ -35,10 +37,7 @@ export default function (fastify, opts, done) {
       const uploadedUntil = ttl => ttl ? new Date(uploadTimestamp + ttl).toISOString() : 'Infinity'
       const getExtname = (fn, mt) => extname(fn).length > 0 ? '' : getMimeExtension(mt)
       const processFile = async (stream, filename) => {
-        // Glorious hack to get access to the stream with 2 seperate readers
-        const [ fileWebStream, thumbnailWebStream ] = Readable.toWeb(stream).tee()
-        const filestream = Readable.fromWeb(fileWebStream)
-        const thumbnailStream = Readable.fromWeb(thumbnailWebStream)
+        const [ filestream, thumbnailStream ] = tee(stream)
         const { stream: fileStream, mimetype } = await getMimetype(filestream)
 
         if (isValidMimetype(mimetype) === false) {
