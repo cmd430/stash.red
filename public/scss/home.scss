@@ -84,6 +84,7 @@ main {
   max-height: 15rem;
   min-height: 10rem;
   transition: opacity 200ms;
+  pointer-events: none;
 
   &::before {
     position: absolute;
