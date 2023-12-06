@@ -111,6 +111,7 @@
   background-color: var(--color-page-background-theme-mix);
   border-radius: 0.2rem;
   border: 1px solid var(--color-modal-border);
+  cursor: pointer;
 }
 .blackout .modal div {
   display: flex;
