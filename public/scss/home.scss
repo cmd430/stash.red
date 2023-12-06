@@ -100,6 +100,7 @@ main {
     align-items: center;
     width: 16rem;
     margin: 0.15rem 0;
+    pointer-events: all;
 
     span {
       position: relative;
@@ -158,6 +159,7 @@ main {
       color: var(--color-theme-inverted);
       background-color: var(--color-page-background-theme-mix);
       z-index: 1;
+      cursor: pointer;
     }
   }
 }

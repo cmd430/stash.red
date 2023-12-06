@@ -92,6 +92,7 @@ main section {
   align-items: center;
   width: 16rem;
   margin: 0.15rem 0;
+  pointer-events: all;
 }
 #settings .setting span {
   position: relative;
@@ -143,6 +144,7 @@ main section {
   color: var(--color-theme-inverted);
   background-color: var(--color-page-background-theme-mix);
   z-index: 1;
+  cursor: pointer;
 }
 
 footer {
