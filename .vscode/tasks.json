@@ -2,6 +2,36 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "type": "npm",
+      "presentation": {
+        "reveal": "always",
+        "group": "Sever",
+        "close": false
+      },
+      "options": {
+        "statusbar": {
+          "label": "$(console) start:prod"
+        }
+      },
+      "script": "start:prod",
+      "label": "start:prod",
+    },
+    {
+      "type": "npm",
+      "presentation": {
+        "reveal": "always",
+        "group": "Sever",
+        "close": false
+      },
+      "options": {
+        "statusbar": {
+          "label": "$(console) start:dev"
+        }
+      },
+      "script": "start:dev",
+      "label": "start:dev",
+    },
+    {
       "type": "eslint",
       "runOptions": {
         "runOn": "folderOpen",
