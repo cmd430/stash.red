@@ -1,0 +1,36 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true,
+      "**/node_modules/": true,
+      "**/package.json": false,
+      "**/package-lock.json": true,
+      "**/.github": true,
+      "**/.vscode": true,
+      "**/.psd": true,
+      "**/*.css.map": true,
+      "**/.gitignore": false,
+      "**/*.db-*": true,
+      "*.code-workspace": true,
+      ".editorconfig": true,
+      ".eslintrc.json": true,
+      ".notes": false,
+      "ecosystem.config.cjs": true,
+      "public": false,
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/.github": true,
+      "**/.vscode": true,
+      "**/*.css.map": true,
+      "*.code-workspace": true,
+      ".editorconfig": true,
+      "ecosystem.config.cjs": true,
+    }
+  }
+}
