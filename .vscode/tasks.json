@@ -56,6 +56,21 @@
       },
       "script": "sass: watch",
       "label": "sass: watch"
+    },
+    {
+      "type": "shell",
+      "presentation": {
+        "reveal": "never",
+        "group": "Task",
+      },
+      "command": ".github/docs/index.html",
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "$(book) docs: view"
+        }
+      },
+      "label": "docs: view"
     }
   ]
 }
