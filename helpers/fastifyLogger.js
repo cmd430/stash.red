@@ -11,7 +11,10 @@ export default {
         statusCode: reply.statusCode,
         contentLength: reply[
           Object.getOwnPropertySymbols(reply).find(s => s.description === 'fastify.reply.headers')
-        ]?.['content-length']
+        ]?.['content-length'],
+        contentRange: reply[
+          Object.getOwnPropertySymbols(reply).find(s => s.description === 'fastify.reply.headers')
+        ]?.['content-range']
       }
     },
     req (request) {
@@ -43,6 +46,14 @@ export default {
         if (s >= 100) return grey(s)
       }
       const contentLength = cl => {
+        try {
+          const { offset, count, size } = cl.match(/^(?<unit>bytes) (?<offset>\d{0,})-(?<count>\d{0,})\/(?<size>\d{0,})$/)?.groups ?? {}
+
+          if (offset || count || size) cl = count
+        } catch {}
+
+        if (cl === '?') fastifyLog.debug('PENIS', logData.res)
+
         if (cl === '?') return '?? Bytes' // should only be for streamed responses
         if (cl === '0' || cl === 0 || cl === '') return '0 Bytes'
 
@@ -53,7 +64,7 @@ export default {
       let message = logData.msg
 
       if (logData.res && !logData.req) {
-        message = `${logData.reqId} - ${bold(status(logData.res.statusCode ?? '?'))} - ${contentLength(logData.res.contentLength ?? '?')} - ${logData.responseTime?.toFixed(4) ?? 0 ?? '?'}ms`
+        message = `${logData.reqId} - ${bold(status(logData.res.statusCode ?? '?'))} - ${contentLength(logData.res.contentLength ?? logData.res.contentRange ?? '?')} - ${logData.responseTime?.toFixed(4) ?? 0 ?? '?'}ms`
       }
       if (logData.req && !logData.res) {
         message = `${logData.reqId} - ${bold(grey(logData.req.method))} - ${logData.req.url}${logData.req.path ?? ''}${logData.req.parameters ?? ''}`
