@@ -1,7 +1,8 @@
 import { uptime } from 'node:process'
-import { Log, strip } from 'cmd430-utils'
-import Tail from 'tail-file'
 import { resolve } from 'node:path'
+import { Log, html } from 'cmd430-utils'
+import Tail from 'tail-file'
+
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Admin (GET)')
@@ -36,7 +37,7 @@ export default function (fastify, opts, done) {
     })
 
     tail.on('error', err => error(err))
-    tail.on('line', line => connection.socket.send(strip(line)))
+    tail.on('line', line => connection.socket.send(html(line)))
     tail.start()
   })
 

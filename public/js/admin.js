@@ -21,10 +21,10 @@ function viewLog (logType) {
   const ws = new WebSocket(wssURL)
 
   ws.addEventListener('message', ({ data }) => {
-    const message = `${data}\n`
+    const message = `${data}`
     const shouldScroll = log.scrollTop === log.scrollTopMax
 
-    log.append(message)
+    log.insertAdjacentHTML('beforeend', message)
 
     if (shouldScroll) log.scrollTop = log.scrollHeight
   })

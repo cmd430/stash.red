@@ -221,8 +221,8 @@ main section {
 }
 
 pre {
-  background: var(--color-page-background-theme-mix);
-  color: var(--color-theme-inverted);
+  background: var(--color-black);
+  color: var(--color-white);
   white-space: pre;
   overflow: auto;
   padding: 1rem;
