@@ -10,8 +10,6 @@ const { storageConnectionString } = config.storage
 
 export default class StorageInterface extends StorageInterfaceBase {
 
-  #blobServiceClient = BlobServiceClient.fromConnectionString(storageConnectionString)
-
   /**
    * Create the storage container for a user
    * @public
@@ -102,13 +100,22 @@ export default class StorageInterface extends StorageInterfaceBase {
   }
 
   /**
-   * Get the azure container client for a user
+   * Get the azure blob service client
+   * @private
+   * @returns {BlobServiceClient}
+   */
+  #getBlobServiceClient () { // eslint-disable-line class-methods-use-this
+    return BlobServiceClient.fromConnectionString(storageConnectionString)
+  }
+
+  /**
+   * Get the azure blob container client for a user
    * @private
    * @param {string} username The username
    * @returns {ContainerClient}
    */
   #getContainerClient (username) {
-    return this.#blobServiceClient.getContainerClient(username.toLowerCase())
+    return this.#getBlobServiceClient().getContainerClient(username.toLowerCase())
   }
 
   /**
