@@ -36,10 +36,7 @@ export default function (fastify, opts, done) {
     })
 
     tail.on('error', err => error(err))
-    tail.on('line', line => connection.socket.send(JSON.stringify({
-      type: 'message',
-      message: strip(line)
-    })))
+    tail.on('line', line => connection.socket.send(strip(line)))
     tail.start()
   })
 

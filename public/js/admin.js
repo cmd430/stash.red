@@ -20,12 +20,12 @@ function viewLog (logType) {
   const ws = new WebSocket(wssURL)
 
   ws.addEventListener('message', ({ data }) => {
-    const { type, message } = JSON.parse(data)
+    const message = `${data}\n`
+    const shouldScroll = log.scrollTop === log.scrollTopMax
 
-    if (type === 'message') {
-      log.append(`${message}\n`)
-      log.scrollTop = log.scrollHeight
-    }
+    log.append(message)
+
+    if (shouldScroll) log.scrollTop = log.scrollHeight
   })
 }
 
