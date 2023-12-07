@@ -41,8 +41,6 @@ export default function (fastify, opts, done) {
       message: strip(line)
     })))
     tail.start()
-
-    setInterval(() => connection.socket.send(JSON.stringify({ type: 'ping' })), 1000 * 60)
   })
 
   done()

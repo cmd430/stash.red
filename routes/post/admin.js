@@ -6,10 +6,12 @@ const { log, debug, info, warn, error } = new Log('Admin (POST)')
 
 export default function (fastify, opts, done) {
 
-  fastify.post('/admin/restart', async (request, reply) => {
+  fastify.post('/admin/:action', async (request, reply) => {
     if (!request.session.get('authenticated') || request.session.get('session')?.isAdmin !== true) return reply.error(401)
 
-    exit(0)
+    const { action } = request.params
+
+    if (action === 'restart') return exit(0)
   })
 
   done()
