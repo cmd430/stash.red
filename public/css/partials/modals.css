@@ -16,12 +16,12 @@
   z-index: 100;
   transition: opacity 250ms linear, visibility 250ms linear;
 }
-.blackout.delete, .blackout.update, .blackout.filter, .blackout.dropzone {
+.blackout.delete, .blackout.update, .blackout.filter, .blackout.restart, .blackout.dropzone {
   opacity: 1;
   visibility: visible;
   transition: opacity 250ms linear, visibility 0ms linear;
 }
-.blackout.delete #delete_modal, .blackout.update #update_modal, .blackout.filter #filter_modal {
+.blackout.delete #delete_modal, .blackout.update #update_modal, .blackout.filter #filter_modal, .blackout.restart #restart_modal {
   background-color: var(--color-modal-background);
   border-color: var(--color-modal-border);
 }
@@ -32,6 +32,9 @@
   visibility: visible;
 }
 .blackout.filter #filter_modal {
+  visibility: visible;
+}
+.blackout.restart #restart_modal {
   visibility: visible;
 }
 .blackout.dropzone {
@@ -150,7 +153,7 @@
 .blackout .modal div button:last-of-type {
   border-radius: 0 0.2rem 0.2rem 0;
 }
-.blackout .modal div button.delete {
+.blackout .modal div button.delete, .blackout .modal div button.restart {
   background: color-mix(in srgb, var(--color-modal-delete) var(--color-background-opacity), var(--color-white));
   color: color-mix(in srgb, var(--color-white) var(--color-text-opacity), var(--color-transparent));
 }

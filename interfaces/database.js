@@ -301,6 +301,24 @@ export class DatabaseInterfaceBase {
    */
 
   /**
+   * Get info
+   * @public
+   * @async
+   * @method
+   * @name DatabaseInterfaceBase#getInfo
+   * @returns {getInfoResult}
+   */
+  /**
+   * @typedef {object} getInfoResult
+   * @property {boolean} succeeded
+   * @property {'OK'|number} code if succeeded = false the error code to use for response or the string OK if succeeded = true
+   * @property {object} [data] returned data if succeeded = true
+   * @property {number} data.totalSize the total size in bytes of all uploaded files
+   * @property {number} data.totalFiles the total number of files
+   * @property {number} data.totalAlbums the total number of albums
+   */
+
+  /**
    * Remove uploads from the DB where the uploadedUntil has expired
    * @public
    * @async

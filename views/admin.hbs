@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {{> head}}
+    <link rel="stylesheet" href="/css/admin.css" />
+    <script type="module" src="/js/admin.js"></script>
+  </head>
+  <body>
+    {{> themeToggle}}
+    <header>
+      {{> logo}}
+      <h1>Admin</h1>
+    </header>
+    <main>
+      <section>
+        <span id="notice">
+          <span>*</span>
+          Requires PM2
+        </span>
+        <div id="table">
+          <div class="row">
+            <span>
+              <i class="icon-attention"></i>
+              Process Control
+              <span>*</span>
+            </span>
+            <span>
+              <button id="restart">Restart</button>
+            </span>
+          </div>
+          <div class="row">
+            <span>
+              <i class="icon-doc-text"></i>
+              Viewing Log
+              <span>*</span>
+            </span>
+            <span>
+              combined.log
+            </span>
+          </div>
+        </div>
+        <div id="table">
+          <div class="row">
+            <span>
+              <i class="icon-docs"></i>
+              Total Files
+            </span>
+            <span>{{stats.totalFiles}}</span>
+          </div>
+          <div class="row">
+            <span>
+              <i class="icon-folder-empty"></i>
+              Total Albums
+            </span>
+            <span>{{stats.totalAlbums}}</span>
+          </div>
+          <div class="row">
+            <span>
+              <i class="icon-hdd"></i>
+              Total Size
+            </span>
+            <span class="totalSize">{{stats.totalSize}}</span>
+          </div>
+          <div class="row">
+            <span>
+              <i class="icon-chart-area"></i>
+              Server Uptime
+            </span>
+            <span class="uptime">{{stats.uptime}}</span>
+          </div>
+        </div>
+        <pre id="log"></pre>
+      </section>
+      {{> modals}}
+    </main>
+  </body>
+</html>

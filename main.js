@@ -13,6 +13,7 @@ import { evaluate } from 'mathjs'
 import SqliteStore from 'fastify-session-better-sqlite3-store'
 import view from '@fastify/view'
 import totp from 'fastify-totp'
+import websocket from '@fastify/websocket'
 import handlebars from 'handlebars'
 import { config } from './config/config.js'
 import { sessions } from './sessions/sessions.js'
@@ -95,6 +96,7 @@ try {
       useDataVariables: true
     }
   })
+  fastify.register(websocket)
   fastify.register(totp)
   fastify.register(disableCache)
   fastify.register(errorPage)

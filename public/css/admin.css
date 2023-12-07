@@ -186,6 +186,14 @@ main section {
   display: none;
 }
 
+#notice {
+  max-width: 25rem;
+  width: 100%;
+}
+#notice span {
+  color: var(--color-modal-update);
+}
+
 #table {
   display: flex;
   flex-direction: column;
@@ -194,6 +202,7 @@ main section {
   min-width: 13rem;
   background: var(--color-page-background);
   border: 1px solid var(--color-content-border);
+  margin-bottom: 1rem;
 }
 #table .row {
   display: flex;
@@ -204,5 +213,20 @@ main section {
 #table .row:nth-child(even) {
   background: var(--color-content-background);
 }
+#table .row span > span {
+  color: var(--color-modal-update);
+}
 
-/*# sourceMappingURL=info.css.map */
+pre {
+  background: var(--color-page-background-theme-mix);
+  color: var(--color-theme-inverted);
+  white-space: pre;
+  overflow: auto;
+  padding: 1rem;
+  width: 100%;
+  max-height: calc(100dvh - 25.5rem);
+  height: 100rem;
+  margin: 0;
+}
+
+/*# sourceMappingURL=admin.css.map */

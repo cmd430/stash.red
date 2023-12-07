@@ -1,5 +1,14 @@
 @import 'shared/userAlbumFileBase';
 
+#notice {
+  max-width: 25rem;
+  width: 100%;
+
+  span {
+    color: var(--color-modal-update);
+  }
+}
+
 #table {
   display: flex;
   flex-direction: column;
@@ -8,6 +17,7 @@
   min-width: 13rem;
   background: var(--color-page-background);
   border: 1px solid var(--color-content-border);
+  margin-bottom: 1rem;
 
   .row {
     display: flex;
@@ -18,5 +28,21 @@
     &:nth-child(even) {
       background: var(--color-content-background);
     }
+
+    span > span {
+      color: var(--color-modal-update);
+    }
   }
+}
+
+pre {
+  background: var(--color-page-background-theme-mix);
+  color: var(--color-theme-inverted);
+  white-space: pre;
+  overflow: auto;
+  padding: 1rem;
+  width: 100%;
+  max-height: calc(100dvh - 25.5rem);
+  height: 100rem;
+  margin: 0;
 }

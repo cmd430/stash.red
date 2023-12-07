@@ -19,6 +19,7 @@
   &.delete,
   &.update,
   &.filter,
+  &.restart,
   &.dropzone {
     opacity: 1;
     visibility: visible;
@@ -27,7 +28,8 @@
 
   &.delete #delete_modal,
   &.update #update_modal,
-  &.filter #filter_modal {
+  &.filter #filter_modal,
+  &.restart #restart_modal {
     background-color: var(--color-modal-background);
     border-color: var(--color-modal-border);
   }
@@ -41,6 +43,10 @@
   }
 
   &.filter #filter_modal {
+    visibility: visible;
+  }
+
+  &.restart #restart_modal {
     visibility: visible;
   }
 
@@ -176,7 +182,8 @@
           border-radius: 0 0.2rem 0.2rem 0;
         }
 
-        &.delete {
+        &.delete,
+        &.restart {
           background: color-mix(in srgb, var(--color-modal-delete) var(--color-background-opacity), var(--color-white));
           color: color-mix(in srgb, var(--color-white) var(--color-text-opacity), var(--color-transparent));
         }

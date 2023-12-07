@@ -78,6 +78,26 @@
       </div>
     </div>
   {{/if_either}}
+  {{#if stats}} {{!-- Admin page --}}
+    <div id="restart_modal" class="modal">
+      <h1>Confirm Restart</h1>
+      <hr>
+      <p>
+        <i class="icon-attention"></i>
+        <span>If you are not running PM2 this will stop the server</span>
+      </p>
+      <div>
+        <button class="restart">
+          <i class="icon-cw"></i>
+          Restart
+        </button>
+        <button class="cancel">
+          <i class="icon-cancel"></i>
+          Cancel
+        </button>
+      </div>
+    </div>
+  {{/if}}
 </div>
 <link href="/css/partials/modals.css" rel="stylesheet" />
 <script type="module" src="/js/partials/modals.js"></script>

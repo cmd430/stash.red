@@ -653,6 +653,53 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
   }
 
   /**
+   * Get info
+   * @returns {{
+   *  succeeded: boolean,
+   *  code: number|'OK',
+   *  data?: {
+   *    totalSize: number,
+   *    totalFiles: number,
+   *    totalAlbums: number
+   *  }
+   * }}
+   */
+  async getInfo () {
+    const allInfo = this.#database
+      .prepare(`
+        SELECT
+          "totalAlbums",
+          "totalFiles",
+          "totalSize"
+        FROM
+          "userInfo"
+      `)
+      .all() ?? []
+
+    const { totalAlbums, totalFiles, totalSize } = allInfo.reduce((accumulator, currentValue) => {
+      accumulator.totalAlbums += currentValue.totalAlbums
+      accumulator.totalFiles += currentValue.totalFiles
+      accumulator.totalSize += currentValue.totalSize
+
+      return accumulator
+    }, {
+      totalAlbums: 0,
+      totalFiles: 0,
+      totalSize: 0
+    })
+
+    return {
+      succeeded: true,
+      code: 'OK',
+      data: {
+        totalAlbums: totalAlbums,
+        totalFiles: totalFiles,
+        totalSize: totalSize
+      }
+    }
+  }
+
+  /**
    * Remove uploads from the DB where the uploadedUntil has expired
    * @returns {{
    *  succeeded: boolean,
