@@ -16,7 +16,8 @@ function prettyTime (unformatted) {
 }
 
 function viewLog (logType) {
-  const ws = new WebSocket(`${location.href.replace('http', 'ws')}logs/${logType}`)
+  const wssURL = `${(location.href.endsWith('/') ? location.href : `${location.href}/`).replace('http', 'ws')}logs/${logType}`
+  const ws = new WebSocket(wssURL)
 
   ws.addEventListener('message', ({ data }) => {
     const { type, message } = JSON.parse(data)
