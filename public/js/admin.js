@@ -23,6 +23,7 @@ function viewLog (logType) {
 
     if (type === 'message') {
       log.append(`${message}\n`)
+      log.scrollTop = log.scrollHeight
     }
   })
 }
