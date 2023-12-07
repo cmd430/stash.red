@@ -216,6 +216,9 @@ main section {
 #table .row span > span {
   color: var(--color-modal-update);
 }
+#table .row button {
+  margin-left: 0.5rem;
+}
 
 pre {
   background: var(--color-page-background-theme-mix);

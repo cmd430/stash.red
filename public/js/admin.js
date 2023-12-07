@@ -6,6 +6,7 @@ const totalSize = document.querySelector('#table > div > span.totalSize')
 const uptime = document.querySelector('#table > div > span.uptime')
 const restartButton = document.querySelector('button#restart')
 const log = document.querySelector('pre#log')
+const clearLogButton = document.querySelector('button#clearLog')
 
 function prettyTime (unformatted) {
   const hours = Math.floor(unformatted / (60 * 60)).toString()
@@ -43,6 +44,7 @@ restartButton.addEventListener('click', async () => {
     setTimeout(() => location.reload(), 5000)
   })
 })
+clearLogButton.addEventListener('click', () => (log.textContent = null))
 
 totalSize.textContent = prettyBytes(Number(totalSize.textContent), {
   minimumFractionDigits: 0,
