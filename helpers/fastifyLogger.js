@@ -52,8 +52,6 @@ export default {
           if (offset || count || size) cl = count
         } catch {}
 
-        if (cl === '?') fastifyLog.debug('PENIS', logData.res)
-
         if (cl === '?') return '?? Bytes' // should only be for streamed responses
         if (cl === '0' || cl === 0 || cl === '') return '0 Bytes'
 
