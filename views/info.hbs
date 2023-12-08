@@ -38,6 +38,11 @@
             <span class="totalSize">{{totalSize}}</span>
           </div>
         </div>
+        {{#if @session.isAdmin}}
+          <span>
+            <a href="/admin">Go to Admin Page</a>
+          </span>
+        {{/if}}
       </section>
     </main>
   </body>
