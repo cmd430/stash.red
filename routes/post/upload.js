@@ -160,7 +160,8 @@ export default function (fastify, opts, done) {
       if (fetchURL !== null && fetchURL.startsWith(`${request.protocol}://${request.hostname}`) === false && (fetchURL.startsWith('https://') || fetchURL.startsWith('http://'))) {
         const externalResponse = await fetch(fetchURL)
         const externalStream = Readable.fromWeb(externalResponse.body)
-        const externalFilename = basename(fetchURL)
+        const { fetchURLOrigin, fetchURLPathname } = new URL(fetchURL)
+        const externalFilename = basename(`${fetchURLOrigin}${fetchURLPathname}`)
         const limit = new LimitStream(evaluate(fastify.config.uploads.limits.fileSize))
 
         await processFile(externalStream.pipe(limit), externalFilename)
