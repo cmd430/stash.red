@@ -6,7 +6,10 @@ const totalSize = document.querySelector('.table > div > span.totalSize')
 const uptime = document.querySelector('.table > div > span.uptime')
 const restartButton = document.querySelector('button#restart')
 const log = document.querySelector('#log > pre')
+const selectLog = document.querySelector('select#selectLog')
 const clearLogButton = document.querySelector('button#clearLog')
+
+let logWS = null
 
 function prettyTime (unformatted) {
   const hours = Math.floor(unformatted / (60 * 60)).toString()
@@ -20,14 +23,19 @@ function viewLog (logType) {
   const wssURL = `${(location.href.endsWith('/') ? location.href : `${location.href}/`).replace('http', 'ws')}logs/${logType}`
   const ws = new WebSocket(wssURL)
 
+  if (logWS !== null) logWS.close()
+
   ws.addEventListener('message', ({ data }) => {
-    const message = `<span class="line">${data}</span>\n`
+    const message = `<span class="line">${data}\n</span>`
     const shouldScroll = log.scrollTop === log.scrollTopMax
 
     log.insertAdjacentHTML('beforeend', message)
 
+    while (log.childElementCount > 500) log.firstChild.remove()
     if (shouldScroll) log.scrollTop = log.scrollHeight
   })
+
+  logWS = ws
 }
 
 restartButton.addEventListener('click', async () => {
@@ -45,6 +53,10 @@ restartButton.addEventListener('click', async () => {
   })
 })
 clearLogButton.addEventListener('click', () => (log.textContent = null))
+selectLog.addEventListener('change', () => {
+  clearLogButton.dispatchEvent(new Event('click'))
+  viewLog(selectLog.value)
+})
 
 totalSize.textContent = prettyBytes(Number(totalSize.textContent), {
   minimumFractionDigits: 0,
@@ -52,4 +64,4 @@ totalSize.textContent = prettyBytes(Number(totalSize.textContent), {
 })
 uptime.textContent = prettyTime(Number(uptime.textContent))
 
-viewLog('combined')
+viewLog(selectLog.value)
