@@ -9,7 +9,6 @@
     {{> themeToggle}}
     <header>
       {{> logo}}
-      <h1>Admin</h1>
     </header>
     <main>
       <section>
@@ -17,7 +16,7 @@
           <span>*</span>
           Requires PM2
         </span>
-        <div id="table">
+        <div class="table">
           <div class="row">
             <span>
               <i class="icon-attention"></i>
@@ -25,22 +24,28 @@
               <span>*</span>
             </span>
             <span>
-              <button id="restart">Restart</button>
+              <button id="restart">
+                <i class="icon-off"></i>
+                <span>Restart</span>
+              </button>
             </span>
           </div>
           <div class="row">
             <span>
               <i class="icon-doc-text"></i>
-              Viewing Log
+              View Log
               <span>*</span>
             </span>
             <span>
-              combined.log
-              <button id="clearLog">clear</button>
+              <select id="viewLog">
+                <option value="out">out.log</option>
+                <option value="err">err.log</option>
+                <option value="combined" selected>combined.log</option>
+              </select>
             </span>
           </div>
         </div>
-        <div id="table">
+        <div class="table">
           <div class="row">
             <span>
               <i class="icon-docs"></i>
@@ -70,7 +75,13 @@
             <span class="uptime">{{stats.uptime}}</span>
           </div>
         </div>
-        <pre id="log"></pre>
+        <div id="log">
+          <button id="clearLog">
+            <i class="icon-eraser"></i>
+            <span>Clear Log</span>
+          </button>
+          <pre></pre>
+        </div>
       </section>
       {{> modals}}
     </main>

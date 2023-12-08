@@ -194,7 +194,7 @@ main section {
   color: var(--color-modal-update);
 }
 
-#table {
+.table {
   display: flex;
   flex-direction: column;
   max-width: 25rem;
@@ -204,31 +204,95 @@ main section {
   border: 1px solid var(--color-content-border);
   margin-bottom: 1rem;
 }
-#table .row {
+.table .row {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   padding: 0.5rem;
 }
-#table .row:nth-child(even) {
+.table .row:nth-child(even) {
   background: var(--color-content-background);
 }
-#table .row span > span {
+.table .row span > span {
   color: var(--color-modal-update);
 }
-#table .row button {
+.table .row button,
+.table .row select {
   margin-left: 0.5rem;
 }
+.table .row button {
+  --color-background-opacity: 90%;
+  display: flex;
+  justify-content: center;
+  padding: 0.4rem;
+  border: 0;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--color-modal-delete) var(--color-background-opacity), var(--color-white));
+  color: var(--color-white);
+  border-radius: 0.2rem;
+  cursor: pointer;
+}
+.table .row button:hover {
+  --color-background-opacity: 100%;
+}
+.table .row select {
+  padding: 0.4rem;
+  border: 0;
+  width: 8rem;
+  font-weight: 600;
+  color: var(--color-theme-inverted);
+  background-color: var(--color-page-background-theme-mix);
+  border-radius: 0.2rem;
+  border: 1px solid var(--color-modal-border);
+  cursor: pointer;
+}
 
-pre {
+#log {
+  display: flex;
+  flex-direction: column;
   background: var(--color-black);
   color: var(--color-white);
+  width: 100%;
+  padding: 1rem;
+  height: calc(100dvh - 26.5rem);
+}
+#log:hover button {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 250ms linear, visibility 0ms linear;
+}
+#log button {
+  position: absolute;
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  align-self: end;
+  min-width: 2.32rem;
+  height: 2.32rem;
+  margin: 0.25rem 1.25rem 0 0;
+  border-radius: 0.2rem;
+  border: 1px solid var(--color-action-background);
+  background-color: var(--color-content-background);
+  color: var(--color-action-default);
+  cursor: pointer;
+  opacity: 0;
+  visibility: collapse;
+  transition: opacity 250ms linear, visibility 250ms linear;
+}
+#log button:hover {
+  color: var(--color-action-delete);
+}
+#log button span {
+  padding-inline-start: 0.15rem;
+  padding-inline-end: 0.35rem;
+}
+#log pre {
   white-space: pre;
   overflow: auto;
-  padding: 1rem;
   width: 100%;
-  max-height: calc(100dvh - 25.5rem);
-  height: 100rem;
+  height: 100%;
   margin: 0;
 }
 

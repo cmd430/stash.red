@@ -2,10 +2,10 @@ import { EventListener } from './utils/EventListner.js'
 import prettyBytes from './vendor/pretty-bytes.js'
 
 const modalContainer = document.querySelector('div#modals')
-const totalSize = document.querySelector('#table > div > span.totalSize')
-const uptime = document.querySelector('#table > div > span.uptime')
+const totalSize = document.querySelector('.table > div > span.totalSize')
+const uptime = document.querySelector('.table > div > span.uptime')
 const restartButton = document.querySelector('button#restart')
-const log = document.querySelector('pre#log')
+const log = document.querySelector('#log > pre')
 const clearLogButton = document.querySelector('button#clearLog')
 
 function prettyTime (unformatted) {
@@ -21,7 +21,7 @@ function viewLog (logType) {
   const ws = new WebSocket(wssURL)
 
   ws.addEventListener('message', ({ data }) => {
-    const message = `${data}`
+    const message = `<span class="line">${data}</span>\n`
     const shouldScroll = log.scrollTop === log.scrollTopMax
 
     log.insertAdjacentHTML('beforeend', message)
