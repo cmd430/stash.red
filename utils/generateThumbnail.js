@@ -115,6 +115,7 @@ export async function generateThumbnail (mimetype, filestream) {
       .webp({
         quality: 80
       })
+      .once('error', err => error(err))
 
     return imageStream.pipe(thumbnailBuffer)
   } catch (err) {
