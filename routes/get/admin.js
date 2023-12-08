@@ -28,7 +28,9 @@ export default function (fastify, opts, done) {
   })
 
   fastify.get('/admin/logs/:log', { websocket: true }, async (connection , request) => {
-    if (!request.session.get('authenticated') || request.session.get('session')?.isAdmin !== true) return connection.socket.send('Not Authorized')
+    const { socket } = connection
+
+    if (!request.session.get('authenticated') || request.session.get('session')?.isAdmin !== true) return socket.send('Not Authorized')
 
     const { log: logFile } = request.params
     const logPath = resolve(`logs/${logFile}.log`)
@@ -36,9 +38,14 @@ export default function (fastify, opts, done) {
       startPos: 'end'
     })
 
-    tail.on('error', err => error(err))
-    tail.on('line', line => connection.socket.send(html(line)))
+    tail.on('error', err => {
+      socket.send(err.toString())
+      error(err)
+    })
+    tail.on('line', line => socket.send(html(line)))
     tail.start()
+
+    socket.once('close', () => tail.stop())
   })
 
   done()
