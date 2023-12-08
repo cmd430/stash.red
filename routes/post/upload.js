@@ -2,10 +2,10 @@ import { extname, basename } from 'node:path'
 import { Readable } from 'node:stream'
 import { customAlphabet } from 'nanoid'
 import { Log } from 'cmd430-utils'
+import { evaluate } from 'mathjs'
 import { generateThumbnail } from '../../utils/generateThumbnail.js'
-import { streamTee as tee } from '../../utils/streamTee.js'
+import { streamTee as tee, LimitStream } from '../../utils/stream.js'
 import { getMimetype, isValidMimetype, getMimeExtension } from '../../utils/mimetype.js'
-
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Upload')
@@ -31,11 +31,23 @@ export default function (fastify, opts, done) {
         // Used to tell if we are adding to an album or not
         isFromHomepage: false
       }
+
       const uploadedFiles = []
       const uploadTimestamp = Date.now()
       const uploadedAt = new Date(uploadTimestamp).toISOString()
       const uploadedUntil = ttl => ttl ? new Date(uploadTimestamp + ttl).toISOString() : 'Infinity'
       const getExtname = (fn, mt) => extname(fn).length > 0 ? '' : getMimeExtension(mt)
+      const removeInvalidUpload = async (statusCode, message) => {
+        for (const { id, file } of uploadedFiles) {
+          await fastify.storage.delete(username, file)
+          await fastify.db.deleteFile(id, username)
+        }
+
+        return {
+          status: statusCode,
+          message: message
+        }
+      }
       const processFile = async (stream, filename) => {
         const [ filestream, thumbnailStream ] = tee(stream)
         const { stream: fileStream, mimetype } = await getMimetype(filestream)
@@ -94,45 +106,52 @@ export default function (fastify, opts, done) {
         // Make sure we can access the file ids after the upload
         uploadedFiles.push({
           id: fileID,
-          ext: extname(filename)
+          ext: extname(filename),
+          file: storageFilename
         })
       }
 
-      for await (const part of request.parts()) {
-        if (part.type === 'field') {
+      try {
+        for await (const part of request.parts()) {
+          if (part.type === 'field') {
           // Load in field data for the upload
-          switch (part.fieldname) {
-            case 'timeToLive': {
-              fields.timeToLive = Number(part.value) || null
-              break
+            switch (part.fieldname) {
+              case 'timeToLive': {
+                fields.timeToLive = Number(part.value) || null
+                break
+              }
+              case 'isPrivate': {
+                fields.isPrivate = Number(part.value || 0) ?? 0
+                break
+              }
+              case 'dontFormAlbum': {
+                fields.dontFormAlbum = Boolean(Number(part.value || 0) ?? 0)
+                break
+              }
+              case 'fetchURL': {
+                fields.fetchURL = part.value || null
+                break
+              }
+              default: {
+                debug('Unknown field in upload', part.fieldname)
+                continue
+              }
             }
-            case 'isPrivate': {
-              fields.isPrivate = Number(part.value || 0) ?? 0
-              break
-            }
-            case 'dontFormAlbum': {
-              fields.dontFormAlbum = Boolean(Number(part.value || 0) ?? 0)
-              break
-            }
-            case 'fetchURL': {
-              fields.fetchURL = part.value || null
-              break
-            }
-            default: {
-              debug('Unknown field in upload', part.fieldname)
-              continue
-            }
-          }
 
-          /*
+            /*
             only gets set if we have at least one valid field
             only the homepage sets the fields so this should mean
             we are uploading from the homepage
           */
-          fields.isFromHomepage = true
-        } else if (part.type === 'file') {
-          await processFile(part.file, part.filename)
+            fields.isFromHomepage = true
+          } else if (part.type === 'file') {
+            await processFile(part.file, part.filename)
+          }
         }
+      } catch (err) {
+        if (err.statusCode !== 413) throw err
+
+        return removeInvalidUpload(413, 'Request payload too large')
       }
 
       // our field data
@@ -142,8 +161,11 @@ export default function (fastify, opts, done) {
         const externalResponse = await fetch(fetchURL)
         const externalStream = Readable.fromWeb(externalResponse.body)
         const externalFilename = basename(fetchURL)
+        const limit = new LimitStream(evaluate(fastify.config.uploads.limits.fileSize))
 
-        await processFile(externalStream, externalFilename)
+        await processFile(externalStream.pipe(limit), externalFilename)
+
+        if (limit.limitReached) return removeInvalidUpload(413, 'Request payload too large')
       }
 
       if (uploadedFiles.length === 0) { // no files uploaded
