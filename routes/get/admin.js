@@ -42,9 +42,24 @@ export default function (fastify, opts, done) {
       socket.send(err.toString())
       error(err)
     })
-    tail.on('line', line => socket.send(html(line)))
+    tail.on('line', line => socket.send(JSON.stringify({
+      type: 'message',
+      message: html(line)
+    })))
     tail.start()
 
+    socket.on('message', message => {
+      const { type } = JSON.parse(message)
+
+      if (type === 'PING') return socket.send(JSON.stringify({
+        type: 'PONG'
+      }))
+
+      socket.send(JSON.stringify({
+        type: 'error',
+        message: 'invalid message'
+      }))
+    })
     socket.once('close', () => tail.stop())
   })
 
