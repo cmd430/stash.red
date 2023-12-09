@@ -59,11 +59,11 @@ export default function (fastify, opts, done) {
     const { file, type, uploadedBy, size } = data
     const { offset: offsetRaw = 0, count: countRaw = '' } = request.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? {}
     const offset = (Number(offsetRaw) || 0)
-    const count = (Number(countRaw) || (size - offset))
+    const count = (Number(countRaw) || (size - (offset + 1)))
 
     debug('Range:', request.headers.range, {
       offset: offset,
-      count: count,
+      count: count + 1,
       size: size,
       partial: (count !== size)
     })
@@ -76,7 +76,7 @@ export default function (fastify, opts, done) {
       .header('content-range', `bytes ${offset}-${count}/${size}`)
       .send(await fastify.storage.read(uploadedBy, file, {
         offset: offset,
-        count: count
+        count: count + 1
       }))
   })
 
