@@ -1,3 +1,48 @@
+// Shared
+////////////////////////////////////////////////////////////////////////
+$theme-logo:                       hsla(0,   81%,  57%,  100%);
+$theme-dev-logo:                   hsla(213, 81%,  57%,  100%);
+
+$theme-info:                       hsla(213, 81%,  57%,  100%);
+$theme-success:                    hsla(93,  81%,  57%,  100%);
+$theme-warning:                    hsla(60,  81%,  57%,  100%);
+$theme-danger:                     hsla(0,   81%,  57%,  100%);
+$theme-transparent:                hsla(0,   0%,   0%,   0%);
+
+
+// Light Theme
+////////////////////////////////////////////////////////////////////////
+$theme-light-background-primary:   hsla(0,   0%,   94%,  100%);
+$theme-light-text-primary:         hsla(0,   0%,   6%,   100%);
+
+$theme-light-background-secondary: hsla(200, 8%,   92%,  100%);
+$theme-light-text-secondary:       hsla(206, 7%,   80%,  100%);
+
+$theme-light-background-tertiary:  hsla(0,   0%,   98%,  100%);
+$theme-light-text-tertiary:        hsla(0,   0%,   50%,  100%);
+
+$theme-light-background-accent:    hsla(214, 11%,  88%,  100%);
+$theme-light-text-accent:          hsla(214, 11%,  88%,  100%);
+
+
+// Dark Theme
+////////////////////////////////////////////////////////////////////////
+$theme-dark-background-primary:    hsla(0,   0%,   6%,   100%);
+$theme-dark-text-primary:          hsla(0,   0%,   94%,  100%);
+
+$theme-dark-background-secondary:  hsla(6,   7%,   20%,  100%);
+$theme-dark-text-secondary:        hsla(0,   8%,   8%,  100%);
+
+$theme-dark-background-tertiary:   hsla(0,   0%,   2%,   100%);
+$theme-dark-text-tertiary:         hsla(0,   0%,   50%,  100%);
+
+$theme-dark-background-accent:     hsla(0,   11%,  12%,  100%);
+$theme-dark-text-accent:           hsla(0,   11%,  12%,  100%);
+
+
+
+// OLD
+////////////////////////////////////////////////////////////////////////
 // Common Colors
 $white:                    rgb(255, 255, 255);
 $black:                    rgb(0, 0, 0);
