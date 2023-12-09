@@ -82,9 +82,10 @@ export class StorageInterfaceBase {
    * @name StorageInterfaceBase#read
    * @param {string} username The Username for the upload
    * @param {string} file The file id for the file or the thumbnail id for the thumbnail
-   * @param {object} [range]
-   * @param {number} range.offset The file offset in bytes to start reading
-   * @param {number|undefined} range.count The amount in bytes of the file to read
+   * @param {object} [opts]
+   * @param {number} opts.signal The abort controler signal
+   * @param {number} opts.range.offset The file offset in bytes to start reading
+   * @param {number|undefined} opts.range.count The amount in bytes of the file to read
    * @returns {ReadStream} a readable stream of the files content
    */
 

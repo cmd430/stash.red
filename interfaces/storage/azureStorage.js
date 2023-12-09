@@ -64,19 +64,26 @@ export default class StorageInterface extends StorageInterfaceBase {
    * @public
    * @param {string} username The Username for the upload
    * @param {string} file The file id for the file or the thumbnail id for the thumbnail
-   * @param {object} [range]
-   * @param {number} range.offset The file offset in bytes to start reading
-   * @param {number|undefined} range.count The amount in bytes of the file to read
+   * @param {object} [opts]
+   * @param {number} opts.signal The abort controler signal
+   * @param {number} opts.range.offset The file offset in bytes to start reading
+   * @param {number|undefined} opts.range.count The amount in bytes of the file to read
    * @returns {ReadStream}
    */
-  async read (username, file, range = {}) {
-    const { offset = 0, count = undefined } = range
-    const blobClient = this.#getBlobClient(username, file)
-    const { readableStreamBody } = await blobClient.download(offset, count, {
-      onProgress: ({ loadedBytes: receivedBytes }) => debug(blobClient.containerName, blobClient.name, 'Bytes received', receivedBytes)
-    })
+  async read (username, file, opts = {}) {
+    try {
+      const { range = {}, signal = undefined } = opts
+      const { offset = 0, count = undefined } = range
+      const blobClient = this.#getBlobClient(username, file)
+      const { readableStreamBody } = await blobClient.download(offset, count, {
+        //onProgress: ({ loadedBytes: receivedBytes }) => debug(blobClient.containerName, blobClient.name, 'Bytes received', receivedBytes),
+        abortSignal: signal
+      })
 
-    return readableStreamBody
+      readableStreamBody.on('error', err => undefined)
+
+      return readableStreamBody
+    } catch {}
   }
 
   /**

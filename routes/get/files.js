@@ -57,27 +57,47 @@ export default function (fastify, opts, done) {
     if (succeeded === false) return reply.error(code)
 
     const { file, type, uploadedBy, size } = data
-    const { offset: offsetRaw = 0, count: countRaw = '' } = request.headers.range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? {}
+    const range = request.headers.range
+    const { offset: offsetRaw = 0, count: countRaw = '' } = range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? {}
     const offset = (Number(offsetRaw) || 0)
-    const count = (Number(countRaw) || (size - (offset + 1)))
+    const count = (Number(countRaw) || (size - offset))
+    const amount = count >= size ? count : count + 1
+    const abortControler = new AbortController()
 
-    debug('Range:', request.headers.range, {
-      offset: offset,
-      count: count + 1,
-      size: size,
-      partial: (count !== size)
+    request.raw.on('close', () => {
+      if (request.raw.aborted) abortControler.abort()
     })
 
-    return reply
-      .status((count !== size) ? 206 : 200)
+    let response = reply
+      .status((amount !== size) ? 206 : 200)
       .type(mimetypeFilter(type))
       //.disableCache()
-      .header('accept-ranges', 'bytes')
-      .header('content-range', `bytes ${offset}-${count}/${size}`)
-      .send(await fastify.storage.read(uploadedBy, file, {
+      .header('X-Content-Type-Options', 'nosniff')
+
+    if (range) {
+      debug('Range:', range, {
         offset: offset,
-        count: count + 1
-      }))
+        count: count,
+        amount: amount,
+        size: size,
+        partial: (amount !== size)
+      })
+
+      response = response
+        .header('Accept-Ranges', 'bytes')
+        .header('Content-Range', `bytes ${offset}-${count}/${size}`)
+    } else {
+      response = response
+        .header('Content-Length', size)
+    }
+
+    return response.send(await fastify.storage.read(uploadedBy, file, {
+      range: {
+        offset: offset,
+        count: amount
+      },
+      signal: abortControler.signal
+    }))
   })
 
   // Get uploaded file thumbnail

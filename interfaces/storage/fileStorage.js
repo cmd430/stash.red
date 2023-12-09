@@ -75,12 +75,14 @@ export default class StorageInterface extends StorageInterfaceBase {
    * @public
    * @param {string} username The Username for the upload
    * @param {string} file The file id for the file or the thumbnail id for the thumbnail
-   * @param {object} [range]
-   * @param {number} range.offset The file offset in bytes to start reading
-   * @param {number|undefined} range.count The amount in bytes of the file to read
+   * @param {object} [opts]
+   * @param {number} opts.signal The abort controler signal
+   * @param {number} opts.range.offset The file offset in bytes to start reading
+   * @param {number|undefined} opts.range.count The amount in bytes of the file to read
    * @returns {ReadStream}
    */
-  async read (username, file, range = {}) {
+  async read (username, file, opts = {}) {
+    const { range = {}, signal = undefined } = opts
     const { offset = 0, count = undefined } = range
 
     return createReadStream(this.#formatFilePath(username, file), {
