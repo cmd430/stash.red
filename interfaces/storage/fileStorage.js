@@ -82,7 +82,7 @@ export default class StorageInterface extends StorageInterfaceBase {
    * @returns {ReadStream}
    */
   async read (username, file, opts = {}) {
-    const { range = {}, signal = undefined } = opts
+    const { range = {} } = opts
     const { offset = 0, count = undefined } = range
 
     return createReadStream(this.#formatFilePath(username, file), {
