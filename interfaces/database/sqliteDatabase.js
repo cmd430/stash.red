@@ -1,6 +1,6 @@
 import { readFile, readdir, access, constants, unlink } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import { Log, isDevEnv } from 'cmd430-utils'
+import { Log } from 'cmd430-utils'
 import Database from 'better-sqlite3'
 import { DatabaseInterfaceBase } from '../database.js'
 
