@@ -121,11 +121,12 @@ export default function (fastify, opts, done) {
 
     if (succeeded === false) return reply.error(code)
 
-    const { type, uploadedBy, file } = data
+    const { type, uploadedBy, file, size } = data
     const filename = `${id}${extname(file)}`
 
     return reply
       .type(type)
+      .header('Content-Length', size)
       .header('content-disposition', `attachment; filename=${filename}`)
       .send(await fastify.storage.read(uploadedBy, file))
   })

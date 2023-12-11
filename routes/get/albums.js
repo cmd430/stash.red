@@ -59,7 +59,7 @@ export default function (fastify, opts, done) {
 
     if (succeeded === false) return reply.error(code)
 
-    const { title, uploadedBy, files } = data
+    const { title, uploadedBy, files, size } = data
     const archive = archiver('zip', {
       comment: `Album downloaded from ${reply.locals.title}`,
       store: true
@@ -75,6 +75,7 @@ export default function (fastify, opts, done) {
 
     return reply
       .type('application/zip')
+      .header('Content-Length', size)
       .header('content-disposition', `attachment; filename=[${id}]${title}.zip`)
       .send(archive)
   })
