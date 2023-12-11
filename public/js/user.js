@@ -16,6 +16,7 @@ filterButton.addEventListener('click', async () => {
 
     url.searchParams.set('filter', filterSelect.value)
     url.searchParams.set('sort', sortSelect.value)
+    url.searchParams.delete('p')
 
     if (filter === '') url.searchParams.delete('filter')
     if (sort === '' || sort === 'DESC') url.searchParams.delete('sort')
