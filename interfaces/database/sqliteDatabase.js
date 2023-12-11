@@ -280,14 +280,15 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
    *      file: string,
    *      type: string,
    *      order: number
-   *    }]
+   *    }],
+   *    size: number
    *  }
    * }}
    */
   async getAlbum (id) {
-    const { title, uploadedBy } = this.#database
-      .prepare('SELECT "title", "uploadedBy" FROM "albums" WHERE "id" = :fileID')
-      .get({ fileID: id }) ?? {}
+    const { title, uploadedBy, size } = this.#database
+      .prepare('SELECT "title", "uploadedBy", "size" FROM "album" WHERE "id" = :albumID')
+      .get({ albumID: id }) ?? {}
 
     if (uploadedBy === undefined) return { succeeded: false, code: 404 } // Album doesnt exist
 
@@ -301,7 +302,8 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
       data: {
         title: title,
         uploadedBy: uploadedBy,
-        files: albumFiles
+        files: albumFiles,
+        size: size
       }
     }
   }
@@ -393,18 +395,18 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
           "uploadedBy"
         FROM
           (SELECT
-            "id",
-            "thumbnail",
-            "uploadedBy"
-          FROM
-            "file"
-          UNION SELECT
-            "id",
-            "thumbnail",
-            "uploadedBy"
-          FROM
-            "album"
-        ) WHERE "id" = :id
+              "id",
+              "thumbnail",
+              "uploadedBy"
+            FROM
+              "file"
+            UNION SELECT
+              "id",
+              "thumbnail",
+              "uploadedBy"
+            FROM
+              "album"
+          ) WHERE "id" = :id
       `)
       .get({ id: id }) ?? {}
 
@@ -461,17 +463,30 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
 
       return `"${column}" LIKE '${filter}%'`
     }
-    const getFilesIncludePrivate = this.#database
+    const privateFilter = shouldInclude => shouldInclude ? '' : 'AND NOT "isPrivate" = TRUE'
+    const files = this.#database
       .prepare(`
         SELECT
           "id",
           "type",
+          "uploadedBy",
           "isPrivate",
-          "total"
+          (SELECT
+              COUNT("id")
+            FROM
+              "files"
+            WHERE
+              "uploadedBy" = "userFiles"."uploadedBy"
+            AND
+              "inAlbum" IS NULL
+            AND
+              ${searchFilter('type')}
+          ) AS "total"
         FROM
           "userFiles"
         WHERE
           "uploadedBy" = :username
+        ${privateFilter(includePrivate)}
         AND
           ${searchFilter('type')}
         ORDER BY
@@ -479,27 +494,6 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
         LIMIT :limit
         OFFSET :offset
       `)
-    const getFilesExcludePrivate = this.#database
-      .prepare(`
-        SELECT
-          "id",
-          "type",
-          "isPrivate",
-          "total"
-        FROM
-          "userFiles"
-        WHERE
-          "uploadedBy" = :username
-        AND NOT
-          "isPrivate" = TRUE
-        AND
-          ${searchFilter('type')}
-        ORDER BY
-          "uploadedAt" ${order}
-        LIMIT :limit
-        OFFSET :offset
-      `)
-    const files = (includePrivate ? getFilesIncludePrivate : getFilesExcludePrivate)
       .all({
         username: username,
         limit: limit,

@@ -168,6 +168,7 @@ export class DatabaseInterfaceBase {
    * @property {string} data.files.file the identifier of the file in storage
    * @property {string} data.files.type the mimetype of the file
    * @property {number} data.files.order the order of the file in the album
+   * @property {number} data.size the total size of all items in the album in bytes
    */
 
   /**
@@ -250,7 +251,7 @@ export class DatabaseInterfaceBase {
    * @property {string} data.files.id the id of the file
    * @property {string} data.files.type the mimetype of the file
    * @property {0|1|boolean} data.files.isPrivate if the file is private or not
-   * @property {number} data.total the total number of files the user has uploaded
+   * @property {number} data.total the total number of files the user has uploaded (or total number of files user has uploaded matching filter)
    */
 
   /**
