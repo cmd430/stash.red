@@ -6,6 +6,7 @@ SELECT
   "uploadedBy",
   "albums"."uploadedAt",
   GROUP_CONCAT("files"."file") AS "files",
+  SUM("files"."size") AS "size",
   COUNT("files"."id") AS "entries",
   "albums"."isPrivate",
   'thumbnail/thumbnail_'||replace("files"."file", ltrim("files"."file", replace("files"."file", '.', '' ) ), '')||'.webp' AS "thumbnail"
@@ -15,6 +16,7 @@ INNER JOIN
   (SELECT
     "id",
     "file",
+    "size",
     "inAlbum"
   FROM
     "files"

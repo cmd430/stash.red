@@ -4,16 +4,7 @@ SELECT
   "type",
   "uploadedBy",
   "uploadedAt",
-  "isPrivate",
-  (SELECT
-      COUNT("id")
-    FROM
-      "files"
-    WHERE
-      "uploadedBy" = "file"."uploadedBy"
-    AND
-      "inAlbum" IS NULL
-  ) AS "total"
+  "isPrivate"
 FROM
  "file"
 WHERE
