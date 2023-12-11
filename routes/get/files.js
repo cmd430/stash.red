@@ -21,7 +21,7 @@ export default function (fastify, opts, done) {
 
     const { file, type: unsafeType } = data
     const mimetype = mimetypeFilter(unsafeType)
-    const type = new MIMEType(mimetype).type
+    const { type } = new MIMEType(mimetype)
     const description = t => {
       if (t === 'image') return `An ${toUpperCaseFirstLetter(t)}`
       if (t === 'audio') return toUpperCaseFirstLetter(t)
@@ -56,13 +56,16 @@ export default function (fastify, opts, done) {
 
     if (succeeded === false) return reply.error(code)
 
-    const { file, type, uploadedBy, size } = data
+    const { file, type: unsafeType, uploadedBy, size } = data
     const range = request.headers.range
     const { offset: offsetRaw = 0, count: countRaw = '' } = range?.match(/(?<unit>bytes)=(?<offset>\d{0,})-(?<count>\d{0,})/).groups ?? {}
     const offset = (Number(offsetRaw) || 0)
     const count = (Number(countRaw) || (size - offset))
     const amount = count >= size ? count : count + 1
     const abortControler = new AbortController()
+    const mimetype = mimetypeFilter(unsafeType)
+    const { type } = new MIMEType(mimetype)
+    const fixedType = type === 'text' ? 'text/plain' : mimetype
 
     request.raw.on('close', () => {
       if (request.raw.aborted) abortControler.abort()
@@ -70,7 +73,7 @@ export default function (fastify, opts, done) {
 
     let response = reply
       .status((amount !== size) ? 206 : 200)
-      .type(mimetypeFilter(type))
+      .type(fixedType)
       //.disableCache()
       .header('X-Content-Type-Options', 'nosniff')
 
