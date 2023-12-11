@@ -1,6 +1,6 @@
-import { readFile, readdir } from 'node:fs/promises'
+import { readFile, readdir, access, constants, unlink } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import { Log } from 'cmd430-utils'
+import { Log, isDevEnv } from 'cmd430-utils'
 import Database from 'better-sqlite3'
 import { DatabaseInterfaceBase } from '../database.js'
 
@@ -24,6 +24,20 @@ export default class DatabaseInterface extends DatabaseInterfaceBase {
 
     this.#database.pragma('journal_mode = WAL')
 
+    for (const migration of await readdir(resolve('./database/migrations'))) {
+      if (migration === '.gitignore') continue
+
+      const migrationPath = resolve(`./database/migrations/${migration}`)
+
+      this.#database.exec(await readFile(migrationPath, {
+        encoding: 'utf8'
+      }))
+
+      try {
+        await access(migrationPath, constants.F_OK)
+        await unlink(migrationPath)
+      } catch {}
+    }
     for (const table of await readdir(resolve('./database/tables'))) this.#database.exec(await readFile(resolve(`./database/tables/${table}`), {
       encoding: 'utf8'
     }))
