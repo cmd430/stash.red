@@ -4,11 +4,21 @@
   [√] COMPLETE
   [x] CANT/WONT DO
 
+
 -= TODO =-
   [ ] Fix broswer back cant upload (edge/chrome)
     -> seems to be bfcache issue
   [ ] Style flash on load
     -> something is forcing a page render before styles are loaded (possibly the theme switching?)
+
+
+-= DB Migrations =-
+[sql] updateViews.sql
+  DROP VIEW IF EXISTS "userFiles";
+  DROP VIEW IF EXISTS "userInfo";
+  DROP VIEW IF EXISTS "album";
+[/sql]
+
 
 -= URL references =-
   - `/f/:id` for files
