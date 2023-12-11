@@ -8,4 +8,9 @@
   <link rel="icon" type="image/webp" href="/img/favicon.webp" />
 {{/if_contains}}
 <link href="/css/base.css" rel="stylesheet" />
-<title>{{@title}}</title>
+{{#if openGraph.title}}
+  <title>{{@title}} | {{openGraph.title}}</title>
+{{else}}
+  <title>{{@title}}</title>
+{{/if}}
+
