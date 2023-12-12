@@ -36,7 +36,7 @@ function viewLog (logType) {
 
   ws.addEventListener('message', ({ data }) => {
     const { type, message } = JSON.parse(data)
-    const shouldScroll = (log.scrollTop + 60) >= log.scrollTopMax
+    const shouldScroll = (log.scrollTop + 60) >= (log.scrollHeight - log.clientHeight)
 
     if (type === 'PONG') return
 
