@@ -3,7 +3,7 @@ import { Readable } from 'node:stream'
 import { customAlphabet } from 'nanoid'
 import { Log } from 'cmd430-utils'
 import { evaluate } from 'mathjs'
-import { generateThumbnail } from '../../utils/generateThumbnail.js'
+import { generateThumbnail } from '../../utils/thumbnail.js'
 import { streamTee as tee, LimitStream } from '../../utils/stream.js'
 import { getMimetype, isValidMimetype, getMimeExtension } from '../../utils/mimetype.js'
 
