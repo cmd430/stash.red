@@ -49,7 +49,9 @@ export default function (fastify, opts, done) {
 
     return reply
       .type('image/webp')
-      .send(await fastify.storage.read(uploadedBy, thumbnail))
+      .send(await fastify.storage.read(uploadedBy, thumbnail, {
+        signal: request.signal
+      }))
   })
 
   // Download album
@@ -66,7 +68,9 @@ export default function (fastify, opts, done) {
     })
 
     for (const { id: fileID, file } of files) {
-      archive.append(await fastify.storage.read(uploadedBy, file), {
+      archive.append(await fastify.storage.read(uploadedBy, file, {
+        signal: request.signal
+      }), {
         name: `${fileID}${extname(file)}`
       })
     }

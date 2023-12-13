@@ -62,18 +62,13 @@ export default function (fastify, opts, done) {
     const offset = (Number(offsetRaw) || 0)
     const count = (Number(countRaw) || (size - offset))
     const amount = count >= size ? count : count + 1
-    const abortControler = new AbortController()
     const mimetype = mimetypeFilter(unsafeType)
     const { type } = new MIMEType(mimetype)
-    const fixedType = type === 'text' ? 'text/plain' : mimetype
-
-    request.raw.on('close', () => {
-      if (request.raw.aborted) abortControler.abort()
-    })
+    const safeType = type === 'text' ? 'text/plain' : mimetype
 
     let response = reply
       .status((amount !== size) ? 206 : 200)
-      .type(fixedType)
+      .type(safeType)
       //.disableCache()
       .header('X-Content-Type-Options', 'nosniff')
 
@@ -99,7 +94,7 @@ export default function (fastify, opts, done) {
         offset: offset,
         count: amount
       },
-      signal: abortControler.signal
+      signal: request.signal
     }))
   })
 
@@ -114,7 +109,9 @@ export default function (fastify, opts, done) {
 
     return reply
       .type('image/webp')
-      .send(await fastify.storage.read(uploadedBy, thumbnail))
+      .send(await fastify.storage.read(uploadedBy, thumbnail, {
+        signal: request.signal
+      }))
   })
 
   // Download file
@@ -131,7 +128,9 @@ export default function (fastify, opts, done) {
       .type(type)
       .header('Content-Length', size)
       .header('content-disposition', `attachment; filename=${filename}`)
-      .send(await fastify.storage.read(uploadedBy, file))
+      .send(await fastify.storage.read(uploadedBy, file, {
+        signal: request.signal
+      }))
   })
 
   done()
