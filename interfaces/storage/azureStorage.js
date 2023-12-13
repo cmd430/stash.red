@@ -76,7 +76,7 @@ export default class StorageInterface extends StorageInterfaceBase {
       const { offset = 0, count = undefined } = range
       const blobClient = this.#getBlobClient(username, file)
       const { readableStreamBody } = await blobClient.download(offset, count, {
-        //onProgress: ({ loadedBytes: receivedBytes }) => debug(blobClient.containerName, blobClient.name, 'Bytes received', receivedBytes),
+        // onProgress: ({ loadedBytes: receivedBytes }) => debug(blobClient.containerName, blobClient.name, 'Bytes received', receivedBytes),
         abortSignal: signal
       })
 
@@ -153,7 +153,7 @@ export default class StorageInterface extends StorageInterfaceBase {
     debug(`Uploading file to Azure storage as blob\n\tname: ${filename}:\n\tURL: ${blobClient.url}`)
 
     await blobClient.uploadStream(stream.pipe(meter), undefined, undefined, {
-      onProgress: ({ loadedBytes: sentBytes }) => debug(blobClient.containerName, blobClient.name, 'Bytes sent', sentBytes)
+      // onProgress: ({ loadedBytes: sentBytes }) => debug(blobClient.containerName, blobClient.name, 'Bytes sent', sentBytes)
     })
 
     return meter.bytes
