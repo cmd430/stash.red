@@ -22,6 +22,16 @@ function prettyTime (unformatted) {
   return `${hours.padStart('2', '0')}:${minutes.padStart('2', '0')}:${seconds.padStart('2', '0')}`
 }
 
+function adminLog (message) {
+  const shouldScroll = (log.scrollTop + 60) >= (log.scrollHeight - log.clientHeight)
+
+  log.insertAdjacentHTML('beforeend', `<span class="line">${message}\n</span>`)
+
+  while (log.childElementCount > MAX_LOG_LINES) log.firstChild.remove()
+
+  if (shouldScroll) log.scrollTop = log.scrollHeight
+}
+
 function viewLog (logType) {
   const wssURL = `${(location.href.endsWith('/') ? location.href : `${location.href}/`).replace('http', 'ws')}logs/${logType}`
   const ws = new WebSocket(wssURL)
@@ -33,29 +43,25 @@ function viewLog (logType) {
     wsPing = setInterval(() => ws.send(JSON.stringify({
       type: 'PING'
     })), 1000 * 30)
-    log.insertAdjacentHTML('beforeend', '<span class="line">Connected to WebSocket\n</span>')
+    adminLog('Connected to WebSocket')
   })
 
   ws.addEventListener('message', ({ data }) => {
     const { type, message } = JSON.parse(data)
-    const shouldScroll = (log.scrollTop + 60) >= (log.scrollHeight - log.clientHeight)
 
     if (type === 'PONG') return
 
-    log.insertAdjacentHTML('beforeend', `<span class="line">${message}\n</span>`)
-
-    while (log.childElementCount > MAX_LOG_LINES) log.firstChild.remove()
-
-    if (shouldScroll) log.scrollTop = log.scrollHeight
+    adminLog(message)
   })
 
   ws.addEventListener('close', () => {
     if (wsPing !== null) clearTimeout(wsPing)
-    log.insertAdjacentHTML('beforeend', '<span class="line">Lost connection to WebSocket\n</span>')
+
+    adminLog('Lost connection to WebSocket')
   })
 
   ws.addEventListener('error', err => {
-    log.insertAdjacentHTML('beforeend', `<span class="line">WebSocket Error: ${err.message}\n</span>`)
+    adminLog(`WebSocket Error: ${err.message}`)
   })
 
   logWS = ws
