@@ -75,6 +75,19 @@
             <span class="uptime">{{stats.uptime}}</span>
           </div>
         </div>
+        <div class="table">
+          <div class="row">
+            <span>
+              <i class="icon-github"></i>
+              Commit Id
+            </span>
+            <span>
+              <a href="https://github.com/cmd430/stash.red/commit/{{info.commit}}" target="_blank" title="{{info.commit}}">
+                {{info.shortCommit}}
+              </a>
+            </span>
+          </div>
+        </div>
         <div id="log">
           <button id="clearLog">
             <i class="icon-eraser"></i>

@@ -2,6 +2,7 @@ import { uptime } from 'node:process'
 import { resolve } from 'node:path'
 import { Log, html } from 'cmd430-utils'
 import Tail from 'tail-file'
+import { commitID, commitShortID } from '../../utils/git.js'
 
 
 // eslint-disable-next-line no-unused-vars
@@ -23,6 +24,10 @@ export default function (fastify, opts, done) {
           totalAlbums: totalAlbums,
           totalSize: totalSize,
           uptime: uptime()
+        },
+        info: {
+          commit: commitID,
+          shortCommit: commitShortID
         }
       })
   })
