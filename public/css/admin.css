@@ -186,6 +186,10 @@ main section {
   display: none;
 }
 
+section {
+  flex-grow: 1;
+}
+
 #notice {
   max-width: 25rem;
   width: 100%;
@@ -264,7 +268,8 @@ main section {
   color: var(--color-white);
   width: 100%;
   padding: 1rem;
-  height: calc(100dvh - 26.5rem);
+  min-height: 37.5rem;
+  flex-grow: 1;
 }
 #log:hover button {
   opacity: 1;

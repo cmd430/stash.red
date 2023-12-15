@@ -1,5 +1,9 @@
 @import 'shared/userAlbumFileBase';
 
+section {
+  flex-grow: 1;
+}
+
 #notice {
   max-width: 25rem;
   width: 100%;
@@ -88,7 +92,9 @@
   color: var(--color-white);
   width: 100%;
   padding: 1rem;
-  height: calc(100dvh - 26.5rem);
+  // height: calc(100dvh - 30rem);
+  min-height: 37.5rem;
+  flex-grow: 1;
 
   &:hover button {
     opacity: 1;
