@@ -9,6 +9,8 @@ const log = document.querySelector('#log > pre')
 const selectLog = document.querySelector('select#selectLog')
 const clearLogButton = document.querySelector('button#clearLog')
 
+const MAX_LOG_LINES = 1000
+
 let logWS = null
 let wsPing = null
 
@@ -42,7 +44,8 @@ function viewLog (logType) {
 
     log.insertAdjacentHTML('beforeend', `<span class="line">${message}\n</span>`)
 
-    while (log.childElementCount > 500) log.firstChild.remove()
+    while (log.childElementCount > MAX_LOG_LINES) log.firstChild.remove()
+
     if (shouldScroll) log.scrollTop = log.scrollHeight
   })
 
