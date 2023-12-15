@@ -85,19 +85,23 @@ main {
 
         &:hover {
           color: var(--color-logo);
+
           &::before,
           &::after {
             opacity: 1;
           }
         }
+
         &::before,
         &::after {
           opacity: 0;
           transition: opacity 150ms linear;
         }
+
         &::before {
           content: '« '
         }
+
         &::after {
           content: ' »'
         }
