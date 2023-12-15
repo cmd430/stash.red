@@ -247,6 +247,15 @@ main section {
   border: 1px solid var(--color-modal-border);
   cursor: pointer;
 }
+.table .row a {
+  color: var(--color-theme-inverted);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 150ms linear;
+}
+.table .row a:hover {
+  color: var(--color-logo);
+}
 
 #log {
   display: flex;
