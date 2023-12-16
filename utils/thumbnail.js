@@ -1,9 +1,11 @@
 import { spawn } from 'node:child_process'
 import { MIMEType } from 'node:util'
 import { resolve } from 'node:path'
-import { createReadStream } from 'node:fs'
+import { createReadStream, createWriteStream } from 'node:fs'
+import { pipeline } from 'node:stream/promises'
 import { platform } from 'node:os'
 import ffmpegPath from 'ffmpeg-static'
+import { file as TempFile } from 'tmp-promise'
 import { Log } from 'cmd430-utils'
 import sharp from 'sharp'
 import { mimetypeFilter } from './mimetype.js'
@@ -54,7 +56,17 @@ function ffEscapePath (str) {
   return str
 }
 
-async function ffmpeg (inputStream, type) {
+function requiresTemp (subtype) {
+  const subtypes = [ // subtypes in here cant be piped into ffmpeg under most situations
+    'mp4'
+  ]
+
+  return subtypes.includes(subtype)
+}
+
+async function ffmpeg (inputStream, mimetype) {
+  const { type, subtype } = mimetype
+  const tempFile = requiresTemp(subtype) ? await TempFile() : undefined
   // So we dont do unnessasary processing, text needs to be buffered to generate the thumbnail
   const inputText = type === 'text' ? ffEscapeString(await streamToBuffer(inputStream)) : ''
   const fontPath = ffEscapePath(thumbnailFontPath)
@@ -66,6 +78,16 @@ async function ffmpeg (inputStream, type) {
   }
   const outputArgs = [ '-frames:v', '1', '-f', 'image2pipe', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ]
   const args = ffmpegArgs.concat(inputArgs[type]).concat(outputArgs)
+
+  if (requiresTemp) {
+    // replace the pipe:0 input with the path to our temp file
+    args[args.indexOf('pipe:0')] = tempFile.path
+
+    // wait for the temp file to be written
+    try {
+      await pipeline(inputStream, createWriteStream(tempFile.path))
+    } catch {}
+  }
 
   debug('ffmpeg args:', args.join(' '))
 
@@ -80,6 +102,7 @@ async function ffmpeg (inputStream, type) {
       // we log the error if it is anything else
       if (err.code !== 'EOF' && err.code !== 'EPIPE') return error('[FFMPEG stdin Error]', err.message)
     })
+    ffProcess.on('exit', () => tempFile?.cleanup())
 
     if (type !== 'text') ffProcess.once('spawn', () => inputStream.pipe(ffProcess.stdin))
 
@@ -89,10 +112,11 @@ async function ffmpeg (inputStream, type) {
 }
 
 export async function generateThumbnail (mimetype, filestream) {
-  const { type } = new MIMEType(mimetypeFilter(mimetype))
+  const mime = new MIMEType(mimetypeFilter(mimetype))
+  const { type } = mime
 
   try {
-    const imageStream = type === 'image' ? filestream : await ffmpeg(filestream, type)
+    const imageStream = type === 'image' ? filestream : await ffmpeg(filestream, mime)
 
     // Resize and crop Thumbnails
     const thumbnailBuffer = sharp()

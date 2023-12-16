@@ -41,6 +41,7 @@
     "stream-head": "^3.0.0",
     "stream-meter": "^1.0.4",
     "tail-file": "^1.4.16",
+    "tmp-promise": "^3.0.3",
     "wasmagic": "^0.0.32"
   },
   "devDependencies": {
