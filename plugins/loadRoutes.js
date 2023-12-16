@@ -5,7 +5,7 @@ import { fastifyPlugin } from 'fastify-plugin'
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Routes')
 
-export default fastifyPlugin(async (fastify, opts, done) => {
+export default fastifyPlugin(async (fastify, opts) => {
   // Find and register routes
   for (const file of await readdir('./routes', { recursive: true })) {
     if (!file.endsWith('.js')) continue
@@ -16,9 +16,6 @@ export default fastifyPlugin(async (fastify, opts, done) => {
   // Error handling
   fastify.setNotFoundHandler((request, reply) => reply.error(404))
   fastify.setErrorHandler((err, request, reply) => reply.error(err))
-
-  // Move on to other handlers
-  done()
 }, {
   fastify: '4.x',
   name: 'load-routes'

@@ -4,11 +4,11 @@ import { Log } from 'cmd430-utils'
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Abort')
 
-export default fastifyPlugin(async (fastify, opts, done) => {
+export default fastifyPlugin(async (fastify, opts) => {
   // Find and register hooks
 
   fastify.decorateRequest('signal', null)
-  fastify.addHook('onRequest', (request, reply, done) => {
+  fastify.addHook('onRequest', async (request, reply) => {
     const abortControler = new AbortController()
 
     request.raw.once('close', () => {
@@ -18,11 +18,7 @@ export default fastifyPlugin(async (fastify, opts, done) => {
     })
 
     request.signal = abortControler.signal
-
-    done()
   })
-
-  done()
 }, {
   fastify: '4.x',
   name: 'abort'

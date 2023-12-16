@@ -5,7 +5,7 @@ import { Log, isNumber } from 'cmd430-utils'
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Create Error')
 
-export default fastifyPlugin((fastify, opts, done) => {
+export default fastifyPlugin(async (fastify, opts) => {
   fastify.decorateReply('error', function (err, description) {
     if (isNumber(err)) {
       err = createError(err)
@@ -50,9 +50,6 @@ export default fastifyPlugin((fastify, opts, done) => {
         stack: err.stack
       })
   })
-
-  // Move on to other handlers
-  done()
 }, {
   fastify: '4.x',
   name: 'error-page'
