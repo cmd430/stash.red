@@ -1,3 +1,4 @@
+import './helpers/processWarnings.js'
 import process from 'node:process'
 import { resolve } from 'node:path'
 import { Log, isDevEnv } from 'cmd430-utils'
@@ -34,8 +35,6 @@ const { log, debug, info, warn, error } = new Log('Main')
 const nanoid = customAlphabet('123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz')
 const DataStore = await getDatabaseInterface(config.database.store)
 const FileStore = await getStorageInterface(config.storage.store)
-
-process.on('warning', warning => warn(warning.stack))
 
 try {
   const fastify = Fastify({
