@@ -60,9 +60,7 @@ function viewLog (logType) {
     adminLog('Lost connection to WebSocket')
   })
 
-  ws.addEventListener('error', err => {
-    adminLog(`WebSocket Error: ${err.message}`)
-  })
+  ws.addEventListener('error', () => adminLog('WebSocket Error'))
 
   logWS = ws
 }
