@@ -1,8 +1,10 @@
 import { uptime } from 'node:process'
 import { resolve } from 'node:path'
+import { createReadStream } from 'node:fs'
 import { Log, html } from 'cmd430-utils'
 import Tail from 'tail-file'
 import { commitID, commitShortID } from '../../utils/git.js'
+import { ReadLastLines, streamToString } from '../../utils/stream.js'
 
 
 // eslint-disable-next-line no-unused-vars
@@ -37,22 +39,6 @@ export default function (fastify, opts, done) {
 
     if (!request.session.get('authenticated') || request.session.get('session')?.isAdmin !== true) return socket.send('Not Authorized')
 
-    const { log: logFile } = request.params
-    const logPath = resolve(`logs/${logFile}.log`)
-    const tail = new Tail(logPath, {
-      startPos: 'end'
-    })
-
-    tail.on('error', err => {
-      socket.send(err.toString())
-      error(err)
-    })
-    tail.on('line', line => socket.send(JSON.stringify({
-      type: 'message',
-      message: html(line)
-    })))
-    tail.start()
-
     socket.on('message', message => {
       const { type } = JSON.parse(message)
 
@@ -65,6 +51,47 @@ export default function (fastify, opts, done) {
         message: 'invalid message'
       }))
     })
+    socket.on('error', err => error(err))
+
+    const { log: logFile } = request.params
+    const logPath = resolve(`logs/${logFile}.log`)
+    const pastLogReader = createReadStream(logPath)
+
+    pastLogReader.on('error', err => {
+      socket.send(JSON.stringify({
+        type: 'message',
+        message: html(err.toString())
+      }))
+      error(err)
+    })
+
+    const pastLogLinesLimit = new ReadLastLines({
+      maxLines: 100
+    })
+    const pastlogLines = await streamToString(pastLogReader.pipe(pastLogLinesLimit))
+
+    for (const pastLogLine of pastlogLines.split('\n')) socket.send(JSON.stringify({
+      type: 'message',
+      message: html(pastLogLine)
+    }))
+
+    const tail = new Tail(logPath, {
+      startPos: 'end'
+    })
+
+    tail.on('error', err => {
+      socket.send(JSON.stringify({
+        type: 'message',
+        message: html(err.toString())
+      }))
+      error(err)
+    })
+    tail.on('line', line => socket.send(JSON.stringify({
+      type: 'message',
+      message: html(line)
+    })))
+    tail.start()
+
     socket.once('close', () => tail.stop())
   })
 
