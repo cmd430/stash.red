@@ -4,7 +4,7 @@ import { createReadStream } from 'node:fs'
 import { Log, html } from 'cmd430-utils'
 import Tail from 'tail-file'
 import { commitID, commitShortID } from '../../utils/git.js'
-import { ReadLastLines, streamToString } from '../../utils/stream.js'
+import { ReadLines, streamToString } from '../../utils/stream.js'
 
 
 // eslint-disable-next-line no-unused-vars
@@ -65,7 +65,8 @@ export default function (fastify, opts, done) {
       error(err)
     })
 
-    const pastLogLinesLimit = new ReadLastLines({
+    const pastLogLinesLimit = new ReadLines({
+      from: 'end',
       maxLines: 100
     })
     const pastlogLines = await streamToString(pastLogReader.pipe(pastLogLinesLimit))
