@@ -141,7 +141,7 @@ totalSize.textContent = prettyBytes(Number(totalSize.textContent), {
   maximumFractionDigits: 2
 })
 uptime.textContent = prettyTime(Number(uptime.textContent), {
-  format: '$DDd %HHh %MMm %SSs'
+  format: '$Dd %HHh %MMm %SSs'
 })
 
 viewLog(selectLog.value)
