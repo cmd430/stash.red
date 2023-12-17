@@ -9,6 +9,7 @@ import { file as TempFile } from 'tmp-promise'
 import { Log } from 'cmd430-utils'
 import sharp from 'sharp'
 import { mimetypeFilter } from './mimetype.js'
+import { streamToString } from './stream.js'
 
 // eslint-disable-next-line no-unused-vars
 const { log, debug, info, warn, error } = new Log('Thumbnail Generator')
@@ -22,19 +23,6 @@ const defaultThumbnailPaths = {
 
 // Disable cache to reduce memory usage
 sharp.cache(false)
-
-function streamToBuffer (readableStream) {
-  return new Promise((resolve, reject) => {
-    const chunks = []
-    readableStream.on('data', data => {
-      chunks.push(data instanceof Buffer ? data : Buffer.from(data))
-    })
-    readableStream.on('end', () => {
-      resolve(Buffer.concat(chunks).toString())
-    })
-    readableStream.on('error', reject)
-  })
-}
 
 function ffEscapeString (str) {
   // escape ffmpeg special chars
@@ -66,9 +54,10 @@ function requiresTemp (subtype) {
 
 async function ffmpeg (inputStream, mimetype) {
   const { type, subtype } = mimetype
-  const tempFile = requiresTemp(subtype) ? await TempFile() : undefined
+  const useTempFile = requiresTemp(subtype)
+  const tempFile = useTempFile ? await TempFile() : undefined
   // So we dont do unnessasary processing, text needs to be buffered to generate the thumbnail
-  const inputText = type === 'text' ? ffEscapeString(await streamToBuffer(inputStream)) : ''
+  const inputText = type === 'text' ? ffEscapeString(await streamToString(inputStream)) : ''
   const fontPath = ffEscapePath(thumbnailFontPath)
   const ffmpegArgs = [ '-hide_banner', '-loglevel', 'error' ]
   const inputArgs = {
@@ -79,7 +68,7 @@ async function ffmpeg (inputStream, mimetype) {
   const outputArgs = [ '-frames:v', '1', '-f', 'image2pipe', '-q:v', '1', '-c:v', 'mjpeg', 'pipe:1' ]
   const args = ffmpegArgs.concat(inputArgs[type]).concat(outputArgs)
 
-  if (requiresTemp) {
+  if (useTempFile) {
     // replace the pipe:0 input with the path to our temp file
     args[args.indexOf('pipe:0')] = tempFile.path
 
