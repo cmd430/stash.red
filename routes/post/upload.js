@@ -162,7 +162,9 @@ export default function (fastify, opts, done) {
         const externalStream = Readable.fromWeb(externalResponse.body)
         const { fetchURLOrigin, fetchURLPathname } = new URL(fetchURL)
         const externalFilename = basename(`${fetchURLOrigin}${fetchURLPathname}`)
-        const limit = new LimitStream(evaluate(fastify.config.uploads.limits.fileSize))
+        const limit = new LimitStream({
+          maxBytes: evaluate(fastify.config.uploads.limits.fileSize)
+        })
 
         await processFile(externalStream.pipe(limit), externalFilename)
 
