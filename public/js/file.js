@@ -4,6 +4,7 @@ const fileContainer = document.querySelector('main > section')
 const fileUser = fileContainer.getAttribute('data-username')
 const fileDeleteButtons = document.querySelectorAll('a.action__delete')
 const modalContainer = document.querySelector('div#modals')
+const logoLink = document.querySelector('#logo > a')
 
 for (const fileDeleteButton of fileDeleteButtons) fileDeleteButton.addEventListener('click', async () => {
   const eventListener = new EventListener({ once: true })
@@ -23,3 +24,13 @@ for (const fileDeleteButton of fileDeleteButtons) fileDeleteButton.addEventListe
   })
 })
 
+// Allow go to the user page by shift clicking the logo when viewing an album/file
+logoLink.addEventListener('click', e => {
+  if (e.shiftKey === false) return
+
+  e.preventDefault()
+
+  if (location.pathname.startsWith('/a/')) return location.assign(`/u/${fileUser}/albums`)
+
+  location.assign(`/u/${fileUser}`)
+})
