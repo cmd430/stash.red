@@ -42,18 +42,19 @@ export class BufferableStream extends Writable {
   }
 }
 
-export class ReadLastLines extends Transform {
+export class ReadLines extends Transform {
 
   #input = new PassThrough()
   #lines = []
   #asArray = false
 
-  constructor ({ maxLines = 50 }) {
+  constructor ({ from = 'start', maxLines = 50 }) {
     super()
 
     createInterface({ input: this.#input, crlfDelay: Infinity })
       .on('line', line => {
-        if (this.#lines.length === maxLines) this.#lines.shift()
+        if (from === 'start' && this.#lines.length >= maxLines) return
+        if (from === 'end' && this.#lines.length === maxLines) this.#lines.shift()
 
         this.#lines.push(line)
       })
