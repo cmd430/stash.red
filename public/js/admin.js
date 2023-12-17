@@ -14,12 +14,66 @@ const MAX_LOG_LINES = 1000
 let logWS = null
 let wsPing = null
 
-function prettyTime (unformatted) {
-  const hours = Math.floor(unformatted / (60 * 60)).toString()
+function prettyTime (unformatted, opts) {
+  // format tokens
+  /*
+    type
+      $ = dont include 0 values
+      % = include 0 values
+
+    token
+      D  = non padded days
+      DD = lead 0 padded days
+      H  = non padded hours
+      HH = lead 0 padded hours
+      M  = non padded minutes
+      MM = lead 0 padded minutes
+      S  = non padded seconds
+      SS = lead 0 padded seconds
+
+    seperator
+      can basically be anything
+  */
+  const { format = '$DD:%HH:%MM:%SS' } = opts ?? {}
+  const days = Math.floor(unformatted / ((60 * 60) * 24)).toString()
+  const hours = Math.floor(unformatted % ((60 * 60) * 24) / (60 * 60)).toString()
   const minutes = Math.floor(unformatted % (60 * 60) / 60).toString()
   const seconds = Math.floor(unformatted % 60).toString()
 
-  return `${hours.padStart('2', '0')}:${minutes.padStart('2', '0')}:${seconds.padStart('2', '0')}`
+  let output = format
+
+  const formatParts = format.matchAll(/(?<fullGroup>(?<fullTtoken>(?<tokenType>[$%]{1})(?<token>[A-Z])\4{0,1})(?<seperator>.+?(?=[$%]{1}|$))?)/g)
+  for (const { groups: { fullGroup, fullTtoken, tokenType, token } } of formatParts) {
+    let segment
+
+    switch (token) {
+      case 'D': {
+        segment = days
+        break
+      } case 'H': {
+        segment = hours
+        break
+      } case 'M': {
+        segment = minutes
+        break
+      } case 'S': {
+        segment = seconds
+        break
+      } default: {
+        segment = fullTtoken
+      }
+    }
+
+    if (fullTtoken.length === 3) segment = segment.padStart('2', '0')
+    if (tokenType === '$' && Number(segment) === 0) {
+      output = output.replace(fullGroup, '')
+      continue
+    }
+
+    output = output.replace(fullTtoken, segment)
+  }
+
+  return output
 }
 
 function adminLog (message) {
@@ -86,6 +140,8 @@ totalSize.textContent = prettyBytes(Number(totalSize.textContent), {
   minimumFractionDigits: 0,
   maximumFractionDigits: 2
 })
-uptime.textContent = prettyTime(Number(uptime.textContent))
+uptime.textContent = prettyTime(Number(uptime.textContent), {
+  format: '$DDd %HHh %MMm %SSs'
+})
 
 viewLog(selectLog.value)
