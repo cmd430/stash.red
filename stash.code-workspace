@@ -22,6 +22,7 @@
       ".notes": false,
       "ecosystem.config.cjs": true,
       "public": false,
+      "**/.testUploads/": true,
     },
     "search.exclude": {
       "**/node_modules": true,
@@ -31,6 +32,7 @@
       "*.code-workspace": true,
       ".editorconfig": true,
       "ecosystem.config.cjs": true,
+      "**/.testUploads/": true,
     }
   }
 }
