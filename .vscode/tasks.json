@@ -4,12 +4,28 @@
     {
       "type": "npm",
       "presentation": {
+        "reveal": "never",
+        "group": "Task",
+        "close": true
+      },
+      "options": {
+        "statusbar": {
+          "label": "$(github) git:push"
+        }
+      },
+      "script": "git:push",
+      "label": "git:push",
+    },
+    {
+      "type": "npm",
+      "presentation": {
         "reveal": "always",
         "group": "Sever",
         "close": false
       },
       "options": {
         "statusbar": {
+          "hide": true,
           "label": "$(console) start:prod"
         }
       },
@@ -25,6 +41,7 @@
       },
       "options": {
         "statusbar": {
+          "hide": true,
           "label": "$(console) start:dev"
         }
       },
@@ -101,6 +118,6 @@
         }
       },
       "label": "docs: view"
-    }
+    },
   ]
 }

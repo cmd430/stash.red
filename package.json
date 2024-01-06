@@ -56,7 +56,8 @@
     "jsdoc:generate": "npx jsdoc interfaces/database.js interfaces/storage.js -d .github/docs",
     "start": "node main.js",
     "start:prod": "cross-env NODE_ENV=production npm run start",
-    "start:dev": "cross-env NODE_ENV=development npm run start"
+    "start:dev": "cross-env NODE_ENV=development npm run start",
+    "git:push": "git push stash && git fetch origin"
   },
   "engines": {
     "node": ">=18.18.2 <=20.10.0"
