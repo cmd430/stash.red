@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import { createReadStream } from 'node:fs'
 import { Log, html } from 'cmd430-utils'
 import Tail from 'tail-file'
-import { commitID, commitShortID } from '../../utils/git.js'
+import { currentCommit, currentShortCommit } from '../../utils/git.js'
 import { ReadLines, streamToString } from '../../utils/stream.js'
 
 
@@ -28,8 +28,8 @@ export default function (fastify, opts, done) {
           uptime: uptime()
         },
         info: {
-          commit: commitID,
-          shortCommit: commitShortID
+          currentCommit: currentCommit,
+          currentShortCommit: currentShortCommit
         }
       })
   })

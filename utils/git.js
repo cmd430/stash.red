@@ -8,7 +8,7 @@ const refPath = HEAD.trim().slice(5)
 const ref = await readFile(resolve('.git', refPath), {
   encoding: 'utf8'
 })
-const commitID = ref.trim()
-const commitShortID = commitID.slice(0, 7)
+const currentCommit = ref.trim()
+const currentShortCommit = currentCommit.slice(0, 7)
 
-export { commitID , commitShortID }
+export { currentCommit , currentShortCommit }
