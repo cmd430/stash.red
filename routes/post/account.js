@@ -86,7 +86,7 @@ export default function (fastify, opts, done) {
 
       if (!username || !password) return reply.error(400, 'All Fields Required')
 
-      const hasValidCredentials = await compare(password, passwordHash)
+      const hasValidCredentials = await compare(password ?? '', passwordHash ?? '')
 
       if (hasValidCredentials === false) return reply.error(401, 'Invalid username or password')
 
