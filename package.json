@@ -13,7 +13,7 @@
   "main": "main.js",
   "private": true,
   "dependencies": {
-    "@azure/storage-blob": "^12.24.0",
+    "@azure/storage-blob": "^12.25.0",
     "@fastify/cookie": "^9.4.0",
     "@fastify/formbody": "^7.4.0",
     "@fastify/multipart": "^8.3.0",
@@ -46,9 +46,9 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "eslint": "^8.57.0",
-    "jsdoc": "^4.0.3",
-    "sass": "^1.77.8"
+    "eslint": "^8.57.1",
+    "jsdoc": "^4.0.4",
+    "sass": "^1.80.4"
   },
   "scripts": {
     "sass: compile": "npx sass public/scss:public/css",
