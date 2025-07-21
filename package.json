@@ -1,7 +1,7 @@
 {
   "name": "stash.red",
   "description": "stash.red is a Small footprint file host (for image, video, audio and text files)",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": "Bradley 'cmd430' Treweek (https://github.com/cmd430)",
   "license": "ISC",
   "homepage": "https://github.com/cmd430/stash.red#readme",
@@ -60,6 +60,6 @@
     "git:push": "git push stash && git fetch origin"
   },
   "engines": {
-    "node": ">=20.10.0 <=20.11.0"
+    "node": ">=20.10.0 <=22.15.1"
   }
 }
