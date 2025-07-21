@@ -34,9 +34,7 @@ export default function (fastify, opts, done) {
       })
   })
 
-  fastify.get('/admin/logs/:log', { websocket: true }, async (connection , request) => {
-    const { socket } = connection
-
+  fastify.get('/admin/logs/:log', { websocket: true }, async (socket , request) => {
     if (!request.session.get('authenticated') || request.session.get('session')?.isAdmin !== true) return socket.send('Not Authorized')
 
     socket.on('message', message => {
