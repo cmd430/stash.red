@@ -17,6 +17,6 @@ export default fastifyPlugin(async (fastify, opts) => {
   fastify.setNotFoundHandler((request, reply) => reply.error(404))
   fastify.setErrorHandler((err, request, reply) => reply.error(err))
 }, {
-  fastify: '4.x',
+  fastify: '5.x',
   name: 'load-routes'
 })

@@ -20,6 +20,6 @@ export default fastifyPlugin(async (fastify, opts) => {
     request.signal = abortControler.signal
   })
 }, {
-  fastify: '4.x',
+  fastify: '5.x',
   name: 'abort'
 })

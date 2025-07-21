@@ -13,6 +13,6 @@ export default fastifyPlugin(async (fastify, opts) => {
       .header('Expires', 0)
   })
 }, {
-  fastify: '4.x',
+  fastify: '5.x',
   name: 'disable-cache'
 })

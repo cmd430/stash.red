@@ -51,6 +51,6 @@ export default fastifyPlugin(async (fastify, opts) => {
       })
   })
 }, {
-  fastify: '4.x',
+  fastify: '5.x',
   name: 'error-page'
 })

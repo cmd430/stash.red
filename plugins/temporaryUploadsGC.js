@@ -18,6 +18,6 @@ export default fastifyPlugin(async (fastify, opts) => {
   performGC(fastify)
   setInterval(() => performGC(fastify), evaluate(gcInterval))
 }, {
-  fastify: '4.x',
+  fastify: '5.x',
   name: 'temporary-uploads-garbarge-collection'
 })

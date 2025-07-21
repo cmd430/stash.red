@@ -16,6 +16,6 @@ export default fastifyPlugin(async (fastify, opts) => {
     fastify.addHook(dirname(file), handler)
   }
 }, {
-  fastify: '4.x',
+  fastify: '5.x',
   name: 'load-hooks'
 })
